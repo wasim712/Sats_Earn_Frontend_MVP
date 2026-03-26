@@ -92,8 +92,6 @@ export const HeroSection = () => {
               controls={isVideoPlaying}
               playsInline
             />
-
-            {/* Custom Play Button Overlay */}
             {!isVideoPlaying && (
               <div 
                 onClick={handlePlayVideo}
