@@ -29,14 +29,14 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose, n
       {/* 1. The Blurred Overlay Backdrop */}
       <div 
         className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none overflow-scroll'
         }`}
         onClick={onClose}
       />
 
       {/* 2. The Sliding Sidebar */}
       <aside 
-        className={`fixed top-0 right-0 z-70 h-screen w-70 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
+        className={`fixed overflow-y-scroll top-0 right-0 z-70 h-screen w-70 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

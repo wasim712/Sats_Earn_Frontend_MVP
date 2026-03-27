@@ -1,10 +1,11 @@
 // Location: src/app/layout.tsx
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/store/StoreProvider';
 import { InteractiveBackground } from '@/components/layout/InteractiveBackground';
 import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+
 
 export const metadata: Metadata = {
   title: 'SatsEarn | The #1 Gamified Platform to Earn Bitcoin',
@@ -24,14 +25,11 @@ export default function RootLayout({
           <Navbar />
           
           <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pt-24 pb-12 sm:px-6 lg:px-8">
-            
-            {/* Next.js looks at the URL. Since the user is on "/", 
-                Next.js automatically drops your `src/app/page.tsx` right here! 
-            */}
+        
             {children}
 
           </main>
-
+          <Footer/>
         </StoreProvider>
       </body>
     </html>

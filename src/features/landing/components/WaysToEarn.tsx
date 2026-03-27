@@ -44,13 +44,13 @@ export const WaysToEarn = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col w-full overflow-hidden">
+    <div className="flex flex-col w-full overflow-hidden" id="how-it-works">
       
       {/* =========================================
           SECTION 1: SIMPLE PROCESS (3 Steps)
           ========================================= */}
       {/* Tightened top padding to blend with the section above it */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20">
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20" >
         
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-75 h-75 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -107,7 +107,7 @@ export const WaysToEarn = () => {
       {/* =========================================
           SECTION 2: MULTIPLE WAYS TO EARN (Grid)
           ========================================= */}
-      <section className="relative pt-8 pb-8 sm:pt-8 sm:pb-10">
+      <section className="relative pt-8 pb-8 sm:pt-8 sm:pb-10" id="ways-to-earn">
         
         {/* Background Glow */}
         <div className="absolute bottom-0 right-0 w-100 h-100 bg-sats-orange-500/5 rounded-full blur-[150px] pointer-events-none z-0" />

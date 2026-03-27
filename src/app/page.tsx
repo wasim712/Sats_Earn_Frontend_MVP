@@ -3,6 +3,9 @@ import { HeroSection } from '@/features/landing/components/HeroSection';
 import { Features } from '@/features/landing/components/Features';
 import { WaysToEarn } from '@/features/landing/components/WaysToEarn';
 import { Advertise } from '@/features/landing/components/Advertise';
+import { Testimonials } from '@/components/layout/Testimonials';
+import { FAQ } from '@/components/layout/Faq';
+import { CTASection } from '@/components/layout/CtaSection';
 // import { BrandsSection } from '@/features/landing/components/BrandsSection';
 
 export default function Home() {
@@ -20,7 +23,9 @@ export default function Home() {
       
       <WaysToEarn />
       <Advertise/>
-      
+      <Testimonials/>
+      <FAQ/>
+      <CTASection/>
     </div>
   );
 }
