@@ -7,7 +7,6 @@ import { Testimonials } from '@/components/layout/Testimonials';
 import { FAQ } from '@/components/layout/Faq';
 import { CTASection } from '@/components/layout/CtaSection';
 import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
 export default function Home() {
   return (
     // REMOVED: gap-16 md:gap-32
@@ -26,7 +25,6 @@ export default function Home() {
       <Testimonials/>
       <FAQ/>
       <CTASection/>
-      <Footer/>
     </div>
   );
 }

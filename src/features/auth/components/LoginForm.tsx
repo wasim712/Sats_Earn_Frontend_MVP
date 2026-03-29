@@ -44,7 +44,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-[440px] bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto">
+    <div className="w-full max-w-110 bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto">
       
       {/* Close Button -> Routes back to landing page */}
       <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
@@ -146,7 +146,7 @@ export default function LoginForm() {
       <p className="mt-8 text-center text-sm text-gray-400">
         Do not have an account?{' '}
         <Link href="/signup" className="font-bold text-sats-orange-500 hover:text-sats-orange-400 transition-colors">
-          Sign up free
+          Sign up
         </Link>
       </p>
     </div>

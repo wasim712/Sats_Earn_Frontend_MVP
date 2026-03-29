@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function SignupPage() {
   return (
-    <main className="min-h-screen bg-sats-black-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <main className=" flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
       {/* Background Grid Pattern (Assumes you kept it in layout, but added here just in case) */}
       <div className="absolute inset-0 bg-grid-base opacity-30 z-0"></div>

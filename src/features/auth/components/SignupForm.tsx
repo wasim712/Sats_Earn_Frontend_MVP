@@ -297,7 +297,7 @@ export default function SignupForm() {
         <p className="mt-8 text-center text-sm text-gray-400">
           Already have an account?{' '}
           <Link href="/login" className="font-bold text-sats-orange-500 hover:text-sats-orange-400 transition-colors">
-            Log in here
+            Log in
           </Link>
         </p>
       )}

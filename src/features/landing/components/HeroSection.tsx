@@ -62,12 +62,12 @@ export const HeroSection = () => {
           </div>
 
           {/* Call to Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center text-nowrap lg:justify-start mb-8">
             <Button size="lg" onClick={() => router.push('/signup')} className="gap-2 group w-full sm:w-auto">
               Start Earning Free
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto" onClick={handlePlayVideo}>
+            <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto text-nowrap" onClick={handlePlayVideo}>
               <Play className="w-5 h-5" />
               Watch Demo
             </Button>
