@@ -11,7 +11,7 @@ export const CTASection = () => {
 
   return (
     // Slightly larger padding bottom (pb-24) to give breathing room before the Footer
-    <section className="relative pt-16  sm:pt-20  overflow-hidden border-t border-sats-black-800/50">
+    <section className="relative pt-16 pb-8 sm:pb-12 sm:pt-20  overflow-hidden border-t border-sats-black-800/50">
       
       {/* Central Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 sm:w-125 h-75 sm:h-125 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" />

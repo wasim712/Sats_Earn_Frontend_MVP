@@ -3,8 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/store/StoreProvider';
 import { InteractiveBackground } from '@/components/layout/InteractiveBackground';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
+// import { Footer } from '@/components/layout/Footer';
 
 
 export const metadata: Metadata = {
@@ -22,14 +21,12 @@ export default function RootLayout({
       <body className="bg-sats-black-950 text-white font-sans">
         <StoreProvider>
           <InteractiveBackground />
-          <Navbar />
           
           <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pt-24 pb-12 sm:px-6 lg:px-8">
         
             {children}
 
           </main>
-          <Footer/>
         </StoreProvider>
       </body>
     </html>

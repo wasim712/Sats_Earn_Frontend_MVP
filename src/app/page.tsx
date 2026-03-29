@@ -6,14 +6,14 @@ import { Advertise } from '@/features/landing/components/Advertise';
 import { Testimonials } from '@/components/layout/Testimonials';
 import { FAQ } from '@/components/layout/Faq';
 import { CTASection } from '@/components/layout/CtaSection';
-// import { BrandsSection } from '@/features/landing/components/BrandsSection';
-
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 export default function Home() {
   return (
     // REMOVED: gap-16 md:gap-32
     // ADDED: space-y-0 so components sit perfectly flush against each other
-    <div className="flex flex-col w-full pb-20">
-      
+    <div className="flex flex-col w-full">
+      <Navbar/>
       <HeroSection />
       
       {/* Divider Line - gave it a small margin so it breathes */}
@@ -26,6 +26,7 @@ export default function Home() {
       <Testimonials/>
       <FAQ/>
       <CTASection/>
+      <Footer/>
     </div>
   );
 }
