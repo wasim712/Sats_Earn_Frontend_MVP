@@ -14,12 +14,7 @@ export default function Home() {
     <div className="flex flex-col w-full">
       <Navbar/>
       <HeroSection />
-      
-      {/* Divider Line - gave it a small margin so it breathes */}
-      <div className="my-8 md:my-12 h-px w-full bg-linear-to-r from-transparent via-sats-black-800 to-transparent" />
-      
       <Features /> 
-      
       <WaysToEarn />
       <Advertise/>
       <Testimonials/>

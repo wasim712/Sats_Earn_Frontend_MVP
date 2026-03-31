@@ -27,10 +27,10 @@ const TESTIMONIALS = [
 export const Testimonials = () => {
   return (
     // Tightened padding and subtle top border to separate it cleanly from the Brands section
-    <section id="testimonials" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 border-t border-sats-black-800/50 overflow-hidden">
+    <section id="testimonials" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 overflow-hidden">
       
       {/* Subtle Background Glow behind the center of the grid */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 sm:w-150 h-75 sm:h-150 bg-sats-orange-500/5 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 sm:w-150 h-75 sm:h-150  rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         

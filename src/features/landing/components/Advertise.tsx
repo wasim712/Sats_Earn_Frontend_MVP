@@ -31,7 +31,7 @@ export const Advertise = () => {
 
   return (
     // Tightened pt-16 to blend smoothly with the section above
-    <section id="brands" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 overflow-hidden border-t border-sats-black-800/50">
+    <section id="brands" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 overflow-hidden">
       
       {/* Subtle Background Glow behind the right-side card */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-100 sm:w-150 h-100 sm:h-150 bg-sats-orange-500/10 rounded-full blur-[150px] pointer-events-none z-0" />
