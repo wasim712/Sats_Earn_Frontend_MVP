@@ -20,7 +20,7 @@ const STEPS = [
   {
     num: '2',
     title: 'Complete Tasks',
-    desc: 'Choose from hundreds of tasks. Follow accounts, watch videos, take surveys, or play games.',
+    desc: 'Choose from hundreds of tasks. Follow accounts, watch videos, or play games.',
   },
   {
     num: '3',
@@ -45,7 +45,6 @@ export const WaysToEarn = () => {
 
   return (
     <div className="flex flex-col w-full overflow-hidden" id="how-it-works">
-      
       {/* =========================================
           SECTION 1: SIMPLE PROCESS (3 Steps)
           ========================================= */}

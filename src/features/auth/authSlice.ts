@@ -1,3 +1,6 @@
+
+// // export const { resetAuthError, goBackToStep1, logout } = authSlice.actions;
+// // export default authSlice.reducer;
 // import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 // // Pull the URL from your .env.local file
@@ -17,7 +20,7 @@
 // interface AuthState {
 //   user: any | null;
 //   token: string | null;
-//   isAuthenticated: boolean; // ADDED: Required for your LoginForm redirect
+//   isAuthenticated: boolean; 
 //   isLoading: boolean;
 //   error: string | null;
 //   step: 1 | 2; 
@@ -25,15 +28,13 @@
 // }
 
 // // 2. Set the Initial State
-// // Safely check local storage so users stay logged in when they refresh
-// const tokenFromStorage = typeof window !== 'undefined' ? localStorage.getItem('sats_token') : null;
+// // Safely check SESSION storage so users stay logged in only for this session
+// const tokenFromStorage = typeof window !== 'undefined' ? sessionStorage.getItem('sats_token') : null;
 
 // const initialState: AuthState = {
 //   user: null,
-//   // token: tokenFromStorage, change this
-//   token: null,
-//   // isAuthenticated: !!tokenFromStorage, // True if token exists, false if it doesn't
-//   isAuthenticated: false, 
+//   token: tokenFromStorage, // Restored the storage check
+//   isAuthenticated: !!tokenFromStorage, // Flips to true if token exists in session
 //   isLoading: false,
 //   error: null,
 //   step: 1,
@@ -47,7 +48,6 @@
 //   'auth/requestOtp',
 //   async (formData: SignUpPayload, { rejectWithValue }) => {
 //     try {
-//       // FIXED: Removed the extra /auth since it is already in API_URL
 //       const response = await fetch(`${API_URL}/auth/signup`, {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
@@ -69,7 +69,6 @@
 //   'auth/verifyOtp',
 //   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
 //     try {
-//       // FIXED: Removed the extra /auth
 //       const response = await fetch(`${API_URL}/auth/verify-otp`, {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
@@ -79,8 +78,8 @@
 //       const data = await response.json();
 //       if (!response.ok) throw new Error(data.error || data.message || 'Invalid OTP');
 
-//       // Save the JWT token securely in Local Storage
-//       localStorage.setItem('sats_token', data.session.access_token);
+//       // FIXED: Save the JWT token securely in Session Storage
+//       sessionStorage.setItem('sats_token', data.session.access_token);
       
 //       return data; 
 //     } catch (error: any) {
@@ -89,7 +88,7 @@
 //   }
 // );
 
-// // Step 3: Sign In (ADDED THIS FOR YOUR LOGIN FORM)
+// // Step 3: Sign In 
 // export const signInUser = createAsyncThunk(
 //   'auth/signIn',
 //   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -103,8 +102,8 @@
 //       const data = await response.json();
 //       if (!response.ok) throw new Error(data.error || data.message || 'Invalid credentials');
 
-//       // Save the JWT token securely in Local Storage
-//       localStorage.setItem('sats_token', data.session.access_token);
+//       // FIXED: Save the JWT token securely in Session Storage
+//       sessionStorage.setItem('sats_token', data.session.access_token);
       
 //       return data; 
 //     } catch (error: any) {
@@ -129,10 +128,11 @@
 //     logout: (state) => {
 //       state.user = null;
 //       state.token = null;
-//       state.isAuthenticated = false; // Ensure this flips to false
+//       state.isAuthenticated = false; 
 //       state.step = 1;
 //       state.tempData = null;
-//       localStorage.removeItem('sats_token');
+//       // FIXED: Remove from Session Storage on logout
+//       sessionStorage.removeItem('sats_token');
 //     }
 //   },
 //   extraReducers: (builder) => {
@@ -144,7 +144,7 @@
 //       })
 //       .addCase(signInUser.fulfilled, (state, action) => {
 //         state.isLoading = false;
-//         state.isAuthenticated = true; // Flips to true so your redirect works!
+//         state.isAuthenticated = true; 
 //         state.user = action.payload.user; 
 //         state.token = action.payload.session.access_token; 
 //       })
@@ -175,7 +175,7 @@
 //       })
 //       .addCase(verifySignupOtp.fulfilled, (state, action) => {
 //         state.isLoading = false;
-//         state.isAuthenticated = true; // Added this here too
+//         state.isAuthenticated = true; 
 //         state.user = action.payload.user; 
 //         state.token = action.payload.session.access_token; 
 //         state.step = 1; 
@@ -219,11 +219,15 @@ interface AuthState {
 // 2. Set the Initial State
 // Safely check SESSION storage so users stay logged in only for this session
 const tokenFromStorage = typeof window !== 'undefined' ? sessionStorage.getItem('sats_token') : null;
+// FIXED: Also grab the user object from session storage so it survives reloads!
+const userFromStorage = typeof window !== 'undefined' && sessionStorage.getItem('sats_user') 
+  ? JSON.parse(sessionStorage.getItem('sats_user') as string) 
+  : null;
 
 const initialState: AuthState = {
-  user: null,
-  token: tokenFromStorage, // Restored the storage check
-  isAuthenticated: !!tokenFromStorage, // Flips to true if token exists in session
+  user: userFromStorage, // Restored the user object
+  token: tokenFromStorage, 
+  isAuthenticated: !!tokenFromStorage, 
   isLoading: false,
   error: null,
   step: 1,
@@ -267,9 +271,6 @@ export const verifySignupOtp = createAsyncThunk(
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid OTP');
 
-      // FIXED: Save the JWT token securely in Session Storage
-      sessionStorage.setItem('sats_token', data.session.access_token);
-      
       return data; 
     } catch (error: any) {
       return rejectWithValue(error.message || 'Network error occurred');
@@ -291,9 +292,6 @@ export const signInUser = createAsyncThunk(
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid credentials');
 
-      // FIXED: Save the JWT token securely in Session Storage
-      sessionStorage.setItem('sats_token', data.session.access_token);
-      
       return data; 
     } catch (error: any) {
       return rejectWithValue(error.message || 'Network error occurred');
@@ -320,8 +318,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false; 
       state.step = 1;
       state.tempData = null;
-      // FIXED: Remove from Session Storage on logout
+      // FIXED: Remove BOTH from Session Storage on logout
       sessionStorage.removeItem('sats_token');
+      sessionStorage.removeItem('sats_user');
     }
   },
   extraReducers: (builder) => {
@@ -336,6 +335,10 @@ const authSlice = createSlice({
         state.isAuthenticated = true; 
         state.user = action.payload.user; 
         state.token = action.payload.session.access_token; 
+        
+        // FIXED: Save both Token AND User to session storage
+        sessionStorage.setItem('sats_token', action.payload.session.access_token);
+        sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -369,6 +372,10 @@ const authSlice = createSlice({
         state.token = action.payload.session.access_token; 
         state.step = 1; 
         state.tempData = null; 
+
+        // FIXED: Save both Token AND User to session storage
+        sessionStorage.setItem('sats_token', action.payload.session.access_token);
+        sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })
       .addCase(verifySignupOtp.rejected, (state, action) => {
         state.isLoading = false;

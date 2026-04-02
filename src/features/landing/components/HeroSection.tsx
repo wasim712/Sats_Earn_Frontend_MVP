@@ -19,7 +19,7 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative overflow-visible pt-12 pb-8 sm:pt-20 sm:pb-10">
+    <section className="relative overflow-visible pt-12 pb-8 px-3 sm:pt-20 sm:pb-10">
       {/* 1. The Global Top Headline */}
       <FadeUp className="text-center mb-16 md:mb-20">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
@@ -63,7 +63,7 @@ export const HeroSection = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center text-nowrap lg:justify-start mb-8">
-            <Button size="lg" onClick={() => router.push('/signup')} className="gap-2 group w-full sm:w-auto">
+            <Button size="lg" onClick={() => router.push('/signup')} className="gap-2 group w-full sm:w-auto ">
               Start Earning Free
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
