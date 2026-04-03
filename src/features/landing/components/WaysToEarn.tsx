@@ -48,8 +48,7 @@ export const WaysToEarn = () => {
       {/* =========================================
           SECTION 1: SIMPLE PROCESS (3 Steps)
           ========================================= */}
-      {/* Tightened top padding to blend with the section above it */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20" >
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20">
         
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-75 h-75 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -100,9 +99,6 @@ export const WaysToEarn = () => {
         </div>
       </section>
 
-      {/* Divider */}
-      {/* <div className="my-2 md:my-4 h-px w-full max-w-7xl mx-auto bg-linear-to-r from-transparent via-sats-black-800 to-transparent" /> */}
-
       {/* =========================================
           SECTION 2: MULTIPLE WAYS TO EARN (Grid)
           ========================================= */}
@@ -125,24 +121,26 @@ export const WaysToEarn = () => {
             {EARN_METHODS.map((method, index) => {
               const Icon = method.icon;
               return (
-                <FadeUp key={index} delay={index * 0.1}>
+                // CRITICAL FIX: Added h-full to FadeUp so it stretches inside the grid cell
+                <FadeUp key={index} delay={index * 0.1} className="h-full">
                   <Card 
-                    // Sharp Black Theme restored here
-                    className="h-full flex flex-col items-start text-left p-6! group transition-all duration-300 border-sats-black-700 bg-sats-black-900 hover:bg-sats-black-800 hover:-translate-y-1 hover:border-sats-orange-500/60 hover:shadow-[0_10px_30px_-10px_rgba(249,115,22,0.2)] cursor-default"
+                    // CRITICAL FIX: Added h-full to the Card
+                    className="h-full p-6! group transition-all duration-300 border-sats-black-700 bg-sats-black-900 hover:bg-sats-black-800 hover:-translate-y-1 hover:border-sats-orange-500/60 hover:shadow-[0_10px_30px_-10px_rgba(249,115,22,0.2)] cursor-default"
                   >
-                    {/* Vibrant Icon Container */}
-                    <div className="w-12 h-12 rounded-xl bg-sats-black-950 border border-sats-black-700 flex items-center justify-center mb-5 transition-all duration-300 group-hover:border-sats-orange-500 group-hover:bg-sats-orange-500/10 group-hover:shadow-[0_0_15px_rgba(249,115,22,0.2)]">
+                    {/* Vibrant Icon Container - Added shrink-0 so it doesn't get squished */}
+                    <div className="w-12 h-12 rounded-xl bg-sats-black-950 border border-sats-black-700 flex items-center justify-center mb-5 transition-all duration-300 group-hover:border-sats-orange-500 group-hover:bg-sats-orange-500/10 group-hover:shadow-[0_0_15px_rgba(249,115,22,0.2)] shrink-0">
                       <Icon className="w-6 h-6 text-sats-orange-500/80 transition-colors duration-300 group-hover:text-sats-orange-500" />
                     </div>
                     
-                    <h3 className="text-lg font-bold text-white mb-2 tracking-wide">{method.title}</h3>
+                    <h3 className="text-lg font-bold text-white mb-2 tracking-wide shrink-0">{method.title}</h3>
                     
-                    <p className="text-sm text-gray-300 mb-6 grow font-medium leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                    {/* CRITICAL FIX: flex-grow expands the text box, pushing the badge below it to the bottom */}
+                    <p className="text-sm text-gray-300 mb-6 flex-grow font-medium leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
                       {method.desc}
                     </p>
                     
-                    {/* Reward Badge */}
-                    <div className="mt-auto w-full inline-flex items-center justify-center px-3 py-2 bg-sats-black-950 rounded-lg border border-sats-black-700 group-hover:border-sats-orange-500/30 transition-all duration-300">
+                    {/* CRITICAL FIX: mt-auto combined with shrink-0 glues this to the very bottom */}
+                    <div className="mt-auto shrink-0 w-full inline-flex items-center justify-center px-3 py-2 bg-sats-black-950 rounded-lg border border-sats-black-700 group-hover:border-sats-orange-500/30 transition-all duration-300">
                       <span className="text-xs text-sats-orange-500 font-bold tracking-wider uppercase">
                         {method.reward}
                       </span>

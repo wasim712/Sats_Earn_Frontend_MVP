@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Campaign } from '@/features/admin/adminCampaignsSlice';
 import { Trash2, Power, PowerOff, Link as LinkIcon, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -28,20 +29,52 @@ const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, clas
   // Instagram Logo (Official Gradient)
   if (lowerUrl.includes('instagram.com')) {
     return (
-      <svg viewBox="0 0 24 24" className={className}>
-        <defs>
-          <linearGradient id="ig-grad" x1="2" y1="2" x2="22" y2="22">
-            <stop offset="0%" stopColor="#feda75" />
-            <stop offset="25%" stopColor="#fa7e1e" />
-            <stop offset="50%" stopColor="#d62976" />
-            <stop offset="75%" stopColor="#962fbf" />
-            <stop offset="100%" stopColor="#4f5bd5" />
-          </linearGradient>
-        </defs>
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="url(#ig-grad)" strokeWidth="2" />
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="url(#ig-grad)" strokeWidth="2" />
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="url(#ig-grad)" strokeWidth="2" strokeLinecap="round" />
-      </svg>
+      <Image
+      src="/svgs/instalogo.svg"
+      alt="Instagram"
+      width={30}
+      height={30}
+    />
+    );
+  }
+  if (lowerUrl.includes('t.me')) {
+    return (
+      <Image
+      src="/svgs/telelogo.svg"
+      alt="Telegram"
+      width={30}
+      height={30}
+    />
+    );
+  }
+  if (lowerUrl.includes('facebook.com')) {
+    return (
+      <Image
+      src="/svgs/facebooklogo.svg"
+      alt="Telegram"
+      width={30}
+      height={30}
+    />
+    );
+  }
+  if (lowerUrl.includes('linkedin.com')) {
+    return (
+      <Image
+      src="/svgs/linkedinlogo.svg"
+      alt="Telegram"
+      width={30}
+      height={30}
+    />
+    );
+  }
+  if (lowerUrl.includes('youtube.com')) {
+    return (
+      <Image
+      src="/svgs/youtubelogo.svg"
+      alt="Telegram"
+      width={30}
+      height={30}
+    />
     );
   }
   
