@@ -20,7 +20,7 @@ const STEPS = [
   {
     num: '2',
     title: 'Complete Tasks',
-    desc: 'Choose from hundreds of tasks. Follow accounts, watch videos, take surveys, or play games.',
+    desc: 'Choose from hundreds of tasks. Follow accounts, watch videos, or play games.',
   },
   {
     num: '3',
@@ -45,7 +45,6 @@ export const WaysToEarn = () => {
 
   return (
     <div className="flex flex-col w-full overflow-hidden" id="how-it-works">
-      
       {/* =========================================
           SECTION 1: SIMPLE PROCESS (3 Steps)
           ========================================= */}
@@ -57,7 +56,7 @@ export const WaysToEarn = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeUp className="text-center mb-16">
-            <div className="inline-block px-4 py-1.5 bg-sats-orange-500/10 rounded-full mb-6 border border-sats-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
+            <div className="inline-block px-4 py-1.5 bg-sats-orange-500/10 rounded-full mb-6 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
               <span className="text-sats-orange-500 text-xs font-bold tracking-wide uppercase">Simple Process</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
@@ -85,7 +84,7 @@ export const WaysToEarn = () => {
                 {/* Connecting Arrow (Hidden on Mobile) */}
                 {index < STEPS.length - 1 && (
                   <FadeUp delay={index * 0.15 + 0.1} className="hidden md:block mb-12">
-                    <ArrowRight className="w-8 h-8 text-sats-black-800" />
+                    <ArrowRight className="w-8 h-8 text-white" />
                   </FadeUp>
                 )}
               </React.Fragment>
@@ -102,7 +101,7 @@ export const WaysToEarn = () => {
       </section>
 
       {/* Divider */}
-      <div className="my-2 md:my-4 h-px w-full max-w-7xl mx-auto bg-linear-to-r from-transparent via-sats-black-800 to-transparent" />
+      {/* <div className="my-2 md:my-4 h-px w-full max-w-7xl mx-auto bg-linear-to-r from-transparent via-sats-black-800 to-transparent" /> */}
 
       {/* =========================================
           SECTION 2: MULTIPLE WAYS TO EARN (Grid)

@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
-
+import adminReducer from '../features/admin/adminSlice'
+import adminCampaignsReducer from '../features/admin/adminCampaignsSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // When we build the dashboard, we will add dashboard: dashboardReducer here
+    admin: adminReducer,// When we build the dashboard, we will add dashboard: dashboardReducer here
+    adminCampaigns: adminCampaignsReducer,
   },
 });
 

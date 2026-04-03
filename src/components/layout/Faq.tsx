@@ -40,7 +40,7 @@ export const FAQ = () => {
   };
 
   return (
-    <section id="faq" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 overflow-hidden border-t border-sats-black-800/50">
+    <section id="faq" className="relative pt-16 pb-16 sm:pt-20 sm:pb-24 overflow-hidden ">
       
       {/* Subtle Background Glow behind the FAQ */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-100 h-100 bg-sats-orange-500/5 rounded-full blur-[150px] pointer-events-none z-0" />

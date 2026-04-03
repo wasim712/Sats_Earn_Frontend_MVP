@@ -36,7 +36,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose, n
 
       {/* 2. The Sliding Sidebar */}
       <aside 
-        className={`fixed overflow-y-scroll top-0 right-0 z-70 h-screen w-70 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
+        className={`fixed overflow-y-scroll top-0 right-0 z-70 h-dvh w-70 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
