@@ -114,6 +114,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
 const handleSave = async () => {
     setIsSaving(true);
+    // const { id: campId, tasks, createdAt, updatedAt, ...cleanUpdateData } = editForm;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: campId, tasks, createdAt, updatedAt, ...cleanUpdateData } = editForm;
 
     const result = await dispatch(updateCampaign({ id: campaign.id, data: cleanUpdateData }));
@@ -237,7 +239,7 @@ const handleSave = async () => {
               </div>
             </div>
             <div className="w-full bg-sats-black-800 rounded-full h-3 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-sats-orange-600 to-sats-orange-400 rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%` }}></div>
+              <div className="h-full bg-linear-to-r from-sats-orange-600 to-sats-orange-400 rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%` }}></div>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
-  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen
+  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,Megaphone
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -27,6 +27,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'All Campaigns', href: '/admin/campaigns', icon: List },
     { name: 'Add Campaign', href: '/admin/addcampaign', icon: CopyPlus },
     { type: 'divider', name: 'System' },
+    { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
