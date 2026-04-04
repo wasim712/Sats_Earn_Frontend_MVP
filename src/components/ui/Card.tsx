@@ -11,7 +11,8 @@ export const Card: React.FC<CardProps> = ({ children, className = '', ...props }
       {...props}
     >
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/5 to-transparent" />
-      <div className="relative z-10">{children}</div>
+      {/* CRITICAL FIX: Added `h-full flex flex-col` so content stretches perfectly */}
+      <div className="relative z-10 h-full flex flex-col">{children}</div>
     </div>
   );
 };
