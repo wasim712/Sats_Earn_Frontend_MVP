@@ -106,7 +106,7 @@ export const Footer = () => {
 
   return (
     // FIXED: Added w-full to ensure it spans the whole page
-    <footer className="relative w-full bg-sats-black-950 border-t border-sats-black-800 pt-20 pb-10 overflow-hidden z-20">
+    <footer className="relative w-full bg-sats-black-950 border-t border-sats-black-800 pt-20 pb-10 overflow-hidden z-5">
       
       {/* Container keeps content centered and max-width restricted */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
