@@ -8,6 +8,7 @@ import { CampaignCard } from '@/components/admin/CampaignCard';
 import { Plus, Loader2, AlertCircle } from 'lucide-react';
 
 export default function AdminCampaignsPage() {
+  // throw new Error("Testing!");
   const dispatch = useAppDispatch();
   const { campaigns, isLoading, error } = useAppSelector((state) => state.adminCampaigns);
 

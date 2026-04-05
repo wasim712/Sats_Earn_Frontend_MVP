@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-sats-black-950 text-white font-sans ">
+      <body className="bg-sats-black-950 text-white font-sans " suppressHydrationWarning>
         <StoreProvider>
           <InteractiveBackground />
           
