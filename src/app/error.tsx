@@ -16,7 +16,7 @@ export default function GlobalError({
   
   // Dynamically determine the dashboard URL based on where the app crashed
   const isAdminArea = pathname?.startsWith('/admin');
-  const dashboardUrl = isAdminArea ? '/admin/dashboard' : '/dashboard';
+  const dashboardUrl = isAdminArea ? '/admin/dashboard' : '/user/dashboard';
   
   // Log the error to an error reporting service (like Sentry) in production
   useEffect(() => {

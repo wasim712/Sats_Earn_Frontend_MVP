@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
-import { signInUser, resetAuthError } from '../authSlice';
+import { signInUser, resetAuthError } from '../authSlice'; // Adjust path if needed
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginForm() {
@@ -21,10 +21,15 @@ export default function LoginForm() {
   
   const [showPassword, setShowPassword] = useState(false);
 
-  // Redirect to dashboard if logged in successfully
+  // SINGLE, UNIFIED REDIRECT LOGIC
   useEffect(() => {
-    if (isAuthenticated || user) {
-      router.push('/dashboard');
+    // Only redirect if both authenticated AND user data exists
+    if (isAuthenticated && user) {
+      if (user.role === 'SUPER_ADMIN') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/user/dashboard');
+      }
     }
   }, [isAuthenticated, user, router]);
 
@@ -36,24 +41,14 @@ export default function LoginForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.role === 'SUPER_ADMIN') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/dashboard');
-      }
-    }
-  }, [isAuthenticated, user, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Dispatches the login action to your Express backend
     dispatch(signInUser(formData));
   };
 
   return (
-    <div className="w-full max-w-110 bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto">
+    <div className="w-full max-w-md bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto mt-10">
       
       {/* Close Button -> Routes back to landing page */}
       <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
@@ -108,7 +103,7 @@ export default function LoginForm() {
           </div>
         </div>
 
-        {/* Password Input with Forgot Password Link */}
+        {/* Password Input */}
         <div>
           <div className="flex justify-between items-center mb-1.5">
             <label className="block text-sm font-bold text-gray-200">Password</label>
@@ -129,7 +124,6 @@ export default function LoginForm() {
               required
               className="w-full bg-sats-black-900 border border-sats-black-700 focus:border-sats-orange-500 focus:ring-1 focus:ring-sats-orange-500 rounded-xl py-3 pl-10 pr-12 outline-none transition-all text-white placeholder-gray-600"
             />
-            {/* Password Visibility Toggle */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
