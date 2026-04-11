@@ -7,6 +7,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '../ui/Button'; 
 import { StaggerReveal } from '../animations/StaggerReveal';
 import { MobileSidebar } from './MobileSidebar';
+import { LogoText } from '../ui/LogoText';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,10 +33,7 @@ export const Navbar = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sats-black-900 shadow-[0_0_15px_rgba(249,115,22,0.2)] border border-sats-orange-500/30 overflow-hidden transition-transform group-hover:scale-105">
                 <Image src="/icon.png" alt="SatsEarn Logo" className="h-full w-full object-cover" width={100} height={100} />
               </div>
-              <span className="text-2xl font-bold tracking-tight">
-                <span className="text-white">Sats</span>
-                <span className="text-sats-orange-500">Earn</span>
-              </span>
+              <LogoText className="text-2xl font-extrabold tracking-tight"/>
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -62,7 +60,7 @@ export const Navbar = () => {
                 {/* Changed text from "Sign up" to "Start Earning" */}
                 <Button variant="primary" size="sm" className="shadow-[0_0_15px_rgba(249,115,22,0.2)]">
                   Start Earning
-                </Button>
+                </Button> 
               </Link>
             </div>
 

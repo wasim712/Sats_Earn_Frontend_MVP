@@ -7,6 +7,8 @@ import {
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
   List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,Megaphone
 } from 'lucide-react';
+import Image from 'next/image';
+import { LogoText } from '../ui/LogoText';
 
 interface AdminSidebarProps {
   isOpen: boolean;           
@@ -58,12 +60,8 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
                }`}
              >
                 {/* 1. Default Logo (Fades out when hovering ANYWHERE on the collapsed sidebar) */}
-                <svg 
-                  width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  className={`transition-all duration-300 ${isCollapsed ? 'opacity-100 group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}
-                >
-                  <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-                </svg>
+                <Image width="45" height="45" alt='logo' className={` rounded-4xl transition-all duration-300 ${isCollapsed ? 'opacity-100  group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}src="/icon.png">
+                </Image>
 
                 {/* 2. Expand Icon (Scales in when hovering ANYWHERE on the collapsed sidebar) */}
                 {isCollapsed && (
@@ -73,9 +71,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
 
              {/* Brand Text */}
              {!isCollapsed && (
-               <span className="text-xl font-bold tracking-tight text-white whitespace-nowrap overflow-hidden transition-opacity duration-300">
-                 Sats<span className="text-sats-orange-500">Earn</span>
-               </span>
+               <LogoText className="text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden transition-opacity duration-300"/>
              )}
           </div>
           

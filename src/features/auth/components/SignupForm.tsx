@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
 import { requestSignupOtp, verifySignupOtp, goBackToStep1, resetAuthError } from '../authSlice';
 import { User, Mail, Calendar, MapPin, Lock, AtSign, ArrowRight, Eye, EyeOff, CheckCircle2, Circle, Gift, Search, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { LogoText } from '@/components/ui/LogoText';
 
 const ALL_COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Côte d'Ivoire", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Congo-Brazzaville)", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia (Czech Republic)", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini (fmr. 'Swaziland')", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar (formerly Burma)", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine State", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
@@ -23,15 +25,30 @@ export default function SignupForm() {
   const router = useRouter();
   const { isLoading, error, step, tempData, user } = useAppSelector((state) => state.auth);
 
-  const [formData, setFormData] = useState({
-    fullName: '', 
-    username: '',
-    email: '',
-    password: '',
-    country: '',
-    dateOfBirth: '',
-    referralCode: ''
-  });
+  const getReferralFromUrl = () => {
+  if (typeof window === "undefined") return "";
+
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+
+  if (ref) {
+    localStorage.setItem("referral", ref.toUpperCase());
+    return ref.toUpperCase();
+  }
+
+  const saved = localStorage.getItem("referral");
+  return saved || "";
+};
+
+const [formData, setFormData] = useState({
+  fullName: '',
+  username: '',
+  email: '',
+  password: '',
+  country: '',
+  dateOfBirth: '',
+  referralCode: getReferralFromUrl() // ✅ here
+});
 
   const [otp, setOtp] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -66,6 +83,7 @@ export default function SignupForm() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dispatch]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -106,18 +124,16 @@ export default function SignupForm() {
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </Link>
-
+      <Link href="/">
       <div className="flex justify-center items-center mb-6">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-black rounded-xl border border-sats-orange-500/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(249,115,22,0.2)]">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-             </svg>
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-white">SatsEarn</span>
+          <div className="w-12 h-12 bg-black rounded-xl border border-sats-orange-500/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(249,115,22,0.2)]">
+                      <Image width={120} height={120} className='rounded-2xl' alt='logo' src='/icon.png'></Image>
+                    </div>
+          <LogoText className="text-2xl font-bold tracking-tight text-white"/>
         </div>
       </div>
-
+    </Link>
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-1 text-white">{step === 1 ? 'Create your account' : 'Verify your email'}</h2>
         <p className="text-gray-400 text-sm">

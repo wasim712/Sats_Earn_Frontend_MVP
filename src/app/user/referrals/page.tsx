@@ -1,0 +1,87 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { AlertTriangle, Users, Copy, CheckCircle2, Trophy, UserMinus, UserPlus, Share2 } from 'lucide-react';
+import ReferralHero from '@/components/user/referrals/ReferralHero';
+import ReferralStats from '@/components/user/referrals/ReferralStats';
+import ReferralList from '@/components/user/referrals/ReferralList';
+
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+export default function ReferralsPage() {
+  function correctUrl(url:string) {
+    
+  }
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchReferrals = async () => {
+      try {
+        const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+        const response = await fetch(`${API_URL}/users/referrals`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to load referral data');
+        const result = await response.json();
+        setData(result);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReferrals();
+  }, []);
+
+  if (error) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center text-center">
+        <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-white mb-2">Connection Error</h2>
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
+
+  // --- PREMIUM SKELETON LOADER ---
+  if (isLoading || !data) {
+    return (
+      <div className="space-y-8 animate-pulse pb-20">
+        <div>
+          <div className="h-10 w-48 bg-[#1a1a1a] rounded-xl mb-3"></div>
+          <div className="h-5 w-72 bg-[#1a1a1a] rounded-lg"></div>
+        </div>
+        <div className="h-48 w-full bg-[#050505] border border-[#1a1a1a] rounded-[28px]"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-[#050505] border border-[#1a1a1a] rounded-[24px]"></div>
+          ))}
+        </div>
+        <div className="h-64 w-full bg-[#050505] border border-[#1a1a1a] rounded-[28px]"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Referrals</h1>
+        <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards. 🚀</p>
+      </div>
+
+      <ReferralHero code={data.referralCode} url={'http://localhost:3000/signup?ref='+data.referralCode} />
+      
+      <ReferralStats stats={data.stats} />
+
+      <ReferralList list={data.referralsList} />
+    </div>
+  );
+}

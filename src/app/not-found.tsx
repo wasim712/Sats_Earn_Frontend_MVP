@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 export default function NotFound() {
   const router = useRouter();
@@ -35,9 +36,8 @@ export default function NotFound() {
           
           {/* Logo Box */}
           <div className="relative w-28 h-28 bg-sats-black-900 border border-sats-black-700 rounded-3xl flex items-center justify-center shadow-[0_0_50px_rgba(249,115,22,0.15)]">
-            <svg width="54" height="54" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
-              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-            </svg>
+            <Image width="150" height="150" src='/icon.png' alt='LOGO'className=" rounded-3xl ">
+          </Image>
           </div>
         </div>
 
