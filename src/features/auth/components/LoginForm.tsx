@@ -53,7 +53,7 @@ export default function LoginForm() {
     <div className="w-full max-w-md bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto mt-10">
       
       {/* Close Button -> Routes back to landing page */}
-      <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+      <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-sats-orange-400 transition-colors">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>

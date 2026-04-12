@@ -27,21 +27,23 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose, n
   return (
     <>
       {/* 1. The Blurred Overlay Backdrop */}
+      {/* FIXED: Changed md:hidden to lg:hidden and removed rogue overflow-scroll */}
       <div 
-        className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none overflow-scroll'
+        className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
 
       {/* 2. The Sliding Sidebar */}
+      {/* FIXED: Changed md:hidden to lg:hidden */}
       <aside 
-        className={`fixed overflow-y-scroll top-0 right-0 z-70 h-dvh w-70 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
+        className={`fixed overflow-y-auto top-0 right-0 z-70 h-dvh w-72 bg-sats-black-950 border-l border-sats-black-800 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header with Close Button */}
-        <div className="flex items-center justify-between p-6 border-b border-sats-black-800">
+        <div className="flex items-center justify-between p-6 border-b border-sats-black-800 shrink-0">
           <span className="text-xl font-bold tracking-tight">
             <span className="text-white">Sats</span>
             <span className="text-sats-orange-500">Earn</span>
@@ -69,7 +71,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose, n
         </div>
 
         {/* Auth Buttons (Footer of Sidebar) */}
-        <div className="p-6 border-t border-sats-black-800 flex flex-col gap-4 bg-sats-black-900/50">
+        <div className="p-6 border-t border-sats-black-800 flex flex-col gap-4 bg-sats-black-900/50 shrink-0">
           <Link href="/login" onClick={onClose} className="w-full">
             <Button variant="ghost" className="w-full text-base py-3 border border-sats-black-700">
               Log in

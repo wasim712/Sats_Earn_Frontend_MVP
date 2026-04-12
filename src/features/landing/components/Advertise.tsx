@@ -51,10 +51,10 @@ export const Advertise = () => {
             
             <h2 className="text-3xl md:text-5xl  font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
               Grow Your Brand with <br className="hidden md:block" />
-              <span className="text-sats-orange-500">Real Users</span>
+              <span className="text-sats-orange-500 text-nowrap">Real Users</span>
             </h2>
             
-            <p className="text-base sm:text-lg text-gray-400 font-medium mb-12 leading-relaxed max-w-xl">
+            <p className="text-base sm:text-lg text-gray-300 font-medium mb-12 leading-relaxed max-w-xl">
               Connect with highly engaged crypto users who are ready to interact with your brand. Pay only for verified actions.
             </p>
 
@@ -69,7 +69,7 @@ export const Advertise = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white mb-1.5 text-base sm:text-lg">{benefit.title}</h4>
-                      <p className="text-gray-400 font-medium text-sm leading-relaxed max-w-md transition-colors duration-300 group-hover:text-gray-300">
+                      <p className="text-gray-300 font-medium text-sm leading-relaxed max-w-md transition-colors duration-300 group-hover:text-gray-300">
                         {benefit.desc}
                       </p>
                     </div>
@@ -111,7 +111,7 @@ export const Advertise = () => {
                         <h4 className="font-bold text-white text-sm sm:text-base mb-0.5 tracking-wide">
                           {campaign.title}
                         </h4>
-                        <p className="text-gray-400 text-xs sm:text-sm font-medium">
+                        <p className="text-gray-300 text-xs sm:text-sm font-medium">
                           {campaign.desc}
                         </p>
                       </div>

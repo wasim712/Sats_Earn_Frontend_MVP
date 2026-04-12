@@ -57,7 +57,7 @@ export const Features = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">
             The Easiest Way to <span className="text-sats-orange-500">Stack Sats</span>
           </h2>
-          <p className="text-base sm:text-lg text-gray-400 font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-gray-300 font-medium max-w-2xl mx-auto leading-relaxed">
             No complicated setups. No expensive mining rigs. Just complete tasks and earn <span className="text-sats-orange-500 font-bold">Bitcoin</span>.
           </p>
         </FadeUp>
@@ -81,7 +81,7 @@ export const Features = () => {
                     {feature.title}
                   </h3>
                   
-                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed font-medium group-hover:text-gray-300 transition-colors">
+                  <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium group-hover:text-gray-300 transition-colors">
                     {feature.desc}
                   </p>
                   
