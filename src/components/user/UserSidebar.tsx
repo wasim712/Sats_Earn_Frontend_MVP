@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LayoutDashboard, Pickaxe, CheckSquare, Wallet, 
-  Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, 
-  User as UserIcon, HelpCircle, ChevronDown
+  LayoutDashboard, ListChecks, Users, Trophy, Wallet, 
+  Bell, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface UserSidebarProps {
   isOpen: boolean;           
@@ -24,33 +24,32 @@ interface UserSidebarProps {
 
 export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout, user }: UserSidebarProps) => {
   const pathname = usePathname();
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
-  // Handle clicking outside to close the profile menu
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
+  // Exactly matching the straight list from your provided image
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
-    { type: 'divider', name: 'Earn Sats' }, 
-    { name: 'Available Tasks', href: '/user/tasks', icon: Pickaxe },
-    { name: 'My Submissions', href: '/user/submissions', icon: CheckSquare },
-    { type: 'divider', name: 'Account' },
-    { name: 'Wallet', href: '/user/wallet', icon: Wallet },
+    { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
+    { name: 'Referrals', href: '/user/referrals', icon: Users },
+    { name: 'Leaderboard', href: '/user/leaderboard', icon: Trophy },
+    { name: 'Withdraw', href: '/user/wallet', icon: Wallet },
+    { name: 'Notifications', href: '/user/notifications', icon: Bell, badge: 3 }, // Hardcoded badge for now
     { name: 'Settings', href: '/user/settings', icon: Settings },
   ];
 
-  // Get initials for the avatar (e.g., "Sumit Dwivedi" -> "SD")
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  // Safely get initials (e.g., "Sumit Dwivedi" -> "SD")
+  const getInitials = (name?: string) => {
+    if (!name) return 'SE';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  };
+
+  // Convert "Sumit Dwivedi" into "@sumitdwivedi" to match the image handle
+  const generateHandle = (name?: string) => {
+    if (!name) return '@earner';
+    return '@' + name.replace(/\s+/g, '').toLowerCase();
   };
 
   return (
@@ -63,74 +62,83 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
       <aside 
         className={`group/sidebar fixed top-0 left-0 h-screen bg-sats-black-950 border-r border-sats-black-800 z-50 flex flex-col transition-all duration-300 ease-in-out shadow-[5px_0_30px_rgba(0,0,0,0.5)] 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 
-        ${isCollapsed ? 'w-20' : 'w-72'}`}
+        ${isCollapsed ? 'w-20' : 'w-[280px]'}`}
       >
-        {/* HEADER SECTION */}
-        <div className={`h-20 flex items-center border-b border-sats-black-800 bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
+        {/* HEADER SECTION (Logo + Beta Badge) */}
+        <div className={`h-24 flex items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
              <button 
                onClick={onToggleCollapse}
                title={isCollapsed ? "Expand Sidebar" : "SatsEarn"}
-               className={`relative flex h-9 w-9 items-center justify-center rounded-xl bg-black border shadow-[0_0_10px_rgba(249,115,22,0.2)] transition-all duration-300 ${
-                 isCollapsed ? 'border-sats-orange-500/30 group-hover/sidebar:border-sats-orange-500' : 'border-sats-orange-500/30 cursor-default'
-               }`}
+               className="relative flex items-center justify-center transition-transform active:scale-95"
              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`transition-all duration-300 ${isCollapsed ? 'opacity-100 group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}>
-                  <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-                </svg>
+                <Image 
+                  width={36} 
+                  height={36} 
+                  alt='logo' 
+                  className={`rounded-xl transition-all duration-300 ${isCollapsed ? 'opacity-100 group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}
+                  src="/icon.png" 
+                />
                 {isCollapsed && (
-                  <PanelLeftOpen className="absolute inset-0 m-auto w-5 h-5 text-sats-orange-500 opacity-0 scale-50 group-hover/sidebar:opacity-100 group-hover/sidebar:scale-100 transition-all duration-300" />
+                  <PanelLeftOpen className="absolute inset-0 m-auto w-6 h-6 text-sats-orange-500 opacity-0 scale-50 group-hover/sidebar:opacity-100 group-hover/sidebar:scale-100 transition-all duration-300" />
                 )}
              </button>
 
              {!isCollapsed && (
-               <span className="text-xl font-bold tracking-tight text-white whitespace-nowrap overflow-hidden transition-opacity duration-300">
-                 Sats<span className="text-sats-orange-500">Earn</span>
-               </span>
+               <div className="flex items-center gap-2 overflow-hidden">
+                 <span className="text-2xl font-bold tracking-tight text-white whitespace-nowrap">
+                   Sats<span className="text-sats-orange-500">Earn</span>
+                 </span>
+                 {/* The Beta Badge from the image */}
+                 <span className="bg-sats-orange-500/20 text-sats-orange-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+                   Beta
+                 </span>
+               </div>
              )}
           </div>
           
+          {/* Close / Collapse toggles */}
           {!isCollapsed && (
             <button onClick={onToggleCollapse} className="hidden lg:flex p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-sats-black-800 transition-colors">
               <PanelLeftClose className="w-5 h-5" />
             </button>
           )}
-
           <button onClick={onClose} className="lg:hidden p-2 text-gray-500 hover:text-white rounded-full hover:bg-sats-black-900 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* NAVIGATION SECTION */}
-        <nav className="flex-1 py-4 px-3 space-y-1.5 overflow-y-auto custom-scrollbar overflow-x-hidden">
-          {navLinks.map((link, index) => {
-            if (link.type === 'divider') {
-              return (
-                <div key={index} className={`pt-4 pb-2 text-[10px] font-bold text-gray-600 uppercase tracking-wider transition-all duration-300 ${isCollapsed ? 'text-center opacity-0 h-0 p-0 m-0' : 'px-3 opacity-100'}`}>
-                  {!isCollapsed && link.name}
-                </div>
-              );
-            }
-
-            const isActive = pathname === link.href;
-            const Icon = link.icon!;
+        <nav className="flex-1 py-2 px-4 space-y-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
+          {navLinks.map((link) => {
+            const isActive = pathname.startsWith(link.href);
+            const Icon = link.icon;
             
             return (
               <Link 
                 key={link.name} 
-                href={link.href!}
-                onClick={() => { onClose(); setIsProfileMenuOpen(false); }} 
+                href={link.href}
+                onClick={onClose} 
                 title={isCollapsed ? link.name : ""}
-                className={`group flex items-center gap-3 py-3 rounded-xl font-medium transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
+                className={`group flex items-center justify-between py-3.5 rounded-2xl font-semibold transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
                   isActive 
-                    ? 'bg-sats-orange-500/10 text-sats-orange-400 border border-sats-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.05)]' 
-                    : 'text-gray-400 border border-transparent hover:text-white hover:bg-sats-black-900'
+                    ? 'bg-[#1c140a] border border-sats-orange-500/20 text-white shadow-inner' 
+                    : 'text-gray-300 border border-transparent hover:text-white hover:bg-sats-black-900'
                 }`}
               >
-                <Icon className={`w-5 h-5 min-w-[20px] transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
-                {!isCollapsed && (
-                  <span className={`whitespace-nowrap transition-transform duration-300 ${!isActive && 'group-hover:translate-x-1 group-hover:text-gray-200'}`}>
-                    {link.name}
+                <div className="flex items-center gap-4">
+                  <Icon className={`w-5 h-5 min-w-[20px] transition-colors duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-400 group-hover:text-gray-300'}`} />
+                  {!isCollapsed && (
+                    <span className="whitespace-nowrap tracking-wide text-[15px]">
+                      {link.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Optional Notification Badge */}
+                {!isCollapsed && link.badge && (
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.4)]">
+                    {link.badge}
                   </span>
                 )}
               </Link>
@@ -138,70 +146,45 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
           })}
         </nav>
 
-        {/* BOTTOM PROFILE & POPOVER MENU */}
-        <div className="p-3 border-t border-sats-black-800 bg-sats-black-950 relative" ref={menuRef}>
+        {/* BOTTOM SECTION (Profile Card & Logout) */}
+        <div className="p-4 border-t border-sats-black-800 bg-sats-black-950 flex flex-col gap-4">
           
-          {/* THE POPOVER MENU (Like the uploaded image) */}
-          <div className={`absolute bottom-[calc(100%+8px)] left-3 w-[240px] bg-[#1e1e1e] border border-sats-black-800 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-200 origin-bottom-left z-50 ${isProfileMenuOpen ? 'opacity-100 scale-100 pointer-events-auto translate-y-0' : 'opacity-0 scale-95 pointer-events-none translate-y-2'}`}>
+          {/* 1. Profile Card (Matches Image Exactly) */}
+          <div className={`flex items-center gap-3 p-3 bg-[#121212] rounded-[20px] border border-sats-black-800 ${isCollapsed ? 'justify-center' : ''}`}>
+            {/* Orange Solid Avatar */}
+            <div className="w-10 h-10 rounded-full bg-sats-orange-500 flex items-center justify-center text-black font-extrabold text-sm shrink-0">
+              {getInitials(user?.name)}
+            </div>
             
-            {/* Popover Header */}
-            <div className="p-4 border-b border-sats-black-800/50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#3d3d3d] flex items-center justify-center text-gray-300 shrink-0 shadow-inner">
-                <span className="text-sm font-medium">{user?.name ? getInitials(user.name) : 'SE'}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-100 truncate">{user?.name || 'Sats Earner'}</p>
-                <p className="text-xs text-gray-400 truncate">{user?.tier || 'Basic'} Tier</p>
-              </div>
-            </div>
-
-            {/* Popover Links */}
-            <div className="p-2 space-y-0.5">
-              <Link 
-                href="/user/profile" 
-                onClick={() => { setIsProfileMenuOpen(false); onClose(); }} 
-                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-[#2d2d2d] rounded-xl transition-colors"
-              >
-                <UserIcon className="w-4 h-4 text-gray-400" /> Profile
-              </Link>
-              <Link 
-                href="/user/help" 
-                onClick={() => { setIsProfileMenuOpen(false); onClose(); }} 
-                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-[#2d2d2d] rounded-xl transition-colors"
-              >
-                <HelpCircle className="w-4 h-4 text-gray-400" /> Help
-              </Link>
-            </div>
-
-            {/* Popover Footer (Logout) */}
-            <div className="p-2 border-t border-sats-black-800/50">
-              <button 
-                onClick={() => { setIsProfileMenuOpen(false); onClose(); onLogout(); }} 
-                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors"
-              >
-                <LogOut className="w-4 h-4" /> Log out
-              </button>
-            </div>
-          </div>
-
-          {/* THE TRIGGER BUTTON */}
-          <button 
-            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className={`flex items-center gap-3 w-full p-2 rounded-xl hover:bg-sats-black-900 transition-colors ${isProfileMenuOpen ? 'bg-sats-black-900' : ''} ${isCollapsed ? 'justify-center' : 'justify-start'}`}
-          >
-            <div className="w-9 h-9 rounded-full bg-[#3d3d3d] flex items-center justify-center text-gray-300 shrink-0">
-              <span className="text-xs font-medium">{user?.name ? getInitials(user.name) : 'SE'}</span>
-            </div>
             {!isCollapsed && (
               <>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-semibold text-gray-200 truncate">{user?.name || 'Sats Earner'}</p>
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <p className="text-sm font-bold text-white truncate leading-tight">
+                    {generateHandle(user?.name)}
+                  </p>
+                  <p className="text-[11px] font-medium text-gray-400 capitalize mt-0.5">
+                    {user?.tier ? user.tier.toLowerCase() : 'Basic'} Tier
+                  </p>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+                
+                {/* Internal Settings Gear */}
+                <Link href="/user/settings" className="p-1.5 text-gray-500 hover:text-white hover:bg-sats-black-800 rounded-lg transition-colors">
+                  <Settings className="w-4 h-4" />
+                </Link>
               </>
             )}
-          </button>
+          </div>
 
+          {/* 2. Simple Log Out Text Button */}
+          <button 
+            onClick={onLogout} 
+            title={isCollapsed ? "Log out" : ""}
+            className={`flex items-center gap-3 text-gray-400 hover:text-white transition-colors font-semibold text-sm px-2 pb-2 ${isCollapsed ? 'justify-center' : ''}`}
+          >
+            <LogOut className="w-5 h-5 min-w-[20px]" />
+            {!isCollapsed && <span>Log Out</span>}
+          </button>
+          
         </div>
       </aside>
     </>

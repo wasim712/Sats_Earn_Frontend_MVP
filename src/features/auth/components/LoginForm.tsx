@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
 import { signInUser, resetAuthError } from '../authSlice'; // Adjust path if needed
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import { LogoText } from '@/components/ui/LogoText';
 
 export default function LoginForm() {
   const dispatch = useAppDispatch();
@@ -59,16 +61,16 @@ export default function LoginForm() {
       </Link>
 
       {/* Logo Area */}
+          <Link href='/'> 
       <div className="flex justify-center items-center mb-6 mt-2">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-black rounded-xl border border-sats-orange-500/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(249,115,22,0.2)]">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-             </svg>
+          <div className="w-12 h-12 bg-black rounded-xl border border-sats-orange-500/30 flex items-center justify-center relative shadow-[0_0_15px_rgba(249,115,22,0.2)]">
+            <Image width={120} height={120} className='rounded-2xl' alt='logo' src='/icon.png'></Image>
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white">SatsEarn</span>
+          <LogoText className="text-2xl font-bold tracking-tight "/>
         </div>
       </div>
+          </Link>
 
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-1 text-white">Welcome back</h2>

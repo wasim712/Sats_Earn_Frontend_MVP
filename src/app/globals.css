@@ -22,9 +22,10 @@
   --color-sats-black-800: #171717;
   --color-sats-black-700: #262626;
 
-  --color-sats-orange-400: #fb923c;
-  --color-sats-orange-500: #f97316;
-  --color-sats-orange-600: #ea580c;
+  /* THE NEW BRAND ORANGE */
+  --color-sats-orange-400: #F4A440; /* Lighter, brighter orange for hovers */
+  --color-sats-orange-500: #EE8B12; /* YOUR LOGO BASE COLOR */
+  --color-sats-orange-600: #D0760C; /* Deeper orange for active/pressed states */
 
   --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
 }

@@ -6,7 +6,6 @@ import { CampaignUserCard } from '@/components/user/CampaignUserCard';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-
 export default function TasksPage() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +16,7 @@ export default function TasksPage() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const token = sessionStorage.getItem('sats_token'); // Or however you store your token
+        const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token'); 
         
         const response = await fetch(`${API_URL}/users/campaigns`, {
           method: 'GET',
@@ -51,17 +50,18 @@ export default function TasksPage() {
   );
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       
       {/* PAGE HEADER & SEARCH */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Available Tasks</h1>
-          <p className="text-gray-400 mt-2 text-sm sm:text-base">Complete these campaigns to stack Sats. New tasks are added daily.</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Available Tasks</h1>
+          <p className="text-gray-400 mt-1.5 text-sm sm:text-base font-medium">Complete these campaigns to stack Sats. New tasks are added daily.</p>
         </div>
 
+        {/* Search Bar - Updated to premium dark theme */}
         <div className="relative w-full md:w-80 group">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
           </div>
           <input
@@ -69,24 +69,53 @@ export default function TasksPage() {
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-sats-black-900 border border-sats-black-800 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-sats-orange-500/50 focus:ring-1 focus:ring-sats-orange-500/50 transition-all shadow-inner"
+            className="w-full bg-black border border-[#1a1a1a] text-white rounded-2xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-sats-orange-500/40 hover:border-[#2a2a2a] transition-all shadow-lg placeholder-gray-600 font-medium"
           />
         </div>
       </div>
 
       {/* ERROR STATE */}
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-3 text-red-400">
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-3 text-red-400 shadow-lg">
           <AlertTriangle className="w-5 h-5 shrink-0" />
           <p className="font-medium">{error}</p>
         </div>
       )}
 
-      {/* LOADING STATE */}
+      {/* LOADING STATE - The Perfect Skeleton */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="h-64 bg-sats-black-900/50 border border-sats-black-800 rounded-3xl animate-pulse"></div>
+            <div key={n} className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 flex flex-col h-full min-h-70 shadow-lg">
+              
+              {/* Header Skeleton: Logo & Reward Pill */}
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#1a1a1a]"></div>
+                <div className="w-24 h-8 rounded-xl bg-[#1a1a1a]"></div>
+              </div>
+              
+              {/* Body Skeleton: Title & Description */}
+              <div className="grow mb-8 space-y-4">
+                <div className="h-6 w-3/4 bg-[#1a1a1a] rounded-lg"></div>
+                <div className="space-y-2.5">
+                  <div className="h-3 w-full bg-[#1a1a1a] rounded-md"></div>
+                  <div className="h-3 w-5/6 bg-[#1a1a1a] rounded-md"></div>
+                </div>
+              </div>
+              
+              {/* Footer Skeleton: Progress Bar & Button */}
+              <div className="mt-auto space-y-6">
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-end">
+                    <div className="h-3 w-20 bg-[#1a1a1a] rounded-md"></div>
+                    <div className="h-3 w-12 bg-[#1a1a1a] rounded-md"></div>
+                  </div>
+                  <div className="w-full h-2 bg-[#1a1a1a] rounded-full"></div>
+                </div>
+                <div className="w-full h-13 bg-[#1a1a1a] rounded-xl"></div>
+              </div>
+
+            </div>
           ))}
         </div>
       ) : (
@@ -99,10 +128,12 @@ export default function TasksPage() {
               ))}
             </div>
           ) : !error && (
-            <div className="flex flex-col items-center justify-center py-20 bg-sats-black-900/50 border border-dashed border-sats-black-800 rounded-3xl text-center px-4">
-              <CheckCircle2 className="w-16 h-16 text-sats-orange-500/50 mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">You are all caught up!</h3>
-              <p className="text-gray-400">There are no new tasks available right now. Check back later to stack more Sats.</p>
+            <div className="flex flex-col items-center justify-center py-24 bg-black border border-[#1a1a1a] rounded-[28px] text-center px-4 shadow-lg">
+              <div className="w-16 h-16 bg-sats-black-950 border border-[#1a1a1a] rounded-full flex items-center justify-center mb-5 shadow-inner">
+                <CheckCircle2 className="w-8 h-8 text-gray-500" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2">You are all caught up!</h3>
+              <p className="text-gray-400 font-medium">There are no new tasks matching your criteria right now.</p>
             </div>
           )}
         </>
