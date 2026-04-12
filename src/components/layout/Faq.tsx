@@ -7,28 +7,47 @@ import { FadeUp } from '@/components/animations/FadeUp';
 // --- DATA CONFIGURATION ---
 const FAQ_DATA = [
   {
-    question: "How much can I earn?",
-    answer: "Earnings vary based on task availability and your tier. Active users typically earn 1,000-10,000 sats daily. Higher tiers unlock better-paying tasks."
-  },
-  {
-    question: "How do withdrawals work?",
-    answer: "We support Lightning Network withdrawals. Simply paste your Lightning invoice and receive your sats instantly. No minimum amount, zero fees."
+    question: "What is SatsEarn?",
+    answer: "SatsEarn is a free platform where you can earn Bitcoin (Sats) by completing simple tasks such as social tasks, watching videos, taking surveys, playing games, trying new apps, referring friends, and more."
   },
   {
     question: "Is SatsEarn really free?",
-    answer: "Yes! SatsEarn is 100% free to use. We earn revenue from our brand partners, not from users. You will never be asked to deposit or pay anything."
-  },
-  {
-    question: "How does the referral program work?",
-    answer: "Share your unique referral link. You earn 10% of your direct referrals' task earnings for life. Higher tiers unlock up to 30% commission rates."
-  },
-  {
-    question: "What are the tier levels?",
-    answer: "We have Bronze, Silver, Gold, Platinum, and Diamond tiers. Each tier unlocks higher-paying tasks, better referral rates, and exclusive bonuses."
+    answer: "Yes, SatsEarn is 100% free to use. We earn from brands, advertisers, and partners, and share that revenue with you. You’ll never be asked to deposit anything. Optional premium tiers (coming soon) will be available for users who want to earn higher rewards."
   },
   {
     question: "How do I get started?",
-    answer: "Sign up with your email, choose a username, and start completing tasks immediately. No KYC, no credit card, no minimum deposit required."
+    answer: "Sign up with your email, choose a username and country, and start completing tasks. No KYC, no credit card, no signup fee, and no deposit required."
+  },
+  {
+    question: "How much can I earn?",
+    answer: "Earnings depend on task availability and your tier level. Active users typically earn between 50–1,000 Sats daily, with higher tiers unlocking better-paying tasks."
+  },
+  {
+    question: "How can I withdraw my Sats?",
+    answer: "You can withdraw your Sats to your Bitcoin wallet or Lightning wallet once you reach the minimum withdrawal threshold. Withdrawals are fast, low-fee, and may depend on maintaining a positive trust score."
+  },
+  {
+    question: "What are the tier levels?",
+    answer: `SatsEarn has two types of tiers:
+  
+🔹 Free Tiers:
+- Basic
+- Bronze
+- Silver
+- Gold
+
+🔹 Premium Tiers (coming soon):
+- Platinum
+- Diamond
+- Crown
+- Elite
+- Founder (highest level)
+
+Each tier unlocks higher-paying tasks, better referral rates, and exclusive bonuses.`
+  },
+  {
+    question: "How does the referral program work?",
+    answer: "Share your unique referral link and earn bonus Sats when your friends join. You’ll earn a 5% base commission on the tasks your referrals complete. Paid/Premium tiers can unlock up to 30% commission rates. Build your referral network to unlock higher ranks and bigger rewards."
   }
 ];
 

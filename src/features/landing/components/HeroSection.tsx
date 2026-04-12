@@ -122,12 +122,12 @@ export const HeroSection = () => {
 
   return (
     // min-h-[calc(100vh-80px)] ensures it tries to fit exactly in the viewport (minus navbar)
-    <section className="relative overflow-visible pt-12 pb-8 px-4 sm:pt-16 sm:pb-12 min-h-[calc(100vh-80px)] flex flex-col justify-center items-center">
+    <section className="relative overflow-visible pt-12 pb-8 px-4 sm:pt-16 sm:pb-12  flex flex-col justify-center items-center">
       
       <div className="w-full max-w-7xl mx-auto">
         {/* 1. The Global Top Headline - Perfectly formatted for mobile */}
         <FadeUp className="text-center mb-8 sm:mb-16">
-          <h2 className="text-[26px] leading-[1.2] sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+          <h2 className="text-[30px] leading-[1.2] sm:text-5xl md:text-[50px] font-extrabold text-white tracking-tight">
             The <span className=" bg-clip-text bg-linear-to- text-white">#1 Gamified Platform</span>
             {/* The line break that ONLY shows on mobile devices */}
             <br className="block sm:hidden" /> to Earn <span className="text-sats-orange-500">Bitcoin</span>
@@ -150,7 +150,7 @@ export const HeroSection = () => {
               Doing Simple Tasks
             </h1>
             
-            <p className="text-sm sm:text-lg text-gray-400 font-medium mb-8 max-w-lg lg:mx-0">
+            <p className="text-[16px] sm:text-lg text-gray-300 font-medium mb-8 max-w-lg lg:mx-0">
               Complete surveys, watch videos, engage on social media, and earn <span className="text-sats-orange-500 font-bold">Bitcoin</span> (sats) instantly.
             </p>
 
