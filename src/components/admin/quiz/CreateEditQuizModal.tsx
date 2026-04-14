@@ -1,0 +1,378 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { X, Plus, Trash2, CheckCircle2, Circle, AlertTriangle, Info } from 'lucide-react';
+import { useAppDispatch } from '@/store/hooks';
+import { createQuiz, updateQuiz } from '@/features/admin/adminQuizSlice';
+import type { Quiz } from '@/features/admin/adminQuizSlice';
+
+// ─── Types & Props ────────────────────────────────────────────────────────────
+
+interface QuestionInput {
+  id: string;
+  questionText: string;
+  options: string[];
+  correctAnswer: string;
+}
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  quiz?: Quiz | null;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
+  const dispatch = useAppDispatch();
+  const isEditMode = !!quiz;
+
+  // Unified form state
+  const [form, setForm] = useState({
+    title: '',
+    date: '',
+    rewardSats: 15,
+    isActive: false, // Added for Edit mode
+  });
+  
+  // Questions state (Only used in Create mode)
+  const [questions, setQuestions] = useState<QuestionInput[]>([
+    { id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }
+  ]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Sync state when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    if (quiz) {
+      // EDIT MODE: Populate only the editable fields
+      setForm({
+        title: quiz.title,
+        date: '', // Uneditable in edit mode
+        rewardSats: quiz.rewardSats,
+        isActive: quiz.isActive || false,
+      });
+      // We explicitly DO NOT load questions here since they aren't editable
+    } else {
+      // CREATE MODE: Reset everything
+      setForm({ title: '', date: '', rewardSats: 15, isActive: false });
+      setQuestions([{ id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
+    }
+    setError(null);
+  }, [isOpen, quiz]);
+
+  if (!isOpen) return null;
+
+  // ── Helpers & State Handlers ───────────────────────────────────────────────
+
+  const setFormField = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const addQuestion = () => setQuestions([...questions, { id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
+  const removeQuestion = (id: string) => questions.length > 1 && setQuestions(questions.filter(q => q.id !== id));
+  const updateQuestion = (id: string, field: keyof QuestionInput, value: any) => setQuestions(questions.map(q => q.id === id ? { ...q, [field]: value } : q));
+  
+  const updateOption = (qId: string, optIndex: number, value: string) => {
+    setQuestions(questions.map(q => {
+      if (q.id === qId) {
+        const newOptions = [...q.options];
+        newOptions[optIndex] = value;
+        const newCorrectAnswer = q.correctAnswer === q.options[optIndex] ? value : q.correctAnswer;
+        return { ...q, options: newOptions, correctAnswer: newCorrectAnswer };
+      }
+      return q;
+    }));
+  };
+
+  const setCorrectOption = (qId: string, optionValue: string) => updateQuestion(qId, 'correctAnswer', optionValue);
+
+  const validate = (): string | null => {
+    if (!form.title.trim()) return 'Quiz title is required.';
+    if (Number(form.rewardSats) < 1) return 'Reward must be at least 1 Sat.';
+    
+    if (!isEditMode) {
+      if (!form.date) return 'Quiz date is required.';
+      if (questions.length === 0) return 'At least one question is required.';
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.questionText.trim()) return `Question ${i + 1} is missing text.`;
+        if (q.options.some(opt => !opt.trim())) return `Question ${i + 1} has empty options.`;
+        if (!q.correctAnswer) return `Please select a correct answer for Question ${i + 1}.`;
+        if (!q.options.includes(q.correctAnswer)) return `Correct answer mismatch in Question ${i + 1}.`;
+      }
+    }
+    return null;
+  };
+
+  const handleSubmit = async () => {
+    const err = validate();
+    if (err) { setError(err); return; }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      if (isEditMode && quiz) {
+        // STRICT EDIT PAYLOAD: Only what the backend allows
+        const editPayload = {
+          title: form.title.trim(),
+          rewardSats: Number(form.rewardSats),
+          isActive: form.isActive
+        };
+        await dispatch(updateQuiz({ id: quiz.id, data: editPayload })).unwrap();
+      } else {
+        // FULL CREATE PAYLOAD
+        const createPayload = {
+          title: form.title.trim(),
+          date: new Date(form.date).toISOString(),
+          rewardSats: Number(form.rewardSats),
+          questions: questions.map((q, index) => ({
+            questionText: q.questionText.trim(),
+            options: q.options.map(o => o.trim()),
+            correctAnswer: q.correctAnswer.trim(),
+            order: index + 1
+          }))
+        };
+        await dispatch(createQuiz(createPayload)).unwrap();
+      }
+      onClose();
+    } catch (err: any) {
+      setError(typeof err === 'string' ? err : 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  // Dynamic sizing: Compact for Edit, Wide for Create
+  const modalWidthClass = isEditMode ? 'max-w-md' : 'max-w-4xl max-h-[90vh]';
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className={`w-full ${modalWidthClass} flex flex-col bg-[#050505] border border-[#1a1a1a] rounded-3xl relative shadow-2xl shadow-black transition-all duration-300`}>
+        
+        {/* Header - Fixed */}
+        <div className="relative p-6 border-b border-[#1a1a1a] shrink-0 bg-[#0a0a0a] rounded-t-3xl">
+           <div className={`absolute top-0 left-1/2 -translate-x-1/2 h-px bg-gradient-to-r from-transparent via-sats-orange-500/50 to-transparent ${isEditMode ? 'w-3/4' : 'w-1/2'}`}></div>
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                {isEditMode ? 'Edit Quiz Settings' : 'Build Daily Quiz'}
+              </h2>
+              <p className="text-sm text-gray-400 mt-1">
+                {isEditMode ? 'Update the metadata for this campaign.' : 'Configure the metadata and questions.'}
+              </p>
+            </div>
+            <button onClick={onClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Body - Scrollable conditionally */}
+        <div className={`flex-1 ${!isEditMode ? 'overflow-y-auto custom-scrollbar' : ''} p-6`}>
+          
+          {/* Metadata Section - Changes layout based on mode */}
+          <div className={isEditMode ? "flex flex-col gap-5" : "grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"}>
+            
+            <div className={!isEditMode ? "md:col-span-2" : ""}>
+               <Field label="Quiz Title" required>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setFormField('title', e.target.value)}
+                  placeholder="e.g. Bitcoin Basics"
+                  className={inputCls}
+                />
+              </Field>
+            </div>
+
+            {/* Date is ONLY visible during creation */}
+            {!isEditMode && (
+              <Field label="Date" required>
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) => setFormField('date', e.target.value)}
+                  className={`${inputCls} [color-scheme:dark]`}
+                />
+              </Field>
+            )}
+
+            <div className={!isEditMode ? "md:col-span-3" : ""}>
+              <Field label="Reward Pool (Sats per user)" required>
+                <div className="relative max-w-xs">
+                  <input
+                    type="number"
+                    value={form.rewardSats}
+                    onChange={(e) => setFormField('rewardSats', Number(e.target.value))}
+                    min={1}
+                    className={`${inputCls} pr-16 font-mono text-lg`}
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-sats-orange-500 select-none">
+                    SATS
+                  </span>
+                </div>
+              </Field>
+            </div>
+
+            {/* IsActive Toggle is ONLY visible during Editing */}
+            {isEditMode && (
+              <div className="mt-2 p-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-white mb-0.5">Active Status</p>
+                  <p className="text-xs text-gray-500">Allow users to play this quiz.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormField('isActive', !form.isActive)}
+                  className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors duration-300 focus:outline-none ${
+                    form.isActive ? 'bg-green-500' : 'bg-[#1a1a1a] border border-[#2a2a2a]'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                      form.isActive ? 'translate-x-6' : 'translate-x-[2px]'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* CREATE MODE ONLY: Questions Builder */}
+          {!isEditMode && (
+            <>
+              <div className="h-px w-full bg-[#1a1a1a] mb-10"></div>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                   <h3 className="text-lg font-bold text-white">Quiz Questions</h3>
+                   <span className="text-xs font-medium px-2.5 py-1 bg-[#111] border border-[#1a1a1a] rounded-lg text-gray-400">
+                     Total: {questions.length}
+                   </span>
+                </div>
+
+                {questions.map((q, qIndex) => (
+                  <div key={q.id} className="p-6 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl relative group">
+                    {questions.length > 1 && (
+                      <button 
+                        onClick={() => removeQuestion(q.id)}
+                        className="absolute top-4 right-4 p-2 text-gray-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    <div className="flex gap-4 mb-6">
+                       <div className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-sats-orange-500/10 text-sats-orange-500 font-black text-sm border border-sats-orange-500/20">
+                         {qIndex + 1}
+                       </div>
+                       <div className="flex-1 pr-8">
+                         <input
+                            type="text"
+                            value={q.questionText}
+                            onChange={(e) => updateQuestion(q.id, 'questionText', e.target.value)}
+                            placeholder="Enter your question here..."
+                            className="w-full bg-transparent border-b border-[#1a1a1a] focus:border-sats-orange-500 pb-2 text-white font-medium focus:outline-none transition-colors"
+                         />
+                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
+                       {q.options.map((opt, optIndex) => {
+                         const isCorrect = q.correctAnswer === opt && opt !== '';
+                         return (
+                           <div key={optIndex} className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${isCorrect ? 'bg-green-500/10 border-green-500/40' : 'bg-[#111] border-[#1a1a1a] hover:border-gray-700'}`}>
+                             <button
+                               onClick={() => opt.trim() && setCorrectOption(q.id, opt)}
+                               disabled={!opt.trim()}
+                               className={`shrink-0 p-1 rounded-full transition-colors ${isCorrect ? 'text-green-500' : 'text-gray-600 hover:text-gray-400 disabled:opacity-30'}`}
+                             >
+                               {isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                             </button>
+                             <input
+                               type="text"
+                               value={opt}
+                               onChange={(e) => updateOption(q.id, optIndex, e.target.value)}
+                               placeholder={`Option ${optIndex + 1}`}
+                               className="flex-1 bg-transparent text-sm text-white focus:outline-none"
+                             />
+                           </div>
+                         );
+                       })}
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  onClick={addQuestion}
+                  className="w-full py-4 border-2 border-dashed border-[#1a1a1a] hover:border-sats-orange-500/50 rounded-xl text-gray-400 hover:text-sats-orange-500 flex items-center justify-center gap-2 font-bold transition-all bg-[#0a0a0a] hover:bg-sats-orange-500/5"
+                >
+                  <Plus className="w-5 h-5" /> Add Another Question
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Info Banner for Edit Mode */}
+          {isEditMode && (
+            <div className="mt-6 flex items-start gap-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-blue-400/80">
+              <Info className="w-5 h-5 shrink-0 mt-0.5" />
+              <p className="text-xs leading-relaxed">
+                Questions and scheduling are locked after creation to ensure fairness for active users. You may safely pause this campaign or adjust the reward pool.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer - Fixed */}
+        <div className="p-6 border-t border-[#1a1a1a] bg-[#0a0a0a] rounded-b-3xl shrink-0">
+          {error && (
+            <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            </div>
+          )}
+          <div className="flex gap-4 justify-end">
+            <button
+              onClick={onClose}
+              className="px-6 py-3 rounded-xl border border-[#1a1a1a] text-gray-400 text-sm font-bold hover:border-gray-600 hover:text-white transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-8 py-3 rounded-xl bg-sats-orange-500 text-black text-sm font-black hover:bg-sats-orange-400 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(238,139,18,0.2)]"
+            >
+              {isSubmitting ? 'Saving...' : isEditMode ? 'Save Changes' : 'Publish Quiz'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Shared Styles & Components ──────────────────────────────────────────────
+
+const inputCls =
+  'w-full bg-[#111] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-sats-orange-500/40 focus:bg-[#151515] hover:border-white/10 transition-all';
+
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode; }) {
+  return (
+    <div>
+      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+        {label}
+        {required && <span className="text-sats-orange-500 ml-1">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
