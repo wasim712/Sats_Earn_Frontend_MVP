@@ -10,6 +10,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 // 🚨 IMPORTANT: Change this path to exactly where your authSlice is! 🚨
 // Example: import { logout } from '@/store/authSlice'; 
 import { logout } from '@/features/auth/authSlice'; 
+import Image from 'next/image';
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -96,14 +97,22 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
           </button>
           
           <div className="flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F97316"/>
-            </svg>
-            <span className="font-bold tracking-tight text-lg">Sats<span className="text-sats-orange-500">Earn</span></span>
+            <Image 
+                              width={36} 
+                              height={36} 
+                              alt='logo' 
+                              className={`rounded-xl transition-all duration-300 ${isCollapsed ? 'opacity-100 group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}
+                              src="/icon.png" 
+                            />
+            <span className="font-bold tracking-tight text-lg">Sats<span className="text-sats-orange-500">Earn</span>
+            </span>
+            <span className="bg-sats-orange-500/20 text-sats-orange-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+                   Beta
+                 </span>
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
+        <main className="flex-1 w-full max-w-7xl overflow-x-hidden">
           {children}
         </main>
         

@@ -50,7 +50,7 @@ export default function TasksPage() {
   );
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6">
       
       {/* PAGE HEADER & SEARCH */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -84,7 +84,7 @@ export default function TasksPage() {
 
       {/* LOADING STATE - The Perfect Skeleton */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-puls ">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div key={n} className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 flex flex-col h-full min-h-70 shadow-lg">
               
