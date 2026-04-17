@@ -52,3 +52,55 @@
       linear-gradient(to bottom, rgba(249, 115, 22, 0.5) 1px, transparent 1px);
   }
 }
+/* ==========================================
+   Premium Dark Scrollbar (Global & Custom)
+   ========================================== */
+
+/* Target the whole document and any overflowing div */
+::-webkit-scrollbar {
+  width: 6px; /* Very thin vertical scrollbar */
+  height: 6px; /* Very thin horizontal scrollbar */
+}
+
+/* The track (background) - completely transparent */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* The draggable thumb - practically hidden until interacted with */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05); /* 5% white, barely visible */
+  border-radius: 10px;
+  /* Note: CSS transitions don't work on scrollbars, so we rely on subtle colors */
+}
+
+/* When the user hovers over the scrollable area or the scrollbar itself */
+*:hover::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2); /* Fades in slightly when hovered */
+}
+
+/* When the user is actively clicking and dragging the scrollbar */
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-sats-orange-500, #EE8B12); /* Lights up Orange! */
+}
+
+/* Custom utility for tight spaces (like our CreateEditQuizModal) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Even thinner for internal modals */
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: var(--color-sats-orange-500, #EE8B12);
+}
+
+/* Firefox compatibility (Firefox handles scrollbars differently) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}

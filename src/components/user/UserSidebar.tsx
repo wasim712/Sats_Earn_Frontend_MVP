@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, ListChecks, Users, Trophy, Wallet, 
-  Bell, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen
+  Bell, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,
+  Lightbulb
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -29,10 +30,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
     { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
+    { name: 'Daily Quiz', href: '/user/quiz', icon: Lightbulb },
     { name: 'Referrals', href: '/user/referrals', icon: Users },
     { name: 'Leaderboard', href: '/user/leaderboard', icon: Trophy },
     { name: 'Withdraw', href: '/user/wallet', icon: Wallet },
-    { name: 'Notifications', href: '/user/notifications', icon: Bell, badge: 3 }, // Hardcoded badge for now
     { name: 'Settings', href: '/user/settings', icon: Settings },
   ];
 
@@ -135,12 +136,6 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
                   )}
                 </div>
 
-                {/* Optional Notification Badge */}
-                {!isCollapsed && link.badge && (
-                  <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.4)]">
-                    {link.badge}
-                  </span>
-                )}
               </Link>
             );
           })}
@@ -179,10 +174,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
           <button 
             onClick={onLogout} 
             title={isCollapsed ? "Log out" : ""}
-            className={`flex items-center gap-3 text-gray-400 hover:text-white transition-colors font-semibold text-sm px-2 pb-2 ${isCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center justify-items-center hover:cursor-pointer gap-3 text-gray-400 bg-sats-black-900 hover:bg-[#2d0a0a]  transition-colors font-semibold text-sm px-2 pb-4 pt-4 rounded-3xl ${isCollapsed ? 'justify-center' : ''} justify-center transition-all duration-300 hover:border-red-600 border border-transparent`}
           >
-            <LogOut className="w-5 h-5 min-w-[20px]" />
-            {!isCollapsed && <span>Log Out</span>}
+            <LogOut className="w-5 h-5 min-w-5" />
+            {!isCollapsed && <span className=''>Log Out</span>}
           </button>
           
         </div>

@@ -2,6 +2,7 @@ import React  from 'react';
 import Link from 'next/link';
 import { Zap, Clock, ChevronRight, LinkIcon } from 'lucide-react';
 import Image from 'next/image';
+import { Campaign } from '@/features/admin/adminCampaignsSlice';
 // --- PLATFORM LOGO COMPONENT ---
 const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, className?: string }) => {
   if (!url) return <LinkIcon className={`text-gray-400 ${className}`} />;
@@ -25,7 +26,7 @@ const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, clas
 };
 
 // --- SUB-COMPONENT: The Individual Task Card ---
-export function CampaignUserCard({ campaign }: { campaign: any }) {
+export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
   const safeTotal = Number(campaign.totalCompletions) || 0;
   const safeMax = Number(campaign.maxCompletions) || 1;
   const spotsLeft = Math.max(0, safeMax - safeTotal);

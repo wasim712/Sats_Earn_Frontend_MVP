@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, Users, Copy, CheckCircle2, Trophy, UserMinus, UserPlus, Share2 } from 'lucide-react';
+import { AlertTriangle  } from 'lucide-react';
 import ReferralHero from '@/components/user/referrals/ReferralHero';
 import ReferralStats from '@/components/user/referrals/ReferralStats';
 import ReferralList from '@/components/user/referrals/ReferralList';
@@ -54,24 +54,24 @@ export default function ReferralsPage() {
   // --- PREMIUM SKELETON LOADER ---
   if (isLoading || !data) {
     return (
-      <div className="space-y-8 animate-pulse pb-20">
+      <div className="space-y-8 animate-pulse pb-20 p-2 md:p-4 lg:p-6">
         <div>
           <div className="h-10 w-48 bg-[#1a1a1a] rounded-xl mb-3"></div>
           <div className="h-5 w-72 bg-[#1a1a1a] rounded-lg"></div>
         </div>
-        <div className="h-48 w-full bg-[#050505] border border-[#1a1a1a] rounded-[28px]"></div>
+        <div className="h-48 w-full bg-sats-black-950 border border-[#1a1a1a] rounded-[28px]"></div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 bg-[#050505] border border-[#1a1a1a] rounded-[24px]"></div>
+            <div key={i} className="h-32 bg-sats-black-950 border border-[#1a1a1a] rounded-3xl"></div>
           ))}
         </div>
-        <div className="h-64 w-full bg-[#050505] border border-[#1a1a1a] rounded-[28px]"></div>
+        <div className="h-64 w-full bg-sats-black-950 border border-[#1a1a1a] rounded-[28px]"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6">
       <div>
         <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Referrals</h1>
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards. 🚀</p>

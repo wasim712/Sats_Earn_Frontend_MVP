@@ -58,7 +58,7 @@ export default function UserDashboardPage() {
   // --- THE NEW SKELETON LOADER ---
   if (isLoading || !data) {
     return (
-      <div className="space-y-8 animate-pulse pb-20 w-full">
+      <div className="space-y-8 animate-pulse pb-20 w-full p-2 md:p-4 lg:p-6">
         
         {/* Header Skeleton */}
         <div>
@@ -120,13 +120,13 @@ export default function UserDashboardPage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6">
       
       {/* PAGE HEADER */}
       <div>
         <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Dashboard</h1>
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">
-          Welcome back, {user?.fullName ? user.fullName.split(' ')[0].charAt(0).toUpperCase() + user.fullName.split(' ')[0].slice(1) : 'Earner'}! Let's stack some sats 🚀
+          Welcome back, {user?.fullName ? user.fullName.split(' ')[0].charAt(0).toUpperCase() + user.fullName.split(' ')[0].slice(1) : 'Earner'}! Let&apos;s stack some sats 🚀
         </p>
       </div>
 

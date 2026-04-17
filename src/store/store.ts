@@ -3,12 +3,18 @@ import authReducer from '../features/auth/authSlice';
 import adminReducer from '../features/admin/adminSlice'
 import adminCampaignsReducer from '../features/admin/adminCampaignsSlice';
 import adminAnnouncementsReducer from '../features/admin/adminAnnouncementsSlice';
+import adminQuizReducer from '../features/admin/adminQuizSlice';
+import userQuizReducer from '../features/user/userQuizSlice'
+import userProfileReducer from '../features/user/userProfileSlice'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     admin: adminReducer,
     adminCampaigns: adminCampaignsReducer,
     adminAnnouncements:adminAnnouncementsReducer,
+    adminQuiz:adminQuizReducer,
+    userQuiz:userQuizReducer,
+    userProfile:userProfileReducer,
   },
 });
 
