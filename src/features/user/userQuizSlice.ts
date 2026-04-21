@@ -40,7 +40,7 @@ const initialState: UserQuizState = {
 };
 
 // --- Thunks ---
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'; // Adjust to your env
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'; // Adjust to your env
 
 export const fetchTodayQuiz = createAsyncThunk(
   'userQuiz/fetchToday',

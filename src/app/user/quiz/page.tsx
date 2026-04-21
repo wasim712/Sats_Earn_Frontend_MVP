@@ -101,7 +101,7 @@ export default function UserDailyQuizPage() {
     return (
       <div className="min-h-screen bg-[#020202] p-4 md:p-8 flex flex-col items-center justify-center relative overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none" />
         
         <div className="bg-[#080808] border border-[#1a1a1a] rounded-3xl p-8 max-w-md w-full text-center relative z-10 shadow-2xl">
           <div className="w-24 h-24 mx-auto mb-6 relative">
@@ -118,7 +118,7 @@ export default function UserDailyQuizPage() {
           </p>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5 flex flex-col items-center justify-center">
+            <div className="bg-sats-black-900 border border-[#1a1a1a] rounded-2xl p-5 flex flex-col items-center justify-center">
                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1.5">Your Score</p>
                <p className="text-3xl font-black text-white">{result.score}<span className="text-sm text-gray-500 font-medium ml-1">/ {quiz.questions.length}</span></p>
             </div>
@@ -154,13 +154,13 @@ export default function UserDailyQuizPage() {
             </p>
           </div>
           
-          <button onClick={() => router.back()} className="hidden md:flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all text-sm font-semibold shrink-0">
+          <button onClick={() => router.back()} className="hidden md:flex items-center justify-center gap-2 px-5 py-2.5 bg-sats-black-900 border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all text-sm font-semibold shrink-0">
             <ArrowLeft className="w-4 h-4" /> Go Back
           </button>
         </div>
 
         {/* Questions List */}
-        <div className="space-y-6 md:space-y-8">
+        <div className="space-y-6 md:space-y-8 p-2">
           {[...quiz.questions].sort((a, b) => a.order - b.order).map((question, index) => (
             <div key={question.id} className="bg-[#080808] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 transition-colors duration-300 hover:border-[#2a2a2a]">
               <div className="flex flex-col md:flex-row items-start gap-4 md:gap-5 mb-6 md:mb-8 text-center md:text-left">
@@ -174,7 +174,7 @@ export default function UserDailyQuizPage() {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 pl-0 md:pl-[60px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 pl-0 md:pl-15">
                  {question.options.map((opt, i) => {
                    const isSelected = answers[question.id] === opt;
                    return (
@@ -193,7 +193,7 @@ export default function UserDailyQuizPage() {
                          {isSelected && <div className="w-2 h-2 bg-black rounded-full" />}
                        </div>
                        
-                       <span className={`text-sm md:text-base font-medium flex-1 break-words ${isSelected ? 'text-sats-orange-400 font-bold' : 'text-gray-300'}`}>
+                       <span className={`text-sm md:text-base font-medium flex-1 wrap-break-word ${isSelected ? 'text-sats-orange-400 font-bold' : 'text-gray-300'}`}>
                          {opt}
                        </span>
                      </button>
@@ -206,7 +206,7 @@ export default function UserDailyQuizPage() {
       </div>
 
       {/* Sticky Action Bar - Centered Content */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-[#020202] via-[#020202]/90 to-transparent pointer-events-none z-50">
+      <div className=" bottom-0 left-0 right-0 p-4 md:p-6 bg-linear-to-t from-[#020202] via-[#020202]/90 to-transparent pointer-events-none z-50">
         <div className="max-w-3xl mx-auto flex justify-center pointer-events-auto relative group">
            
            {/* Tooltip */}
@@ -220,7 +220,7 @@ export default function UserDailyQuizPage() {
            <button
              onClick={handleSubmit}
              disabled={!isAllAnswered || isSubmitting}
-             className={`py-4 px-8 md:px-12 rounded-2xl font-black tracking-wide flex items-center justify-center gap-3 transition-all duration-300 w-full sm:w-auto min-w-[280px] ${
+             className={`py-4 px-8 md:px-12 rounded-2xl font-black tracking-wide flex items-center justify-center gap-3 transition-all duration-300 w-full sm:w-auto min-w-70 ${
                isAllAnswered 
                  ? 'bg-sats-orange-500 text-black hover:bg-sats-orange-400 active:scale-[0.98] shadow-[0_0_40px_rgba(238,139,18,0.3)]' 
                  : 'bg-sats-orange-500/10 text-sats-orange-500/50 border border-sats-orange-500/20 cursor-not-allowed'
