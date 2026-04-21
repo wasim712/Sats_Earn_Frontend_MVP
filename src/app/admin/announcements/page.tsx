@@ -28,7 +28,7 @@ export default function AdminAnnouncementsPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 p-4 md:p-6 lg:p-8">
         {/* Edit Modal: Only renders when editingAnnouncement exists! */}
       {editingAnnouncement && (
         <EditAnnouncementModal 

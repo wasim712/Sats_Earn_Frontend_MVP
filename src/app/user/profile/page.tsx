@@ -1,0 +1,269 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchUserProfile } from '@/features/user/userProfileSlice';
+import { 
+  Mail, Phone, MapPin, Calendar, 
+  Copy, CheckCircle2, Edit3, ShieldCheck, 
+  Share2, UserPlus, AlertTriangle
+} from 'lucide-react';
+
+export default function UserProfilePage() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { data: profile, isLoading, error } = useAppSelector((state) => state.userProfile);
+  
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
+
+  const handleCopyReferral = () => {
+    if (profile?.referralCode) {
+      navigator.clipboard.writeText(profile.referralCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  // ─── Loading Skeleton ──────────────────────────────────────────────────────
+  if (isLoading || !profile) {
+    return (
+      <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8 animate-pulse">
+          <div className="flex justify-between items-center mb-8">
+            <div className="h-8 w-40 bg-[#1a1a1a] rounded-lg" />
+            <div className="h-10 w-32 bg-[#1a1a1a] rounded-xl" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="h-[280px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
+              <div className="h-[200px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
+            </div>
+            <div className="h-[400px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Error State ────────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#020202] flex items-center justify-center p-4">
+        <div className="bg-[#050505] border border-red-500/20 text-red-400 p-8 rounded-3xl flex flex-col items-center gap-4 max-w-sm text-center shadow-2xl">
+          <AlertTriangle className="w-12 h-12 text-red-500/80" />
+          <p className="font-semibold text-lg">{error}</p>
+          <button 
+            onClick={() => dispatch(fetchUserProfile())} 
+            className="px-6 py-2.5 bg-[#111] border border-[#2a2a2a] rounded-xl text-sm text-white hover:bg-white/5 transition-all mt-2"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Derived Data ───────────────────────────────────────────────────────────
+  const joinDate = new Date(profile.createdAt).toLocaleDateString('en-US', {
+    month: 'long', year: 'numeric'
+  });
+
+  const initials = profile.fullName
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header Area */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-10">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Player Identity</h1>
+            <p className="text-gray-400 text-sm mt-1">Manage your personal details and Web3 social presence.</p>
+          </div>
+          <button 
+            onClick={() => router.push('/user/settings')}
+            className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-white font-bold hover:bg-[#111] hover:border-[#333] transition-all active:scale-[0.98] shadow-sm"
+          >
+            <Edit3 className="w-4 h-4 text-gray-400" /> Edit Profile
+          </button>
+        </div>
+
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          
+          {/* Left Column (Personal & Socials) */}
+          <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
+            
+            {/* Personal Details Card */}
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 flex flex-col">
+              
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10 pb-8 border-b border-[#1a1a1a]">
+                {/* Crisp Avatar */}
+                <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 bg-[#0a0a0a] border border-[#2a2a2a] rounded-full flex items-center justify-center text-2xl md:text-3xl font-black text-white shadow-inner ring-4 ring-[#050505] outline outline-1 outline-[#1a1a1a]">
+                  {initials}
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight">{profile.fullName}</h2>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-bold text-green-400 uppercase tracking-widest">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Verified
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-8">
+                <InfoRow icon={Mail} label="Email Address" value={profile.email} />
+                <InfoRow icon={Phone} label="Phone Number" value={profile.phone} fallback="Not provided" />
+                <InfoRow icon={MapPin} label="Region" value={profile.country} />
+                <InfoRow icon={Calendar} label="Member Since" value={joinDate} />
+              </div>
+            </div>
+
+            {/* Web3 Socials Card */}
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-gray-500" /> Connected Accounts
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <SocialBox 
+                  iconSrc="/svgs/twitter.svg" 
+                  platform="Twitter / X" 
+                  handle={profile.twitterHandle} 
+                  hoverAccent="hover:border-white/40" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/discord.svg" 
+                  platform="Discord" 
+                  handle={profile.discordHandle} 
+                  hoverAccent="hover:border-indigo-500/50" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/telelogo.svg" 
+                  platform="Telegram" 
+                  handle={profile.telegramHandle} 
+                  hoverAccent="hover:border-sky-500/50" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/instalogo.svg" 
+                  platform="Instagram" 
+                  handle={profile.instagramHandle} 
+                  hoverAccent="hover:border-pink-500/50" 
+                />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column: Referral Center */}
+          <div className="flex flex-col h-full">
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full flex flex-col group relative overflow-hidden transition-colors hover:border-[#2a2a2a]">
+              
+              {/* Subtle top accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-sats-orange-500 opacity-80" />
+
+              <div className="w-14 h-14 bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+                <UserPlus className="w-6 h-6 text-sats-orange-500" />
+              </div>
+
+              <h3 className="text-xl font-black text-white mb-3">Refer & Earn</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-8">
+                Build your network. Share your unique code and earn a percentage of Sats every time a referral completes a task.
+              </p>
+
+              <div className="mt-auto">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.15em] mb-3">Your Unique Code</p>
+                <div className="flex items-stretch gap-2">
+                  <div className="flex-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-4 flex items-center justify-center">
+                    <span className="text-xl md:text-2xl font-mono font-black text-white tracking-[0.2em] select-all">
+                      {profile.referralCode}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={handleCopyReferral}
+                    className={`shrink-0 w-16 flex items-center justify-center rounded-xl transition-all duration-300 border ${
+                      copied 
+                        ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                        : 'bg-sats-orange-500 text-black border-sats-orange-500 hover:bg-sats-orange-400 active:scale-95 shadow-[0_0_15px_rgba(238,139,18,0.15)]'
+                    }`}
+                    title={copied ? "Copied!" : "Copy Code"}
+                  >
+                    {copied ? <CheckCircle2 className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Reusable Micro-Components ──────────────────────────────────────────────
+
+function InfoRow({ icon: Icon, label, value, fallback }: { icon:any, label: string, value: string | null | undefined, fallback?: string }) {
+  const displayValue = value || fallback;
+  const isFallback = !value;
+
+  return (
+    <div className="flex items-start gap-4 group">
+      <div className="w-10 h-10 rounded-xl bg-[#0a0a0a] border border-[#1a1a1a] flex items-center justify-center shrink-0 group-hover:border-[#333] transition-colors">
+        <Icon className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+      </div>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">{label}</p>
+        <p className={`text-sm md:text-base font-semibold truncate ${isFallback ? 'text-gray-600 italic font-medium' : 'text-gray-200'}`}>
+          {displayValue}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SocialBox({ iconSrc, platform, handle, hoverAccent }: { iconSrc: string, platform: string, handle: string | null | undefined, hoverAccent: string }) {
+  const isConnected = !!handle;
+
+  return (
+    <div 
+      className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
+        isConnected 
+          ? `bg-[#0a0a0a] border-[#1a1a1a] ${hoverAccent} hover:-translate-y-[2px] shadow-sm` 
+          : 'bg-[#050505] border-[#1a1a1a] border-dashed opacity-50'
+      }`}
+    >
+      <div className="w-10 h-10 shrink-0 bg-[#111] rounded-xl flex items-center justify-center border border-[#1a1a1a]">
+        {/* Placeholder for actual SVGs placed in the public/svgs folder */}
+        <Image 
+          src={iconSrc} 
+          alt={`${platform} icon`} 
+          width={20} 
+          height={20} 
+          className={!isConnected ? 'opacity-40 grayscale' : ''}
+        />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{platform}</p>
+        <p className={`text-sm font-bold truncate ${isConnected ? 'text-gray-200' : 'text-gray-600'}`}>
+          {isConnected ? `@${handle}` : 'Not Linked'}
+        </p>
+      </div>
+    </div>
+  );
+}

@@ -12,19 +12,19 @@ interface VerifyOtpProps {
 }
 
 export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }: VerifyOtpProps) {
-  const [otp, setOtp] = useState<string[]>(new Array(8).fill(''));
+  const [otp, setOtp] = useState<string[]>(new Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (index: number, value: string) => {
     // Only allow alphanumeric characters
-    if (/[^a-zA-Z0-9]/.test(value)) return;
+    if (/[^0-9]/.test(value)) return;
     
     const newOtp = [...otp];
     newOtp[index] = value.substring(value.length - 1).toUpperCase();
     setOtp(newOtp);
 
     // Auto-advance to next input
-    if (value && index < 7) {
+    if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -52,7 +52,7 @@ export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }:
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const otpString = otp.join('');
-    if (otpString.length === 8) {
+    if (otpString.length === 6) {
       onSubmit(otpString);
     }
   };
@@ -69,7 +69,7 @@ export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }:
         <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Check your email</h3>
         
         <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-4">
-          We have sent an 8-digit verification code to
+          We have sent an 6-digit verification code to
         </p>
         
         {/* Email Callout Badge */}
@@ -100,10 +100,6 @@ export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }:
                 `}
               />
               
-              {/* Visual Splitter between 4th and 5th digit for better readability */}
-              {index === 3 && (
-                <div className="w-2 sm:w-4 h-[2px] bg-[#1a1a1a] rounded-full mx-0.5 sm:mx-1 shrink-0" />
-              )}
             </React.Fragment>
           ))}
         </div>
@@ -119,7 +115,7 @@ export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }:
 
       {/* 4. Actions */}
       <div className="w-full space-y-4 sm:space-y-5 pt-2">
-        <button type="submit" disabled={isLoading || otp.join('').length < 8} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-sm sm:text-lg rounded-xl py-3.5 sm:py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
+        <button type="submit" disabled={isLoading || otp.join('').length < 6} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-sm sm:text-lg rounded-xl py-3.5 sm:py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
           {isLoading ? 'Verifying...' : 'Verify & Enter Dashboard'}
         </button>
 

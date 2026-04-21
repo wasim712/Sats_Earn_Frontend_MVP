@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { RootState } from '@/store/store'; // Adjust path if needed
+import type { RootState } from '@/store/store'; 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+// 🚨 UPDATED INTERFACE: Matches your new Prisma/Backend schema exactly
 export interface Campaign {
   id: string;
   title: string;
@@ -11,8 +12,13 @@ export interface Campaign {
   targetUrl: string | null;
   socialHandleTarget: string | null;
   targetCountries: string[];
-  requiredTier: string;
-  rewardSats: number;
+  
+  // NEW ECONOMICS & ACCESS GATES
+  isPremiumOnly: boolean;
+  requiredFreeTier: string;
+  baseRewardSats: number;
+  tierRewardMatrix: Record<string, number>;
+  
   totalCompletions: number;
   maxCompletions: number;
   isActive: boolean;
@@ -73,7 +79,7 @@ export const toggleCampaignStatus = createAsyncThunk(
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to update campaign');
-      return { id, isActive }; // Return data to update Redux state instantly
+      return { id, isActive }; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -98,13 +104,13 @@ export const updateCampaign = createAsyncThunk(
 
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.error || 'Failed to update campaign');
-      return resData as Campaign; // Return the fully updated campaign
+      return resData as Campaign; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
   }
 );
-//create campaign thunk
+
 export const createCampaign = createAsyncThunk(
   'adminCampaigns/create',
   async (data: any, { getState, rejectWithValue }) => {
@@ -146,7 +152,7 @@ export const deleteCampaign = createAsyncThunk(
         const data = await response.json();
         throw new Error(data.error || 'Failed to delete campaign');
       }
-      return id; // Return ID to filter out of Redux state instantly
+      return id; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -178,29 +184,24 @@ const adminCampaignsSlice = createSlice({
           state.campaigns[index].isActive = action.payload.isActive;
         }
       })
-      
       // Delete
       .addCase(deleteCampaign.fulfilled, (state, action) => {
         state.campaigns = state.campaigns.filter(c => c.id !== action.payload);
       })
-      //builder bloack
+      // Update
       .addCase(updateCampaign.fulfilled, (state, action) => {
         const index = state.campaigns.findIndex(c => c.id === action.payload.id);
         if (index !== -1) {
-          state.campaigns[index] = action.payload; // Instantly updates the UI list
+          state.campaigns[index] = action.payload; 
         }
       })
-      // --- CREATE CAMPAIGN ---
+      // Create
       .addCase(createCampaign.fulfilled, (state, action) => {
-        // THE FIX: Only unshift if the backend actually returned a full object with an ID.
-        // Otherwise, do nothing. The redirect to the Campaigns page will trigger 
-        // fetchAllCampaigns() and grab the fresh, correct data from the database automatically!
         if (action.payload && action.payload.id) {
           state.campaigns.unshift(action.payload);
         }
       });
   },
 });
-
 
 export default adminCampaignsSlice.reducer;

@@ -143,8 +143,8 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
 
         {/* BOTTOM SECTION (Profile Card & Logout) */}
         <div className="p-4 border-t border-sats-black-800 bg-sats-black-950 flex flex-col gap-4">
-          
           {/* 1. Profile Card (Matches Image Exactly) */}
+          <Link href="/user/profile">
           <div className={`flex items-center gap-3 p-3 bg-[#121212] rounded-[20px] border border-sats-black-800 ${isCollapsed ? 'justify-center' : ''}`}>
             {/* Orange Solid Avatar */}
             <div className="w-10 h-10 rounded-full bg-sats-orange-500 flex items-center justify-center text-black font-extrabold text-sm shrink-0">
@@ -162,13 +162,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
                   </p>
                 </div>
                 
-                {/* Internal Settings Gear */}
-                <Link href="/user/settings" className="p-1.5 text-gray-500 hover:text-white hover:bg-sats-black-800 rounded-lg transition-colors">
-                  <Settings className="w-4 h-4" />
-                </Link>
               </>
             )}
           </div>
+            </Link>
 
           {/* 2. Simple Log Out Text Button */}
           <button 

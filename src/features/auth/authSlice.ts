@@ -143,10 +143,10 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true; 
         state.user = action.payload.user; 
-        state.token = action.payload.session.access_token; 
+        state.token = action.payload.session; 
         
         // FIXED: Save both Token AND User to session storage
-        sessionStorage.setItem('sats_token', action.payload.session.access_token);
+        sessionStorage.setItem('sats_token', action.payload.session);
         sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })
       .addCase(signInUser.rejected, (state, action) => {
@@ -178,12 +178,12 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true; 
         state.user = action.payload.user; 
-        state.token = action.payload.session.access_token; 
+        state.token = action.payload.session; 
         state.step = 1; 
         state.tempData = null; 
 
         // FIXED: Save both Token AND User to session storage
-        sessionStorage.setItem('sats_token', action.payload.session.access_token);
+        sessionStorage.setItem('sats_token', action.payload.session);
         sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })
       .addCase(verifySignupOtp.rejected, (state, action) => {

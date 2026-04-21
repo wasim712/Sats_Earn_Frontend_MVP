@@ -44,7 +44,7 @@ export default function AddAnnouncementPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4">
+    <div className="min-h-[80vh] flex items-center justify-center p-4 md:p-6 lg:p-8">
       {/* "Modal" Glass Container */}
       <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-300">
         
