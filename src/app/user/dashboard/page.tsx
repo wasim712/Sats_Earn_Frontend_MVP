@@ -133,10 +133,10 @@ export default function UserDashboardPage() {
       {/* MODULAR SECTIONS */}
       <TotalBalanceCard balances={data.balances} />
       
-      <GamificationStats 
+    <GamificationStats 
         gamification={data.gamification} 
-        tasksCompleted={user?.tasksCompleted || 0} 
-        activeReferrals={user?.activeReferrals || 0} 
+        tasksCompleted={data.gamification.tasksCompleted} 
+        activeReferrals={data.gamification.activeReferrals} 
       />
       
       <RecentActivityPanel activities={data.recentActivity} />
