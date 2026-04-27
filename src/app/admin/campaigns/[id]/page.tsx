@@ -68,9 +68,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       const headers = { 'Authorization': `Bearer ${token}` };
 
       const [campRes, analyticsRes] = await Promise.all([
-        fetch(`${API_URL}/admin/campaigns/${id}`, { headers, cache: 'no-store' }),
-        fetch(`${API_URL}/admin/campaigns/${id}/analytics`, { headers, cache: 'no-store' }).catch(() => ({ ok: false }))
-      ]);
+  fetch(`${API_URL}/admin/campaigns/${id}`, { headers, cache: 'no-store' }),
+  fetch(`${API_URL}/admin/campaigns/${id}/analytics`, { headers, cache: 'no-store' })
+]);
 
       if (campRes.ok) {
         const campData = await campRes.json();
@@ -78,17 +78,27 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         setEditForm(campData);
       }
 
-      if (analyticsRes && analyticsRes.ok) {
-        const analyticsData = await analyticsRes.json();
-        setAnalytics(analyticsData);
-      }
+      if (analyticsRes.ok) {
+  const analyticsData = await analyticsRes.json();
+  setAnalytics(analyticsData);
+} else {
+  setAnalytics(null); // or fallback
+}
     } catch (err) {
       console.error("Failed to fetch campaign data", err);
     } finally {
       setIsLoading(false);
     }
   }, [id]);
-
+  const handleMatrixChange = (tier: string, value: string) => {
+  setEditForm((prev: any) => ({
+    ...prev,
+    tierRewardMatrix: {
+      ...prev.tierRewardMatrix,
+      [tier]: Number(value)
+    }
+  }));
+};
   useEffect(() => {
     fetchCampaignData();
   }, [fetchCampaignData]);

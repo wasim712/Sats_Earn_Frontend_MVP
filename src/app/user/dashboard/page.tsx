@@ -10,11 +10,40 @@ import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+// --- TYPESCRIPT DEFINITIONS ---
+interface DashboardData {
+  balances: {
+    available: number;
+    pending: number;
+    locked: number;
+    totalLifetime: number;
+  };
+  gamification: {
+    totalXp: number;
+    level: number;
+    activeTier: string;
+    underlyingFreeTier: string;
+    isPremium: boolean;
+    premiumExpiresAt: string | null;
+    currentStreak: number;
+    xpDisplay: string;
+    progressPercent: number;
+    tasksCompleted: number;
+    activeReferrals: number;
+  };
+  recentActivity: Array<{
+    amountSats: number;
+    type: string;
+    description: string;
+    createdAt: string;
+  }>;
+}
+
 export default function UserDashboardPage() {
   const { user } = useAppSelector((state) => state.auth);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<any>(null);
+  // We now use the strict interface instead of 'any'
+  const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +62,7 @@ export default function UserDashboardPage() {
 
         if (!response.ok) throw new Error('Failed to fetch dashboard data. Please try again.');
 
-        const result = await response.json();
+        const result: DashboardData = await response.json();
         setData(result);
       } catch (err: any) {
         setError(err.message || 'An unexpected error occurred.');
@@ -55,7 +84,7 @@ export default function UserDashboardPage() {
     );
   }
 
-  // --- THE NEW SKELETON LOADER ---
+  // --- THE SKELETON LOADER ---
   if (isLoading || !data) {
     return (
       <div className="space-y-8 animate-pulse pb-20 w-full p-2 md:p-4 lg:p-6">
@@ -133,7 +162,7 @@ export default function UserDashboardPage() {
       {/* MODULAR SECTIONS */}
       <TotalBalanceCard balances={data.balances} />
       
-    <GamificationStats 
+      <GamificationStats 
         gamification={data.gamification} 
         tasksCompleted={data.gamification.tasksCompleted} 
         activeReferrals={data.gamification.activeReferrals} 

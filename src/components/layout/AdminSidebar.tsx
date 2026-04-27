@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
-  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,Megaphone,Lightbulb
+  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,Megaphone,Lightbulb,
+  MonitorCog
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
@@ -33,6 +34,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { type: 'divider', name: 'System' },
     { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
+    { name: 'Payments', href: '/admin/payments', icon: MonitorCog },
   ];
 
   return (

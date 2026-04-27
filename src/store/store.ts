@@ -4,6 +4,7 @@ import adminReducer from '../features/admin/adminSlice'
 import adminCampaignsReducer from '../features/admin/adminCampaignsSlice';
 import adminAnnouncementsReducer from '../features/admin/adminAnnouncementsSlice';
 import adminUsersReducer from '../features/admin/adminUsersSlice';
+import adminSubmissionsReducer from '../features/admin/adminSubmissionsSlice';
 import adminQuizReducer from '../features/admin/adminQuizSlice';
 import userQuizReducer from '../features/user/userQuizSlice'
 import userProfileReducer from '../features/user/userProfileSlice'
@@ -15,6 +16,7 @@ export const store = configureStore({
     adminAnnouncements:adminAnnouncementsReducer,
     adminQuiz:adminQuizReducer,
     adminUsers:adminUsersReducer,
+    adminSubmissions:adminSubmissionsReducer,
     userQuiz:userQuizReducer,
     userProfile:userProfileReducer,
   },
