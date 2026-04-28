@@ -1,15 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
-  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,Megaphone,Lightbulb,
-  MonitorCog
+  List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, Megaphone, Lightbulb,
+  MonitorCog, Bell
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 interface AdminSidebarProps {
   isOpen: boolean;           
@@ -21,10 +23,51 @@ interface AdminSidebarProps {
 
 export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout }: AdminSidebarProps) => {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // --- FETCH UNREAD ALERTS ---
+  const fetchUnreadCount = async () => {
+    try {
+      const token = sessionStorage.getItem('sats_token');
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/admin/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Count how many are NOT read
+        const unread = data.filter((n: any) => !n.isRead).length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error("Failed to fetch sidebar notifications count", err);
+    }
+  };
+
+  useEffect(() => {
+    // 1. Fetch on initial load
+    fetchUnreadCount();
+
+    // 2. Poll every 60 seconds to keep it updated if the admin leaves the tab open
+    const interval = setInterval(fetchUnreadCount, 60000);
+
+    // 3. Listen for our custom "instant update" event from the notifications page
+    const handleInstantUpdate = () => fetchUnreadCount();
+    window.addEventListener('notifications-updated', handleInstantUpdate);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notifications-updated', handleInstantUpdate);
+    };
+  }, []);
 
   const navLinks = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Users', href: '/admin/users', icon: Users },
+    // Inject the dynamic count here
+    { name: 'Alerts', href: '/admin/notifications', icon: Bell, count: unreadCount },
     { name: 'Submissions', href: '/admin/submissions', icon: CheckSquare },
     { type: 'divider', name: 'Campaigns' }, 
     { name: 'All Campaigns', href: '/admin/campaigns', icon: List },
@@ -44,7 +87,6 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
         onClick={onClose} 
       />
 
-      {/* ADDED: group/sidebar to the main aside element so the whole sidebar tracks hovers */}
       <aside 
         className={`group/sidebar fixed top-0 left-0 h-screen bg-sats-black-950 border-r border-sats-black-800 z-50 flex flex-col transition-all duration-300 ease-in-out shadow-[5px_0_30px_rgba(0,0,0,0.5)] 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 
@@ -53,9 +95,6 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
         {/* HEADER SECTION */}
         <div className={`h-20 flex items-center border-b border-sats-black-800 bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
-             
-             {/* THE MAGIC LOGO TOGGLE */}
-             {/* CHANGED: Now listens to group-hover/sidebar instead of its own group hover */}
              <button 
                onClick={onToggleCollapse}
                title={isCollapsed ? "Expand Sidebar" : "SatsEarn Admin"}
@@ -63,23 +102,17 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
                  isCollapsed ? 'border-sats-orange-500/30 group-hover/sidebar:border-sats-orange-500' : 'border-sats-orange-500/30 cursor-default'
                }`}
              >
-                {/* 1. Default Logo (Fades out when hovering ANYWHERE on the collapsed sidebar) */}
-                <Image width="45" height="45" alt='logo' className={` rounded-4xl transition-all duration-300 ${isCollapsed ? 'opacity-100  group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}src="/icon.png">
-                </Image>
-
-                {/* 2. Expand Icon (Scales in when hovering ANYWHERE on the collapsed sidebar) */}
+                <Image width="45" height="45" alt='logo' className={` rounded-4xl transition-all duration-300 ${isCollapsed ? 'opacity-100  group-hover/sidebar:opacity-0 group-hover/sidebar:scale-50' : 'opacity-100'}`}src="/icon.png" />
                 {isCollapsed && (
                   <PanelLeftOpen className="absolute inset-0 m-auto w-5 h-5 text-sats-orange-500 opacity-0 scale-50 group-hover/sidebar:opacity-100 group-hover/sidebar:scale-100 transition-all duration-300" />
                 )}
              </button>
 
-             {/* Brand Text */}
              {!isCollapsed && (
                <LogoText className="text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden transition-opacity duration-300"/>
              )}
           </div>
           
-          {/* Desktop Collapse Button */}
           {!isCollapsed && (
             <button 
               onClick={onToggleCollapse} 
@@ -90,7 +123,6 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
             </button>
           )}
 
-          {/* Mobile Close Button */}
           <button onClick={onClose} className="lg:hidden p-2 text-gray-500 hover:text-white rounded-full hover:bg-sats-black-900 transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -116,17 +148,37 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
                 href={link.href!}
                 onClick={onClose} 
                 title={isCollapsed ? link.name : ""}
-                className={`group flex items-center gap-3 py-3 rounded-xl font-medium transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
+                className={`group flex items-center gap-3 py-3 rounded-xl font-medium transition-all duration-300 relative ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
                   isActive 
                     ? 'bg-sats-orange-500/10 text-sats-orange-400 border border-sats-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.05)]' 
                     : 'text-gray-400 border border-transparent hover:text-white hover:bg-sats-black-900'
                 }`}
               >
-                <Icon className={`w-5 h-5 min-w-[20px] transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
+                {/* Icon Container (Used for absolute positioning the badge when collapsed) */}
+                <div className="relative flex items-center justify-center">
+                  <Icon className={`w-5 h-5 min-w-[20px] transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
+                  
+                  {/* Badge for Collapsed State */}
+                  {isCollapsed && link.count !== undefined && link.count > 0 && (
+                    <span className="absolute -top-1.5 -right-2 bg-sats-orange-500 text-black text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-sats-black-950">
+                      {link.count > 9 ? '9+' : link.count}
+                    </span>
+                  )}
+                </div>
+
                 {!isCollapsed && (
-                  <span className={`whitespace-nowrap transition-transform duration-300 ${!isActive && 'group-hover:translate-x-1 group-hover:text-gray-200'}`}>
-                    {link.name}
-                  </span>
+                  <>
+                    <span className={`whitespace-nowrap transition-transform duration-300 ${!isActive && 'group-hover:translate-x-1 group-hover:text-gray-200'}`}>
+                      {link.name}
+                    </span>
+                    
+                    {/* Badge for Expanded State */}
+                    {link.count !== undefined && link.count > 0 && (
+                      <span className="ml-auto bg-sats-orange-500 text-black text-xs font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.4)]">
+                        {link.count > 99 ? '99+' : link.count}
+                      </span>
+                    )}
+                  </>
                 )}
               </Link>
             );
