@@ -1,20 +1,16 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { createCampaign } from '@/features/admin/adminCampaignsSlice';
 import { 
-  ArrowLeft, Save, Loader2, Globe, Search, ChevronDown, 
-  CheckSquare, Square, Zap, Shield, Target, Coins, Crown 
+  ArrowLeft, Save, Loader2, ChevronDown, 
+  Zap, Shield, Target, Coins, Crown 
 } from 'lucide-react';
 
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
-const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
-
-const ALL_COUNTRIES = [
-  "Afghanistan", "Albania", "Algeria", "Argentina", "Australia", "Austria", "Bangladesh", "Belgium", "Brazil", "Canada", "China", "Colombia", "Denmark", "Egypt", "Finland", "France", "Germany", "Greece", "India", "Indonesia", "Ireland", "Israel", "Italy", "Japan", "Kenya", "Malaysia", "Mexico", "Netherlands", "New Zealand", "Nigeria", "Norway", "Pakistan", "Philippines", "Poland", "Portugal", "Russia", "Saudi Arabia", "Singapore", "South Africa", "South Korea", "Spain", "Sweden", "Switzerland", "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Vietnam"
-]; // Shortened for display, keep your full array here!
+const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
 
 export default function AddCampaignPage() {
   const router = useRouter();
@@ -22,36 +18,20 @@ export default function AddCampaignPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
-  // ─── Form State (Aligned exactly with Zod Schema) ───
+  // ─── Form State (Aligned exactly with your Zod Schema) ───
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: 'SOCIAL',
-    targetUrl: '',
-    socialHandleTarget: '',
     isPremiumOnly: false,
     requiredFreeTier: 'BASIC',
     baseRewardSats: 0,
     maxCompletions: 0,
-    targetCountries: [] as string[],
     tierRewardMatrix: {
       BASIC: 0, COPPER: 0, BRONZE: 0, SILVER: 0, GOLD: 0,
       PLATINUM: 0, DIAMOND: 0, CROWN: 0, ELITE: 0, FOUNDER: 0
     } as Record<string, number>
   });
-
-  // ─── Dropdown State ───
-  const [isCountryOpen, setIsCountryOpen] = useState(false);
-  const [countrySearch, setCountrySearch] = useState('');
-  const countryRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (countryRef.current && !countryRef.current.contains(event.target as Node)) setIsCountryOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   // ─── Handlers ───
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -71,28 +51,6 @@ export default function AddCampaignPage() {
     }));
   };
 
-  const handleCountryToggle = (country: string) => {
-    setFormData(prev => {
-      const isSelected = prev.targetCountries.includes(country);
-      return {
-        ...prev, 
-        targetCountries: isSelected 
-          ? prev.targetCountries.filter(c => c !== country) 
-          : [...prev.targetCountries, country]
-      };
-    });
-  };
-
-  const handleSelectAllCountries = () => {
-    setFormData(prev => ({
-      ...prev, 
-      targetCountries: prev.targetCountries.length === ALL_COUNTRIES.length ? [] : [...ALL_COUNTRIES]
-    }));
-  };
-
-  const filteredCountries = ALL_COUNTRIES.filter(c => c.toLowerCase().includes(countrySearch.toLowerCase()));
-  const allSelected = formData.targetCountries.length === ALL_COUNTRIES.length && ALL_COUNTRIES.length > 0;
-
   // ─── Submit Engine ───
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,8 +64,8 @@ export default function AddCampaignPage() {
 
     setIsSaving(true);
     
-    // ZOD CLEANUP: Strip empty strings so Zod's .optional() doesn't crash on invalid URLs
-    const payload: any = {
+    // Strict Payload Generation to match Zod exactly
+    const payload = {
       title: formData.title.trim(),
       description: formData.description.trim(),
       category: formData.category,
@@ -117,10 +75,6 @@ export default function AddCampaignPage() {
       maxCompletions: Number(formData.maxCompletions),
       tierRewardMatrix: formData.tierRewardMatrix,
     };
-
-    if (formData.targetUrl.trim()) payload.targetUrl = formData.targetUrl.trim();
-    if (formData.socialHandleTarget.trim()) payload.socialHandleTarget = formData.socialHandleTarget.trim();
-    if (formData.targetCountries.length > 0) payload.targetCountries = formData.targetCountries;
 
     const result = await dispatch(createCampaign(payload));
     
@@ -190,10 +144,10 @@ export default function AddCampaignPage() {
                 </div>
               </div>
 
-              {/* CARD 2: Targeting & Access Gates */}
+              {/* CARD 2: Access Gates */}
               <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
                 <h2 className="text-lg font-black text-white mb-6 flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-sats-orange-500" /> Access Gates & Targeting
+                  <Shield className="w-5 h-5 text-sats-orange-500" /> Categorization & Gates
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -210,21 +164,11 @@ export default function AddCampaignPage() {
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   </InputWrapper>
-
-                  <InputWrapper label="Target URL (Optional)">
-                    <input type="url" name="targetUrl" value={formData.targetUrl} onChange={handleChange} placeholder="https://..." className={inputCls} />
-                  </InputWrapper>
-
-                  <InputWrapper label="Social Handle Target (Optional)">
-                    <input type="text" name="socialHandleTarget" value={formData.socialHandleTarget} onChange={handleChange} placeholder="@username" className={inputCls} />
-                  </InputWrapper>
                 </div>
 
-                {/* Premium Only Toggle & Country Target */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-[#1a1a1a] pt-8">
-                  
-                  {/* iOS Style Toggle */}
-                  <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl">
+                {/* Premium Only Toggle */}
+                <div className="border-t border-[#1a1a1a] pt-8">
+                  <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl max-w-sm">
                     <div>
                       <p className="text-sm font-bold text-white flex items-center gap-1.5"><Crown className="w-4 h-4 text-yellow-500" /> Premium Exclusive</p>
                       <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Restrict to paid users</p>
@@ -236,52 +180,6 @@ export default function AddCampaignPage() {
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${formData.isPremiumOnly ? 'translate-x-[22px]' : 'translate-x-1'}`} />
                     </button>
-                  </div>
-
-                  {/* Custom Country Dropdown */}
-                  <div className="relative" ref={countryRef}>
-                    <InputWrapper label={`Target Countries (${formData.targetCountries.length || 'Global'})`}>
-                      <button 
-                        type="button" 
-                        onClick={() => setIsCountryOpen(!isCountryOpen)} 
-                        className={`w-full bg-[#111] border ${isCountryOpen ? 'border-sats-orange-500' : 'border-[#2a2a2a]'} text-left px-4 py-3.5 rounded-xl outline-none transition-colors flex items-center justify-between`}
-                      >
-                        <span className={`truncate text-sm ${formData.targetCountries.length === 0 ? 'text-gray-500' : 'text-white font-semibold'}`}>
-                          {formData.targetCountries.length === 0 ? "Select locations..." : 
-                           formData.targetCountries.length === ALL_COUNTRIES.length ? "Worldwide (All)" : 
-                           `${formData.targetCountries.length} Selected`}
-                        </span>
-                        <Globe className="w-4 h-4 text-gray-500" />
-                      </button>
-                    </InputWrapper>
-
-                    {isCountryOpen && (
-                      <div className="absolute z-50 w-full mt-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
-                        <div className="p-3 border-b border-[#1a1a1a] bg-[#111] flex flex-col gap-3">
-                          <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                            <input type="text" placeholder="Search countries..." value={countrySearch} onChange={e => setCountrySearch(e.target.value)} className="w-full bg-[#050505] border border-[#1a1a1a] rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-sats-orange-500/50" />
-                          </div>
-                          <button type="button" onClick={handleSelectAllCountries} className="flex items-center text-xs font-bold text-sats-orange-500 hover:text-sats-orange-400 transition-colors w-max">
-                            {allSelected ? <CheckSquare className="w-4 h-4 mr-1.5" /> : <Square className="w-4 h-4 mr-1.5" />}
-                            {allSelected ? "Clear Selection" : "Select Worldwide"}
-                          </button>
-                        </div>
-                        <div className="max-h-60 overflow-y-auto custom-scrollbar p-2">
-                          {filteredCountries.map(country => {
-                            const isSelected = formData.targetCountries.includes(country);
-                            return (
-                              <div key={country} onClick={() => handleCountryToggle(country)} className="flex items-center px-3 py-2 hover:bg-[#151515] rounded-lg cursor-pointer transition-colors">
-                                <div className={`w-4 h-4 rounded-md flex items-center justify-center mr-3 border transition-colors ${isSelected ? 'bg-sats-orange-500 border-sats-orange-500' : 'border-[#333]'}`}>
-                                  {isSelected && <CheckSquare className="w-4 h-4 text-black" />}
-                                </div>
-                                <span className={`text-sm ${isSelected ? 'text-white font-bold' : 'text-gray-400 font-medium'}`}>{country}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -316,9 +214,9 @@ export default function AddCampaignPage() {
                 <div>
                   <h3 className="text-sm font-bold text-white mb-4">Tier Reward Matrix</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {FREE_TIERS.map(tier => (
+                    {Object.keys(formData.tierRewardMatrix).map(tier => (
                       <div key={tier} className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-2.5 flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider">{tier}</label>
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
                         <input 
                           type="number" 
                           min="0"

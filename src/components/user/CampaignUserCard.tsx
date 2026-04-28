@@ -76,7 +76,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
         </div>
 
         <Link 
-          href={`/dashboard/tasks/${campaign.id}`}
+          href={`/user/tasks/${campaign.id}`}
           className="w-full flex items-center justify-center gap-2 bg-sats-black-950 hover:bg-sats-orange-500 text-white hover:text-black font-bold py-3 px-4 rounded-xl border border-sats-black-800 hover:border-sats-orange-500 transition-all duration-300 group/btn"
         >
           <span>Start Task</span>

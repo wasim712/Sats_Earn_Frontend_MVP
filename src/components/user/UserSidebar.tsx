@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -9,6 +9,8 @@ import {
   Lightbulb
 } from 'lucide-react';
 import Image from 'next/image';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 interface UserSidebarProps {
   isOpen: boolean;           
@@ -25,10 +27,45 @@ interface UserSidebarProps {
 
 export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout, user }: UserSidebarProps) => {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Exactly matching the straight list from your provided image
+  // --- FETCH UNREAD ALERTS ---
+  const fetchUnreadCount = async () => {
+    try {
+      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/users/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        const unread = data.filter((n: any) => !n.isRead).length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error("Failed to fetch sidebar notifications count", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000); // Poll every 60s
+    
+    // Listen for custom event from the notifications page to clear badge instantly
+    const handleInstantUpdate = () => fetchUnreadCount();
+    window.addEventListener('user-notifications-updated', handleInstantUpdate);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('user-notifications-updated', handleInstantUpdate);
+    };
+  }, []);
+
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
+    { name: 'Alerts', href: '/user/notifications', icon: Bell, count: unreadCount }, // <-- NEW
     { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
     { name: 'Daily Quiz', href: '/user/quiz', icon: Lightbulb },
     { name: 'Referrals', href: '/user/referrals', icon: Users },
@@ -37,17 +74,13 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     { name: 'Settings', href: '/user/settings', icon: Settings },
   ];
 
-  // Safely get initials (e.g., "Sumit Dwivedi" -> "SD")
   const getInitials = (name?: string) => {
     if (!name) return 'SE';
     const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return parts[0].substring(0, 2).toUpperCase();
   };
 
-  // Convert "Sumit Dwivedi" into "@sumitdwivedi" to match the image handle
   const generateHandle = (name?: string) => {
     if (!name) return '@earner';
     return '@' + name.replace(/\s+/g, '').toLowerCase();
@@ -65,7 +98,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 
         ${isCollapsed ? 'w-20' : 'w-[280px]'}`}
       >
-        {/* HEADER SECTION (Logo + Beta Badge) */}
+        {/* HEADER SECTION */}
         <div className={`h-24 flex items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
              <button 
@@ -90,7 +123,6 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
                  <span className="text-2xl font-bold tracking-tight text-white whitespace-nowrap">
                    Sats<span className="text-sats-orange-500">Earn</span>
                  </span>
-                 {/* The Beta Badge from the image */}
                  <span className="bg-sats-orange-500/20 text-sats-orange-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
                    Beta
                  </span>
@@ -98,7 +130,6 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
              )}
           </div>
           
-          {/* Close / Collapse toggles */}
           {!isCollapsed && (
             <button onClick={onToggleCollapse} className="hidden lg:flex p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-sats-black-800 transition-colors">
               <PanelLeftClose className="w-5 h-5" />
@@ -121,14 +152,22 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
                 href={link.href}
                 onClick={onClose} 
                 title={isCollapsed ? link.name : ""}
-                className={`group flex items-center justify-between py-3.5 rounded-2xl font-semibold transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
+                className={`group flex items-center justify-between py-3.5 rounded-2xl font-semibold transition-all duration-300 relative ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
                   isActive 
                     ? 'bg-[#1c140a] border border-sats-orange-500/20 text-white shadow-inner' 
                     : 'text-gray-300 border border-transparent hover:text-white hover:bg-sats-black-900'
                 }`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 relative">
                   <Icon className={`w-5 h-5 min-w-[20px] transition-colors duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-400 group-hover:text-gray-300'}`} />
+                  
+                  {/* Badge for Collapsed State */}
+                  {isCollapsed && link.count !== undefined && link.count > 0 && (
+                    <span className="absolute -top-1.5 -right-2 bg-sats-orange-500 text-black text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-sats-black-950">
+                      {link.count > 9 ? '9+' : link.count}
+                    </span>
+                  )}
+
                   {!isCollapsed && (
                     <span className="whitespace-nowrap tracking-wide text-[15px]">
                       {link.name}
@@ -136,47 +175,46 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
                   )}
                 </div>
 
+                {/* Badge for Expanded State */}
+                {!isCollapsed && link.count !== undefined && link.count > 0 && (
+                  <span className="bg-sats-orange-500 text-black text-xs font-black px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.4)]">
+                    {link.count > 99 ? '99+' : link.count}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
 
-        {/* BOTTOM SECTION (Profile Card & Logout) */}
+        {/* BOTTOM SECTION */}
         <div className="p-4 border-t border-sats-black-800 bg-sats-black-950 flex flex-col gap-4">
-          {/* 1. Profile Card (Matches Image Exactly) */}
           <Link href="/user/profile">
           <div className={`flex items-center gap-3 p-3 bg-[#121212] rounded-[20px] border border-sats-black-800 ${isCollapsed ? 'justify-center' : ''}`}>
-            {/* Orange Solid Avatar */}
             <div className="w-10 h-10 rounded-full bg-sats-orange-500 flex items-center justify-center text-black font-extrabold text-sm shrink-0">
               {getInitials(user?.name)}
             </div>
             
             {!isCollapsed && (
-              <>
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <p className="text-sm font-bold text-white truncate leading-tight">
-                    {generateHandle(user?.name)}
-                  </p>
-                  <p className="text-[11px] font-medium text-gray-400 capitalize mt-0.5">
-                    {user?.tier ? user.tier.toLowerCase() : 'Basic'} Tier
-                  </p>
-                </div>
-                
-              </>
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <p className="text-sm font-bold text-white truncate leading-tight">
+                  {generateHandle(user?.name)}
+                </p>
+                <p className="text-[11px] font-medium text-gray-400 capitalize mt-0.5">
+                  {user?.tier ? user.tier.toLowerCase() : 'Basic'} Tier
+                </p>
+              </div>
             )}
           </div>
-            </Link>
+          </Link>
 
-          {/* 2. Simple Log Out Text Button */}
           <button 
             onClick={onLogout} 
             title={isCollapsed ? "Log out" : ""}
-            className={`flex items-center justify-items-center hover:cursor-pointer gap-3 text-gray-400 bg-sats-black-900 hover:bg-[#2d0a0a]  transition-colors font-semibold text-sm px-2 pb-4 pt-4 rounded-3xl ${isCollapsed ? 'justify-center' : ''} justify-center transition-all duration-300 hover:border-red-600 border border-transparent`}
+            className={`flex items-center gap-3 text-gray-400 bg-sats-black-900 hover:bg-[#2d0a0a] transition-all duration-300 font-semibold text-sm px-2 pb-4 pt-4 rounded-3xl ${isCollapsed ? 'justify-center' : 'justify-center'} hover:border-red-600 border border-transparent`}
           >
-            <LogOut className="w-5 h-5 min-w-5" />
-            {!isCollapsed && <span className=''>Log Out</span>}
+            <LogOut className="w-5 h-5 min-w-[20px]" />
+            {!isCollapsed && <span>Log Out</span>}
           </button>
-          
         </div>
       </aside>
     </>
