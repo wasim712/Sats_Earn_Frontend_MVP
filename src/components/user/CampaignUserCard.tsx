@@ -36,7 +36,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
   return (
     <div className="group relative bg-sats-black-900 border border-sats-black-800 rounded-3xl p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700 overflow-hidden">
       
-      <div className="absolute inset-0 bg-gradient-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-colors duration-500 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-linear-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-colors duration-500 pointer-events-none"></div>
 
       <div className="relative z-10 flex justify-between items-start mb-5">
         <div className="w-12 h-12 rounded-2xl bg-sats-black-950 border border-sats-black-800 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
@@ -45,7 +45,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
 
         <div className="flex items-center gap-1.5 bg-sats-orange-500/10 border border-sats-orange-500/20 px-3 py-1.5 rounded-xl shadow-sm">
           <Zap className="w-4 h-4 text-sats-orange-500 fill-sats-orange-500" />
-          <span className="text-sm font-black text-sats-orange-400">~{campaign.rewardSats} <span className="text-xs font-bold text-sats-orange-500/70">SATS</span></span>
+          <span className="text-sm font-black text-sats-orange-400">~{campaign.baseRewardSats} <span className="text-xs font-bold text-sats-orange-500/70">SATS</span></span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
           href={`/user/tasks/${campaign.id}`}
           className="w-full flex items-center justify-center gap-2 bg-sats-black-950 hover:bg-sats-orange-500 text-white hover:text-black font-bold py-3 px-4 rounded-xl border border-sats-black-800 hover:border-sats-orange-500 transition-all duration-300 group/btn"
         >
-          <span>Start Task</span>
+          <span>View Task</span>
           <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
         </Link>
       </div>
