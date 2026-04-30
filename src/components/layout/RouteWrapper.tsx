@@ -3,7 +3,6 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Footer } from '@/components/layout/Footer';
-import { Navbar } from './Navbar';
 
 export function RouteWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

@@ -1,5 +1,6 @@
 import React from 'react';
 import LoginForm from '@/features/auth/components/LoginForm';
+import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 
 export const metadata = {
   title: 'Log In | SatsEarn',
@@ -15,7 +16,7 @@ export default function LoginPage() {
       
       {/* FIXED Dynamic Highlight: Perfect glowing orb behind the form */}
       <div className="fixed  w-200 h-200 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      
+      <AnnouncementBanner/>
       {/* Form Container: Added z-index and padding to sit above the background safely */}
       <div className="z-10 w-full flex justify-center py-12">
         <LoginForm />

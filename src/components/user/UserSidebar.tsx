@@ -86,6 +86,20 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     return '@' + name.replace(/\s+/g, '').toLowerCase();
   };
 
+  // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname === href) {
+      // If we are already on this page, strictly prevent Next.js from routing.
+      // This stops the page from re-rendering and stops the useEffect from fetching again!
+      e.preventDefault(); 
+      
+      // If on mobile, we still want to close the drawer even if we didn't route anywhere
+      if (window.innerWidth < 1024 && isOpen) {
+        onClose();
+      }
+    }
+  };
+  
   return (
     <>
       <div 
@@ -150,7 +164,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
               <Link 
                 key={link.name} 
                 href={link.href}
-                onClick={onClose} 
+                onClick={(e) => handleLinkClick(e, link.href)} 
                 title={isCollapsed ? link.name : ""}
                 className={`group flex items-center justify-between py-3.5 rounded-2xl font-semibold transition-all duration-300 relative ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
                   isActive 

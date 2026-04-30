@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
+import { AnnouncementBanner } from '../ui/AnnouncementBanner';
 
 export const NavbarWrapper = () => {
   const pathname = usePathname();
@@ -9,5 +10,10 @@ export const NavbarWrapper = () => {
   // Show only on homepage "/"
   if (pathname !== '/') return null;
 
-  return <Navbar />;
+  return (
+  <div>
+  <AnnouncementBanner/>
+  <Navbar />
+  </div>
+   );
 };
