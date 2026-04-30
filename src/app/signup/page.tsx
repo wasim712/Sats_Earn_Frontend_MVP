@@ -24,6 +24,7 @@
 //     </main>
 //   );
 // }import React from 'react';
+import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 import SignupForm from '@/features/auth/components/SignupForm';
 
 export const metadata = {
@@ -34,7 +35,6 @@ export const metadata = {
 export default function SignupPage() {
   return (
     <main className="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-8 relative bg-[#020202] overflow-x-hidden">
-      
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 bg-grid-base opacity-20 z-0"></div>
       

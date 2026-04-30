@@ -9,6 +9,7 @@ import { Menu, Home, Target, Lightbulb } from 'lucide-react';
 import { UserSidebar } from '@/components/user/UserSidebar';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'; 
 import { logout } from '@/features/auth/authSlice'; 
+import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 
 // ─── Floating Dock Links ────────────────────────────────────────────────────
 // You can easily add more links here. The dock will flex and adapt automatically.
@@ -66,7 +67,6 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   
   return (
     <div className="min-h-screen bg-[#020202] font-sans text-white relative">
-      
       {/* ─── Sidebar ─── */}
       <UserSidebar 
         isOpen={isSidebarOpen}
@@ -112,19 +112,22 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
           </div>
         </header>
 
+          <AnnouncementBanner/>
         {/* ─── Main Content Area ─── */}
         {/* Note: pb-28 creates space for the dock on mobile, lg:pb-0 removes it on desktop where the dock is hidden */}
         <main className="flex-1 w-full flex flex-col relative overflow-x-hidden pb-28 lg:pb-0">
-          {children}
+
+            {children}
+          
         </main>
         
       </div>
-
+{/* //*****************************************************************  */}
       {/* ─── Floating Bottom Navigation Dock (Mobile & Tablet Only) ─── */}
       <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center pointer-events-none lg:hidden px-4">
         
         {/* pointer-events-auto ensures you can click the dock, but transparent space around it allows clicking the page */}
-        <nav className="pointer-events-auto bg-[#0a0a0a]/90 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-1.5 flex items-center justify-center gap-1 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto">
+        <nav className="pointer-events-auto bg-sats-black-900/90 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-1.5 flex items-center justify-center gap-1 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto">
           
           {DOCK_LINKS.map((item) => {
             // Highlight if exactly matching OR if viewing a sub-page (like /user/tasks/123)
@@ -160,7 +163,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             className="flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all shrink-0"
             title="Open Menu"
           >
-            <Menu className="w-[22px] h-[22px]" />
+            <Menu className="w-5.5 h-[22px]" />
             <span className="text-[10px] font-bold tracking-wide">Menu</span>
           </button>
           

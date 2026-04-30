@@ -22,7 +22,6 @@ export default function RootLayout({
       <body className="bg-sats-black-950 text-white font-sans " suppressHydrationWarning>
         <StoreProvider>
           <NavbarWrapper/>
-          <AnnouncementBanner/>
           <InteractiveBackground />
           
           <RouteWrapper>
