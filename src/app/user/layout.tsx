@@ -64,7 +64,15 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   if (!mounted || (!isAuthenticated && !user)) {
     return null; 
   }
-  
+    // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname === href) {
+      // If we are already on this page, strictly prevent Next.js from routing.
+      // This stops the page from re-rendering and stops the useEffect from fetching again!
+      e.preventDefault(); 
+      
+    }
+  };
   return (
     <div className="min-h-screen bg-[#020202] font-sans text-white relative">
       {/* ─── Sidebar ─── */}
@@ -137,6 +145,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
               <Link
                 key={item.path}
                 href={item.path}
+                onClick={(e) => handleLinkClick(e, item.path)}//prevented unnecesarry reloads
                 className={`flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl transition-all duration-300 shrink-0 ${
                   isActive
                     ? 'bg-sats-orange-500/10 text-sats-orange-500'

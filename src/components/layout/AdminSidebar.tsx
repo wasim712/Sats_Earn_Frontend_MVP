@@ -79,7 +79,19 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Settings', href: '/admin/settings', icon: Settings },
     { name: 'Payments', href: '/admin/payments', icon: MonitorCog },
   ];
-
+    // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname === href) {
+      // If we are already on this page, strictly prevent Next.js from routing.
+      // This stops the page from re-rendering and stops the useEffect from fetching again!
+      e.preventDefault(); 
+      
+      // If on mobile, we still want to close the drawer even if we didn't route anywhere
+      if (window.innerWidth < 1024 && isOpen) {
+        onClose();
+      }
+    }
+  };
   return (
     <>
       <div 
@@ -146,7 +158,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
               <Link 
                 key={link.name} 
                 href={link.href!}
-                onClick={onClose} 
+                onClick={(e) => handleLinkClick(e, link.href!)}
                 title={isCollapsed ? link.name : ""}
                 className={`group flex items-center gap-3 py-3 rounded-xl font-medium transition-all duration-300 relative ${isCollapsed ? 'justify-center px-0' : 'px-4'} ${
                   isActive 

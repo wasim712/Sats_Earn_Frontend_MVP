@@ -74,7 +74,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* 3. Main Viewport - Automatically flexes to fill the exact remaining space */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         
-        <AnnouncementBanner/>
         {/* Header - Stays naturally at the top of the flex column */}
         <header className="shrink-0 h-20 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-[#1a1a1a] flex items-center justify-between px-4 sm:px-8 z-30">
           <div className="flex items-center gap-4">
@@ -94,6 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </span>
           </div>
         </header>
+        <AnnouncementBanner/>
         {/* Main Content Area - Handles its own internal scrolling */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#020202]">
           {/* Centering container for the actual page content */}
