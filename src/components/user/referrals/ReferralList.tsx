@@ -2,8 +2,13 @@
 
 import React from 'react';
 import { UserPlus } from 'lucide-react';
+import type { UserReferral } from '@/types/user';
 
-export default function ReferralList({ list }: { list: any[] }) {
+interface ReferralListProps {
+  list: UserReferral[];
+}
+
+export default function ReferralList({ list }: ReferralListProps) {
   return (
     <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 transition-all duration-500 hover:border-sats-orange-500/30 shadow-lg">
       <h2 className="text-xl font-bold text-white tracking-tight mb-6 border-b border-[#1a1a1a] pb-5">My Network</h2>

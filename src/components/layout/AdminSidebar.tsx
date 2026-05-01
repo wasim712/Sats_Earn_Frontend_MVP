@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
   List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, Megaphone, Lightbulb,
-  MonitorCog, Bell
+  MonitorCog, Bell,
+  ShieldAlert
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
@@ -19,6 +20,10 @@ interface AdminSidebarProps {
   onClose: () => void;       
   onToggleCollapse: () => void; 
   onLogout: () => void;
+}
+
+interface NotificationItem {
+  isRead?: boolean;
 }
 
 export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout }: AdminSidebarProps) => {
@@ -36,9 +41,9 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
       });
       
       if (res.ok) {
-        const data = await res.json();
+        const data = await res.json() as NotificationItem[];
         // Count how many are NOT read
-        const unread = data.filter((n: any) => !n.isRead).length;
+        const unread = data.filter((notification) => !notification.isRead).length;
         setUnreadCount(unread);
       }
     } catch (err) {
@@ -70,6 +75,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Alerts', href: '/admin/notifications', icon: Bell, count: unreadCount },
     { name: 'Submissions', href: '/admin/submissions', icon: CheckSquare },
     { type: 'divider', name: 'Campaigns' }, 
+    { name: 'Security', href: '/admin/fraud', icon: ShieldAlert },
     { name: 'All Campaigns', href: '/admin/campaigns', icon: List },
     { name: 'Add Campaign', href: '/admin/addcampaign', icon: CopyPlus },
     { type: 'divider', name: 'Quiz' }, 
@@ -168,7 +174,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
               >
                 {/* Icon Container (Used for absolute positioning the badge when collapsed) */}
                 <div className="relative flex items-center justify-center">
-                  <Icon className={`w-5 h-5 min-w-[20px] transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
+                  <Icon className={`w-5 h-5 min-w-5 transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
                   
                   {/* Badge for Collapsed State */}
                   {isCollapsed && link.count !== undefined && link.count > 0 && (
@@ -204,7 +210,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
             title={isCollapsed ? "Secure Logout" : ""}
             className={`group flex items-center gap-3 py-3 w-full rounded-xl font-medium text-gray-400 transition-all border border-transparent hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400 ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
           >
-            <LogOut className="w-5 h-5 min-w-[20px] transition-transform duration-300 group-hover:scale-110" />
+            <LogOut className="w-5 h-5 min-w-5 transition-transform duration-300 group-hover:scale-110" />
             {!isCollapsed && <span className="whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1">Secure Logout</span>}
           </button>
         </div>

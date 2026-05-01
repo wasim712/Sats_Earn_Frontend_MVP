@@ -74,7 +74,7 @@ export default function UserProfilePage() {
     month: 'long', year: 'numeric'
   });
 
-  const initials = profile.fullName
+  const initials = (profile.fullName || profile.email || 'User')
     .split(' ')
     .map(n => n[0])
     .join('')

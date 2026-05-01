@@ -4,27 +4,9 @@ import type { RootState } from '@/store/store';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 // 🚨 UPDATED INTERFACE: Matches your new Prisma/Backend schema exactly
-export interface Campaign {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  targetUrl: string | null;
-  socialHandleTarget: string | null;
-  targetCountries: string[];
-  
-  // NEW ECONOMICS & ACCESS GATES
-  isPremiumOnly: boolean;
-  requiredFreeTier: string;
-  baseRewardSats: number;
-  tierRewardMatrix: Record<string, number>;
-  
-  totalCompletions: number;
-  maxCompletions: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Campaign, AdminTask } from '@/types/admin';
+export type { Campaign } from '@/types/admin';
+export type Task = AdminTask;
 
 interface AdminCampaignsState {
   campaigns: Campaign[];
@@ -130,6 +112,59 @@ export const createCampaign = createAsyncThunk(
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create campaign');
       return resData as Campaign; 
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const createTask = createAsyncThunk(
+  'adminCampaigns/createTask',
+  async ({ campaignId, data }: { campaignId: string; data: Partial<Task> }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+
+      const response = await fetch(`${API_URL}/admin/campaigns/${campaignId}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      const resData = await response.json();
+      if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create task');
+      return resData as Task;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateTask = createAsyncThunk(
+  'adminCampaigns/updateTask',
+  async (
+    { campaignId, taskId, data }: { campaignId: string; taskId: string; data: Partial<Task> },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+
+      const response = await fetch(`${API_URL}/admin/campaigns/${campaignId}/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      const resData = await response.json();
+      if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to update task');
+      return resData as Task;
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

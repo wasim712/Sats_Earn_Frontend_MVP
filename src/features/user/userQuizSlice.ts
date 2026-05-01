@@ -1,27 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { RootState } from '@/store/store'; // Adjust path if needed
-
-// --- Types ---
-export interface UserQuestion {
-  id: string;
-  questionText: string;
-  options: string[];
-  order: number;
-}
-
-export interface TodayQuiz {
-  id: string;
-  title: string;
-  rewardSats: number;
-  questions: UserQuestion[];
-}
-
-export interface QuizResult {
-  message: string;
-  passed: boolean;
-  score: number;
-  rewardEarned: number;
-}
+import type { RootState } from '@/store/store';
+import type { TodayQuiz, QuizResult } from '@/types/user';
 
 interface UserQuizState {
   quiz: TodayQuiz | null;
@@ -39,8 +18,7 @@ const initialState: UserQuizState = {
   error: null,
 };
 
-// --- Thunks ---
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'; // Adjust to your env
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 export const fetchTodayQuiz = createAsyncThunk(
   'userQuiz/fetchToday',
@@ -48,11 +26,7 @@ export const fetchTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-
-      const response = await fetch(`${API_URL}/users/quiz/today`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const response = await fetch(`${API_URL}/users/quiz/today`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to fetch quiz');
       return data as TodayQuiz;
@@ -68,16 +42,11 @@ export const submitTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-
       const response = await fetch(`${API_URL}/users/quiz/today/submit`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ answers }),
       });
-
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to submit quiz');
       return data as QuizResult;
@@ -87,7 +56,6 @@ export const submitTodayQuiz = createAsyncThunk(
   }
 );
 
-// --- Slice ---
 const userQuizSlice = createSlice({
   name: 'userQuiz',
   initialState,
@@ -100,32 +68,12 @@ const userQuizSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch
-      .addCase(fetchTodayQuiz.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchTodayQuiz.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.quiz = action.payload;
-      })
-      .addCase(fetchTodayQuiz.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-      // Submit
-      .addCase(submitTodayQuiz.pending, (state) => {
-        state.isSubmitting = true;
-        state.error = null;
-      })
-      .addCase(submitTodayQuiz.fulfilled, (state, action) => {
-        state.isSubmitting = false;
-        state.result = action.payload;
-      })
-      .addCase(submitTodayQuiz.rejected, (state, action) => {
-        state.isSubmitting = false;
-        state.error = action.payload as string;
-      });
+      .addCase(fetchTodayQuiz.pending, (state) => { state.isLoading = true; state.error = null; })
+      .addCase(fetchTodayQuiz.fulfilled, (state, action) => { state.isLoading = false; state.quiz = action.payload; })
+      .addCase(fetchTodayQuiz.rejected, (state, action) => { state.isLoading = false; state.error = action.payload as string; })
+      .addCase(submitTodayQuiz.pending, (state) => { state.isSubmitting = true; state.error = null; })
+      .addCase(submitTodayQuiz.fulfilled, (state, action) => { state.isSubmitting = false; state.result = action.payload; })
+      .addCase(submitTodayQuiz.rejected, (state, action) => { state.isSubmitting = false; state.error = action.payload as string; });
   },
 });
 
