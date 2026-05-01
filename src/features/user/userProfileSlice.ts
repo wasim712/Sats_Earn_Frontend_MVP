@@ -1,18 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 
-export interface UserProfile {
-  fullName: string;
-  email: string;
-  phone: string | null;
-  country: string;
-  twitterHandle: string | null;
-  instagramHandle: string | null;
-  telegramHandle: string | null;
-  discordHandle: string | null;
-  referralCode: string;
-  createdAt: string;
-}
+import type { UserProfile } from '@/types/user';
 
 interface UserProfileState {
   data: UserProfile | null;

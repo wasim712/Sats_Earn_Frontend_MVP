@@ -83,9 +83,9 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         onLogout={handleLogout}
         user={user ? { 
-          name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User', 
-          tier: user.tier || 'BASIC', 
-          streak: user.streak || 0 
+          name: user.fullName || user.email || 'User', 
+          tier: user.activeTier || 'BASIC', 
+          streak: 0 
         } : null} 
       />
 

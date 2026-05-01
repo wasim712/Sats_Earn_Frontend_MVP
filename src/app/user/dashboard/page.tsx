@@ -1,78 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useAppSelector } from '@/store/hooks'; 
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
 import { AlertTriangle } from 'lucide-react';
 
 import TotalBalanceCard from '@/components/user/dashboard/TotalBalanceCard';
 import GamificationStats from '@/components/user/dashboard/GamificationStats';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-// --- TYPESCRIPT DEFINITIONS ---
-interface DashboardData {
-  balances: {
-    available: number;
-    pending: number;
-    locked: number;
-    totalLifetime: number;
-  };
-  gamification: {
-    totalXp: number;
-    level: number;
-    activeTier: string;
-    underlyingFreeTier: string;
-    isPremium: boolean;
-    premiumExpiresAt: string | null;
-    currentStreak: number;
-    xpDisplay: string;
-    progressPercent: number;
-    tasksCompleted: number;
-    activeReferrals: number;
-  };
-  recentActivity: Array<{
-    amountSats: number;
-    type: string;
-    description: string;
-    createdAt: string;
-  }>;
-}
+import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 
 export default function UserDashboardPage() {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-
-  // We now use the strict interface instead of 'any'
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-        
-        const response = await fetch(`${API_URL}/users/dashboard`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch dashboard data. Please try again.');
-
-        const result: DashboardData = await response.json();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message || 'An unexpected error occurred.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+    dispatch(fetchUserDashboard());
+  }, [dispatch]);
 
   if (error) {
     return (

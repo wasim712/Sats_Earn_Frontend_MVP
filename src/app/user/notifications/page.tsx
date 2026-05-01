@@ -1,80 +1,36 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
   Bell, CheckSquare, Wallet, Loader2, CheckCheck, 
   RefreshCw, AlertTriangle, ArrowRight, Activity, XCircle, CheckCircle2
 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-interface UserNotification {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
-  isRead: boolean;
-  referenceId: string | null;
-  createdAt: string;
-}
+import {
+  fetchUserNotifications,
+  markAllUserNotificationsRead,
+  markUserNotificationRead,
+  type UserNotification,
+} from '@/features/user/userNotificationsSlice';
 
 export default function UserNotificationsPage() {
   const router = useRouter();
-  const [notifications, setNotifications] = useState<UserNotification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchNotifications = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/users/notifications`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch alerts.");
-      const data = await res.json();
-      setNotifications(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const { notifications, isLoading, error } = useAppSelector((state) => state.userNotifications);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    dispatch(fetchUserNotifications());
+  }, [dispatch]);
 
   const handleMarkAsRead = async (id: string) => {
-    try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      await fetch(`${API_URL}/users/notifications/${id}/read`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
-      window.dispatchEvent(new Event('user-notifications-updated'));
-    } catch (err) {
-      console.error("Failed to mark as read", err);
-    }
+    await dispatch(markUserNotificationRead(id));
+    window.dispatchEvent(new Event('user-notifications-updated'));
   };
 
   const handleMarkAllRead = async () => {
-    try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      await fetch(`${API_URL}/users/notifications/read-all`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-      window.dispatchEvent(new Event('user-notifications-updated'));
-    } catch (err) {
-      console.error("Failed to mark all as read", err);
-    }
+    await dispatch(markAllUserNotificationsRead());
+    window.dispatchEvent(new Event('user-notifications-updated'));
   };
 
   const handleNotificationClick = (notification: UserNotification) => {
@@ -129,11 +85,11 @@ export default function UserNotificationsPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={fetchNotifications}
-            className="flex items-center justify-center p-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all"
-            title="Refresh"
-          >
+            <button
+              onClick={() => dispatch(fetchUserNotifications())}
+              className="flex items-center justify-center p-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all"
+              title="Refresh"
+            >
             <RefreshCw className="w-5 h-5" />
           </button>
           <button

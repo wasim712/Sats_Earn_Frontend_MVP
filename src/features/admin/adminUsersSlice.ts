@@ -2,26 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 
 // ─── Types ───
-export interface AdminUser {
-  id: string;
-  email: string;
-  fullName: string | null;
-  role: string;
-  totalXp: number;
-  premiumTier: string | null;
-  premiumExpiresAt: string | null;
-  isActive: boolean;
-  balanceAvailable: number;
-  balancePending: number;
-  balanceLocked: number;
-  referralCode: string | null;
-  _count: { referrals: number; submissions: number };
-  createdAt: string;
-  lastActivityAt: string | null;
-  activeTier: string;
-  isPremium: boolean;
-  underlyingFreeTier: string;
-}
+import type { AdminUser } from '@/types/admin';
+export type { AdminUser } from '@/types/admin';
 
 interface AdminUsersState {
   users: AdminUser[];
@@ -54,8 +36,9 @@ export const fetchAllUsers = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to fetch users');
       
       return data as AdminUser[];
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch users';
+      return rejectWithValue(message);
     }
   }
 );

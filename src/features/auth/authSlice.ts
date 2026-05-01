@@ -1,22 +1,13 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import Error from 'next/error';
 
-// Pull the URL from your .env.local file
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-// 1. Define your TypeScript types
-export interface SignUpPayload {
-  fullName: string;
-  username: string;
-  email: string;
-  password?: string;
-  country: string;
-  dateOfBirth: string;
-  referralCode?: string;
-}
+import type { AuthUser, SignUpPayload } from '@/types/user';
 
 interface AuthState {
-  user: any | null;
+  user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean; 
   isLoading: boolean;
@@ -25,16 +16,28 @@ interface AuthState {
   tempData: SignUpPayload | null;
 }
 
-// 2. Set the Initial State
-// Safely check SESSION storage so users stay logged in only for this session
-const tokenFromStorage = typeof window !== 'undefined' ? sessionStorage.getItem('sats_token') : null;
-// FIXED: Also grab the user object from session storage so it survives reloads!
-const userFromStorage = typeof window !== 'undefined' && sessionStorage.getItem('sats_user') 
-  ? JSON.parse(sessionStorage.getItem('sats_user') as string) 
-  : null;
+// --- SAFE STORAGE HELPERS ---
+const getSafeToken = () => {
+  if (typeof window === 'undefined') return null;
+  return sessionStorage.getItem('sats_token');
+};
+
+const getSafeUser = () => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const userStr = sessionStorage.getItem('sats_user');
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (error) {
+    console.error("Failed to parse user from session storage:", error);
+    return null;
+  }
+};
+
+const tokenFromStorage = getSafeToken();
+const userFromStorage = getSafeUser();
 
 const initialState: AuthState = {
-  user: userFromStorage, // Restored the user object
+  user: userFromStorage,
   token: tokenFromStorage, 
   isAuthenticated: !!tokenFromStorage, 
   isLoading: false,
@@ -45,7 +48,6 @@ const initialState: AuthState = {
 
 // --- API CALLS (THUNKS) ---
 
-// Step 1: Request OTP
 export const requestSignupOtp = createAsyncThunk(
   'auth/requestOtp',
   async (formData: SignUpPayload, { rejectWithValue }) => {
@@ -60,13 +62,12 @@ export const requestSignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to send OTP');
 
       return formData; 
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error occurred');
+    } catch (error:Error | unknown) {
+      return rejectWithValue(error || 'Network error occurred');
     }
   }
 );
 
-// Step 2: Verify OTP
 export const verifySignupOtp = createAsyncThunk(
   'auth/verifyOtp',
   async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
@@ -81,13 +82,12 @@ export const verifySignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid OTP');
 
       return data; 
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error occurred');
+    } catch (error: Error | unknown) {
+      return rejectWithValue(error || 'Network error occurred');
     }
   }
 );
 
-// Step 3: Sign In 
 export const signInUser = createAsyncThunk(
   'auth/signIn',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -102,8 +102,8 @@ export const signInUser = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid credentials');
 
       return data; 
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Network error occurred');
+    } catch (error: Error| unknown) {
+      return rejectWithValue(error || 'Network error occurred');
     }
   }
 );
@@ -127,14 +127,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false; 
       state.step = 1;
       state.tempData = null;
-      // FIXED: Remove BOTH from Session Storage on logout
       sessionStorage.removeItem('sats_token');
       sessionStorage.removeItem('sats_user');
     }
   },
   extraReducers: (builder) => {
     builder
-      // --- SIGN IN STATES ---
       .addCase(signInUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -145,7 +143,6 @@ const authSlice = createSlice({
         state.user = action.payload.user; 
         state.token = action.payload.session; 
         
-        // FIXED: Save both Token AND User to session storage
         sessionStorage.setItem('sats_token', action.payload.session);
         sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })
@@ -154,7 +151,6 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // --- REQUEST OTP STATES ---
       .addCase(requestSignupOtp.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -169,7 +165,6 @@ const authSlice = createSlice({
         state.error = action.payload as string; 
       })
 
-      // --- VERIFY OTP STATES ---
       .addCase(verifySignupOtp.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -182,7 +177,6 @@ const authSlice = createSlice({
         state.step = 1; 
         state.tempData = null; 
 
-        // FIXED: Save both Token AND User to session storage
         sessionStorage.setItem('sats_token', action.payload.session);
         sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
       })

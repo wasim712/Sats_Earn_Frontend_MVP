@@ -25,6 +25,10 @@ interface UserSidebarProps {
   } | null;
 }
 
+interface NotificationItem {
+  isRead?: boolean;
+}
+
 export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout, user }: UserSidebarProps) => {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -40,8 +44,8 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
       });
       
       if (res.ok) {
-        const data = await res.json();
-        const unread = data.filter((n: any) => !n.isRead).length;
+        const data = await res.json() as NotificationItem[];
+        const unread = data.filter((notification) => !notification.isRead).length;
         setUnreadCount(unread);
       }
     } catch (err) {

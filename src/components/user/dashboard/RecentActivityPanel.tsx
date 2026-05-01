@@ -2,28 +2,21 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  Activity, ArrowRight, X, Target, Users, 
+import {
+  Activity, ArrowRight, X, Target, Users,
   ArrowUpRight, AlertTriangle, Gift, Clock
 } from 'lucide-react';
+import type { UserDashboard } from '@/types/user';
 
-// --- STRICT TYPES ---
-interface Transaction {
-  amountSats: number;
-  type: string;
-  description: string;
-  createdAt: string;
-}
+type Transaction = UserDashboard['recentActivity'][number];
 
 interface RecentActivityPanelProps {
-  activities: Transaction[]; 
+  activities: Transaction[];
 }
 
 export default function RecentActivityPanel({ activities }: RecentActivityPanelProps) {
-  // State to control the Modal overlay
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Helper to format the ISO date into something readable
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -33,7 +26,6 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
     });
   };
 
-  // Helper to get the right icon and colors based on TransactionType
   const getActivityUI = (type: string) => {
     switch (type) {
       case 'TASK_REWARD':
@@ -56,14 +48,10 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
   return (
     <>
       <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 transition-all duration-500 hover:border-sats-orange-500/30 shadow-lg group relative z-10">
-        
         <div className="flex items-center justify-between mb-6 border-b border-[#1a1a1a] pb-5">
           <h2 className="text-xl font-bold text-white tracking-tight group-hover:text-sats-orange-50 transition-colors">Recent Activity</h2>
           {activities && activities.length > 0 && (
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="text-sm font-extrabold text-sats-orange-500 hover:text-sats-orange-400 transition-colors"
-            >
+            <button onClick={() => setIsModalOpen(true)} className="text-sm font-extrabold text-sats-orange-500 hover:text-sats-orange-400 transition-colors">
               View All
             </button>
           )}
@@ -72,7 +60,6 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
         <div className="min-h-37.5">
           {activities && activities.length > 0 ? (
             <ul className="space-y-3">
-              {/* Only map the first 3 items in the preview panel to save space */}
               {activities.slice(0, 3).map((activity, idx) => {
                 const ui = getActivityUI(activity.type);
                 return (
@@ -103,10 +90,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
               <p className="text-gray-400 font-medium text-sm mb-6">
                 No recent activity found. Start a task to begin earning!
               </p>
-              <Link 
-                href="/user/tasks"
-                className="inline-flex items-center gap-2 bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-sm py-2.5 px-6 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(249,115,22,0.2)] active:scale-95"
-              >
+              <Link href="/user/tasks" className="inline-flex items-center gap-2 bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-sm py-2.5 px-6 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(249,115,22,0.2)] active:scale-95">
                 Browse Tasks
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -115,26 +99,19 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
         </div>
       </div>
 
-      {/* ─── MODAL OVERLAY ─── */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-sats-black-900 border border-[#2a2a2a] rounded-3xl w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[80vh] animate-in slide-in-from-bottom-8 duration-300">
-            
-            {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-[#1a1a1a] bg-sats-black-950">
               <div>
                 <h3 className="text-xl font-black text-white">Transaction History</h3>
                 <p className="text-xs text-gray-500 mt-1">Your recent earnings and payouts.</p>
               </div>
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="p-2 bg-[#111] hover:bg-[#1a1a1a] border border-[#2a2a2a] rounded-full text-gray-400 hover:text-white transition-colors"
-              >
+              <button onClick={() => setIsModalOpen(false)} className="p-2 bg-[#111] hover:bg-[#1a1a1a] border border-[#2a2a2a] rounded-full text-gray-400 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Body (Scrollable) */}
             <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-3">
               {activities.map((activity, idx) => {
                 const ui = getActivityUI(activity.type);
@@ -162,13 +139,9 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
               })}
             </div>
 
-            {/* Modal Footer */}
             <div className="p-4 border-t border-[#1a1a1a] bg-sats-black-950 text-center">
-              <p className="text-xs text-gray-500 font-medium">
-                Showing your {activities.length} most recent transactions.
-              </p>
+              <p className="text-xs text-gray-500 font-medium">Showing your {activities.length} most recent transactions.</p>
             </div>
-
           </div>
         </div>
       )}
