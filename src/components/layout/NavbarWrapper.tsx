@@ -12,8 +12,13 @@ export const NavbarWrapper = () => {
 
   return (
   <div>
+    <div className=' hidden lg:block'>
   <AnnouncementBanner/>
+  </div>
   <Navbar />
+  <div className='lg:hidden'>
+  <AnnouncementBanner/>
+  </div>
   </div>
    );
 };

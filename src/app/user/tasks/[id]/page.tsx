@@ -1,21 +1,27 @@
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, ExternalLink, Upload, Image as ImageIcon, 
-  CheckCircle2, AlertTriangle, Loader2, Zap, Link as LinkIcon, FileText
+import {
+  ArrowLeft, ExternalLink, Upload, Image as ImageIcon,
+  CheckCircle2, AlertTriangle, Zap, Link as LinkIcon,
+  FileText, Shield, RotateCcw, ChevronRight, X,
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-// --- Type Definitions ---
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Task {
   id: string;
   title: string;
   description: string;
   requiredPlatform: string;
-  proofType: string; // "SCREENSHOT" | "URL" | "TEXT_RESPONSE" | "API_VERIFIED"
+  proofType: 'SCREENSHOT' | 'URL' | 'TEXT_RESPONSE' | 'API_VERIFIED';
+  targetUrl?: string | null;
+  // Optional: if the campaign endpoint already returns submission status
+  userSubmission?: { status: 'PENDING' | 'APPROVED' | 'REJECTED' } | null;
 }
 
 interface Campaign {
@@ -27,6 +33,511 @@ interface Campaign {
   tasks: Task[];
 }
 
+type TaskResult = { success: boolean; message: string };
+type TaskStatus = 'idle' | 'completed' | 'pending_review' | 'rejected';
+
+// ─── Proof Type Meta ──────────────────────────────────────────────────────────
+
+const PROOF_META: Record<string, { icon: React.ReactNode; label: string; hint: string }> = {
+  SCREENSHOT: {
+    icon: <ImageIcon className="w-3.5 h-3.5" />,
+    label: 'Screenshot',
+    hint: 'Upload a JPG or PNG image (max 5MB)',
+  },
+  URL: {
+    icon: <LinkIcon className="w-3.5 h-3.5" />,
+    label: 'Link Proof',
+    hint: 'Paste the URL as proof of completion',
+  },
+  TEXT_RESPONSE: {
+    icon: <FileText className="w-3.5 h-3.5" />,
+    label: 'Text Response',
+    hint: 'Describe what you did to complete this task',
+  },
+  API_VERIFIED: {
+    icon: <Shield className="w-3.5 h-3.5" />,
+    label: 'Auto-Verified',
+    hint: 'Completion is verified automatically via secure API',
+  },
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SKELETON
+// ══════════════════════════════════════════════════════════════════════════════
+
+function PageSkeleton() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-6 md:py-10 space-y-6 animate-pulse">
+      {/* Back */}
+      <div className="h-4 w-24 bg-white/5 rounded-lg" />
+
+      {/* Hero card */}
+      <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-6 md:p-8">
+        <div className="h-5 w-28 bg-sats-orange-500/10 rounded-full mb-5" />
+        <div className="h-8 w-3/4 bg-white/5 rounded-xl mb-3" />
+        <div className="h-4 w-full bg-white/5 rounded-lg mb-2" />
+        <div className="h-4 w-2/3 bg-white/5 rounded-lg mb-6" />
+        <div className="h-10 w-40 bg-white/5 rounded-xl" />
+      </div>
+
+      {/* Progress bar */}
+      <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="h-3 w-24 bg-white/5 rounded" />
+          <div className="h-3 w-10 bg-white/5 rounded" />
+        </div>
+        <div className="h-1.5 bg-[#1a1a1a] rounded-full" />
+      </div>
+
+      {/* Task cards */}
+      {[1, 2].map(i => (
+        <div key={i} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-6">
+          <div className="flex items-start gap-4 mb-5">
+            <div className="w-8 h-8 rounded-xl bg-[#111] border border-[#1a1a1a] shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="h-5 bg-white/5 rounded-lg w-2/3" />
+              <div className="h-4 bg-white/5 rounded-lg w-full" />
+              <div className="h-4 bg-white/5 rounded-lg w-4/5" />
+            </div>
+          </div>
+          <div className="h-28 bg-[#111] border border-[#1a1a1a] rounded-xl" />
+          <div className="h-11 bg-white/5 rounded-xl mt-3" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PROOF INPUT COMPONENTS
+// ══════════════════════════════════════════════════════════════════════════════
+
+function ScreenshotInput({
+  taskId,
+  file,
+  onChange,
+}: {
+  taskId: string;
+  file: File | null;
+  onChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <label className="group block cursor-pointer">
+      <div
+        className={`relative flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed transition-all duration-200 ${
+          file
+            ? 'border-sats-orange-500/40 bg-sats-orange-500/5'
+            : 'border-[#222] hover:border-sats-orange-500/30 hover:bg-white/[0.02]'
+        }`}
+      >
+        {file ? (
+          <>
+            <div className="w-9 h-9 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/20 flex items-center justify-center mb-2">
+              <ImageIcon className="w-4 h-4 text-sats-orange-500" />
+            </div>
+            <p className="text-xs font-semibold text-white/70 px-4 truncate max-w-full">
+              {file.name}
+            </p>
+            <p className="text-[10px] text-white/25 mt-1">
+              {(file.size / 1024).toFixed(0)} KB · Click to change
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="w-9 h-9 rounded-xl bg-[#111] border border-[#1e1e1e] flex items-center justify-center mb-2 group-hover:border-sats-orange-500/20 transition-colors">
+              <Upload className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors" />
+            </div>
+            <p className="text-xs font-medium text-white/30">
+              Click to upload screenshot
+            </p>
+            <p className="text-[10px] text-white/15 mt-0.5">JPG, PNG — max 5MB</p>
+          </>
+        )}
+      </div>
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => onChange(taskId, e)}
+      />
+    </label>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TASK STATUS BADGE
+// ══════════════════════════════════════════════════════════════════════════════
+
+function StatusBadge({ status }: { status: TaskStatus }) {
+  const config = {
+    completed: {
+      cls: 'bg-green-500/10 border-green-500/25 text-green-400',
+      dot: 'bg-green-400',
+      label: 'Completed',
+    },
+    pending_review: {
+      cls: 'bg-amber-500/10 border-amber-500/25 text-amber-400',
+      dot: 'bg-amber-400',
+      label: 'In Review',
+    },
+    rejected: {
+      cls: 'bg-red-500/10 border-red-500/25 text-red-400',
+      dot: 'bg-red-400',
+      label: 'Rejected',
+    },
+    idle: {
+      cls: 'bg-white/5 border-white/8 text-white/30',
+      dot: 'bg-white/20',
+      label: 'Pending',
+    },
+  }[status];
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${config.cls}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${config.dot} ${status === 'pending_review' ? 'animate-pulse' : ''}`} />
+      {config.label}
+    </span>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TASK CARD
+// ══════════════════════════════════════════════════════════════════════════════
+
+function TaskCard({
+  task,
+  index,
+  taskStatus,
+  result,
+  isSubmitting,
+  selectedFile,
+  textInput,
+  onFileChange,
+  onTextChange,
+  onSubmit,
+}: {
+  task: Task;
+  index: number;
+  taskStatus: TaskStatus;
+  result: TaskResult | null;
+  isSubmitting: boolean;
+  selectedFile: File | null;
+  textInput: string;
+  onFileChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTextChange: (id: string, val: string) => void;
+  onSubmit: (id: string, proofType: string) => void;
+}) {
+  const meta = PROOF_META[task.proofType] ?? PROOF_META.TEXT_RESPONSE;
+  const isCompleted = taskStatus === 'completed' || taskStatus === 'pending_review';
+
+  const isSubmitDisabled =
+    isSubmitting ||
+    isCompleted ||
+    (task.proofType === 'SCREENSHOT' && !selectedFile) ||
+    ((task.proofType === 'URL' || task.proofType === 'TEXT_RESPONSE') && !textInput.trim());
+
+  return (
+    <div
+      className={`relative bg-[#080808] border rounded-2xl overflow-hidden transition-all duration-300 ${
+        isCompleted
+          ? 'border-green-500/15'
+          : result?.success === false
+          ? 'border-red-500/15'
+          : 'border-[#1a1a1a]'
+      }`}
+    >
+      {/* Left accent bar */}
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-[3px] transition-all duration-300 ${
+          isCompleted
+            ? 'bg-green-500/50'
+            : result?.success === false
+            ? 'bg-red-500/50'
+            : 'bg-sats-orange-500/20'
+        }`}
+      />
+
+      <div className="pl-6 pr-5 pt-6 pb-6 md:pl-7">
+
+        {/* ── Header row ── */}
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div className="flex items-start gap-4">
+            {/* Step number / check */}
+            <div
+              className={`shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black border mt-0.5 transition-all duration-300 ${
+                isCompleted
+                  ? 'bg-green-500/10 border-green-500/25 text-green-400'
+                  : 'bg-[#111] border-[#1e1e1e] text-white/20'
+              }`}
+            >
+              {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : index + 1}
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold text-white leading-snug mb-1">
+                {task.title}
+              </h3>
+              <p className="text-sm text-white/35 leading-relaxed">
+                {task.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Status badge — visible on md+ */}
+          <div className="hidden sm:block shrink-0">
+            <StatusBadge status={taskStatus} />
+          </div>
+        </div>
+
+        {/* Tags row */}
+        <div className="flex flex-wrap items-center gap-2 mb-4 pl-12">
+          {/* Platform */}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/6 text-[10px] font-bold uppercase tracking-wider text-white/30">
+            {task.requiredPlatform}
+          </span>
+          {/* Proof type */}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sats-orange-500/5 border border-sats-orange-500/15 text-[10px] font-bold uppercase tracking-wider text-sats-orange-500/60">
+            {meta.icon}
+            {meta.label}
+          </span>
+          {/* Mobile status badge */}
+          <span className="sm:hidden">
+            <StatusBadge status={taskStatus} />
+          </span>
+        </div>
+        
+      {task.targetUrl && (
+        <div className="pl-12 mb-5">
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[#0d0d0d] border border-[#1e1e1e] group/link">
+            {/* Step indicator */}
+            <div className="shrink-0 w-6 h-6 rounded-lg bg-sats-orange-500/8 border border-sats-orange-500/15 flex items-center justify-center">
+              <span className="text-[9px] font-black text-sats-orange-500/70">1</span>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/25 mb-0.5">
+                Step 1 — Open on {task.requiredPlatform}
+              </p>
+              <p className="text-xs text-white/40 truncate">{task.targetUrl}</p>
+            </div>
+
+            {/* 🚨 FIXED: Attributes moved inside the opening <a ... > tag */}
+            <a
+              href={task.targetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sats-orange-500/8 border border-sats-orange-500/20 text-sats-orange-500 text-xs font-bold hover:bg-sats-orange-500/15 hover:border-sats-orange-500/35 transition-all"
+            >
+              <span> Open </span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      )}
+
+
+        {/* ── Submission zone ── */}
+        <div className="pl-0 sm:pl-12">
+
+          {/* Already completed / in review */}
+          {isCompleted ? (
+            <div className={`flex items-start gap-3 p-4 rounded-xl border ${
+              taskStatus === 'completed'
+                ? 'bg-green-500/5 border-green-500/15'
+                : 'bg-amber-500/5 border-amber-500/15'
+            }`}>
+              <div className={`shrink-0 w-8 h-8 rounded-xl flex items-center justify-center ${
+                taskStatus === 'completed' ? 'bg-green-500/10' : 'bg-amber-500/10'
+              }`}>
+                {taskStatus === 'completed'
+                  ? <CheckCircle2 className="w-4 h-4 text-green-400" />
+                  : <RotateCcw className="w-4 h-4 text-amber-400 animate-spin" style={{ animationDuration: '3s' }} />
+                }
+              </div>
+              <div>
+                <p className={`text-sm font-semibold mb-0.5 ${
+                  taskStatus === 'completed' ? 'text-green-300' : 'text-amber-300'
+                }`}>
+                  {taskStatus === 'completed' ? 'Task Completed' : 'Submission Under Review'}
+                </p>
+                <p className={`text-xs ${
+                  taskStatus === 'completed' ? 'text-green-400/50' : 'text-amber-400/50'
+                }`}>
+                  {taskStatus === 'completed'
+                    ? 'Your proof was approved. Sats have been credited.'
+                    : 'Our team is reviewing your submission. This usually takes a few hours.'}
+                </p>
+              </div>
+            </div>
+
+          ) : taskStatus === 'rejected' ? (
+            // Rejected — allow re-submission
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/5 border border-red-500/15">
+                <div className="shrink-0 w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center">
+                  <X className="w-4 h-4 text-red-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-red-300 mb-0.5">Submission Rejected</p>
+                  <p className="text-xs text-red-400/50">
+                    Your previous submission was rejected. Please re-submit with valid proof.
+                  </p>
+                </div>
+              </div>
+              <ProofInputZone
+                task={task}
+                meta={meta}
+                selectedFile={selectedFile}
+                textInput={textInput}
+                result={result}
+                isSubmitting={isSubmitting}
+                isSubmitDisabled={isSubmitDisabled}
+                onFileChange={onFileChange}
+                onTextChange={onTextChange}
+                onSubmit={onSubmit}
+              />
+            </div>
+
+          ) : (
+            // Fresh submission
+            <ProofInputZone
+              task={task}
+              meta={meta}
+              selectedFile={selectedFile}
+              textInput={textInput}
+              result={result}
+              isSubmitting={isSubmitting}
+              isSubmitDisabled={isSubmitDisabled}
+              onFileChange={onFileChange}
+              onTextChange={onTextChange}
+              onSubmit={onSubmit}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Proof Input Zone ──────────────────────────────────────────────────────────
+
+function ProofInputZone({
+  task, meta, selectedFile, textInput, result,
+  isSubmitting, isSubmitDisabled,
+  onFileChange, onTextChange, onSubmit,
+}: {
+  task: Task;
+  meta: (typeof PROOF_META)[string];
+  selectedFile: File | null;
+  textInput: string;
+  result: TaskResult | null;
+  isSubmitting: boolean;
+  isSubmitDisabled: boolean;
+  onFileChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTextChange: (id: string, val: string) => void;
+  onSubmit: (id: string, proofType: string) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      {/* Hint */}
+      <p className="text-[11px] text-white/20 flex items-center gap-1.5">
+        <span className="text-white/15">{meta.icon}</span>
+        {meta.hint}
+      </p>
+
+      {/* Input area */}
+      {task.proofType === 'SCREENSHOT' && (
+        <ScreenshotInput
+          taskId={task.id}
+          file={selectedFile}
+          onChange={onFileChange}
+        />
+      )}
+
+      {task.proofType === 'URL' && (
+        <div className="relative">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none">
+            <LinkIcon className="w-4 h-4" />
+          </div>
+          <input
+            type="url"
+            placeholder="https://twitter.com/..."
+            value={textInput}
+            onChange={(e) => onTextChange(task.id, e.target.value)}
+            className="w-full bg-[#0d0d0d] border border-[#1a1a1a] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/15 focus:outline-none focus:border-sats-orange-500/35 hover:border-white/8 transition-colors"
+          />
+        </div>
+      )}
+
+      {task.proofType === 'TEXT_RESPONSE' && (
+        <textarea
+          placeholder="Describe what you did to complete this task..."
+          value={textInput}
+          onChange={(e) => onTextChange(task.id, e.target.value)}
+          rows={3}
+          className="w-full bg-[#0d0d0d] border border-[#1a1a1a] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/15 focus:outline-none focus:border-sats-orange-500/35 hover:border-white/8 transition-colors resize-none"
+        />
+      )}
+
+      {task.proofType === 'API_VERIFIED' && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-[#0d0d0d] border border-[#1a1a1a]">
+          <div className="shrink-0 w-8 h-8 rounded-xl bg-sats-orange-500/8 border border-sats-orange-500/15 flex items-center justify-center">
+            <Shield className="w-4 h-4 text-sats-orange-500/60" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-white/50 mb-0.5">Automatic Verification</p>
+            <p className="text-xs text-white/25 leading-relaxed">
+              Click Submit and our system will verify your completion securely in real time.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Inline error */}
+      {result?.success === false && (
+        <div className="flex items-start gap-2.5 p-3 bg-red-500/6 border border-red-500/15 rounded-xl">
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+          <p className="text-xs text-red-400/80 leading-relaxed">{result.message}</p>
+        </div>
+      )}
+
+      {/* Submit button */}
+      <button
+        onClick={() => onSubmit(task.id, task.proofType)}
+        disabled={isSubmitDisabled}
+        className={`
+          w-full flex items-center justify-center gap-2 py-3 rounded-xl
+          text-sm font-bold transition-all duration-200 active:scale-[0.98]
+          ${isSubmitDisabled
+            ? 'bg-[#111] text-white/15 border border-[#1a1a1a] cursor-not-allowed'
+            : 'bg-sats-orange-500 text-black hover:bg-sats-orange-500/90 shadow-[0_0_24px_rgba(238,139,18,0.2)]'
+          }
+        `}
+      >
+        {isSubmitting ? (
+          <>
+            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+              <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Submitting...
+          </>
+        ) : (
+          <>
+            Submit Proof
+            <ChevronRight className="w-4 h-4 opacity-60" />
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MAIN PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+
 export default function CampaignDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -34,31 +545,74 @@ export default function CampaignDetailsPage() {
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
-  // --- Submission State ---
+  // ── Submission state (unchanged logic) ────────────────────────────────────
   const [selectedFiles, setSelectedFiles] = useState<{ [taskId: string]: File | null }>({});
-  const [textInputs, setTextInputs] = useState<{ [taskId: string]: string }>({}); // 🚀 NEW: For URLs and Text
+  const [textInputs, setTextInputs] = useState<{ [taskId: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState<{ [taskId: string]: boolean }>({});
-  const [submissionResults, setSubmissionResults] = useState<{ [taskId: string]: { success: boolean; message: string } }>({});
+  const [submissionResults, setSubmissionResults] = useState<{ [taskId: string]: TaskResult }>({});
 
-  // 1. FETCH CAMPAIGN DETAILS
+  // ── Pre-loaded task statuses (fetched on mount) ───────────────────────────
+  const [taskStatuses, setTaskStatuses] = useState<{ [taskId: string]: TaskStatus }>({});
+
+  // ── 1. FETCH CAMPAIGN + PRE-CHECK SUBMISSION STATUS ───────────────────────
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-        
+        const token =
+          sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+
         const response = await fetch(`${API_URL}/users/campaigns/${campaignId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
-console.log(response);
 
-        if (!response.ok) throw new Error('Failed to fetch task details.');
+        if (!response.ok) throw new Error('Failed to fetch campaign details.');
 
-        const data = await response.json();
+        const data: Campaign = await response.json();
         setCampaign(data);
+
+        // Pre-populate task statuses from campaign response (if backend returns them)
+        const initialStatuses: { [id: string]: TaskStatus } = {};
+        data.tasks?.forEach((task) => {
+          if (task.userSubmission) {
+            const s = task.userSubmission.status;
+            initialStatuses[task.id] =
+              s === 'APPROVED' ? 'completed'
+              : s === 'PENDING' ? 'pending_review'
+              : s === 'REJECTED' ? 'rejected'
+              : 'idle';
+          } else {
+            initialStatuses[task.id] = 'idle';
+          }
+        });
+        setTaskStatuses(initialStatuses);
+
+        // Parallel: try to fetch individual task statuses as fallback
+        // (if the campaign endpoint doesn't embed submission data)
+        const hasAnyEmbedded = data.tasks?.some((t) => t.userSubmission !== undefined);
+        if (!hasAnyEmbedded && data.tasks?.length) {
+          const statusFetches = data.tasks.map(async (task) => {
+            try {
+              const r = await fetch(`${API_URL}/users/tasks/${task.id}/status`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (!r.ok) return;
+              const s = await r.json();
+              const mapped: TaskStatus =
+                s?.status === 'APPROVED' ? 'completed'
+                : s?.status === 'PENDING' ? 'pending_review'
+                : s?.status === 'REJECTED' ? 'rejected'
+                : 'idle';
+              setTaskStatuses((prev) => ({ ...prev, [task.id]: mapped }));
+            } catch {
+              // Silently fail — status check is best-effort
+            }
+          });
+          await Promise.allSettled(statusFetches);
+        }
       } catch (err: any) {
-        setError(err.message);
+        setPageError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -67,50 +621,46 @@ console.log(response);
     fetchCampaign();
   }, [campaignId]);
 
-  // 2. INPUT HANDLERS
+  // ── 2. INPUT HANDLERS (unchanged) ─────────────────────────────────────────
+
   const handleFileChange = (taskId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (!file.type.startsWith('image/')) return alert("Please upload a valid image file (JPG, PNG).");
-      if (file.size > 5 * 1024 * 1024) return alert("Image must be smaller than 5MB.");
-      
-      setSelectedFiles(prev => ({ ...prev, [taskId]: file }));
+      if (!file.type.startsWith('image/')) return alert('Please upload a valid image file (JPG, PNG).');
+      if (file.size > 5 * 1024 * 1024) return alert('Image must be smaller than 5MB.');
+      setSelectedFiles((prev) => ({ ...prev, [taskId]: file }));
     }
   };
 
   const handleTextChange = (taskId: string, value: string) => {
-    setTextInputs(prev => ({ ...prev, [taskId]: value }));
+    setTextInputs((prev) => ({ ...prev, [taskId]: value }));
   };
 
-  // 3. DYNAMIC SUBMIT LOGIC
+  // ── 3. SUBMIT (unchanged logic, adds status update on success) ────────────
+
   const handleSubmitProof = async (taskId: string, proofType: string) => {
-    setIsSubmitting(prev => ({ ...prev, [taskId]: true }));
-    setError(null);
+    setIsSubmitting((prev) => ({ ...prev, [taskId]: true }));
 
     try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      
-      let fetchOptions: RequestInit = {
+      const token =
+        sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+
+      const fetchOptions: RequestInit = {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       };
 
-      // Branch logic based on Proof Type!
       if (proofType === 'SCREENSHOT') {
         const file = selectedFiles[taskId];
-        if (!file) throw new Error("Please upload a screenshot.");
-        
+        if (!file) throw new Error('Please upload a screenshot.');
         const formData = new FormData();
         formData.append('proofImage', file);
-        fetchOptions.body = formData; // No Content-Type header needed for FormData
-        
+        fetchOptions.body = formData;
       } else if (proofType === 'URL' || proofType === 'TEXT_RESPONSE') {
         const text = textInputs[taskId];
-        if (!text || text.trim() === '') throw new Error("Response cannot be empty.");
-        
+        if (!text || text.trim() === '') throw new Error('Response cannot be empty.');
         fetchOptions.headers = { ...fetchOptions.headers, 'Content-Type': 'application/json' };
         fetchOptions.body = JSON.stringify({ proofText: text.trim() });
-        
       } else if (proofType === 'API_VERIFIED') {
         fetchOptions.headers = { ...fetchOptions.headers, 'Content-Type': 'application/json' };
         fetchOptions.body = JSON.stringify({ triggerVerification: true });
@@ -119,222 +669,180 @@ console.log(response);
       const response = await fetch(`${API_URL}/users/tasks/${taskId}/submit`, fetchOptions);
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || 'Submission failed');
+      if (!response.ok) throw new Error(data.error || 'Submission failed.');
 
-      setSubmissionResults(prev => ({ 
-        ...prev, 
-        [taskId]: { success: true, message: data.message || "Submitted successfully!" } 
+      setSubmissionResults((prev) => ({
+        ...prev,
+        [taskId]: { success: true, message: data.message || 'Submitted successfully!' },
       }));
+      // Mark task as pending review immediately after successful submit
+      setTaskStatuses((prev) => ({ ...prev, [taskId]: 'pending_review' }));
 
     } catch (err: any) {
-      setSubmissionResults(prev => ({ 
-        ...prev, 
-        [taskId]: { success: false, message: err.message } 
+      setSubmissionResults((prev) => ({
+        ...prev,
+        [taskId]: { success: false, message: err.message },
       }));
     } finally {
-      setIsSubmitting(prev => ({ ...prev, [taskId]: false }));
+      setIsSubmitting((prev) => ({ ...prev, [taskId]: false }));
     }
   };
 
-  // --- RENDER STATES ---
-  if (isLoading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-sats-orange-500 animate-spin" />
-      </div>
-    );
-  }
+  // ── Derived ────────────────────────────────────────────────────────────────
 
-  if (error || !campaign) {
+  const completedCount = campaign
+    ? Object.values(taskStatuses).filter(
+        (s) => s === 'completed' || s === 'pending_review'
+      ).length
+    : 0;
+  const totalTasks = campaign?.tasks?.length ?? 0;
+  const progressPct = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;
+  const allDone = completedCount === totalTasks && totalTasks > 0;
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  if (isLoading) return <PageSkeleton />;
+
+  if (pageError || !campaign) {
     return (
-      <div className="max-w-2xl mx-auto mt-12 p-6 bg-red-500/10 border border-red-500/30 rounded-2xl text-center">
-        <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Could not load campaign</h2>
-        <p className="text-red-400 mb-6">{error}</p>
-        <button onClick={() => router.back()} className="text-white hover:underline">Go Back</button>
+      <div className="max-w-md mx-auto mt-20 px-4 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-red-500/8 border border-red-500/15 flex items-center justify-center mx-auto mb-5">
+          <AlertTriangle className="w-7 h-7 text-red-400" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">Campaign Unavailable</h2>
+        <p className="text-sm text-white/35 mb-8 leading-relaxed">
+          {pageError || "We couldn't load this campaign. It may have ended or been removed."}
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Go Back
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20 p-4 md:p-6">
-      
-      {/* 1. BACK BUTTON & HEADER */}
-      <button 
-        onClick={() => router.back()}
-        className="flex items-center text-gray-400 hover:text-white transition-colors text-sm font-medium"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Tasks
-      </button>
+    <div className="min-h-screen bg-[#020202]">
+      {/* Ambient glows */}
+      <div className="fixed top-0 right-1/4 w-[400px] h-[400px] bg-sats-orange-500/4 rounded-full blur-[140px] pointer-events-none" />
+      <div className="fixed bottom-0 left-0 w-64 h-64 bg-sats-orange-500/3 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 md:p-10 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-5">
-          <Zap className="w-48 h-48" />
-        </div>
-        
-        <div className="relative z-10">
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 text-sm font-bold mb-6">
-            💰 {campaign.baseRewardSats} Sats Reward
+      <div className="relative max-w-3xl mx-auto px-4 py-6 md:py-10 pb-24">
+
+        {/* ── Back button ── */}
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white mb-7 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Campaigns
+        </button>
+
+        {/* ── Campaign Hero ── */}
+        <div className="relative bg-[#080808] border border-[#1a1a1a] rounded-2xl p-6 md:p-8 mb-5 overflow-hidden">
+          {/* Decorative bg zap */}
+          <div className="absolute -right-6 -top-6 text-white/[0.02]">
+            <Zap className="w-48 h-48" strokeWidth={1} />
           </div>
-          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
-            {campaign.title}
-          </h1>
-          <p className="text-gray-400 text-lg leading-relaxed max-w-2xl">
-            {campaign.description}
-          </p>
+          {/* Top highlight */}
+          <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
-          {campaign.targetUrl && (
-            <a 
-              href={campaign.targetUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center px-6 py-3 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white font-semibold rounded-xl transition-colors border border-[#333]"
-            >
-              Open Target Link <ExternalLink className="w-4 h-4 ml-2" />
-            </a>
+          <div className="relative">
+            {/* Reward pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sats-orange-500/8 border border-sats-orange-500/20 mb-5">
+              <Zap className="w-3.5 h-3.5 text-sats-orange-500" />
+              <span className="text-sm font-black text-sats-orange-500">
+                {campaign.baseRewardSats} Sats
+              </span>
+              <span className="text-xs text-sats-orange-500/50 font-medium">total reward</span>
+            </div>
+
+            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug mb-3">
+              {campaign.title}
+            </h1>
+            <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-xl mb-6">
+              {campaign.description}
+            </p>
+
+            {/* Target URL */}
+            {campaign.targetUrl && (
+              <a
+                href={campaign.targetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f0f0f] border border-[#1e1e1e] text-sm font-semibold text-white/60 hover:text-white hover:border-white/15 transition-all"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Open Campaign Link
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* ── Progress tracker ── */}
+        <div className="bg-[#080808] border border-[#1a1a1a] rounded-xl px-5 py-4 mb-6">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-white/40">Your Progress</span>
+              {allDone && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-bold text-green-400">
+                  <CheckCircle2 className="w-2.5 h-2.5" /> All done
+                </span>
+              )}
+            </div>
+            <span className="text-xs font-bold text-white/40">
+              <span className={completedCount > 0 ? 'text-white' : ''}>{completedCount}</span>
+              /{totalTasks} tasks
+            </span>
+          </div>
+          <div className="h-1.5 bg-[#111] rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ${
+                allDone
+                  ? 'bg-green-500'
+                  : 'bg-gradient-to-r from-sats-orange-500 to-yellow-500'
+              }`}
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+        </div>
+
+        {/* ── Tasks ── */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-sm font-bold text-white/50 uppercase tracking-widest">
+              Tasks to Complete
+            </h2>
+            <span className="text-[10px] text-white/20 font-medium">
+              {totalTasks} task{totalTasks !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          {campaign.tasks?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-[#080808] border border-[#1a1a1a] border-dashed rounded-2xl">
+              <p className="text-sm text-white/25">No tasks found for this campaign.</p>
+            </div>
+          ) : (
+            campaign.tasks.map((task, index) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                index={index}
+                taskStatus={taskStatuses[task.id] ?? 'idle'}
+                result={submissionResults[task.id] ?? null}
+                isSubmitting={!!isSubmitting[task.id]}
+                selectedFile={selectedFiles[task.id] ?? null}
+                textInput={textInputs[task.id] ?? ''}
+                onFileChange={handleFileChange}
+                onTextChange={handleTextChange}
+                onSubmit={handleSubmitProof}
+              />
+            ))
           )}
         </div>
-      </div>
 
-      {/* 2. TASKS LIST */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white">Tasks to Complete</h2>
-        
-        {campaign.tasks?.map((task, index) => {
-          
-          // Disable submit button logic dynamically based on proof type
-          const isSubmitDisabled = 
-            isSubmitting[task.id] ||
-            (task.proofType === 'SCREENSHOT' && !selectedFiles[task.id]) ||
-            ((task.proofType === 'URL' || task.proofType === 'TEXT_RESPONSE') && !textInputs[task.id]?.trim());
-
-          return (
-            <div key={task.id} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-6 md:p-8">
-              <div className="flex flex-col md:flex-row gap-6 justify-between">
-                
-                {/* Task Info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="w-8 h-8 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center font-bold text-sm shrink-0">
-                      {index + 1}
-                    </span>
-                    <h3 className="text-xl font-bold text-white">{task.title}</h3>
-                  </div>
-                  <p className="text-gray-400 ml-11">{task.description}</p>
-                  <div className="mt-4 ml-11 flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-xs font-bold uppercase tracking-wider">
-                      Platform: {task.requiredPlatform}
-                    </span>
-                    <span className="inline-block px-3 py-1 bg-[#111] border border-[#333] text-gray-400 rounded-lg text-xs font-bold uppercase tracking-wider">
-                      Type: {task?.proofType?.replace('_', ' ')}
-                    </span>
-                  </div>
-                </div>
-
-                {/* DYNAMIC Upload & Submit Zone */}
-                <div className="w-full md:w-80 shrink-0 bg-black border border-[#1a1a1a] rounded-xl p-5 flex flex-col justify-center">
-                  
-                  {submissionResults[task.id]?.success ? (
-                    <div className="text-center py-4">
-                      <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
-                      <h4 className="text-green-400 font-bold">Task Completed!</h4>
-                      <p className="text-xs text-gray-500 mt-1">{submissionResults[task.id].message}</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      
-                      {/* Error Message Display */}
-                      {submissionResults[task.id]?.success === false && (
-                        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400 font-medium">
-                          {submissionResults[task.id].message}
-                        </div>
-                      )}
-
-                      {/* ─── DYNAMIC FORM RENDERING ─── */}
-                      {task.proofType === 'SCREENSHOT' && (
-                        <>
-                          <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><ImageIcon className="w-4 h-4 text-gray-500" /> Upload Screenshot</h4>
-                          <label className="cursor-pointer flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-[#333] hover:border-sats-orange-500 hover:bg-sats-orange-500/5 rounded-xl transition-all">
-                            {selectedFiles[task.id] ? (
-                              <>
-                                <ImageIcon className="w-6 h-6 text-sats-orange-500 mb-2" />
-                                <span className="text-xs font-bold text-white truncate px-4 max-w-full">
-                                  {selectedFiles[task.id]?.name}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="w-6 h-6 text-gray-500 mb-2" />
-                                <span className="text-xs font-medium text-gray-400">Click to browse</span>
-                              </>
-                            )}
-                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(task.id, e)} />
-                          </label>
-                        </>
-                      )}
-
-                      {task.proofType === 'URL' && (
-                        <>
-                          <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><LinkIcon className="w-4 h-4 text-gray-500" /> Submit Link</h4>
-                          <input 
-                            type="url" 
-                            placeholder="https://..." 
-                            value={textInputs[task.id] || ''} 
-                            onChange={(e) => handleTextChange(task.id, e.target.value)}
-                            className="w-full bg-[#111] border border-[#333] text-white text-sm px-4 py-3 rounded-xl focus:border-sats-orange-500 outline-none transition-colors"
-                          />
-                        </>
-                      )}
-
-                      {task.proofType === 'TEXT_RESPONSE' && (
-                        <>
-                          <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-gray-500" /> Submit Text</h4>
-                          <textarea 
-                            placeholder="Enter your response here..." 
-                            value={textInputs[task.id] || ''} 
-                            onChange={(e) => handleTextChange(task.id, e.target.value)}
-                            className="w-full min-h-[100px] bg-[#111] border border-[#333] text-white text-sm px-4 py-3 rounded-xl focus:border-sats-orange-500 outline-none transition-colors resize-none"
-                          />
-                        </>
-                      )}
-
-                      {task.proofType === 'API_VERIFIED' && (
-                        <div className="text-center p-4 bg-[#111] border border-[#333] rounded-xl">
-                          <Zap className="w-6 h-6 text-sats-orange-500 mx-auto mb-2" />
-                          <p className="text-xs text-gray-400 font-medium">Click below to securely verify completion via API.</p>
-                        </div>
-                      )}
-
-                      {/* Universal Submit Button */}
-                      <button
-                        onClick={() => handleSubmitProof(task.id, task.proofType)}
-                        disabled={isSubmitDisabled}
-                        className={`w-full py-3 rounded-xl font-bold flex items-center justify-center transition-all mt-2 ${
-                          isSubmitDisabled 
-                            ? 'bg-[#1a1a1a] text-gray-500 cursor-not-allowed' 
-                            : 'bg-sats-orange-500 hover:bg-sats-orange-400 text-black shadow-[0_0_20px_rgba(247,147,26,0.3)] active:scale-95'
-                        }`}
-                      >
-                        {isSubmitting[task.id] ? (
-                          <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
-                        ) : (
-                          'Submit Proof'
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            </div>
-          );
-        })}
-
-        {campaign.tasks?.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No specific tasks found for this campaign.
-          </div>
-        )}
       </div>
     </div>
   );
