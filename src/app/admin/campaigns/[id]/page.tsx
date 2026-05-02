@@ -54,7 +54,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const [taskForm, setTaskForm] = useState({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'',
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -174,7 +174,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT' });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'' });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
     } catch (err: any) {
@@ -198,7 +198,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           title: editingTaskForm.title,
           description: editingTaskForm.description,
           requiredPlatform: editingTaskForm.requiredPlatform,
-          proofType: editingTaskForm.proofType
+          proofType: editingTaskForm.proofType,
+          // Send empty string to clear, undefined to skip — backend accepts both per schema
+          ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
         })
       });
 
@@ -459,6 +461,32 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         </select>
                       </div>
                     </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
+                        Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
+                      </label>
+                      <div className="relative">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <LinkIcon className="w-4 h-4 text-white/15" />
+                        </div>
+                        <input
+                          type="url"
+                          value={taskForm.targetUrl}
+                          onChange={e => setTaskForm({ ...taskForm, targetUrl: e.target.value })}
+                          placeholder="https://twitter.com/profile (leave blank if not needed)"
+                          className={`${inputCls} pl-10`}
+                          pattern="https?://.+"
+                          title="Must be a valid URL starting with http:// or https://"
+                          minLength={10}
+                          maxLength={2048}
+                        />
+                      </div>
+                      {taskForm.targetUrl && !/^https?:\/\/.+/.test(taskForm.targetUrl) && (
+                        <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
+                          <span>⚠</span> Must start with http:// or https://
+                        </p>
+                      )}
+                    </div>
                     <div className="pt-2">
                       <button type="submit" disabled={isSubmittingTask} className="w-full flex items-center justify-center gap-2 bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-black py-3 rounded-xl transition-all disabled:opacity-50">
                         {isSubmittingTask ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />} 
@@ -472,7 +500,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               {/* Task List Display */}
               {campaign.tasks && campaign.tasks.length > 0 ? (
                 <div className="space-y-4">
-                  {campaign.tasks.map((task: any, index: number) => (
+                  {campaign.tasks.map((task:any, index: number) => (
                     <div key={task.id} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5 group hover:border-[#2a2a2a] transition-all">
                       
                       {/* Inline Task Editor */}
@@ -492,6 +520,32 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               {PROOF_TYPES.map(p => <option key={p} value={p}>{p.replace('_', ' ')}</option>)}
                             </select>
                           </div>
+                          <div>
+                          <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
+                            Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
+                          </label>
+                          <div className="relative">
+                            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                              <LinkIcon className="w-4 h-4 text-white/15" />
+                            </div>
+                            <input
+                              type="url"
+                              value={editingTaskForm.targetUrl || ''}
+                              onChange={e => setEditingTaskForm({ ...editingTaskForm, targetUrl: e.target.value })}
+                              placeholder="https://... (leave blank to remove)"
+                              className={`${inputCls} pl-10`}
+                              pattern="https?://.+"
+                              title="Must be a valid URL starting with http:// or https://"
+                              minLength={10}
+                              maxLength={2048}
+                            />
+                          </div>
+                          {editingTaskForm.targetUrl && !/^https?:\/\/.+/.test(editingTaskForm.targetUrl) && (
+                            <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
+                              <span>⚠</span> Must start with http:// or https://
+                            </p>
+                          )}
+                        </div>
                           <div className="flex gap-3 justify-end pt-2">
                             <button type="button" onClick={() => setEditingTaskId(null)} className="px-4 py-2 text-gray-400 hover:text-white font-bold text-sm">Cancel</button>
                             <button type="submit" disabled={isUpdatingTask} className="px-6 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold text-sm flex items-center disabled:opacity-50">

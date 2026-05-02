@@ -144,6 +144,7 @@ export default function UserSettingsPage() {
                     <input 
                       type="text" 
                       value={form.fullName}
+                      minLength={2}
                       onChange={(e) => handleUpdate('fullName', e.target.value)}
                       className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl pl-11 pr-4 py-3.5 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-sats-orange-500/50 focus:bg-[#151515] transition-all"
                       placeholder="John Doe"
@@ -155,9 +156,11 @@ export default function UserSettingsPage() {
                     <input 
                       type="text" 
                       value={form.phone}
+                      maxLength={10}
+                      max={10}
                       onChange={(e) => handleUpdate('phone', e.target.value)}
                       className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl pl-11 pr-4 py-3.5 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-sats-orange-500/50 focus:bg-[#151515] transition-all"
-                      placeholder="+1 234 567 8900"
+                      placeholder="123 456 7890"
                     />
                   </InputWrapper>
                 </div>
