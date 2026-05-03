@@ -11,7 +11,7 @@ export const NavbarWrapper = () => {
   if (pathname !== '/') return null;
 
   return (
-  <div>
+  <div className=''>
     <div className=' hidden lg:block'>
   <AnnouncementBanner/>
   </div>
