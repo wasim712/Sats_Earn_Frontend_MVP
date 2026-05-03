@@ -299,14 +299,8 @@ export const requestSignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to send OTP');
 
       return formData; 
-<<<<<<< HEAD
     } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
-=======
-    } catch (error: any) {
-      // 🚨 FIXED: Passing error.message (string) instead of raw Error object
-      return rejectWithValue(error.message || 'Network error occurred');
->>>>>>> 3b57fe4d83db1a3a98d776a96ff347baab47d89d
     }
   }
 );
@@ -325,14 +319,8 @@ export const verifySignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid OTP');
 
       return data; 
-<<<<<<< HEAD
     } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
-=======
-    } catch (error: any) {
-      // 🚨 FIXED: Extracting string message
-      return rejectWithValue(error.message || 'Network error occurred');
->>>>>>> 3b57fe4d83db1a3a98d776a96ff347baab47d89d
     }
   }
 );
@@ -351,54 +339,8 @@ export const signInUser = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid credentials');
 
       return data; 
-<<<<<<< HEAD
     } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
-=======
-    } catch (error: any) {
-      // 🚨 FIXED: Extracting string message
-      return rejectWithValue(error.message || 'Network error occurred');
-    }
-  }
-);
-
-export const requestPasswordReset = createAsyncThunk(
-  'auth/requestPasswordReset',
-  async (email: string, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || data.message || 'Failed to send reset code');
-      return data;
-    } catch (error: any) {
-      // 🚨 FIXED: Extracting string message
-      return rejectWithValue(error.message || 'Network error occurred');
-    }
-  }
-);
-
-export const resetPassword = createAsyncThunk(
-  'auth/resetPassword',
-  async ({ email, token, newPassword }: any, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, token, newPassword }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || data.message || 'Failed to reset password');
-      return data;
-    } catch (error: any) {
-      // 🚨 FIXED: Extracting string message
-      return rejectWithValue(error.message || 'Network error occurred');
->>>>>>> 3b57fe4d83db1a3a98d776a96ff347baab47d89d
     }
   }
 );
