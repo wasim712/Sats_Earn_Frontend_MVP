@@ -1,10 +1,15 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import Error from 'next/error';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 import type { AuthUser, SignUpPayload } from '@/types/user';
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return fallback;
+};
 
 interface AuthState {
   user: AuthUser | null;
@@ -62,8 +67,8 @@ export const requestSignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to send OTP');
 
       return formData; 
-    } catch (error:Error | unknown) {
-      return rejectWithValue(error || 'Network error occurred');
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
     }
   }
 );
@@ -82,8 +87,8 @@ export const verifySignupOtp = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid OTP');
 
       return data; 
-    } catch (error: Error | unknown) {
-      return rejectWithValue(error || 'Network error occurred');
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
     }
   }
 );
@@ -102,8 +107,8 @@ export const signInUser = createAsyncThunk(
       if (!response.ok) throw new Error(data.error || data.message || 'Invalid credentials');
 
       return data; 
-    } catch (error: Error| unknown) {
-      return rejectWithValue(error || 'Network error occurred');
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
     }
   }
 );
