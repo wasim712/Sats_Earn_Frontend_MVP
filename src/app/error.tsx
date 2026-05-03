@@ -45,7 +45,7 @@ export default function GlobalError({
         </div>
 
         {/* Text Content */}
-        <h1 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 mb-4 tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-linear-to-b from-white to-gray-500 mb-4 tracking-tight">
           System Glitch
         </h1>
         
