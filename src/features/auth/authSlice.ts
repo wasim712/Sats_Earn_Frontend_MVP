@@ -345,6 +345,49 @@ export const signInUser = createAsyncThunk(
   }
 );
 
+export const requestPasswordReset = createAsyncThunk(
+  'auth/requestPasswordReset',
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || data.message || 'Failed to send reset code');
+
+      return data;
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async (
+    payload: { email: string; token: string; newPassword: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || data.message || 'Failed to reset password');
+
+      return data;
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
+    }
+  }
+);
+
 // --- SLICE & REDUCERS ---
 
 const authSlice = createSlice({
