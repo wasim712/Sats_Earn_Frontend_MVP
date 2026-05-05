@@ -14,6 +14,8 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
+const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
+const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 const PLATFORMS = ["TWITTER", "YOUTUBE", "INSTAGRAM", "TELEGRAM", "FACEBOOK", "LINKEDIN", "APP_STORE", "PLAY_STORE", "WEBSITE"];
 const PROOF_TYPES = ["SCREENSHOT", "URL", "TEXT_RESPONSE", "API_VERIFIED"];
 
@@ -275,6 +277,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const safeTotal = Number(campaign.totalCompletions) || 0;
   const safeMax = Number(campaign.maxCompletions) || 1;
   const progressPercent = Math.min((safeTotal / safeMax) * 100, 100);
+  const visibleRewardTiers = editForm.isPremiumOnly
+    ? PREMIUM_TIERS
+    : [...FREE_TIERS, ...PREMIUM_TIERS];
 
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
@@ -409,6 +414,28 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   )}
                   </Field>
 
+                  <Field title="Device Targeting">
+                    {!isEditing ? (
+                      <span className="text-white font-bold">
+                        {campaign.requiredPlatform === 'DESKTOP'
+                          ? 'Desktop Only'
+                          : campaign.requiredPlatform === 'ANDROID'
+                            ? 'Android Only'
+                            : campaign.requiredPlatform === 'IOS'
+                              ? 'iOS Only'
+                              : 'All Devices'}
+                      </span>
+                    ) : (
+                      <select value={editForm.requiredPlatform || 'NONE'} onChange={e => setEditForm({ ...editForm, requiredPlatform: e.target.value })} className={inputCls}>
+                        {DEVICE_OPTIONS.map(device => (
+                          <option key={device} value={device}>
+                            {device === 'NONE' ? 'All Devices' : device === 'DESKTOP' ? 'Desktop Only' : device === 'ANDROID' ? 'Android Only' : 'iOS Only'}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+
                   <Field title="Target Countries">
                     {!isEditing ? (
                       <div className="flex flex-wrap gap-2">
@@ -456,7 +483,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   
                   {!isEditing ? (
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {FREE_TIERS.map(tier => (
+                      {(campaign.isPremiumOnly ? PREMIUM_TIERS : [...FREE_TIERS, ...PREMIUM_TIERS]).map(tier => (
                         <div key={tier} className="bg-sats-black-900 border border-[#1a1a1a] rounded-xl p-3 flex flex-col gap-1 shadow-sm">
                           <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
                           <span className="text-white font-bold text-sm">~ {campaign.tierRewardMatrix?.[tier] || 0}</span>
@@ -465,7 +492,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {FREE_TIERS.map(tier => (
+                      {visibleRewardTiers.map(tier => (
                         <div key={tier} className="bg-sats-black-900 border border-[#1a1a1a] rounded-lg p-2 flex flex-col gap-1">
                           <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
                           <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || 0} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />

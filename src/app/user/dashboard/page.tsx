@@ -137,13 +137,25 @@ export default function UserDashboardPage() {
                       </div>
                       <h3 className="text-white font-bold text-base">{submission.taskTitle}</h3>
                       <p className="text-xs text-gray-500 font-medium mt-1">{submission.campaignTitle}</p>
+                      {submission.status === 'PENDING_24H' && (
+                        <div className="mt-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-3 text-xs">
+                          <p className="font-bold text-blue-300 mb-1">Submission accepted</p>
+                          <p className="text-blue-100/80 leading-relaxed">Your proof is accepted and is now in the 24-hour review window. After 24 hours, it moves into the 15-day locked state.</p>
+                        </div>
+                      )}
+                      {submission.status === 'LOCKED_15D' && (
+                        <div className="mt-3 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-3 text-xs">
+                          <p className="font-bold text-yellow-300 mb-1">Accepted and locked for 15 days</p>
+                          <p className="text-yellow-100/80 leading-relaxed">The 24-hour review is complete. Your reward is now in the 15-day security lock until it becomes withdrawable.</p>
+                        </div>
+                      )}
                     </div>
 
                     <div className="text-xs text-gray-400 space-y-1 sm:text-right">
                       <p>Reward: {submission.rewardSats.toLocaleString()} sats</p>
                       <p>Submitted: {formatDate(submission.submittedAt)}</p>
-                      {submission.unlockAt && <p>Unlocks: {formatDate(submission.unlockAt)}</p>}
-                      {submission.status !== 'WITHDRAWABLE' && submission.remainingMs > 0 && <p>Time left: {formatRemainingTime(submission.remainingMs)}</p>}
+                      {submission.unlockAt && <p>{submission.status === 'LOCKED_15D' ? 'Available for withdrawal:' : 'Next unlock step:'} {formatDate(submission.unlockAt)}</p>}
+                      {submission.status !== 'WITHDRAWABLE' && submission.remainingMs > 0 && <p>{submission.status === 'LOCKED_15D' ? 'Becomes withdrawable in:' : 'Time left:'} {formatRemainingTime(submission.remainingMs)}</p>}
                       {submission.creditedAt && <p>Credited: {formatDate(submission.creditedAt)}</p>}
                     </div>
                   </div>

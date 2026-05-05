@@ -1,16 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Search, CheckCircle2, AlertTriangle, Monitor, Smartphone } from 'lucide-react';
 import { CampaignUserCard } from '@/components/user/CampaignUserCard';
+import type { Campaign } from '@/types/admin';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+type FilterMode = 'ALL' | 'AVAILABLE' | 'COMPLETED';
+type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
+
 export default function TasksPage() {
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<FilterMode>('ALL');
+  const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>('ALL');
 
   // --- THE REAL API CALL ---
   useEffect(() => {
@@ -44,10 +50,29 @@ export default function TasksPage() {
   }, []);
 
   // Filter functionality for the search bar
-  const filteredCampaigns = campaigns.filter(c => 
-    c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    const matchesSearch =
+      campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      campaign.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const campaignDevice = typeof (campaign as any).requiredPlatform === 'string'
+      ? (campaign as any).requiredPlatform.toUpperCase()
+      : 'NONE';
+
+    const matchesDevice =
+      deviceFilter === 'ALL'
+        ? true
+        : campaignDevice === deviceFilter;
+
+    const matchesFilter =
+      filterMode === 'ALL'
+        ? true
+        : filterMode === 'COMPLETED'
+          ? Boolean(campaign.isCompleted)
+          : !campaign.isCompleted;
+
+    return matchesSearch && matchesFilter && matchesDevice;
+  });
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-4 lg:p-6">
@@ -72,6 +97,38 @@ export default function TasksPage() {
             className="w-full bg-black border border-[#1a1a1a] text-white rounded-2xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-sats-orange-500/40 hover:border-[#2a2a2a] transition-all shadow-lg placeholder-gray-600 font-medium"
           />
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        {(['ALL', 'AVAILABLE', 'COMPLETED'] as FilterMode[]).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => setFilterMode(mode)}
+            className={`rounded-2xl border px-4 py-2 text-sm font-bold transition-all ${filterMode === mode ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400' : 'border-[#1a1a1a] bg-black text-gray-400 hover:border-[#2a2a2a] hover:text-white'}`}
+          >
+            {mode === 'ALL' ? 'All' : mode === 'AVAILABLE' ? 'Available' : 'Completed'}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        {([
+          { key: 'ALL', label: 'All Devices', icon: Monitor },
+          { key: 'DESKTOP', label: 'Desktop', icon: Monitor },
+          { key: 'ANDROID', label: 'Android', icon: Smartphone },
+          { key: 'IOS', label: 'iOS', icon: Smartphone },
+        ] as { key: DeviceFilter; label: string; icon: React.ComponentType<{ className?: string }> }[]).map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setDeviceFilter(key)}
+            className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-bold transition-all ${deviceFilter === key ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400' : 'border-[#1a1a1a] bg-black text-gray-400 hover:border-[#2a2a2a] hover:text-white'}`}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* ERROR STATE */}
