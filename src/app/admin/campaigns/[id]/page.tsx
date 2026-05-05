@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateCampaign, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
+import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import { 
   ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Calendar, Trash2, 
   BarChart3, Activity, CheckCircle2, Clock, XCircle, Globe2, Medal, 
@@ -12,7 +13,7 @@ import {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
-const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
+const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
 const PLATFORMS = ["TWITTER", "YOUTUBE", "INSTAGRAM", "TELEGRAM", "FACEBOOK", "LINKEDIN", "APP_STORE", "PLAY_STORE", "WEBSITE"];
 const PROOF_TYPES = ["SCREENSHOT", "URL", "TEXT_RESPONSE", "API_VERIFIED"];
 
@@ -37,6 +38,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const { id } = React.use(params);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { countries } = useAppSelector((state) => state.adminCountries);
   
   const [campaign, setCampaign] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
@@ -99,6 +101,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   }));
 };
+
+  const handleCountryToggle = (country: string) => {
+    setEditForm((prev: any) => ({
+      ...prev,
+      targetCountries: prev.targetCountries?.includes(country)
+        ? prev.targetCountries.filter((item: string) => item !== country)
+        : [...(prev.targetCountries || []), country],
+    }));
+  };
+
+  useEffect(() => {
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [countries.length, dispatch]);
   useEffect(() => {
     fetchCampaignData();
   }, [fetchCampaignData]);
@@ -116,6 +133,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       title: editForm.title.trim(),
       description: editForm.description.trim(),
       category: editForm.category,
+      targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
       baseRewardSats: Number(editForm.baseRewardSats),
@@ -373,23 +391,53 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   )}
                 </Field>
 
-                <Field title="Access Gate">
+                  <Field title="Access Gate">
                   {!isEditing ? (
                     <div className="flex items-center gap-2">
                       {campaign.isPremiumOnly && <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-[10px] font-black text-yellow-400 uppercase tracking-widest"><Crown className="w-3 h-3" /> Premium Only</span>}
                       <span className="text-gray-300 font-bold text-sm uppercase tracking-wider bg-[#111] px-2 py-0.5 rounded border border-[#2a2a2a]">Tier: {campaign.requiredFreeTier}</span>
                     </div>
-                  ) : (
-                    <div className="flex gap-4">
-                       <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} className={inputCls}>
-                        {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                      <button type="button" onClick={() => setEditForm((prev: any) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
+                    ) : (
+                      <div className="flex gap-4">
+                        <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
+                          {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                        <button type="button" onClick={() => setEditForm((prev: any) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
                         <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
                       </button>
                     </div>
                   )}
-                </Field>
+                  </Field>
+
+                  <Field title="Target Countries">
+                    {!isEditing ? (
+                      <div className="flex flex-wrap gap-2">
+                        {campaign.targetCountries?.length ? campaign.targetCountries.map((country: string) => (
+                          <span key={country} className="px-2 py-1 rounded-lg bg-[#111] border border-[#1a1a1a] text-xs font-bold text-gray-300">
+                            {country}
+                          </span>
+                        )) : <span className="text-gray-500 text-sm">All countries</span>}
+                      </div>
+                    ) : (
+                      <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 max-h-56 overflow-y-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          {countries.map((country) => {
+                            const selected = editForm.targetCountries?.includes(country);
+                            return (
+                              <button
+                                key={country}
+                                type="button"
+                                onClick={() => handleCountryToggle(country)}
+                                className={`text-left px-3 py-2 rounded-xl border transition-all ${selected ? 'bg-sats-orange-500 text-black border-sats-orange-500' : 'bg-black text-gray-300 border-[#1a1a1a] hover:border-sats-orange-500/40'}`}
+                              >
+                                {country}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </Field>
 
                 <Field title="Base Economics">
                   {!isEditing ? (

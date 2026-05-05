@@ -14,10 +14,9 @@ import {
 import Image from 'next/image';
 import { requestSignupOtp , verifySignupOtp, goBackToStep1, resetAuthError} from '../authSlice';
 import DatePickerInput from './DatePickerInput';
+import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-export const ALL_COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe","American Samoa","Anguilla","Aruba","Bermuda","British Virgin Islands","Cayman Islands","Christmas Island","Cook Islands","Curacao","Faroe Islands","French Guiana","French Polynesia","Gibraltar","Greenland","Guadeloupe","Guam","Guernsey","Hong Kong","Isle of Man","Jersey","Kosovo","Macau","Martinique","Mayotte","Montserrat","New Caledonia","Niue","Norfolk Island","Northern Mariana Islands","Puerto Rico","Reunion","Saint Barthelemy","Saint Helena","Saint Martin","Saint Pierre and Miquelon","Sint Maarten","Tokelau","Turks and Caicos Islands","U.S. Virgin Islands","Western Sahara"];
 
 const RuleItem = ({ met, text }: { met: boolean, text: string }) => (
   <div className={`flex items-center space-x-2 text-[11px] transition-colors duration-300 ${met ? 'text-green-400' : 'text-gray-500'}`}>
@@ -36,6 +35,7 @@ export default function SignupForm() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { isLoading, error, step, tempData, user } = useAppSelector((state) => state.auth);
+  const { countries } = useAppSelector((state) => state.adminCountries);
   
   const [formError, setFormError] = useState<string | null>(null);
   const [toast, setToast] = useState({ show: false, message: '' });
@@ -79,6 +79,12 @@ export default function SignupForm() {
   useEffect(() => {
     if (user) router.push('/user/dashboard');
   }, [user, router]);
+
+  useEffect(() => {
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [countries.length, dispatch]);
 
   // LIVE USERNAME CHECKER
   useEffect(() => {
@@ -207,7 +213,7 @@ export default function SignupForm() {
     }
   };
 
-  const filteredCountries = ALL_COUNTRIES.filter(c => 
+  const filteredCountries = countries.filter(c => 
     c.toLowerCase().includes(countrySearch.toLowerCase())
   );
 
