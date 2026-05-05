@@ -92,15 +92,14 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
 
   // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Always close the mobile drawer when any link is clicked
+      if (window.innerWidth < 1024 && isOpen) {
+        onClose();
+      }
     if (pathname === href) {
       // If we are already on this page, strictly prevent Next.js from routing.
       // This stops the page from re-rendering and stops the useEffect from fetching again!
       e.preventDefault(); 
-      
-      // If on mobile, we still want to close the drawer even if we didn't route anywhere
-      if (window.innerWidth < 1024 && isOpen) {
-        onClose();
-      }
     }
   };
   
@@ -204,10 +203,18 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
           })}
         </nav>
 
-        {/* BOTTOM SECTION */}
+        {/* BOTTOM SECTION */}  
         <div className="p-4 border-t border-sats-black-800 bg-sats-black-950 flex flex-col gap-4">
           <Link href="/user/profile">
-          <div className={`flex items-center gap-3 p-3 bg-[#121212] rounded-[20px] border border-sats-black-800 ${isCollapsed ? 'justify-center' : ''}`}>
+          <div className={`flex items-center gap-3 p-3 bg-[#121212] rounded-[20px] border border-sats-black-800 ${isCollapsed ? 'justify-center' : ''}`} onClick={(e)=>{  if (window.innerWidth < 1024 && isOpen) {
+        onClose();
+      }
+          if (pathname === '/user/profile') {
+      // If we are already on this page, strictly prevent Next.js from routing.
+      // This stops the page from re-rendering and stops the useEffect from fetching again!
+      e.preventDefault(); 
+    }
+      }}>
             <div className="w-10 h-10 rounded-full bg-sats-orange-500 flex items-center justify-center text-black font-extrabold text-sm shrink-0">
               {getInitials(user?.name)}
             </div>

@@ -44,7 +44,7 @@ export default function ReferralsPage() {
     );
   }
 
-  const referralUrl = `http://localhost:3000/signup?ref=${data.referralCode}`;
+  const referralUrl = `https://sats-earn-frontend.vercel.app/signup?ref=${data.referralCode}`;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6">

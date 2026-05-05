@@ -11,14 +11,14 @@ export const NavbarWrapper = () => {
   if (pathname !== '/') return null;
 
   return (
-  <div className=''>
-    <div className=' hidden lg:block'>
-  <AnnouncementBanner/>
-  </div>
-  <Navbar />
-  <div className='lg:hidden'>
-  <AnnouncementBanner/>
-  </div>
+  <div className="sticky top-0 z-50">
+    <div className="hidden lg:block">
+      <AnnouncementBanner />
+    </div>
+    <Navbar />
+    <div className="lg:hidden">
+      <AnnouncementBanner />
+    </div>
   </div>
    );
 };

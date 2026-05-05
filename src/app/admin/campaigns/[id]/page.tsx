@@ -161,7 +161,13 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       const res = await fetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(taskForm)
+        body: JSON.stringify({
+          title: taskForm.title,
+          description: taskForm.description,
+          proofType: taskForm.proofType,
+          targetUrl: taskForm.targetUrl || undefined,
+          requirements: { requiredPlatform: taskForm.requiredPlatform },
+        })
       });
 
       if (!res.ok) {
@@ -194,12 +200,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       const res = await fetch(`${API_URL}/admin/campaigns/${id}/tasks/${editingTaskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        // AFTER
         body: JSON.stringify({
           title: editingTaskForm.title,
           description: editingTaskForm.description,
-          requiredPlatform: editingTaskForm.requiredPlatform,
           proofType: editingTaskForm.proofType,
-          // Send empty string to clear, undefined to skip — backend accepts both per schema
+          requirements: {
+            ...(editingTaskForm.requirements || {}),
+            requiredPlatform: editingTaskForm.requiredPlatform,
+          },
           ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
         })
       });
@@ -513,7 +522,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
-                            <select value={editingTaskForm.requiredPlatform} onChange={e => setEditingTaskForm({...editingTaskForm, requiredPlatform: e.target.value})} className={inputCls}>
+                            <select
+                            value={editingTaskForm.requirements?.requiredPlatform || ''}
+                            onChange={e => setEditingTaskForm({
+                              ...editingTaskForm,
+                              requiredPlatform: e.target.value, // keep for local state
+                              requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
+                            })}
+                            className={inputCls}
+                          >
                               {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
                             <select value={editingTaskForm.proofType} onChange={e => setEditingTaskForm({...editingTaskForm, proofType: e.target.value})} className={inputCls}>
