@@ -87,16 +87,15 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
   ];
     // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname === href) {
-      // If we are already on this page, strictly prevent Next.js from routing.
-      // This stops the page from re-rendering and stops the useEffect from fetching again!
-      e.preventDefault(); 
-      
-      // If on mobile, we still want to close the drawer even if we didn't route anywhere
+    // Always close the mobile drawer when any link is clicked
       if (window.innerWidth < 1024 && isOpen) {
         onClose();
       }
-    }
+
+      // Prevent redundant navigation only if already on this page
+      if (pathname === href) {
+        e.preventDefault();
+      }
   };
   return (
     <>

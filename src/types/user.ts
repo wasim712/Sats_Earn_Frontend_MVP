@@ -70,6 +70,18 @@ export interface UserDashboard {
     description: string | null;
     createdAt: string;
   }>;
+  recentSubmissions: Array<{
+    id: string;
+    taskTitle: string;
+    campaignTitle: string;
+    status: string;
+    rejectionReason: string | null;
+    submittedAt: string;
+    unlockAt: string | null;
+    creditedAt: string | null;
+    rewardSats: number;
+    remainingMs: number;
+  }>;
 }
 
 export interface UserReferral {
@@ -140,4 +152,17 @@ export interface UserWithdrawal {
   paymentProof: string | null;
   status: 'PENDING' | 'PAID' | 'REJECTED';
   createdAt: string;
+}
+
+export interface UserSubmissionHistoryItem {
+  id: string;
+  taskTitle: string;
+  campaignTitle: string;
+  status: string;
+  rejectionReason: string | null;
+  submittedAt: string;
+  unlockAt: string | null;
+  creditedAt: string | null;
+  rewardSats: number;
+  remainingMs: number;
 }

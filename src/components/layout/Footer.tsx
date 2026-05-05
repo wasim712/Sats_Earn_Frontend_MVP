@@ -6,11 +6,11 @@ import { LogoText } from '../ui/LogoText';
 // --- DATA CONFIGURATION ---
 const FOOTER_LINKS = {
   Earn: [
-    { name: 'Social Tasks', href: '#' },
-    { name: 'Surveys', href: '#' },
-    { name: 'Offerwalls', href: '#' },
-    { name: 'Referral Program', href: '#' },
-    { name: 'Leaderboard', href: '#' },
+    { name: 'Social Tasks', href: '/signup' },
+    { name: 'Surveys', href: '/signup' },
+    { name: 'Offerwalls', href: '/signup' },
+    { name: 'Referral Program', href: '/signup' },
+    { name: 'Leaderboard', href: '/signup' },
   ],
   Company: [
     { name: 'About Us', href: '#' },

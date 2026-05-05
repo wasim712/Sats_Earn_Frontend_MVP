@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, Home, Target, Lightbulb } from 'lucide-react';
+import { Menu, Home, Target, Lightbulb, FileCheck2 } from 'lucide-react';
 
 import { UserSidebar } from '@/components/user/UserSidebar';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'; 
@@ -16,6 +16,7 @@ import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 const DOCK_LINKS = [
   { label: 'Dashboard', path: '/user/dashboard', icon: Home },
   { label: 'Tasks', path: '/user/tasks', icon: Target }, 
+  { label: 'Submissions', path: '/user/submissions', icon: FileCheck2 },
   { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
 ];
 

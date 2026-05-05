@@ -116,7 +116,8 @@ export function AnnouncementBanner() {
         }
       `}</style>
 
-      <div className="sticky top-16 lg:top-0 z-40 w-full overflow-hidden">
+      {/* <div className="sticky top-16 lg:top-0 z-40 w-full overflow-hidden"> */}
+      <div className="w-full overflow-hidden">
 
         {/* ── Glass base ── */}
         <div className="relative flex items-stretch h-11 bg-sats-black-950/80 backdrop-blur-2xl border-b border-white/[0.06]">

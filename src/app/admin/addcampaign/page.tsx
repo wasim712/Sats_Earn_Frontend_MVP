@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { createCampaign } from '@/features/admin/adminCampaignsSlice';
+import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import { 
   ArrowLeft, Save, Loader2, ChevronDown, 
   Zap, Shield, Target, Coins, Crown 
@@ -11,10 +12,13 @@ import {
 
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
+const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
+const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 
 export default function AddCampaignPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { countries } = useAppSelector((state) => state.adminCountries);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
@@ -23,6 +27,8 @@ export default function AddCampaignPage() {
     title: '',
     description: '',
     category: 'SOCIAL',
+    targetCountries: [] as string[],
+    requiredPlatform: 'NONE',
     isPremiumOnly: false,
     requiredFreeTier: 'BASIC',
     baseRewardSats: 0,
@@ -51,6 +57,29 @@ export default function AddCampaignPage() {
     }));
   };
 
+  const handleCountryToggle = (country: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      targetCountries: prev.targetCountries.includes(country)
+        ? prev.targetCountries.filter((item) => item !== country)
+        : [...prev.targetCountries, country],
+    }));
+  };
+
+  useEffect(() => {
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [countries.length, dispatch]);
+
+  const visibleRewardTiers = formData.isPremiumOnly
+    ? PREMIUM_TIERS
+    : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const projectedMaxLiability = visibleRewardTiers.reduce((max, tier) => {
+    const reward = Number(formData.tierRewardMatrix[tier]) || 0;
+    return Math.max(max, reward * Number(formData.maxCompletions || 0));
+  }, 0);
+
   // ─── Submit Engine ───
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +98,8 @@ export default function AddCampaignPage() {
       title: formData.title.trim(),
       description: formData.description.trim(),
       category: formData.category,
+      targetCountries: formData.targetCountries,
+      requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
       requiredFreeTier: formData.requiredFreeTier,
       baseRewardSats: Number(formData.baseRewardSats),
@@ -150,7 +181,7 @@ export default function AddCampaignPage() {
                   <Shield className="w-5 h-5 text-sats-orange-500" /> Categorization & Gates
                 </h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <InputWrapper label="Category" required>
                     <select name="category" value={formData.category} onChange={handleChange} className={`${inputCls} appearance-none cursor-pointer`}>
                       {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
@@ -159,12 +190,41 @@ export default function AddCampaignPage() {
                   </InputWrapper>
 
                   <InputWrapper label="Required Free Tier">
-                    <select name="requiredFreeTier" value={formData.requiredFreeTier} onChange={handleChange} className={`${inputCls} appearance-none cursor-pointer`}>
-                      {FREE_TIERS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </InputWrapper>
-                </div>
+                      <select name="requiredFreeTier" value={formData.requiredFreeTier} onChange={handleChange} disabled={formData.isPremiumOnly} className={`${inputCls} appearance-none cursor-pointer disabled:opacity-50`}>
+                        {FREE_TIERS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    </InputWrapper>
+
+                    <InputWrapper label="Device Targeting">
+                      <select name="requiredPlatform" value={formData.requiredPlatform} onChange={handleChange} className={`${inputCls} appearance-none cursor-pointer`}>
+                        {DEVICE_OPTIONS.map(device => <option key={device} value={device}>{device === 'NONE' ? 'All Devices' : device === 'DESKTOP' ? 'Desktop Only' : device === 'ANDROID' ? 'Android Only' : 'iOS Only'}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    </InputWrapper>
+                  </div>
+
+                  <div className="mb-8">
+                    <InputWrapper label="Target Countries">
+                      <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 max-h-56 overflow-y-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          {countries.map((country) => {
+                            const selected = formData.targetCountries.includes(country);
+                            return (
+                              <button
+                                key={country}
+                                type="button"
+                                onClick={() => handleCountryToggle(country)}
+                                className={`text-left px-3 py-2 rounded-xl border transition-all ${selected ? 'bg-sats-orange-500 text-black border-sats-orange-500' : 'bg-black text-gray-300 border-[#1a1a1a] hover:border-sats-orange-500/40'}`}
+                              >
+                                {country}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </InputWrapper>
+                  </div>
 
                 {/* Premium Only Toggle */}
                 <div className="border-t border-[#1a1a1a] pt-8">
@@ -195,17 +255,20 @@ export default function AddCampaignPage() {
                 </h2>
 
                 <div className="grid grid-cols-1 gap-6 mb-8 border-b border-[#1a1a1a] pb-8">
-                  <InputWrapper label="Base Reward (Sats)" required>
+                  <InputWrapper label="Fallback Reward (Sats)" required>
                     <div className="relative">
                       <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sats-orange-500" />
                       <input type="number" name="baseRewardSats" min="1" value={formData.baseRewardSats || ''} onChange={handleNumberChange} required placeholder="0" className={`${inputCls} pl-11 text-lg font-black text-sats-orange-500`} />
                     </div>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
+                      Used only if a tier reward is missing from the matrix.
+                    </p>
                   </InputWrapper>
 
                   <InputWrapper label="Max Completions (Budget Cap)" required>
                     <input type="number" name="maxCompletions" min="1" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
-                      Max Liability: <span className="text-yellow-500">{(formData.baseRewardSats * formData.maxCompletions).toLocaleString()} Sats</span>
+                      Worst-Case Liability: <span className="text-yellow-500">{projectedMaxLiability.toLocaleString()} Sats</span>
                     </p>
                   </InputWrapper>
                 </div>
@@ -214,7 +277,7 @@ export default function AddCampaignPage() {
                 <div>
                   <h3 className="text-sm font-bold text-white mb-4">Tier Reward Matrix</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(formData.tierRewardMatrix).map(tier => (
+                    {visibleRewardTiers.map(tier => (
                       <div key={tier} className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-2.5 flex items-center justify-between">
                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
                         <input 

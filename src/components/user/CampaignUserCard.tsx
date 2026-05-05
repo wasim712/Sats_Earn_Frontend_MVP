@@ -1,6 +1,6 @@
 import React  from 'react';
 import Link from 'next/link';
-import { Zap, Clock, ChevronRight, LinkIcon } from 'lucide-react';
+import { Zap, Clock, ChevronRight, LinkIcon, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { Campaign } from '@/features/admin/adminCampaignsSlice';
 // --- PLATFORM LOGO COMPONENT ---
@@ -32,9 +32,12 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
   const spotsLeft = Math.max(0, safeMax - safeTotal);
   const progressPercent = Math.min((safeTotal / safeMax) * 100, 100);
   const isAlmostFull = spotsLeft < (safeMax * 0.1) && spotsLeft > 0;
+  const isCompleted = Boolean(campaign.isCompleted);
+  const completedTasksCount = Number(campaign.completedTasksCount) || 0;
+  const totalTasksCount = Number(campaign.totalTasksCount) || 0;
   
   return (
-    <div className="group relative bg-sats-black-900 border border-sats-black-800 rounded-3xl p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700 overflow-hidden">
+    <div className={`group relative bg-sats-black-900 border rounded-3xl p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 overflow-hidden ${isCompleted ? 'border-green-500/30 hover:shadow-[0_10px_30px_rgba(34,197,94,0.12)]' : 'border-sats-black-800 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700'}`}>
       
       <div className="absolute inset-0 bg-linear-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-colors duration-500 pointer-events-none"></div>
 
@@ -43,10 +46,17 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
           <PlatformLogo url={campaign.targetUrl} className="w-6 h-6" />
         </div>
 
-        <div className="flex items-center gap-1.5 bg-sats-orange-500/10 border border-sats-orange-500/20 px-3 py-1.5 rounded-xl shadow-sm">
-          <Zap className="w-4 h-4 text-sats-orange-500 fill-sats-orange-500" />
-          <span className="text-sm font-black text-sats-orange-400">~{campaign.baseRewardSats} <span className="text-xs font-bold text-sats-orange-500/70">SATS</span></span>
-        </div>
+        {isCompleted ? (
+          <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-xl shadow-sm">
+            <CheckCircle2 className="w-4 h-4 text-green-400" />
+            <span className="text-sm font-black text-green-400">Completed</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 bg-sats-orange-500/10 border border-sats-orange-500/20 px-3 py-1.5 rounded-xl shadow-sm">
+            <Zap className="w-4 h-4 text-sats-orange-500 fill-sats-orange-500" />
+            <span className="text-sm font-black text-sats-orange-400">~{campaign.baseRewardSats} <span className="text-xs font-bold text-sats-orange-500/70">SATS</span></span>
+          </div>
+        )}
       </div>
 
       <div className="relative z-10 grow mb-6">
@@ -56,20 +66,25 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
         <p className="text-sm text-gray-400 leading-relaxed line-clamp-2">
           {campaign.description}
         </p>
+        {totalTasksCount > 0 && (
+          <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#1a1a1a] bg-black/40 px-3 py-2 text-xs font-bold text-gray-300">
+            <span>{completedTasksCount}/{totalTasksCount} completed</span>
+          </div>
+        )}
       </div>
 
       <div className="relative z-10 mt-auto space-y-5">
         <div className="space-y-2">
           <div className="flex justify-between items-end text-xs font-bold">
-            <span className={`${isAlmostFull ? 'text-orange-400 flex items-center gap-1' : 'text-gray-500'}`}>
-              {isAlmostFull && <Clock className="w-3 h-3" />}
-              {spotsLeft.toLocaleString()} spots left
+            <span className={`${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-orange-400 flex items-center gap-1' : 'text-gray-500'}`}>
+              {!isCompleted && isAlmostFull && <Clock className="w-3 h-3" />}
+              {isCompleted ? 'All steps completed' : `${spotsLeft.toLocaleString()} spots left`}
             </span>
             <span className="text-gray-600">{progressPercent.toFixed(0)}% Filled</span>
           </div>
           <div className="w-full bg-sats-black-950 rounded-full h-2 border border-sats-black-800 overflow-hidden">
             <div 
-              className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-sats-orange-600 to-sats-orange-400"
+              className="h-full rounded-full transition-all duration-1000 bg-linear-to-r from-sats-orange-600 to-sats-orange-400"
               style={{ width: `${progressPercent}%` }}
             ></div>
           </div>
@@ -77,9 +92,9 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
 
         <Link 
           href={`/user/tasks/${campaign.id}`}
-          className="w-full flex items-center justify-center gap-2 bg-sats-black-950 hover:bg-sats-orange-500 text-white hover:text-black font-bold py-3 px-4 rounded-xl border border-sats-black-800 hover:border-sats-orange-500 transition-all duration-300 group/btn"
+          className={`w-full flex items-center justify-center gap-2 font-bold py-3 px-4 rounded-xl border transition-all duration-300 group/btn ${isCompleted ? 'bg-green-500/10 hover:bg-green-500/20 border-green-500/20 text-green-300' : 'bg-sats-black-950 hover:bg-sats-orange-500 text-white hover:text-black border-sats-black-800 hover:border-sats-orange-500'}`}
         >
-          <span>View Task</span>
+          <span>{isCompleted ? 'View Completed' : 'View Task'}</span>
           <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
         </Link>
       </div>

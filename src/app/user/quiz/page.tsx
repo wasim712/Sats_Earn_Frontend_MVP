@@ -13,6 +13,11 @@ export default function UserDailyQuizPage() {
 
   // Local state to track user's selected answers map: { questionId: selectedOption }
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const alreadyCompleted = Boolean(
+    error &&
+      (error.toLowerCase().includes('already completed') ||
+        error.toLowerCase().includes('already submitted'))
+  );
 
   useEffect(() => {
     dispatch(fetchTodayQuiz());
@@ -66,6 +71,27 @@ export default function UserDailyQuizPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (alreadyCompleted && !quiz && !result) {
+    return (
+      <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8">
+        <div className="max-w-3xl mx-auto w-full mt-4 md:mt-8">
+          <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 font-semibold transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+
+          <div className="bg-[#080808] border border-green-500/20 rounded-3xl p-8 md:p-10 text-center shadow-[0_0_40px_rgba(34,197,94,0.08)]">
+            <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-5">
+              <CheckCircle2 className="w-8 h-8 text-green-400" />
+            </div>
+            <h1 className="text-3xl font-black text-white mb-3">Quiz Already Completed</h1>
+            <p className="text-gray-400 font-medium">You have already completed today&apos;s quiz. Come back tomorrow for the next one.</p>
           </div>
         </div>
       </div>

@@ -24,6 +24,105 @@ interface Withdrawal {
   createdAt: string;
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// SKELETON
+// ══════════════════════════════════════════════════════════════════════════════
+function WithdrawalSkeleton() {
+  return (
+    <div className="max-w-6xl w-full mx-auto space-y-8 animate-pulse pb-20 p-4 md:p-6 lg:p-8">
+      
+      {/* ─── PAGE HEADER SKELETON ─── */}
+      <div>
+        <div className="h-[40px] sm:h-[48px] w-64 bg-white/5 rounded-xl" />
+        <div className="h-[24px] w-80 sm:w-96 bg-white/[0.03] rounded-lg mt-1.5" />
+      </div>
+
+      {/* ─── LIQUIDITY OVERVIEW SKELETON ─── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        {/* Orange Card */}
+        <div className="bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-3xl p-6 relative overflow-hidden">
+          <div className="h-[16px] w-36 bg-sats-orange-500/20 rounded mb-2" />
+          <div className="h-[40px] w-32 bg-sats-orange-500/20 rounded-xl" />
+          <div className="h-[20px] w-10 bg-sats-orange-500/10 rounded mt-1" />
+        </div>
+        
+        {/* Dark Cards */}
+        {[1, 2].map(i => (
+          <div key={i} className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-4 h-4 rounded-full bg-white/10 shrink-0" />
+              <div className="h-[16px] w-32 bg-white/5 rounded" />
+            </div>
+            <div className="h-[36px] w-24 bg-white/5 rounded-xl" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start w-full">
+        
+        {/* ─── WITHDRAWAL FORM SKELETON ─── */}
+        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 md:p-8 shadow-xl relative z-10 w-full">
+          <div className="flex items-center gap-3 mb-6 border-b border-[#1a1a1a] pb-5">
+            <div className="w-10 h-10 rounded-xl bg-[#111] border border-[#2a2a2a] shrink-0" />
+            <div className="h-7 w-40 bg-white/5 rounded-lg" />
+          </div>
+
+          <div className="space-y-6 w-full">
+            {/* Amount Input */}
+            <div className="w-full">
+              <div className="flex justify-between mb-2">
+                <div className="h-[16px] w-28 bg-white/5 rounded" />
+                <div className="h-[16px] w-8 bg-sats-orange-500/20 rounded" />
+              </div>
+              <div className="w-full h-[60px] bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl" />
+            </div>
+
+            {/* Textarea Input */}
+            <div className="w-full">
+              <div className="h-[16px] w-36 bg-white/5 rounded mb-2" />
+              <div className="w-full h-[116px] bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl" />
+              {/* Fake helper text */}
+              <div className="h-[16px] w-11/12 bg-white/[0.03] rounded mt-2" />
+              <div className="h-[16px] w-2/3 bg-white/[0.03] rounded mt-1" />
+            </div>
+
+            {/* Submit Button */}
+            <div className="w-full h-[60px] bg-sats-orange-500/10 border border-sats-orange-500/15 rounded-xl" />
+          </div>
+        </div>
+
+        {/* ─── WITHDRAWAL HISTORY SKELETON ─── */}
+        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 md:p-8 shadow-xl w-full">
+          <div className="flex items-center gap-3 mb-6 border-b border-[#1a1a1a] pb-5">
+            <div className="w-10 h-10 rounded-xl bg-[#111] border border-[#2a2a2a] shrink-0" />
+            <div className="h-7 w-36 bg-white/5 rounded-lg" />
+          </div>
+
+          {/* Added the min-h-[300px] and pr-2 to perfectly match the scrollbar spacing of the loaded UI! */}
+          <div className="min-h-[300px] overflow-hidden pr-2 w-full">
+            <div className="space-y-4 w-full">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 w-full">
+                  <div className="flex justify-between items-start mb-3 w-full">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 shrink-0" />
+                      <div className="flex flex-col gap-1">
+                        <div className="h-[16px] w-20 bg-white/10 rounded" />
+                        <div className="h-[14px] w-28 bg-white/5 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-[28px] w-24 bg-white/5 rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
 export default function UserWithdrawalsPage() {
   const [balances, setBalances] = useState<Balances | null>(null);
   const [history, setHistory] = useState<Withdrawal[]>([]);
@@ -135,11 +234,8 @@ export default function UserWithdrawalsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-sats-orange-500 animate-spin" />
-      </div>
-    );
+      return <WithdrawalSkeleton/>;
+  
   }
 
   return (
@@ -214,11 +310,14 @@ export default function UserWithdrawalsPage() {
               <div className="relative">
                 <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                 <input 
-                  type="number" 
+                  type="text"
+                  inputMode='numeric' 
                   min={minWithdrawal}
                   max={balances?.available || 0}
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) =>{
+                    const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                     setAmount(onlyNums)}}
                   placeholder={`Min. ${minWithdrawal.toLocaleString()}`}
                   required
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-lg font-black px-4 py-4 pl-12 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"

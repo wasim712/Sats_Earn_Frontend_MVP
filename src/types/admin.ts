@@ -6,6 +6,7 @@ export interface Campaign {
   targetUrl: string | null;
   socialHandleTarget: string | null;
   targetCountries: string[];
+  requiredPlatform?: 'NONE' | 'DESKTOP' | 'ANDROID' | 'IOS';
   isPremiumOnly: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
@@ -13,6 +14,11 @@ export interface Campaign {
   totalCompletions: number;
   maxCompletions: number;
   isActive: boolean;
+  isCompleted?: boolean;
+  hasStarted?: boolean;
+  completedTasksCount?: number;
+  totalTasksCount?: number;
+  userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED';
   createdAt: string;
   updatedAt: string;
 }
