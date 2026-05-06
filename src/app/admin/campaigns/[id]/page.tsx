@@ -27,6 +27,8 @@ type CampaignAnalytics = {
 };
 
 type CampaignEditForm = Partial<Campaign> & {
+  title:string;
+  description:string;
   targetCountries: string[];
   tierRewardMatrix: Record<string, number>;
   xpReward: number;
@@ -84,6 +86,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [successMessage, setSuccessMessage] = useState("Update Successful");
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
+    title:'',
+    description:'',
     targetCountries: [],
     tierRewardMatrix: {},
     xpReward: 0,
@@ -524,13 +528,96 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input type="number" required min={1} value={editForm.baseRewardSats || 0} onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} placeholder="Base Sats" className={inputCls} />
-                      <input type="number" required min={1} value={editForm.maxCompletions || 1} onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} placeholder="Max Users" className={inputCls} />
-                      <input type="number" min={0} value={editForm.xpReward || 0} onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} placeholder="Campaign XP Reward" className={inputCls} />
-                      <button type="button" onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all">2x All Tier Rewards</button>
-                      <input type="datetime-local" value={typeof editForm.doubleRewardsStartAt === 'string' ? editForm.doubleRewardsStartAt.slice(0,16) : ''} onChange={e => setEditForm({...editForm, doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} className={inputCls} />
-                      <input type="datetime-local" value={typeof editForm.doubleRewardsEndAt === 'string' ? editForm.doubleRewardsEndAt.slice(0,16) : ''} onChange={e => setEditForm({...editForm, doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} className={inputCls} />
-                    </div>
+                        
+                        {/* Base Sats */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Base Reward (Sats)
+                          </label>
+                          <input 
+                            type="number" 
+                            required 
+                            min={1} 
+                            value={editForm.baseRewardSats || ''} 
+                            onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} 
+                            placeholder="Base Sats" 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                        {/* Max Users */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Max Completions (Users)
+                          </label>
+                          <input 
+                            type="number" 
+                            required 
+                            min={0} 
+                            value={editForm.maxCompletions || ''} 
+                            onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} 
+                            placeholder="Max Users" 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                        {/* XP Reward */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Campaign XP Reward
+                          </label>
+                          <input 
+                            type="number" 
+                            min={0} 
+                            value={editForm.xpReward || ''} 
+                            onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} 
+                            placeholder="Campaign XP Reward" 
+                            className={inputCls} 
+                            formTarget='Xp' 
+                          />
+                        </div>
+
+                        {/* Tier Reward Action */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Bulk Action
+                          </label>
+                          <button 
+                            type="button" 
+                            onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} 
+                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all"
+                          >
+                            2x All Tier Rewards
+                          </button>
+                        </div>
+
+                        {/* Double Rewards Start */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Double Rewards Start Date
+                          </label>
+                          <input 
+                            type="datetime-local" 
+                            value={typeof editForm.doubleRewardsStartAt === 'string' ? editForm.doubleRewardsStartAt.slice(0,16) : ''} 
+                            onChange={e => setEditForm({...editForm, doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                        {/* Double Rewards End */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Double Rewards End Date
+                          </label>
+                          <input 
+                            type="datetime-local" 
+                            value={typeof editForm.doubleRewardsEndAt === 'string' ? editForm.doubleRewardsEndAt.slice(0,16) : ''} 
+                            onChange={e => setEditForm({...editForm, doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                      </div>
                   )}
                 </Field>
                 
@@ -552,7 +639,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       {visibleRewardTiers.map(tier => (
                         <div key={tier} className="bg-sats-black-900 border border-[#1a1a1a] rounded-lg p-2 flex flex-col gap-1">
                           <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
-                          <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || 0} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
+                          <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || ''} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
                         </div>
                       ))}
                     </div>
@@ -658,7 +745,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="number" min={0} value={editingTaskForm.xpRewardOverride || 0} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: Number(e.target.value) })} placeholder="XP Reward Override" className={inputCls} />
+                            <input type="number" min={0} value={editingTaskForm.xpRewardOverride || ''} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: Number(e.target.value) })} placeholder="XP Reward Override" className={inputCls} />
                             <select
                             value={editingTaskForm.requirements?.requiredPlatform || ''}
                             onChange={e => setEditingTaskForm({

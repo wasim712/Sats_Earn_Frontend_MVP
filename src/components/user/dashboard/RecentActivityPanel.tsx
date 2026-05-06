@@ -51,8 +51,8 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
         <div className="flex items-center justify-between mb-6 border-b border-[#1a1a1a] pb-5">
           <h2 className="text-xl font-bold text-white tracking-tight group-hover:text-sats-orange-50 transition-colors">Recent Activity</h2>
           {activities && activities.length > 0 && (
-            <button onClick={() => setIsModalOpen(true)} className="text-sm font-extrabold text-sats-orange-500 hover:text-sats-orange-400 transition-colors">
-              View All
+            <button onClick={() => setIsModalOpen(true)} className="cursor-pointer text-sm font-extrabold text-sats-orange-500 hover:text-sats-orange-400 transition-colors">
+              View More
             </button>
           )}
         </div>

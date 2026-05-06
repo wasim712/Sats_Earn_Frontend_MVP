@@ -216,7 +216,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 <div className="relative max-w-xs">
                   <input
                     type="number"
-                    value={form.rewardSats}
+                    value={form.rewardSats||''}
                     onChange={(e) => setFormField('rewardSats', Number(e.target.value))}
                     min={1}
                     className={`${inputCls} pr-16 font-mono text-lg`}
@@ -233,7 +233,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 <div className="relative max-w-xs">
                   <input
                     type="number"
-                    value={form.xpReward}
+                    value={form.xpReward ||''}
                     onChange={(e) => setFormField('xpReward', Number(e.target.value))}
                     min={0}
                     className={`${inputCls} pr-12 font-mono text-lg`}

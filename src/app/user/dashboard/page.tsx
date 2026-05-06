@@ -29,7 +29,7 @@ export default function UserDashboardPage() {
   }
 
   // --- THE SKELETON LOADER ---
-  if (isLoading || !data) {
+  if (isLoading || !data || !data.balances || !data.gamification){
     return (
       <div className="space-y-8 animate-pulse pb-20 w-full p-2 md:p-4 lg:p-6">
         
@@ -104,12 +104,12 @@ export default function UserDashboardPage() {
       </div>
 
       {/* MODULAR SECTIONS */}
-      <TotalBalanceCard balances={data.balances} />
+      <TotalBalanceCard balances={data?.balances} />
       
       <GamificationStats 
         gamification={data.gamification} 
-        tasksCompleted={data.gamification.tasksCompleted} 
-        activeReferrals={data.gamification.activeReferrals} 
+        tasksCompleted={data.gamification.tasksCompleted || 0} 
+        activeReferrals={data.gamification.activeReferrals || 0} 
       />
 
       <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 shadow-2xl">
@@ -120,7 +120,7 @@ export default function UserDashboardPage() {
           </div>
         </div>
 
-        {data.recentSubmissions.length > 0 ? (
+        {data.recentSubmissions && data.recentSubmissions.length > 0 ? (
           <div className="space-y-4">
             {data.recentSubmissions.map((submission) => {
               const statusUi = getSubmissionStatusUi(submission.status);
@@ -176,7 +176,7 @@ export default function UserDashboardPage() {
         )}
       </div>
       
-      <RecentActivityPanel activities={data.recentActivity} />
+      <RecentActivityPanel activities={data.recentActivity || []} />
 
     </div>
   );
