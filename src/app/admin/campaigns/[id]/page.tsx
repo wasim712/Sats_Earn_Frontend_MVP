@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateCampaign, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
+import type { Campaign, AdminTask } from '@/types/admin';
 import { 
-  ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Calendar, Trash2, 
-  BarChart3, Activity, CheckCircle2, Clock, XCircle, Globe2, Medal, 
+  ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Trash2, 
+  BarChart3, Activity, CheckCircle2, Clock, XCircle, Medal, 
   Zap, Target, Crown, Users, Plus, Check
 } from 'lucide-react';
 
@@ -19,7 +20,37 @@ const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 const PLATFORMS = ["TWITTER", "YOUTUBE", "INSTAGRAM", "TELEGRAM", "FACEBOOK", "LINKEDIN", "APP_STORE", "PLAY_STORE", "WEBSITE"];
 const PROOF_TYPES = ["SCREENSHOT", "URL", "TEXT_RESPONSE", "API_VERIFIED"];
 
-// ─── Platform Logo Helper ───
+type CampaignAnalytics = {
+  totalSubmissions?: number;
+  statusCounts?: { verified?: number; pending?: number; rejected?: number };
+  tierDistribution?: Record<string, number>;
+};
+
+type CampaignEditForm = Partial<Campaign> & {
+  targetCountries: string[];
+  tierRewardMatrix: Record<string, number>;
+  xpReward: number;
+  doubleRewardsStartAt?: string | null;
+  doubleRewardsEndAt?: string | null;
+};
+
+type TaskFormState = {
+  title: string;
+  description: string;
+  requiredPlatform: string;
+  proofType: string;
+  targetUrl: string;
+  xpRewardOverride: number;
+};
+
+type EditableTask = AdminTask & {
+  proofType?: string;
+  requiredPlatform?: string;
+};
+
+type ValidationIssue = { path?: string; message: string };
+
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Platform Logo Helper Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 export const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, className?: string }) => {
   if (!url) return <LinkIcon className={className} />;
   const lowerUrl = url.toLowerCase();
@@ -42,8 +73,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const dispatch = useAppDispatch();
   const { countries } = useAppSelector((state) => state.adminCountries);
   
-  const [campaign, setCampaign] = useState<any>(null);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [campaign, setCampaign] = useState<(Campaign & { tasks?: EditableTask[] }) | null>(null);
+  const [analytics, setAnalytics] = useState<CampaignAnalytics | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -52,17 +83,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Update Successful");
   
-  const [editForm, setEditForm] = useState<any>({});
+  const [editForm, setEditForm] = useState<CampaignEditForm>({
+    targetCountries: [],
+    tierRewardMatrix: {},
+    xpReward: 0,
+  });
 
-  // ─── TASK CREATION & EDITING STATE ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CREATION & EDITING STATE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
-  const [taskForm, setTaskForm] = useState({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'',
+  const [taskForm, setTaskForm] = useState<TaskFormState>({
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0,
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [editingTaskForm, setEditingTaskForm] = useState<any>({});
+  const [editingTaskForm, setEditingTaskForm] = useState<EditableTask>({} as EditableTask);
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
   const [isDeletingTask, setIsDeletingTask] = useState<string | null>(null);
 
@@ -79,7 +114,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       if (campRes.ok) {
         const campData = await campRes.json();
         setCampaign(campData);
-        setEditForm(campData);
+        setEditForm({
+          ...campData,
+          targetCountries: campData.targetCountries || [],
+          tierRewardMatrix: campData.tierRewardMatrix || {},
+          xpReward: campData.xpReward || 0,
+          doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
+          doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
+        });
       }
 
       if (analyticsRes.ok) {
@@ -95,7 +137,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   }, [id]);
   const handleMatrixChange = (tier: string, value: string) => {
-  setEditForm((prev: any) => ({
+  setEditForm((prev) => ({
     ...prev,
     tierRewardMatrix: {
       ...prev.tierRewardMatrix,
@@ -105,10 +147,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 };
 
   const handleCountryToggle = (country: string) => {
-    setEditForm((prev: any) => ({
+    setEditForm((prev) => ({
       ...prev,
       targetCountries: prev.targetCountries?.includes(country)
-        ? prev.targetCountries.filter((item: string) => item !== country)
+        ? prev.targetCountries.filter((item) => item !== country)
         : [...(prev.targetCountries || []), country],
     }));
   };
@@ -128,7 +170,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  // ─── CAMPAIGN CRUD ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CAMPAIGN CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSave = async () => {
     setIsSaving(true);
     const payload = {
@@ -139,11 +181,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
       baseRewardSats: Number(editForm.baseRewardSats),
+      xpReward: Number(editForm.xpReward || 0),
       maxCompletions: Number(editForm.maxCompletions),
       tierRewardMatrix: editForm.tierRewardMatrix,
       isActive: editForm.isActive,
       targetUrl: editForm.targetUrl?.trim() || undefined,
       socialHandleTarget: editForm.socialHandleTarget?.trim() || undefined,
+      doubleRewardsStartAt: editForm.doubleRewardsStartAt || null,
+      doubleRewardsEndAt: editForm.doubleRewardsEndAt || null,
     };
 
     const result = await dispatch(updateCampaign({ id: campaign.id, data: payload }));
@@ -171,7 +216,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  // ─── TASK CRUD ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingTask(true);
@@ -186,6 +231,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           description: taskForm.description,
           proofType: taskForm.proofType,
           targetUrl: taskForm.targetUrl || undefined,
+          xpRewardOverride: Number(taskForm.xpRewardOverride || 0),
           requirements: { requiredPlatform: taskForm.requiredPlatform },
         })
       });
@@ -194,17 +240,17 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         const errorData = await res.json();
         // Zod validation parser so you see EXACTLY why it failed!
         if (errorData.details) {
-          throw new Error(errorData.details.map((d: any) => `${d.path}: ${d.message}`).join(' | '));
+          throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
         }
         throw new Error(errorData.error || "Failed to create task");
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'' });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0 });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
-    } catch (err: any) {
-      alert(`Validation Error: \n${err.message}`);
+    } catch (err) {
+      alert(`Validation Error: \n${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsSubmittingTask(false);
     }
@@ -229,21 +275,22 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             ...(editingTaskForm.requirements || {}),
             requiredPlatform: editingTaskForm.requiredPlatform,
           },
+          xpRewardOverride: Number(editingTaskForm.xpRewardOverride || 0),
           ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
         })
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        if (errorData.details) throw new Error(errorData.details.map((d: any) => `${d.path}: ${d.message}`).join(' | '));
+        if (errorData.details) throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
         throw new Error(errorData.error || "Failed to update task");
       }
 
       await fetchCampaignData();
       setEditingTaskId(null);
       triggerSuccess("Task Updated Successfully.");
-    } catch (err: any) {
-      alert(`Update Failed: \n${err.message}`);
+    } catch (err) {
+      alert(`Update Failed: \n${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsUpdatingTask(false);
     }
@@ -264,8 +311,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
       await fetchCampaignData();
       triggerSuccess("Task Deleted Successfully.");
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsDeletingTask(null);
     }
@@ -284,7 +331,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
       
-      {/* ─── SUCCESS TOAST ─── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ SUCCESS TOAST Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-sats-black-900 border border-green-500/30 text-green-400 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(34,197,94,0.15)] transition-all duration-500 ${showSuccess ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0'}`}>
         <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
           <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -297,7 +344,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
       <div className="max-w-350 mx-auto w-full flex flex-col gap-6 md:gap-8">
         
-        {/* ─── STICKY HEADER ─── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ STICKY HEADER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl mt-4">
           <button onClick={() => router.push('/admin/campaigns')} className="flex items-center text-gray-400 hover:text-white bg-sats-black-900 border border-[#1a1a1a] hover:bg-[#111] px-5 py-2.5 rounded-xl transition-all font-bold w-full sm:w-auto justify-center shadow-sm">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
@@ -328,7 +375,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
           
-          {/* ─── LEFT COLUMN (Spans 2): Campaign Details ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEFT COLUMN (Spans 2): Campaign Details Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <div className="xl:col-span-2 flex flex-col gap-6 md:gap-8">
             <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
               
@@ -407,7 +454,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
                           {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
-                        <button type="button" onClick={() => setEditForm((prev: any) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
+                        <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
                         <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
                       </button>
                     </div>
@@ -468,11 +515,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                 <Field title="Base Economics">
                   {!isEditing ? (
-                    <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> {campaign.baseRewardSats.toLocaleString()} Sats Base</span>
+                    <div className="space-y-1">
+                      <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> {campaign.baseRewardSats.toLocaleString()} Sats Base</span>
+                      <p className="text-xs text-gray-400 font-medium">XP Reward: {campaign.xpReward || 0}</p>
+                      {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
+                        <p className="text-xs text-yellow-400 font-medium">2x Window: {formatDate(campaign.doubleRewardsStartAt)} - {formatDate(campaign.doubleRewardsEndAt)}</p>
+                      )}
+                    </div>
                   ) : (
-                    <div className="flex gap-4">
-                      <input type="number" required min={1} value={editForm.baseRewardSats} onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} placeholder="Base Sats" className={inputCls} />
-                      <input type="number" required min={1} value={editForm.maxCompletions} onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} placeholder="Max Users" className={inputCls} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input type="number" required min={1} value={editForm.baseRewardSats || 0} onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} placeholder="Base Sats" className={inputCls} />
+                      <input type="number" required min={1} value={editForm.maxCompletions || 1} onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} placeholder="Max Users" className={inputCls} />
+                      <input type="number" min={0} value={editForm.xpReward || 0} onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} placeholder="Campaign XP Reward" className={inputCls} />
+                      <button type="button" onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all">2x All Tier Rewards</button>
+                      <input type="datetime-local" value={typeof editForm.doubleRewardsStartAt === 'string' ? editForm.doubleRewardsStartAt.slice(0,16) : ''} onChange={e => setEditForm({...editForm, doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} className={inputCls} />
+                      <input type="datetime-local" value={typeof editForm.doubleRewardsEndAt === 'string' ? editForm.doubleRewardsEndAt.slice(0,16) : ''} onChange={e => setEditForm({...editForm, doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} className={inputCls} />
                     </div>
                   )}
                 </Field>
@@ -504,7 +561,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </div>
             </div>
             
-            {/* ─── TASK MANAGEMENT ZONE ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK MANAGEMENT ZONE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden">
               <div className="flex items-center justify-between mb-6 border-b border-[#1a1a1a] pb-4">
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
@@ -546,6 +603,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </div>
                     </div>
                     <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">XP Reward Override</label>
+                      <input type="number" min={0} value={taskForm.xpRewardOverride} onChange={e => setTaskForm({ ...taskForm, xpRewardOverride: Number(e.target.value) })} placeholder="0 uses campaign XP reward" className={inputCls} />
+                    </div>
+                    <div>
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
                         Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
                       </label>
@@ -567,7 +628,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </div>
                       {taskForm.targetUrl && !/^https?:\/\/.+/.test(taskForm.targetUrl) && (
                         <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                          <span>⚠</span> Must start with http:// or https://
+                          <span>Ã¢Å¡Â </span> Must start with http:// or https://
                         </p>
                       )}
                     </div>
@@ -584,7 +645,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               {/* Task List Display */}
               {campaign.tasks && campaign.tasks.length > 0 ? (
                 <div className="space-y-4">
-                  {campaign.tasks.map((task:any, index: number) => (
+                  {campaign.tasks.map((task: EditableTask, index: number) => (
                     <div key={task.id} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5 group hover:border-[#2a2a2a] transition-all">
                       
                       {/* Inline Task Editor */}
@@ -596,7 +657,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           <div>
                             <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="number" min={0} value={editingTaskForm.xpRewardOverride || 0} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: Number(e.target.value) })} placeholder="XP Reward Override" className={inputCls} />
                             <select
                             value={editingTaskForm.requirements?.requiredPlatform || ''}
                             onChange={e => setEditingTaskForm({
@@ -634,7 +696,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           {editingTaskForm.targetUrl && !/^https?:\/\/.+/.test(editingTaskForm.targetUrl) && (
                             <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                              <span>⚠</span> Must start with http:// or https://
+                              <span>Ã¢Å¡Â </span> Must start with http:// or https://
                             </p>
                           )}
                         </div>
@@ -655,12 +717,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             </div>
                             <p className="text-sm text-gray-400 leading-relaxed ml-9">{task.description}</p>
                             
-                            <div className="flex items-center gap-3 mt-4 ml-9">
+                            <div className="flex items-center gap-3 mt-4 ml-9 flex-wrap">
                               <span className="px-2.5 py-1 bg-[#111] border border-[#2a2a2a] rounded-md text-[10px] font-bold text-gray-300 uppercase tracking-wider">
-                                {task.requiredPlatform || 'UNKNOWN'}
+                                {task.requiredPlatform || task.requirements?.requiredPlatform || 'UNKNOWN'}
                               </span>
                               <span className="px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
+                              </span>
+                              <span className="px-2.5 py-1 bg-purple-500/10 border border-purple-500/20 rounded-md text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                                XP: {task.xpRewardOverride || campaign.xpReward || 0}
                               </span>
                             </div>
                           </div>
@@ -698,7 +763,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* ─── RIGHT COLUMN: Real-Time Analytics ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Real-Time Analytics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {analytics && (
             <div className="xl:col-span-1 flex flex-col gap-6 md:gap-8">
               <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
@@ -750,7 +815,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   );
 }
 
-// ─── Micro-Components ───
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function Field({ title, children }: { title: string, children: React.ReactNode }) {
   return (

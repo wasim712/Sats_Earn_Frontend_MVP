@@ -22,7 +22,7 @@ export default function AddCampaignPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
-  // ─── Form State (Aligned exactly with your Zod Schema) ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -32,6 +32,9 @@ export default function AddCampaignPage() {
     isPremiumOnly: false,
     requiredFreeTier: 'BASIC',
     baseRewardSats: 0,
+    xpReward: 0,
+    doubleRewardsStartAt: '',
+    doubleRewardsEndAt: '',
     maxCompletions: 0,
     tierRewardMatrix: {
       BASIC: 0, COPPER: 0, BRONZE: 0, SILVER: 0, GOLD: 0,
@@ -39,7 +42,7 @@ export default function AddCampaignPage() {
     } as Record<string, number>
   });
 
-  // ─── Handlers ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Handlers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -80,7 +83,7 @@ export default function AddCampaignPage() {
     return Math.max(max, reward * Number(formData.maxCompletions || 0));
   }, 0);
 
-  // ─── Submit Engine ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Submit Engine Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -103,6 +106,9 @@ export default function AddCampaignPage() {
       isPremiumOnly: formData.isPremiumOnly,
       requiredFreeTier: formData.requiredFreeTier,
       baseRewardSats: Number(formData.baseRewardSats),
+      xpReward: Number(formData.xpReward),
+      doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
+      doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
       maxCompletions: Number(formData.maxCompletions),
       tierRewardMatrix: formData.tierRewardMatrix,
     };
@@ -123,7 +129,7 @@ export default function AddCampaignPage() {
         
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
           
-          {/* ─── Header Sticky Bar ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Header Sticky Bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl">
             <button 
               type="button"
@@ -156,7 +162,7 @@ export default function AddCampaignPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             
-            {/* ─── LEFT COLUMN: Metadata & Access ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEFT COLUMN: Metadata & Access Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
               
               {/* CARD 1: Basic Information */}
@@ -246,7 +252,7 @@ export default function AddCampaignPage() {
               </div>
             </div>
 
-            {/* ─── RIGHT COLUMN: Economics ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Economics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="flex flex-col h-full gap-6 md:gap-8">
               <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
                 
@@ -303,7 +309,7 @@ export default function AddCampaignPage() {
   );
 }
 
-// ─── Input Wrapper Helper ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Input Wrapper Helper Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 function InputWrapper({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
