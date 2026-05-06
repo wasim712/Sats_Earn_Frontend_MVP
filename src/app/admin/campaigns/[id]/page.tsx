@@ -184,7 +184,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
-      baseRewardSats: Number(editForm.baseRewardSats),
+      baseRewardSats: Number(visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(editForm.tierRewardMatrix?.[tier] || 0)), 0)),
       xpReward: Number(editForm.xpReward || 0),
       maxCompletions: Number(editForm.maxCompletions),
       tierRewardMatrix: editForm.tierRewardMatrix,
@@ -331,6 +331,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const visibleRewardTiers = editForm.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
 
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
@@ -414,8 +415,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Base Reward</p>
-                    <span className="text-sats-orange-500 font-black text-3xl">~ {campaign.baseRewardSats.toLocaleString()} <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Sats</span></span>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Top Tier Reward</p>
+                    <span className="text-sats-orange-500 font-black text-3xl">~ {topTierReward.toLocaleString()} <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Sats</span></span>
                   </div>
                 </div>
                 <div className="w-full bg-[#111] border border-[#2a2a2a] rounded-full h-3 overflow-hidden shadow-inner">
@@ -517,10 +518,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     )}
                   </Field>
 
-                <Field title="Base Economics">
+                <Field title="Campaign Economics">
                   {!isEditing ? (
                     <div className="space-y-1">
-                      <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> {campaign.baseRewardSats.toLocaleString()} Sats Base</span>
+                      <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
                       <p className="text-xs text-gray-400 font-medium">XP Reward: {campaign.xpReward || 0}</p>
                       {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
                         <p className="text-xs text-yellow-400 font-medium">2x Window: {formatDate(campaign.doubleRewardsStartAt)} - {formatDate(campaign.doubleRewardsEndAt)}</p>
@@ -528,23 +529,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
-                        {/* Base Sats */}
-                        <div>
-                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                            Base Reward (Sats)
-                          </label>
-                          <input 
-                            type="number" 
-                            required 
-                            min={1} 
-                            value={editForm.baseRewardSats || ''} 
-                            onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} 
-                            placeholder="Base Sats" 
-                            className={inputCls} 
-                          />
-                        </div>
-
                         {/* Max Users */}
                         <div>
                           <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">

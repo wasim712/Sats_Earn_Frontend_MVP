@@ -759,7 +759,7 @@ export default function CampaignDetailsPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sats-orange-500/8 border border-sats-orange-500/20 mb-5">
               <Zap className="w-3.5 h-3.5 text-sats-orange-500" />
               <span className="text-sm font-black text-sats-orange-500">
-                {campaign.displayRewardSats ?? campaign.baseRewardSats} Sats
+                {campaign.displayRewardSats ?? Math.max(...Object.values(campaign.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0)} Sats
               </span>
               <span className="text-xs text-sats-orange-500/50 font-medium">total reward</span>
             </div>
@@ -782,6 +782,12 @@ export default function CampaignDetailsPage() {
                 <ExternalLink className="w-4 h-4" />
                 Open Campaign Link
               </a>
+            )}
+            {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-sm font-bold text-yellow-300">
+                <Zap className="w-4 h-4" />
+                You will get 2x reward from {new Date(campaign.doubleRewardsStartAt).toLocaleDateString()} to {new Date(campaign.doubleRewardsEndAt).toLocaleDateString()}
+              </div>
             )}
           </div>
         </div>
