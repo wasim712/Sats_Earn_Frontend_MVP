@@ -16,7 +16,6 @@ import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 const DOCK_LINKS = [
   { label: 'Dashboard', path: '/user/dashboard', icon: Home },
   { label: 'Tasks', path: '/user/tasks', icon: Target }, 
-  { label: 'Submissions', path: '/user/submissions', icon: FileCheck2 },
   { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
 ];
 
@@ -74,6 +73,25 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
       
     }
   };
+  // ─── DYNAMIC PAGE TITLE FORMATTER ───
+  const getPageTitle = () => {
+    const path = pathname || '';
+    if (path.includes('/dashboard')) return 'Dashboard';
+    if (path.includes('/tasks')) return 'Browse Tasks';
+    if (path.includes('/submissions')) return 'Your Submissions';
+    if (path.includes('/quiz')) return 'Daily Quiz';
+    if (path.includes('/wallet')) return 'Withdraw Funds';
+    if (path.includes('/notifications')) return 'Notifications';
+    if (path.includes('/referrals')) return 'Referrals';
+    if (path.includes('/leaderboard')) return 'Leaderboard';
+    if (path.includes('/settings')) return 'Settings';
+    if (path.includes('/profile')) return 'User Profile';
+    
+    // Fallback: Capitalize the last word in the URL
+    const segments = path.split('/').filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+    return lastSegment ? lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1) : 'SatsEarn';
+  };
   return (
     <div className="min-h-screen bg-[#020202] font-sans text-white relative">
       {/* ─── Sidebar ─── */}
@@ -94,7 +112,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
       <div className={`transition-all duration-300 ease-in-out min-h-screen flex flex-col ${isCollapsed ? 'lg:pl-20' : 'lg:pl-72'}`}>
         
         {/* ─── Mobile Header ─── */}
-        <header className="lg:hidden h-16 border-b border-[#1a1a1a] bg-[#0a0a0a]/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-4">
+        <header className="lg:hidden h-16 border-b border-[#1a1a1a] bg-sats-black-900/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -103,20 +121,11 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
               <Menu className="w-5 h-5" />
             </button>
             
-            <div className="flex items-center gap-2">
-              <Image 
-                width={32} 
-                height={32} 
-                alt='logo' 
-                className="rounded-lg shadow-sm"
-                src="/icon.png" 
-              />
-              <span className="font-bold tracking-tight text-lg text-white">
-                Sats<span className="text-sats-orange-500">Earn</span>
-              </span>
-              <span className="bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">
-                Beta
-              </span>
+            {/* Dynamic Page Title */}
+            <div className="flex items-center justify-end pr-1">
+              <h1 className="font-black tracking-tight text-lg text-white">
+                {getPageTitle()}
+              </h1>
             </div>
           </div>
         </header>
@@ -138,6 +147,19 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         {/* pointer-events-auto ensures you can click the dock, but transparent space around it allows clicking the page */}
         <nav className="pointer-events-auto bg-sats-black-900/90 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-1.5 flex items-center justify-center gap-1 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto">
           
+          {/* Open Menu Button */}
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all shrink-0"
+            title="Open Menu"
+          >
+            <Menu className="w-5.5 h-[22px]" />
+            <span className="text-[10px] font-bold tracking-wide">Menu</span>
+          </button>
+          
+          {/* Vertical Divider Line */}
+          <div className="w-px h-8 bg-[#2a2a2a] mx-1 shrink-0" />
+
           {DOCK_LINKS.map((item) => {
             // Highlight if exactly matching OR if viewing a sub-page (like /user/tasks/123)
             const isActive = pathname === item.path || pathname?.startsWith(`${item.path}/`);
@@ -164,18 +186,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             );
           })}
 
-          {/* Vertical Divider Line */}
-          <div className="w-px h-8 bg-[#2a2a2a] mx-1 shrink-0" />
 
-          {/* Open Menu Button */}
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all shrink-0"
-            title="Open Menu"
-          >
-            <Menu className="w-5.5 h-[22px]" />
-            <span className="text-[10px] font-bold tracking-wide">Menu</span>
-          </button>
           
         </nav>
       </div>
