@@ -42,7 +42,6 @@ type TaskFormState = {
   requiredPlatform: string;
   proofType: string;
   targetUrl: string;
-  xpRewardOverride: number;
 };
 
 type EditableTask = AdminTask & {
@@ -97,7 +96,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const [taskForm, setTaskForm] = useState<TaskFormState>({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0,
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'',
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -235,7 +234,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           description: taskForm.description,
           proofType: taskForm.proofType,
           targetUrl: taskForm.targetUrl || undefined,
-          xpRewardOverride: Number(taskForm.xpRewardOverride || 0),
           requirements: { requiredPlatform: taskForm.requiredPlatform },
         })
       });
@@ -250,7 +248,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0 });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'' });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
     } catch (err) {
@@ -279,7 +277,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             ...(editingTaskForm.requirements || {}),
             requiredPlatform: editingTaskForm.requiredPlatform,
           },
-          xpRewardOverride: Number(editingTaskForm.xpRewardOverride || 0),
           ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
         })
       });
@@ -674,10 +671,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">XP Reward Override</label>
-                      <input type="number" min={0} value={taskForm.xpRewardOverride} onChange={e => setTaskForm({ ...taskForm, xpRewardOverride: Number(e.target.value) })} placeholder="0 uses campaign XP reward" className={inputCls} />
-                    </div>
-                    <div>
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
                         Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
                       </label>
@@ -729,7 +722,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="number" min={0} value={editingTaskForm.xpRewardOverride || ''} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: Number(e.target.value) })} placeholder="XP Reward Override" className={inputCls} />
                             <select
                             value={editingTaskForm.requirements?.requiredPlatform || ''}
                             onChange={e => setEditingTaskForm({
@@ -796,7 +788,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
                               </span>
                               <span className="px-2.5 py-1 bg-purple-500/10 border border-purple-500/20 rounded-md text-[10px] font-bold text-purple-400 uppercase tracking-wider">
-                                XP: {task.xpRewardOverride || campaign.xpReward || 0}
+                                XP: {campaign.xpReward || 0}
                               </span>
                             </div>
                           </div>

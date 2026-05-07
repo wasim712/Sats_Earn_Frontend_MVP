@@ -40,8 +40,8 @@ export const fetchUserNotifications = createAsyncThunk(
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to fetch alerts.');
       return data as UserNotification[];
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch alerts.');
     }
   }
 );
@@ -57,8 +57,8 @@ export const markUserNotificationRead = createAsyncThunk(
       });
       if (!response.ok) throw new Error('Failed to mark as read.');
       return id;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to mark as read.');
     }
   }
 );
@@ -74,8 +74,8 @@ export const markAllUserNotificationsRead = createAsyncThunk(
       });
       if (!response.ok) throw new Error('Failed to mark all as read.');
       return true;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to mark all as read.');
     }
   }
 );

@@ -9,18 +9,21 @@ import {
 import Link from 'next/link';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
+import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
 
 export default function UserDashboardPage() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
+  const { notifications } = useAppSelector((state) => state.userNotifications);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUserDashboard());
+    dispatch(fetchUserNotifications());
   }, [dispatch]);
 
   // --- HELPERS ---
@@ -113,6 +116,20 @@ export default function UserDashboardPage() {
   const currentStreak = data.gamification?.currentStreak || 0;
   const activeTier = data.gamification?.activeTier || 'Basic';
   const currentLevel = data.gamification?.level || 1;
+  const unreadStreakReward = notifications.find(
+    (notification) => !notification.isRead && notification.title.toLowerCase().includes('streak milestone reward unlocked'),
+  );
+  const streakMilestones = [
+    { days: 7, sats: 70 },
+    { days: 21, sats: 210 },
+    { days: 60, sats: 600 },
+    { days: 90, sats: 900 },
+    { days: 180, sats: 1800 },
+    { days: 365, sats: 3650 },
+  ];
+  const nextStreakMilestone = streakMilestones.find((milestone) => currentStreak < milestone.days) || null;
+  const streakProgressMax = nextStreakMilestone?.days || 365;
+  const streakProgressPercent = Math.min((currentStreak / streakProgressMax) * 100, 100);
 
   // Dummy Leaderboard Data
   const dummyLeaderboard = [
@@ -138,7 +155,8 @@ export default function UserDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
+          <div className="relative flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
+            {unreadStreakReward && <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
             <Flame className="w-4 h-4 text-sats-orange-500" />
             <span className="text-xs font-bold text-white">{currentStreak} Day Streak</span>
           </div>
@@ -240,6 +258,79 @@ export default function UserDashboardPage() {
       </div>
 
       {/* ─── 3. WEEKLY STREAK PROGRESS ─── */}
+      {unreadStreakReward && (
+        <div className="mb-6 rounded-[24px] border border-red-500/20 bg-red-500/10 px-5 py-4 flex items-start gap-3 shadow-[0_0_20px_rgba(239,68,68,0.08)]">
+          <div className="mt-0.5 w-3 h-3 rounded-full bg-red-500 animate-pulse shrink-0" />
+          <div>
+            <p className="text-sm font-black text-white">Streak Milestone Reward Received</p>
+            <p className="text-sm text-red-100/90 mt-1">{unreadStreakReward.message}</p>
+            <Link href="/user/notifications" className="inline-flex mt-3 text-xs font-bold text-red-300 hover:text-white transition-colors">
+              View notification
+            </Link>
+          </div>
+        </div>
+      )}
+      <div className="mb-6 rounded-[24px] border border-[#1a1a1a] bg-[#080808] px-5 py-5 sm:px-6 sm:py-6 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          <div>
+            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Streak Milestones</p>
+            <h3 className="text-xl font-black text-white mt-1">{currentStreak} day streak</h3>
+          </div>
+          <div className="text-left sm:text-right">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Next Reward</p>
+            <p className="text-sm font-black text-sats-orange-400 mt-1">
+              {nextStreakMilestone
+                ? `${nextStreakMilestone.days} days • +${nextStreakMilestone.sats.toLocaleString()} sats`
+                : 'All milestone rewards unlocked'}
+            </p>
+          </div>
+        </div>
+
+        <div className="relative pt-8 pb-4">
+          <div className="h-2 rounded-full bg-[#141414] border border-[#222] overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-yellow-500 to-red-500 transition-all duration-1000"
+              style={{ width: `${streakProgressPercent}%` }}
+            />
+          </div>
+
+          {streakMilestones.map((milestone) => {
+            const position = (milestone.days / 365) * 100;
+            const achieved = currentStreak >= milestone.days;
+            const isNext = nextStreakMilestone?.days === milestone.days;
+
+            return (
+              <div
+                key={milestone.days}
+                className="absolute top-0 -translate-x-1/2"
+                style={{ left: `${position}%` }}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 ${
+                      achieved
+                        ? 'bg-green-400 border-green-300 shadow-[0_0_12px_rgba(74,222,128,0.8)]'
+                        : isNext
+                          ? 'bg-red-500 border-red-300 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-pulse'
+                          : 'bg-[#111] border-[#333]'
+                    }`}
+                  />
+                  <div className="text-center min-w-[52px]">
+                    <p className={`text-[10px] font-black ${achieved ? 'text-green-400' : isNext ? 'text-red-400' : 'text-gray-500'}`}>
+                      {milestone.days}d
+                    </p>
+                    <p className="text-[10px] text-gray-600 font-bold">+{milestone.sats}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="mt-4 text-xs text-gray-400 font-medium">
+          Complete at least 1 valid task or quiz each day to keep your streak alive.
+        </p>
+      </div>
       
 
       {/* ─── 4. BOTTOM GRID (Submissions & Extras) ─── */}

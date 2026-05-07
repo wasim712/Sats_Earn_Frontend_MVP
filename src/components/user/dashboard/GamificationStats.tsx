@@ -18,9 +18,11 @@ interface GamificationProps {
   };
   tasksCompleted: number;
   activeReferrals: number;
+  hasUnreadStreakReward?: boolean;
+  latestStreakRewardText?: string | null;
 }
 
-export default function GamificationStats({ gamification, tasksCompleted, activeReferrals }: GamificationProps) {
+export default function GamificationStats({ gamification, tasksCompleted, activeReferrals, hasUnreadStreakReward = false, latestStreakRewardText = null }: GamificationProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       
@@ -28,9 +30,10 @@ export default function GamificationStats({ gamification, tasksCompleted, active
       <StatCard 
         value={gamification?.currentStreak || 0}
         title="Day Streak"
-        subtitle="Complete tasks daily"
+        subtitle={latestStreakRewardText || 'Complete tasks daily'}
         icon={<Flame className="w-5 h-5 text-sats-orange-500" />}
         iconBg="bg-sats-orange-500/10 border border-sats-orange-500/20"
+        hasAlert={hasUnreadStreakReward}
       />
 
       {/* Tasks Card */}
@@ -105,9 +108,10 @@ export default function GamificationStats({ gamification, tasksCompleted, active
 }
 
 // Sub-component for standard stat cards
-function StatCard({ value, title, subtitle, icon, iconBg }: { value: string | number, title: string, subtitle: string, icon: React.ReactNode, iconBg: string }) {
+function StatCard({ value, title, subtitle, icon, iconBg, hasAlert = false }: { value: string | number, title: string, subtitle: string, icon: React.ReactNode, iconBg: string, hasAlert?: boolean }) {
   return (
-    <div className="bg-black border border-[#1a1a1a] rounded-[24px] p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#2a2a2a] hover:bg-[#050505] shadow-lg">
+    <div className="bg-black border border-[#1a1a1a] rounded-[24px] p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#2a2a2a] hover:bg-[#050505] shadow-lg relative overflow-hidden">
+      {hasAlert && <span className="absolute top-4 right-4 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
       <div className="flex justify-between items-start mb-5">
         <h4 className="text-3xl font-black text-white tracking-tight">{value}</h4>
         <div className={`w-10 h-10 rounded-full ${iconBg} flex items-center justify-center shrink-0`}>
