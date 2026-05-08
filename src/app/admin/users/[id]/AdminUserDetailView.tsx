@@ -155,7 +155,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
             <InfoRow label="Registration IP" value={detail.registrationIp || '—'} mono />
             <InfoRow label="Last IP" value={detail.lastIpAddress || '—'} mono />
             <InfoRow label="Created" value={new Date(detail.createdAt).toLocaleString()} />
-            <InfoRow label="Updated" value={new Date(detail.updatedAt).toLocaleString()} />
+            <InfoRow label="Updated" value={detail.updatedAt ? new Date(detail.updatedAt).toLocaleString() : '?'} />
             <InfoRow label="Last Activity" value={new Date(detail.lastActivityAt).toLocaleString()} />
             <InfoRow label="Twitter" value={detail.twitterHandle || '—'} />
             <InfoRow label="Instagram" value={detail.instagramHandle || '—'} />
