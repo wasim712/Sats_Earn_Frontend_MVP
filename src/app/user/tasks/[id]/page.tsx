@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
@@ -38,6 +39,7 @@ interface Campaign {
   doubleRewardsActive?: boolean;
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
+  coverImageUrl?: string | null;
   targetUrl: string | null;
   tasks: Task[];
 }
@@ -542,7 +544,7 @@ function ProofInputZone({
           </>
         ) : (
           <>
-            Submit Proof
+            {taskStatus === 'rejected' ? 'Resubmit Proof' : 'Submit Proof'}
             <ChevronRight className="w-4 h-4 opacity-60" />
           </>
         )}
@@ -632,6 +634,7 @@ export default function CampaignDetailsPage() {
   // Ã¢â€â‚¬Ã¢â€â‚¬ 2. INPUT HANDLERS (unchanged) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
   const handleFileChange = (taskId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    setSubmissionResults((prev) => ({ ...prev, [taskId]: null }));
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (!file.type.startsWith('image/')) return alert('Please upload a valid image file (JPG, PNG).');
@@ -641,6 +644,7 @@ export default function CampaignDetailsPage() {
   };
 
   const handleTextChange = (taskId: string, value: string) => {
+    setSubmissionResults((prev) => ({ ...prev, [taskId]: null }));
     setTextInputs((prev) => ({ ...prev, [taskId]: value }));
   };
 

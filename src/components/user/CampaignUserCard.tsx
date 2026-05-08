@@ -44,11 +44,24 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
   );
   
   return (
-    <div className={`group relative bg-sats-black-900 border rounded-3xl p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 overflow-hidden ${isCompleted ? 'border-green-500/30 hover:shadow-[0_10px_30px_rgba(34,197,94,0.12)]' : 'border-sats-black-800 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700'}`}>
+    <div className={`group relative bg-sats-black-900 border rounded-3xl flex flex-col h-full transition-all duration-300 hover:-translate-y-1 overflow-hidden ${isCompleted ? 'border-green-500/30 hover:shadow-[0_10px_30px_rgba(34,197,94,0.12)]' : 'border-sats-black-800 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700'}`}>
+      {campaign.coverImageUrl && (
+        <div className="relative h-40 w-full overflow-hidden">
+          <Image
+            src={campaign.coverImageUrl}
+            alt={campaign.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 33vw"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-sats-black-900 via-sats-black-900/35 to-transparent" />
+        </div>
+      )}
       
       <div className="absolute inset-0 bg-linear-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-colors duration-500 pointer-events-none"></div>
 
-      <div className="relative z-10 flex justify-between items-start mb-5">
+      <div className="relative z-10 p-6 flex justify-between items-start mb-5">
         <div className="w-12 h-12 rounded-2xl bg-sats-black-950 border border-sats-black-800 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
           <PlatformLogo url={campaign.targetUrl} className="w-6 h-6" />
         </div>
@@ -66,7 +79,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
         )}
       </div>
 
-      <div className="relative z-10 grow mb-6">
+      <div className="relative z-10 grow mb-6 px-6">
         <h3 className="text-xl font-bold text-white mb-2 leading-tight group-hover:text-sats-orange-400 transition-colors line-clamp-1">
           {campaign.title}
         </h3>

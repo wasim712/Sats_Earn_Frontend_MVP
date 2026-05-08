@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { createCampaign } from '@/features/admin/adminCampaignsSlice';
+import { createCampaign, uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import { 
   ArrowLeft, Save, Loader2, ChevronDown, 
@@ -21,12 +22,15 @@ export default function AddCampaignPage() {
   const { countries } = useAppSelector((state) => state.adminCountries);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: 'SOCIAL',
+    coverImageUrl: '',
     targetCountries: [] as string[],
     requiredPlatform: 'NONE',
     isPremiumOnly: false,
@@ -108,12 +112,27 @@ export default function AddCampaignPage() {
     if (formData.maxCompletions <= 0) return setErrorMsg("Max Completions must be greater than 0.");
 
     setIsSaving(true);
+
+    let coverImageUrl = formData.coverImageUrl || '';
+    if (coverImageFile) {
+      setIsUploadingCover(true);
+      const uploadResult = await dispatch(uploadCampaignCover(coverImageFile));
+      setIsUploadingCover(false);
+      if (uploadCampaignCover.fulfilled.match(uploadResult)) {
+        coverImageUrl = uploadResult.payload;
+      } else {
+        setErrorMsg((uploadResult.payload as string) || 'Failed to upload campaign cover.');
+        setIsSaving(false);
+        return;
+      }
+    }
     
     // Strict Payload Generation to match Zod exactly
     const payload = {
       title: formData.title.trim(),
       description: formData.description.trim(),
       category: formData.category,
+      coverImageUrl: coverImageUrl || undefined,
       targetCountries: formData.targetCountries,
       requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
@@ -188,6 +207,24 @@ export default function AddCampaignPage() {
                     <input type="text" name="title" value={formData.title} onChange={handleChange} required minLength={5} placeholder="e.g. Follow SatsEarn on Twitter" className={inputCls} />
                   </InputWrapper>
                   
+                  <InputWrapper label="Campaign Cover Image">
+                    <div className="space-y-3">
+                      <input type="file" accept="image/*" onChange={(e) => setCoverImageFile(e.target.files?.[0] || null)} className={inputCls} />
+                      <input type="url" name="coverImageUrl" value={formData.coverImageUrl} onChange={handleChange} placeholder="Or paste image URL https://..." className={inputCls} />
+                      {(coverImageFile || formData.coverImageUrl) && (
+                        <div className="relative h-36 w-full overflow-hidden rounded-2xl border border-[#1a1a1a]">
+                          <Image
+                            src={coverImageFile ? URL.createObjectURL(coverImageFile) : formData.coverImageUrl}
+                            alt="Campaign cover preview"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </InputWrapper>
+
                   <InputWrapper label="Description" required>
                     <textarea name="description" value={formData.description} onChange={handleChange} required minLength={10} placeholder="Explain the high-level goal of this campaign..." className={`${inputCls} min-h-[120px] resize-none`} />
                   </InputWrapper>

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { updateCampaign, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
+import { updateCampaign, deleteCampaign, uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import type { Campaign, AdminTask } from '@/types/admin';
 import { 
@@ -83,6 +84,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isDeleting, setIsDeleting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Update Successful");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -90,6 +93,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     targetCountries: [],
     tierRewardMatrix: {},
     xpReward: 0,
+    coverImageUrl: '',
   });
 
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CREATION & EDITING STATE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
@@ -122,6 +126,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           targetCountries: campData.targetCountries || [],
           tierRewardMatrix: campData.tierRewardMatrix || {},
           xpReward: campData.xpReward || 0,
+          coverImageUrl: campData.coverImageUrl || '',
           doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
           doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
         });
@@ -175,11 +180,28 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CAMPAIGN CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSave = async () => {
+    if (!campaign) return;
     setIsSaving(true);
+
+    let coverImageUrl = editForm.coverImageUrl || '';
+    if (coverImageFile) {
+      setIsUploadingCover(true);
+      const uploadResult = await dispatch(uploadCampaignCover(coverImageFile));
+      setIsUploadingCover(false);
+      if (uploadCampaignCover.fulfilled.match(uploadResult)) {
+        coverImageUrl = uploadResult.payload;
+      } else {
+        alert((uploadResult.payload as string) || 'Failed to upload campaign cover.');
+        setIsSaving(false);
+        return;
+      }
+    }
+
     const payload = {
       title: editForm.title.trim(),
       description: editForm.description.trim(),
       category: editForm.category,
+      coverImageUrl: coverImageUrl?.trim() || null,
       targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
@@ -207,6 +229,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   };
 
   const handleDelete = async () => {
+    if (!campaign) return;
     if (window.confirm(`Are you sure you want to delete "${campaign.title}"? All user submissions and associated tasks will be lost forever.`)) {
       setIsDeleting(true);
       const result = await dispatch(deleteCampaign(campaign.id));
@@ -274,7 +297,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       description: editingTaskForm.description,
       proofType: editingTaskForm.proofType,
       // Send at top level — backend reads it here and stores it in requirements JSON
-      requiredPlatform: editingTaskForm.requirements?.requiredPlatform || editingTaskForm.requiredPlatform || '',
+      requiredPlatform: (editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || '',
       // Only include targetUrl if it has actual content — omit entirely when blank
       ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
     })
@@ -344,6 +367,19 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="max-w-350 mx-auto w-full flex flex-col gap-6 md:gap-8">
+        {campaign.coverImageUrl && (
+          <div className="relative h-56 md:h-72 overflow-hidden rounded-3xl border border-[#1a1a1a]">
+            <Image
+              src={campaign.coverImageUrl}
+              alt={campaign.title}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-black/35 to-transparent" />
+          </div>
+        )}
         
         {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ STICKY HEADER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl mt-4">
@@ -363,11 +399,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </>
             ) : (
               <>
-                <button onClick={() => { setEditForm(campaign); setIsEditing(false); }} className="flex items-center text-gray-400 hover:text-white px-4 py-2.5 transition-colors font-bold">
+                <button onClick={() => { setEditForm({ ...campaign, targetCountries: campaign.targetCountries || [], tierRewardMatrix: campaign.tierRewardMatrix || {}, xpReward: campaign.xpReward || 0, coverImageUrl: campaign.coverImageUrl || '', doubleRewardsStartAt: campaign.doubleRewardsStartAt || '', doubleRewardsEndAt: campaign.doubleRewardsEndAt || '' }); setIsEditing(false); }} className="flex items-center text-gray-400 hover:text-white px-4 py-2.5 transition-colors font-bold">
                   <X className="w-5 h-5 mr-1.5" /> Cancel
                 </button>
                 <button onClick={handleSave} disabled={isSaving} className="flex items-center bg-green-500 hover:bg-green-400 text-black font-black px-6 py-2.5 rounded-xl transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(34,197,94,0.3)] active:scale-95">
-                  {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />} Save Changes
+                  {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />} {isUploadingCover ? 'Uploading Cover...' : 'Save Changes'}
                 </button>
               </>
             )}
@@ -395,6 +431,33 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     <div className="space-y-4">
                       <input type="text" value={editForm.title} required minLength={5} onChange={e => setEditForm({...editForm, title: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-white text-xl font-bold px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 transition-all" placeholder="Campaign Title (Min 5 chars)" />
                       <textarea value={editForm.description} required minLength={10} onChange={e => setEditForm({...editForm, description: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-gray-300 px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 min-h-30 transition-all" placeholder="Description (Min 10 chars)" />
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 space-y-3">
+                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest">Campaign Cover Image</label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => setCoverImageFile(e.target.files?.[0] || null)}
+                          className={inputCls}
+                        />
+                        <input
+                          type="url"
+                          value={editForm.coverImageUrl || ''}
+                          onChange={e => setEditForm({ ...editForm, coverImageUrl: e.target.value })}
+                          placeholder="Or paste image URL https://..."
+                          className={inputCls}
+                        />
+                        {(coverImageFile || editForm.coverImageUrl) && (
+                          <div className="relative h-40 w-full overflow-hidden rounded-2xl border border-[#1a1a1a]">
+                            <Image
+                              src={coverImageFile ? URL.createObjectURL(coverImageFile) : (editForm.coverImageUrl || '')}
+                              alt="Campaign cover preview"
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -474,7 +537,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               : 'All Devices'}
                       </span>
                     ) : (
-                      <select value={editForm.requiredPlatform || 'NONE'} onChange={e => setEditForm({ ...editForm, requiredPlatform: e.target.value })} className={inputCls}>
+                      <select value={editForm.requiredPlatform || 'NONE'} onChange={e => setEditForm({ ...editForm, requiredPlatform: e.target.value as Campaign['requiredPlatform'] })} className={inputCls}>
                         {DEVICE_OPTIONS.map(device => (
                           <option key={device} value={device}>
                             {device === 'NONE' ? 'All Devices' : device === 'DESKTOP' ? 'Desktop Only' : device === 'ANDROID' ? 'Android Only' : 'iOS Only'}
@@ -715,14 +778,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       {editingTaskId === task.id ? (
                         <form onSubmit={handleUpdateTask} className="space-y-4 animate-in fade-in">
                           <div>
-                            <input required type="text" value={editingTaskForm.title} onChange={e => setEditingTaskForm({...editingTaskForm, title: e.target.value})} className={inputCls} />
+                            <input required type="text" value={editingTaskForm.title || ''} onChange={e => setEditingTaskForm({...editingTaskForm, title: e.target.value})} className={inputCls} />
                           </div>
                           <div>
-                            <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
+                            <textarea required value={editingTaskForm.description || ''} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select
-                              value={editingTaskForm.requirements?.requiredPlatform || editingTaskForm.requiredPlatform || ''}
+                              value={(editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || ''}
                                 onChange={e => setEditingTaskForm({
                                   ...editingTaskForm,
                                   requiredPlatform: e.target.value,
@@ -732,7 +795,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           >
                               {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
-                            <select value={editingTaskForm.proofType} onChange={e => setEditingTaskForm({...editingTaskForm, proofType: e.target.value})} className={inputCls}>
+                            <select value={editingTaskForm.proofType || 'SCREENSHOT'} onChange={e => setEditingTaskForm({...editingTaskForm, proofType: e.target.value})} className={inputCls}>
                               {PROOF_TYPES.map(p => <option key={p} value={p}>{p.replace('_', ' ')}</option>)}
                             </select>
                           </div>
@@ -781,7 +844,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             
                             <div className="flex items-center gap-3 mt-4 ml-9 flex-wrap">
                               <span className="px-2.5 py-1 bg-[#111] border border-[#2a2a2a] rounded-md text-[10px] font-bold text-gray-300 uppercase tracking-wider">
-                                {task.requiredPlatform || task.requirements?.requiredPlatform || 'UNKNOWN'}
+                                {task.requiredPlatform || (task.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || 'UNKNOWN'}
                               </span>
                               <span className="px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
@@ -854,7 +917,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
                       {Object.keys(analytics.tierDistribution || {}).length > 0 ? (
                         <ul className="space-y-3">
-                          {Object.entries(analytics.tierDistribution).map(([tier, count]) => (
+                          {Object.entries(analytics.tierDistribution || {}).map(([tier, count]) => (
                             <li key={tier} className="flex justify-between items-center text-sm">
                               <span className="text-gray-400 uppercase tracking-widest text-[10px] font-black">{tier}</span>
                               <span className="font-bold text-white px-2 py-0.5 bg-[#111] border border-[#2a2a2a] rounded-md">{String(count)}</span>

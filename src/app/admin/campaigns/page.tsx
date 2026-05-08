@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAllCampaigns, toggleCampaignStatus, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
 import type { Campaign } from '@/features/admin/adminCampaignsSlice';

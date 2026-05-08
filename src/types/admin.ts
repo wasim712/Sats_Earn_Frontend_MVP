@@ -3,6 +3,7 @@ export interface Campaign {
   title: string;
   description: string;
   category: string;
+  coverImageUrl?: string | null;
   targetUrl: string | null;
   socialHandleTarget: string | null;
   targetCountries: string[];
