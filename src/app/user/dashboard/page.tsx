@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
 import { 
   AlertTriangle, CheckCircle2, Clock3, LockKeyhole, XCircle, 
-  Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy
+  Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy,
+  Clock4
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,7 +21,8 @@ export default function UserDashboardPage() {
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
-
+  // Fiat Currency Converter State (INR or USD)
+  const [fiatCurrency, setFiatCurrency] = useState<'INR' | 'USD'>('INR');
   useEffect(() => {
     dispatch(fetchUserDashboard());
     dispatch(fetchUserNotifications());
@@ -44,15 +46,15 @@ export default function UserDashboardPage() {
     if (showBtc) {
       return (
         <div className="flex items-baseline gap-1">
-          <span className="text-3xl sm:text-4xl font-black tracking-tight">{(sats / 100000000).toFixed(8)}</span>
+          <span className={`text-2xl sm:text-2xl xl:text-3xl font-black tracking-tight`}>{(sats / 100000000).toFixed(8)}</span>
           <span className="text-2xl font-bold text-gray-300 mb-1">BTC</span>
         </div>
       );
     }
     return (
       <div className="flex items-baseline gap-1">
-        <span className="text-3xl sm:text-4xl font-black tracking-tight">{sats.toLocaleString()}</span>
-        <span className="text-2xl font-bold text-gray-400 mb-1">.00</span>
+        <span className={`text-2xl sm:text-3xl font-black tracking-tight`}>{sats.toLocaleString()}</span>
+        <span className={`"text-2xl font-bold text-gray-400 mb-1 ${sats>1000000?'hidden':''}`}>.00</span>
         <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span>
       </div>
     );
@@ -60,8 +62,17 @@ export default function UserDashboardPage() {
 
   // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
-    const inrValue = (sats / 100000000) * 5500000;
-    return `≈ ₹${inrValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR at current rate`;
+    const btcAmount = sats / 100000000;
+    
+    if (fiatCurrency === 'USD') {
+      // Assuming 1 BTC = ~$90,000 USD (Adjust as needed)
+      const usdValue = btcAmount * 90000;
+      return `≈ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    } else {
+      // Current INR Rate
+      const inrValue = btcAmount * 7500406;
+      return `≈ ₹${inrValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR`;
+    }
   };
 
   if (error) {
@@ -172,7 +183,7 @@ export default function UserDashboardPage() {
       </div>
 
       {/* ─── 2. STATS GRID (4 Cards) ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         
         {/* Card 1: Main Balance (The Blue/Orange one from the design) */}
         <div className="lg:col-span-1 bg-gradient-to-br from-[#1c2e4a] via-[#101b30] to-[#050505] border border-blue-500/20 rounded-[24px] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300">
@@ -207,41 +218,39 @@ export default function UserDashboardPage() {
             <div className="text-white mb-2 drop-shadow-md ">
               {formatAvailableBalance(data.balances?.available || 0)}
             </div>
-            <p className="text-sm font-medium text-blue-200/60">
-              {getFiatValue(data.balances?.available || 0)}
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-medium text-blue-200/60">
+                {getFiatValue(data.balances?.available || 0)}
+              </p>
+              
+              {/* Fiat Currency Toggle Button */}
+              <button 
+                onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
+                className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
+                title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
+              >
+                {fiatCurrency === 'INR' ? '$' : '₹'}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Card 2: Total Earned */}
-        {/* <div className="bg-[#080808] border border-[#1a1a1a] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between group hover:-translate-y-1 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] transition-all duration-300">
-          <div className="flex flex-col gap-4">
-            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
-              <Activity className="w-5 h-5 text-green-500" />
-            </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Total Earned</p>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}</h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
-          </div>
-        </div> */}
-
-        {/* Card 3: Total XP */}
+        
+        {/* Card 2: pending */}
         <div className="bg-[#080808] border border-[#1a1a1a] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between group hover:-translate-y-1 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] transition-all duration-300">
           <div className="flex flex-col gap-4">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
-              <Zap className="w-5 h-5 text-purple-500" />
+              <Clock4 className="w-5 h-5 text-purple-500" />
             </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Total XP</p>
+            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending Sats</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.gamification?.totalXp || 0).toLocaleString()}</h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Experience Points</p>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()}</h3>
+            <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
           </div>
         </div>
 
-        {/* Card 4: Locked Balance */}
+        {/* Card 3: Locked Balance */}
         <div className="bg-[#080808] border border-[#1a1a1a] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between group hover:-translate-y-1 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] transition-all duration-300">
           <div className="flex flex-col gap-4">
             <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
@@ -254,84 +263,132 @@ export default function UserDashboardPage() {
             <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
+        {/* Card 4: Total Earned */}
+        <div className="bg-[#080808] overflow-hidden border border-[#1a1a1a] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between group hover:-translate-y-1 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] transition-all duration-300">
+          <div className="flex flex-col gap-4">
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
+              <Activity className="w-5 h-5 text-green-500" />
+            </div>
+            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Total Earned</p>
+          </div>
+          <div className="mt-4">
+            <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}
+              <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span></h3>
+              
+            <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
+          </div>
+        </div>
+
 
       </div>
 
-      {/* ─── 3. WEEKLY STREAK PROGRESS ─── */}
+      {/* ─── 3. STREAK MILESTONES ─── */}
       {unreadStreakReward && (
-        <div className="mb-6 rounded-[24px] border border-red-500/20 bg-red-500/10 px-5 py-4 flex items-start gap-3 shadow-[0_0_20px_rgba(239,68,68,0.08)]">
-          <div className="mt-0.5 w-3 h-3 rounded-full bg-red-500 animate-pulse shrink-0" />
+        <div className="mb-6 rounded-[20px] border border-green-500/20 bg-green-500/10 px-5 py-4 flex items-start gap-3 shadow-[0_0_20px_rgba(34,197,94,0.08)] backdrop-blur-sm transition-all">
+          <div className="mt-1 w-3 h-3 rounded-full bg-green-500 animate-pulse shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
           <div>
-            <p className="text-sm font-black text-white">Streak Milestone Reward Received</p>
-            <p className="text-sm text-red-100/90 mt-1">{unreadStreakReward.message}</p>
-            <Link href="/user/notifications" className="inline-flex mt-3 text-xs font-bold text-red-300 hover:text-white transition-colors">
-              View notification
+            <p className="text-sm font-black text-white tracking-tight">Milestone Unlocked! 🏆</p>
+            <p className="text-sm text-green-100/80 mt-0.5 font-medium">{unreadStreakReward.message}</p>
+            <Link href="/user/notifications" className="inline-flex mt-2 text-xs font-bold text-green-400 hover:text-green-300 transition-colors">
+              Claim Reward &rarr;
             </Link>
           </div>
         </div>
       )}
-      <div className="mb-6 rounded-[24px] border border-[#1a1a1a] bg-[#080808] px-5 py-5 sm:px-6 sm:py-6 shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-          <div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Streak Milestones</p>
-            <h3 className="text-xl font-black text-white mt-1">{currentStreak} day streak</h3>
+
+      <div className="mb-6 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-8 shadow-xl relative overflow-hidden group">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-sats-orange-500/5 blur-[80px] pointer-events-none" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#111] border border-[#2a2a2a] flex items-center justify-center shrink-0">
+              <span className="text-xl">🔥</span>
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Current Streak</p>
+              <h3 className="text-2xl font-black text-white tracking-tight mt-0.5">{currentStreak} <span className="text-gray-400 text-lg">Days</span></h3>
+            </div>
           </div>
-          <div className="text-left sm:text-right">
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Next Reward</p>
-            <p className="text-sm font-black text-sats-orange-400 mt-1">
+          
+          <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-5 py-3 text-left sm:text-right">
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
+            <p className="text-sm font-black text-sats-orange-500 mt-1">
               {nextStreakMilestone
-                ? `${nextStreakMilestone.days} days • +${nextStreakMilestone.sats.toLocaleString()} sats`
-                : 'All milestone rewards unlocked'}
+                ? `${nextStreakMilestone.days} Days • +${nextStreakMilestone.sats.toLocaleString()} Sats`
+                : 'All Rewards Unlocked 🎉'}
             </p>
           </div>
         </div>
 
-        <div className="relative pt-8 pb-4">
-          <div className="h-2 rounded-full bg-[#141414] border border-[#222] overflow-hidden">
+        {/* ─── THE NEW STEPPER UI ─── */}
+        {/* Added overflow-x-auto so it scrolls beautifully on small mobile screens without squishing */}
+        <div className="relative pt-4 pb-2 overflow-x-auto custom-scrollbar">
+          <div className="min-w-[600px] sm:min-w-full relative px-2">
+            
+            {/* Background Track */}
+            <div className="absolute left-4 right-4 top-[15px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
+
+            {/* Active Track Fill */}
             <div
-              className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-yellow-500 to-red-500 transition-all duration-1000"
-              style={{ width: `${streakProgressPercent}%` }}
+              className="absolute left-4 top-[15px] h-1.5 bg-gradient-to-r from-sats-orange-500 to-yellow-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+              style={{ 
+                // Calculate percentage based on the index of milestones achieved, not raw days
+                width: `calc(${(streakMilestones.findIndex(m => m.days === nextStreakMilestone?.days) > 0 
+                  ? (streakMilestones.findIndex(m => m.days === nextStreakMilestone?.days) / (streakMilestones.length - 1)) * 100 
+                  : currentStreak >= Math.max(...streakMilestones.map(m => m.days)) ? 100 : 0)}% - 2rem)` 
+              }}
             />
-          </div>
 
-          {streakMilestones.map((milestone) => {
-            const position = (milestone.days / 365) * 100;
-            const achieved = currentStreak >= milestone.days;
-            const isNext = nextStreakMilestone?.days === milestone.days;
+            <div className="flex items-center justify-between relative z-10">
+              {streakMilestones.map((milestone) => {
+                const achieved = currentStreak >= milestone.days;
+                const isNext = nextStreakMilestone?.days === milestone.days;
 
-            return (
-              <div
-                key={milestone.days}
-                className="absolute top-0 -translate-x-1/2"
-                style={{ left: `${position}%` }}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 ${
-                      achieved
-                        ? 'bg-green-400 border-green-300 shadow-[0_0_12px_rgba(74,222,128,0.8)]'
-                        : isNext
-                          ? 'bg-red-500 border-red-300 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-pulse'
-                          : 'bg-[#111] border-[#333]'
-                    }`}
-                  />
-                  <div className="text-center min-w-[52px]">
-                    <p className={`text-[10px] font-black ${achieved ? 'text-green-400' : isNext ? 'text-red-400' : 'text-gray-500'}`}>
-                      {milestone.days}d
-                    </p>
-                    <p className="text-[10px] text-gray-600 font-bold">+{milestone.sats}</p>
+                return (
+                  <div key={milestone.days} className="flex flex-col items-center gap-3 relative group/node cursor-default w-16">
+                    
+                    {/* The Node */}
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border-[3px] transition-all duration-500 ${
+                        achieved
+                          ? 'bg-[#111] border-sats-orange-500 text-sats-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]'
+                          : isNext
+                            ? 'bg-[#111] border-yellow-400 text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] scale-110'
+                            : 'bg-[#0a0a0a] border-[#2a2a2a] text-gray-600'
+                      }`}
+                    >
+                      {achieved ? (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      ) : (
+                        <span className="text-[10px] font-black">{milestone.days}</span>
+                      )}
+                    </div>
+
+                    {/* The Text */}
+                    <div className="text-center">
+                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-sats-orange-500' : isNext ? 'text-white' : 'text-gray-500'}`}>
+                        {milestone.days} Days
+                      </p>
+                      <p className={`text-[10px] font-bold mt-0.5 ${achieved || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
+                        +{ milestone.sats}
+                      </p>
+                    </div>
+
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <p className="mt-4 text-xs text-gray-400 font-medium">
-          Complete at least 1 valid task or quiz each day to keep your streak alive.
-        </p>
+        <div className="mt-8 pt-4 border-t border-[#1a1a1a] flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-sats-orange-500/50" />
+          <p className="text-xs text-gray-500 font-medium">
+            Complete at least <strong className="text-gray-300">1 valid task or quiz</strong> each day to advance your path.
+          </p>
+        </div>
       </div>
-      
 
       {/* ─── 4. BOTTOM GRID (Submissions & Extras) ─── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">

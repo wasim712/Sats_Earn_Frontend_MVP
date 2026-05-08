@@ -270,15 +270,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         // AFTER
         body: JSON.stringify({
-          title: editingTaskForm.title,
-          description: editingTaskForm.description,
-          proofType: editingTaskForm.proofType,
-          requirements: {
-            ...(editingTaskForm.requirements || {}),
-            requiredPlatform: editingTaskForm.requiredPlatform,
-          },
-          ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
-        })
+      title: editingTaskForm.title,
+      description: editingTaskForm.description,
+      proofType: editingTaskForm.proofType,
+      // Send at top level — backend reads it here and stores it in requirements JSON
+      requiredPlatform: editingTaskForm.requirements?.requiredPlatform || editingTaskForm.requiredPlatform || '',
+      // Only include targetUrl if it has actual content — omit entirely when blank
+      ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
+    })
       });
 
       if (!res.ok) {
@@ -549,7 +548,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </label>
                           <input 
                             type="number" 
-                            min={0} 
+                            min={1} 
                             value={editForm.xpReward || ''} 
                             onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} 
                             placeholder="Campaign XP Reward" 
@@ -723,12 +722,12 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select
-                            value={editingTaskForm.requirements?.requiredPlatform || ''}
-                            onChange={e => setEditingTaskForm({
-                              ...editingTaskForm,
-                              requiredPlatform: e.target.value, // keep for local state
-                              requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
-                            })}
+                              value={editingTaskForm.requirements?.requiredPlatform || editingTaskForm.requiredPlatform || ''}
+                                onChange={e => setEditingTaskForm({
+                                  ...editingTaskForm,
+                                  requiredPlatform: e.target.value,
+                                  requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
+                                })}
                             className={inputCls}
                           >
                               {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
@@ -794,7 +793,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           
                           {/* Edit / Delete Buttons */}
-                          <div className="flex sm:flex-col gap-2 justify-end shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex sm:flex-col gap-2 justify-end shrink-0 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button 
                               onClick={() => { setEditingTaskId(task.id); setEditingTaskForm({ ...task }); }}
                               className="p-2 bg-[#111] border border-[#2a2a2a] hover:text-white text-gray-400 rounded-lg transition-colors"
