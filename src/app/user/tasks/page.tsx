@@ -138,38 +138,42 @@ export default function TasksPage() {
           <p className="font-medium">{error}</p>
         </div>
       )}
-
-      {/* LOADING STATE - The Perfect Skeleton */}
+{/* LOADING STATE - The Perfect Skeleton */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-puls ">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 flex flex-col h-full min-h-70 shadow-lg">
+            <div key={n} className="bg-[#080808] border border-[#1a1a1a] rounded-[32px] flex flex-col h-full min-h-[440px] overflow-hidden shadow-lg">
               
-              {/* Header Skeleton: Logo & Reward Pill */}
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-[#1a1a1a]"></div>
-                <div className="w-24 h-8 rounded-xl bg-[#1a1a1a]"></div>
+              {/* TALL Header Image Skeleton */}
+              <div className="relative h-[200px] w-full bg-[#111] shrink-0">
+                {/* Top Left Glass Badge Skeleton */}
+                <div className="absolute top-5 left-5 w-11 h-11 rounded-xl bg-[#1a1a1a]" />
+                {/* Top Right Reward Badge Skeleton */}
+                <div className="absolute top-5 right-5 w-28 h-8 rounded-xl bg-[#1a1a1a]" />
               </div>
               
-              {/* Body Skeleton: Title & Description */}
-              <div className="grow mb-8 space-y-4">
-                <div className="h-6 w-3/4 bg-[#1a1a1a] rounded-lg"></div>
-                <div className="space-y-2.5">
-                  <div className="h-3 w-full bg-[#1a1a1a] rounded-md"></div>
-                  <div className="h-3 w-5/6 bg-[#1a1a1a] rounded-md"></div>
+              {/* Spacious Body Skeleton */}
+              <div className="p-6 md:p-8 flex flex-col grow">
+                {/* Title */}
+                <div className="h-7 w-3/4 bg-[#1a1a1a] rounded-lg mb-4" />
+                
+                {/* Description */}
+                <div className="space-y-2.5 mb-8 grow">
+                  <div className="h-4 w-full bg-[#141414] rounded-md" />
+                  <div className="h-4 w-5/6 bg-[#141414] rounded-md" />
                 </div>
-              </div>
-              
-              {/* Footer Skeleton: Progress Bar & Button */}
-              <div className="mt-auto space-y-6">
-                <div className="space-y-2.5">
+                
+                {/* Progress Skeleton */}
+                <div className="space-y-3 mb-6">
                   <div className="flex justify-between items-end">
-                    <div className="h-3 w-20 bg-[#1a1a1a] rounded-md"></div>
-                    <div className="h-3 w-12 bg-[#1a1a1a] rounded-md"></div>
+                    <div className="h-3 w-24 bg-[#141414] rounded-md" />
+                    <div className="h-3 w-12 bg-[#141414] rounded-md" />
                   </div>
-                  <div className="w-full h-2 bg-[#1a1a1a] rounded-full"></div>
+                  <div className="w-full h-2 bg-[#141414] rounded-full" />
                 </div>
-                <div className="w-full h-13 bg-[#1a1a1a] rounded-xl"></div>
+                
+                {/* Thick Button Skeleton */}
+                <div className="w-full h-[52px] bg-[#111] rounded-xl border border-[#1a1a1a]" />
               </div>
 
             </div>

@@ -1,8 +1,14 @@
-import React  from 'react';
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
-import { Zap, Clock, ChevronRight, LinkIcon, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import { 
+  Zap, Clock, ChevronRight, LinkIcon, CheckCircle2, 
+  Monitor, Smartphone, Users, LayoutGrid, ListChecks 
+} from 'lucide-react';
 import { Campaign } from '@/features/admin/adminCampaignsSlice';
+
 // --- PLATFORM LOGO COMPONENT ---
 const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, className?: string }) => {
   if (!url) return <LinkIcon className={`text-gray-400 ${className}`} />;
@@ -27,103 +33,151 @@ const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, clas
 
 // --- SUB-COMPONENT: The Individual Task Card ---
 export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
+  // Calculations & Logic
   const safeTotal = Number(campaign.totalCompletions) || 0;
   const safeMax = Number(campaign.maxCompletions) || 1;
   const spotsLeft = Math.max(0, safeMax - safeTotal);
   const progressPercent = Math.min((safeTotal / safeMax) * 100, 100);
   const isAlmostFull = spotsLeft < (safeMax * 0.1) && spotsLeft > 0;
+  const isFull = safeTotal >= safeMax;
   const isCompleted = Boolean(campaign.isCompleted);
+  
   const completedTasksCount = Number(campaign.completedTasksCount) || 0;
   const totalTasksCount = Number(campaign.totalTasksCount) || 0;
+  
   const visibleRewardTiers = campaign.isPremiumOnly
     ? ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER']
     : ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
+    
   const topTierReward = visibleRewardTiers.reduce(
     (max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)),
     0,
   );
-  
+
+  const requiredPlatform = String((campaign as any).requiredPlatform || 'NONE').toUpperCase();
+  const RequiredPlatformIcon = requiredPlatform === 'DESKTOP' ? Monitor : requiredPlatform === 'ANDROID' || requiredPlatform === 'IOS' ? Smartphone : LayoutGrid;
+  const requiredPlatformLabel = requiredPlatform === 'NONE' ? 'All Devices' : requiredPlatform === 'IOS' ? 'iOS Only' : requiredPlatform === 'ANDROID' ? 'Android Only' : 'Desktop Only';
+
   return (
-    <div className={`group relative bg-sats-black-900 border rounded-3xl flex flex-col h-full transition-all duration-300 hover:-translate-y-1 overflow-hidden ${isCompleted ? 'border-green-500/30 hover:shadow-[0_10px_30px_rgba(34,197,94,0.12)]' : 'border-sats-black-800 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700'}`}>
-      {campaign.coverImageUrl && (
-        <div className="relative h-40 w-full overflow-hidden">
-          <Image
-            src={campaign.coverImageUrl}
-            alt={campaign.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 33vw"
-            unoptimized
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-sats-black-900 via-sats-black-900/35 to-transparent" />
-        </div>
-      )}
-      
-      <div className="absolute inset-0 bg-linear-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-colors duration-500 pointer-events-none"></div>
+    <Link href={`/user/tasks/${campaign.id}`} className="group block h-full">
+      <div className={`relative h-full flex flex-col bg-[#080808] border ${isCompleted ? 'border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.06)]' : 'border-[#1a1a1a] group-hover:border-[#2a2a2a]'} rounded-[32px] overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_15px_50px_rgba(249,115,22,0.1)]`}>
+        
+        {/* ─── 1. Tall Header Banner Image ─── */}
+        <div className="relative h-[200px] w-full bg-[#111] overflow-hidden shrink-0">
+          {campaign.coverImageUrl ? (
+            <Image
+              src={campaign.coverImageUrl}
+              alt={campaign.title}
+              fill
+              className="object-cover opacity-70 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              unoptimized
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-sats-orange-500/10 via-[#111] to-blue-500/10 " />
+            // <Image
+            // src={"/icon.png"}
+            // alt='app logo'
+            // fill
+            //   className="object-cover opacity-70 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
+            //   sizes="(max-width: 768px) 100vw, 33vw"
+            //   unoptimized
+            // />
+          )}
+          {/* Bottom fade so text doesn't clash if we put anything over it */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#080808] to-transparent opacity-90" />
+          
+          {/* Top Left: Platform Logo (Clean Glassmorphism) */}
+          <div className="absolute top-5 left-5 w-11 h-11 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center shadow-lg z-20 group-hover:scale-110 transition-transform duration-300">
+            <PlatformLogo url={campaign.targetUrl} className="w-5 h-5 drop-shadow-md" />
+          </div>
 
-      <div className="relative z-10 p-6 flex justify-between items-start mb-5">
-        <div className="w-12 h-12 rounded-2xl bg-sats-black-950 border border-sats-black-800 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
-          <PlatformLogo url={campaign.targetUrl} className="w-6 h-6" />
-        </div>
-
-        {isCompleted ? (
-          <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-xl shadow-sm">
-            <CheckCircle2 className="w-4 h-4 text-green-400" />
-            <span className="text-sm font-black text-green-400">Completed</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5 bg-sats-orange-500/10 border border-sats-orange-500/20 px-3 py-1.5 rounded-xl shadow-sm">
-            <Zap className="w-4 h-4 text-sats-orange-500 fill-sats-orange-500" />
-            <span className="text-sm font-black text-sats-orange-400">Up to {topTierReward} <span className="text-xs font-bold text-sats-orange-500/70">SATS</span></span>
-          </div>
-        )}
-      </div>
-
-      <div className="relative z-10 grow mb-6 px-6">
-        <h3 className="text-xl font-bold text-white mb-2 leading-tight group-hover:text-sats-orange-400 transition-colors line-clamp-1">
-          {campaign.title}
-        </h3>
-        <p className="text-sm text-gray-400 leading-relaxed line-clamp-2">
-          {campaign.description}
-        </p>
-        {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
-          <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-yellow-500/20 bg-yellow-500/10 px-3 py-2 text-xs font-bold text-yellow-300">
-            <Zap className="w-3.5 h-3.5" />
-            Get 2x rewards from {new Date(campaign.doubleRewardsStartAt).toLocaleDateString()} to {new Date(campaign.doubleRewardsEndAt).toLocaleDateString()}
-          </div>
-        )}
-        {totalTasksCount > 0 && (
-          <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#1a1a1a] bg-black/40 px-3 py-2 text-xs font-bold text-gray-300">
-            <span>{completedTasksCount}/{totalTasksCount} completed</span>
-          </div>
-        )}
-      </div>
-
-      <div className="relative z-10 mt-auto space-y-5">
-        <div className="space-y-2">
-          <div className="flex justify-between items-end text-xs font-bold">
-            <span className={`${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-orange-400 flex items-center gap-1' : 'text-gray-500'}`}>
-              {!isCompleted && isAlmostFull && <Clock className="w-3 h-3" />}
-              {isCompleted ? 'All steps completed' : `${spotsLeft.toLocaleString()} spots left`}
-            </span>
-            <span className="text-gray-600">{progressPercent.toFixed(0)}% Filled</span>
-          </div>
-          <div className="w-full bg-sats-black-950 rounded-full h-2 border border-sats-black-800 overflow-hidden">
-            <div 
-              className="h-full rounded-full transition-all duration-1000 bg-linear-to-r from-sats-orange-600 to-sats-orange-400"
-              style={{ width: `${progressPercent}%` }}
-            ></div>
+          {/* Top Right Badges */}
+          <div className="absolute top-5 right-5 flex items-center gap-2 z-20">
+            {isCompleted ? (
+              <div className="bg-green-500/90 backdrop-blur-md text-black text-[11px] font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md">
+                <CheckCircle2 className="w-4 h-4" /> COMPLETED
+              </div>
+            ) : (
+              <div className="bg-sats-orange-500/90 backdrop-blur-md text-black text-xs font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+                <Zap className="w-4 h-4 fill-black" />
+                Up to {topTierReward.toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
 
-        <Link 
-          href={`/user/tasks/${campaign.id}`}
-          className={`w-full flex items-center justify-center gap-2 font-bold py-3 px-4 rounded-xl border transition-all duration-300 group/btn ${isCompleted ? 'bg-green-500/10 hover:bg-green-500/20 border-green-500/20 text-green-300' : 'bg-sats-black-950 hover:bg-sats-orange-500 text-white hover:text-black border-sats-black-800 hover:border-sats-orange-500'}`}
-        >
-          <span>{isCompleted ? 'View Completed' : 'View Task'}</span>
-          <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-        </Link>
+        {/* ─── 2. Spacious Content Body ─── */}
+        <div className="p-6 md:p-8 flex flex-col grow relative z-10">
+          
+          <h3 className="text-2xl font-black text-white mb-3 leading-tight group-hover:text-sats-orange-500 transition-colors line-clamp-1">
+            {campaign.title}
+          </h3>
+          <p className="text-[15px] text-gray-400 leading-relaxed line-clamp-2">
+            {campaign.description}
+          </p>
+
+          {/* Info Pills Section */}
+          <div className="flex flex-wrap items-center gap-2.5 mt-5 mb-8">
+            {/* Device Badge */}
+            <div className="inline-flex items-center gap-1.5 rounded-xl border border-[#2a2a2a] bg-[#111] px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 shadow-sm">
+              <RequiredPlatformIcon className="w-3.5 h-3.5 text-sats-orange-500" />
+              {requiredPlatformLabel}
+            </div>
+
+            {/* Steps Completed Badge */}
+            {totalTasksCount > 0 && (
+              <div className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm ${completedTasksCount === totalTasksCount ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-[#111] border-[#2a2a2a] text-blue-400'}`}>
+                <ListChecks className="w-3.5 h-3.5" />
+                {completedTasksCount}/{totalTasksCount} Steps
+              </div>
+            )}
+
+            {/* Double Rewards Badge */}
+            {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.1)]">
+                <Zap className="w-3.5 h-3.5 fill-yellow-400" />
+                2x Rewards
+              </div>
+            )}
+          </div>
+
+          {/* ─── 3. Progress & Footer (Pushed to bottom) ─── */}
+          <div className="mt-auto space-y-6">
+            
+            <div className="space-y-3">
+              <div className="flex justify-between items-end">
+                <span className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-red-400' : 'text-gray-500'}`}>
+                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Users className="w-4 h-4" />}
+                  {isCompleted ? 'All steps completed' : `${spotsLeft.toLocaleString()} spots left`}
+                </span>
+                <span className="text-xs font-bold text-gray-400">
+                  {progressPercent.toFixed(0)}% Filled
+                </span>
+              </div>
+              
+              <div className="h-2 w-full bg-[#141414] rounded-full overflow-hidden border border-[#1a1a1a]">
+                <div 
+                  className={`h-full rounded-full transition-all duration-1000 ${isFull ? 'bg-red-500' : isCompleted ? 'bg-green-500' : 'bg-sats-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]'}`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+
+            <div className={`w-full py-4 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all border group/btn ${
+              isCompleted 
+                ? 'bg-green-500/10 border-green-500/20 text-green-400' 
+                : isFull
+                  ? 'bg-red-500/10 border-red-500/20 text-red-400'
+                  : 'bg-[#111] border-[#2a2a2a] text-white group-hover:bg-sats-orange-500 group-hover:border-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+            }`}>
+              <span>{isCompleted ? 'View Submission' : isFull ? 'Campaign Full' : 'View Task Details'}</span>
+              {!isCompleted && !isFull && <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />}
+            </div>
+            
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

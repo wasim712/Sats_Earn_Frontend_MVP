@@ -11,6 +11,7 @@ export interface AdminSettings {
   baseXpPerTask: number;
   dailyStreakBonusXp: number;
   tierReferralMatrix: Record<string, number>;
+  tierMinWithdrawalMatrix: Record<string, number>;
 }
 
 interface AdminSettingsState {

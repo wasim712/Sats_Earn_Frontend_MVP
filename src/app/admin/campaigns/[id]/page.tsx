@@ -256,8 +256,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           title: taskForm.title,
           description: taskForm.description,
           proofType: taskForm.proofType,
+          requiredPlatform: taskForm.requiredPlatform,
           targetUrl: taskForm.targetUrl || undefined,
-          requirements: { requiredPlatform: taskForm.requiredPlatform },
         })
       });
 

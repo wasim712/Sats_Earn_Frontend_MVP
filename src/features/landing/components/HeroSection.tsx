@@ -156,7 +156,7 @@ export const HeroSection = () => {
 
             {/* Call to Action Button - Full width on mobile, prominent */}
             <div className="w-full sm:w-auto mb-6 sm:mb-8">
-              <Button size="lg" onClick={() => router.push('/signup')} className="gap-2 group w-full sm:w-auto text-base sm:text-lg py-6 sm:px-10 rounded-2xl shadow-[0_10px_30px_rgba(238,139,18,0.25)]">
+              <Button size="lg" onClick={() => router.push('/signup')} className="gap-2 group w-full sm:w-auto text-base sm:text-lg py-4 sm:px-10 rounded-2xl shadow-[0_10px_30px_rgba(238,139,18,0.25)]">
                 Start Earning Free
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
