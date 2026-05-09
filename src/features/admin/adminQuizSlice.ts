@@ -81,7 +81,7 @@ export const toggleQuizStatus = createAsyncThunk(
 
 export const createQuiz = createAsyncThunk(
   'adminQuiz/create',
-  async (data: { title: string; date: string; rewardSats: number; questions: Array<{ questionText: string; options: string[]; correctAnswer: string; order: number; }>; }, { getState, rejectWithValue }) => {
+  async (data: { title: string; date: string; rewardSats: number; xpReward: number; questions: Array<{ questionText: string; options: string[]; correctAnswer: string; order: number; }>; }, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
       const response = await fetch(`${API_URL}/admin/quiz/daily`, {

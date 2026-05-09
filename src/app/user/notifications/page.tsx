@@ -62,11 +62,72 @@ export default function UserNotificationsPage() {
         return { icon: <Activity className="w-5 h-5 text-blue-400" />, border: 'border-blue-500' };
     }
   };
+   function NotificationsSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 animate-pulse pb-20 p-4 md:p-6 lg:p-8 w-full">
+      
+      {/* ─── HEADER SKELETON ─── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mt-4 w-full">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            {/* Header Icon */}
+            <div className="w-[38px] h-[38px] bg-[#111] border border-[#2a2a2a] rounded-xl shrink-0" />
+            {/* Header Title */}
+            <div className="h-[36px] md:h-[40px] w-48 md:w-64 bg-white/5 rounded-xl" />
+          </div>
+          {/* Header Subtitle */}
+          <div className="h-[20px] w-64 sm:w-80 bg-white/[0.03] rounded-lg mt-1" />
+        </div>
 
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          {/* Refresh Button */}
+          <div className="w-[46px] h-[46px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl shrink-0" />
+          {/* Mark All Read Button */}
+          <div className="h-[46px] w-[144px] bg-[#111] border border-[#2a2a2a] rounded-xl shrink-0" />
+        </div>
+      </div>
+
+      {/* ─── NOTIFICATIONS FEED SKELETON ─── */}
+      <div className="bg-black border border-[#1a1a1a] rounded-[28px] overflow-hidden shadow-xl w-full">
+        <div className="divide-y divide-[#141414] w-full">
+          {/* Generating 5 skeleton rows to fill the screen nicely */}
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="w-full p-5 md:p-6 bg-[#0a0a0a]">
+              <div className="flex items-start gap-4 md:gap-5 w-full">
+                
+                {/* Notification Icon */}
+                <div className="mt-1 w-10 h-10 rounded-full bg-[#111] border border-[#2a2a2a] shrink-0" />
+                
+                {/* Notification Content */}
+                <div className="flex-1 min-w-0 w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-2">
+                    {/* Title */}
+                    <div className="h-[20px] w-48 sm:w-64 bg-white/10 rounded" />
+                    {/* Timestamp */}
+                    <div className="h-[14px] w-24 sm:w-32 bg-white/5 rounded shrink-0" />
+                  </div>
+                  
+                  {/* Message body (2 lines) */}
+                  <div className="flex flex-col gap-2 mt-2.5">
+                    <div className="h-[14px] w-full bg-white/[0.03] rounded" />
+                    <div className="h-[14px] w-3/4 sm:w-2/3 bg-white/[0.03] rounded" />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  );
+}
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   if (isLoading && notifications.length === 0) {
-    return <div className="min-h-screen bg-[#020202] flex items-center justify-center"><Loader2 className="w-10 h-10 text-sats-orange-500 animate-spin" /></div>;
+    return <NotificationsSkeleton/>;
   }
 
   return (

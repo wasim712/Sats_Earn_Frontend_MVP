@@ -3,6 +3,7 @@ export interface Campaign {
   title: string;
   description: string;
   category: string;
+  coverImageUrl?: string | null;
   targetUrl: string | null;
   socialHandleTarget: string | null;
   targetCountries: string[];
@@ -10,6 +11,10 @@ export interface Campaign {
   isPremiumOnly: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
+  xpReward?: number;
+  doubleRewardsStartAt?: string | null;
+  doubleRewardsEndAt?: string | null;
+  doubleRewardsActive?: boolean;
   tierRewardMatrix: Record<string, number>;
   totalCompletions: number;
   maxCompletions: number;
@@ -31,6 +36,7 @@ export interface AdminTask {
   targetUrl?: string | null;
   requirements?: unknown;
   baseRewardSatsOverride?: number | null;
+  xpRewardOverride?: number | null;
   tierRewardMatrixOverride?: Record<string, number> | null;
   createdAt?: string;
   updatedAt?: string;
@@ -87,6 +93,95 @@ export interface AdminUser {
   };
 }
 
+export interface AdminUserTransaction {
+  id: string;
+  amountSats: number;
+  type: string;
+  description: string | null;
+  referenceId: string | null;
+  createdAt: string;
+  source: {
+    kind: 'submission' | 'withdrawal';
+    submissionId?: string;
+    withdrawalId?: string;
+    status?: string;
+    taskId?: string;
+    taskTitle?: string | null;
+    campaignId?: string;
+    campaignTitle?: string | null;
+    amountSats?: number;
+  } | null;
+}
+
+export interface AdminUserDetail extends AdminUser {
+  phone?: string | null;
+  username?: string | null;
+  country?: string | null;
+  dateOfBirth?: string | null;
+  authProvider?: string;
+  isVerified?: boolean;
+  currentStreak?: number;
+  registrationIp?: string | null;
+  lastIpAddress?: string | null;
+  twitterHandle?: string | null;
+  instagramHandle?: string | null;
+  telegramHandle?: string | null;
+  discordHandle?: string | null;
+  submissions: Array<{
+    id: string;
+    status: string;
+    submittedAt: string;
+    confidenceScore?: number | null;
+    rejectionReason?: string | null;
+    taskId: string;
+    task?: {
+      id: string;
+      title?: string | null;
+      campaign?: {
+        id: string;
+        title: string;
+        baseRewardSats: number;
+      };
+    };
+  }>;
+  withdrawals: Array<{
+    id: string;
+    amountSats: number;
+    status: string;
+    createdAt: string;
+    paymentProof?: string | null;
+  }>;
+  transactions: AdminUserTransaction[];
+  notifications: Array<{
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    createdAt: string;
+    isRead: boolean;
+  }>;
+  quizAttempts: Array<{
+    id: string;
+    score: number;
+    passed: boolean;
+    createdAt: string;
+    dailyQuiz?: {
+      id: string;
+      title: string;
+      rewardSats: number;
+      date: string;
+    };
+  }>;
+  _count?: {
+    referrals: number;
+    submissions: number;
+    withdrawals: number;
+    transactions: number;
+    quizAttempts: number;
+    notifications: number;
+  };
+}
+
 export interface AdminQuizQuestion {
   id: string;
   questionText: string;
@@ -99,6 +194,7 @@ export interface AdminQuiz {
   id: string;
   title: string;
   rewardSats: number;
+  xpReward?: number;
   date: string;
   isActive: boolean;
   questions?: AdminQuizQuestion[];

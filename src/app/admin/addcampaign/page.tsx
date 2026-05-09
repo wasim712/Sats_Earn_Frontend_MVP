@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { createCampaign } from '@/features/admin/adminCampaignsSlice';
+import { createCampaign, uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import { 
   ArrowLeft, Save, Loader2, ChevronDown, 
-  Zap, Shield, Target, Coins, Crown 
+  Shield, Target, Coins, Crown 
 } from 'lucide-react';
 
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
@@ -21,17 +22,23 @@ export default function AddCampaignPage() {
   const { countries } = useAppSelector((state) => state.adminCountries);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   
-  // ─── Form State (Aligned exactly with your Zod Schema) ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: 'SOCIAL',
+    coverImageUrl: '',
     targetCountries: [] as string[],
     requiredPlatform: 'NONE',
     isPremiumOnly: false,
     requiredFreeTier: 'BASIC',
     baseRewardSats: 0,
+    xpReward: 0,
+    doubleRewardsStartAt: '',
+    doubleRewardsEndAt: '',
     maxCompletions: 0,
     tierRewardMatrix: {
       BASIC: 0, COPPER: 0, BRONZE: 0, SILVER: 0, GOLD: 0,
@@ -39,7 +46,7 @@ export default function AddCampaignPage() {
     } as Record<string, number>
   });
 
-  // ─── Handlers ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Handlers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -54,6 +61,15 @@ export default function AddCampaignPage() {
     setFormData(prev => ({
       ...prev,
       tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: value === '' ? 0 : parseInt(value, 10) }
+    }));
+  };
+
+  const handleDoubleAllRewards = () => {
+    setFormData((prev) => ({
+      ...prev,
+      tierRewardMatrix: Object.fromEntries(
+        Object.entries(prev.tierRewardMatrix).map(([tier, reward]) => [tier, Number(reward || 0) * 2])
+      ),
     }));
   };
 
@@ -75,12 +91,16 @@ export default function AddCampaignPage() {
   const visibleRewardTiers = formData.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const derivedBaseReward = visibleRewardTiers.reduce((max, tier) => {
+    const reward = Number(formData.tierRewardMatrix[tier]) || 0;
+    return Math.max(max, reward);
+  }, 0);
   const projectedMaxLiability = visibleRewardTiers.reduce((max, tier) => {
     const reward = Number(formData.tierRewardMatrix[tier]) || 0;
     return Math.max(max, reward * Number(formData.maxCompletions || 0));
   }, 0);
 
-  // ─── Submit Engine ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Submit Engine Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -88,21 +108,39 @@ export default function AddCampaignPage() {
     // Frontend Validations
     if (formData.title.length < 5) return setErrorMsg("Title must be at least 5 characters.");
     if (formData.description.length < 10) return setErrorMsg("Description must be at least 10 characters.");
-    if (formData.baseRewardSats <= 0) return setErrorMsg("Base Reward must be greater than 0.");
+    if (derivedBaseReward <= 0) return setErrorMsg("At least one tier reward must be greater than 0.");
     if (formData.maxCompletions <= 0) return setErrorMsg("Max Completions must be greater than 0.");
 
     setIsSaving(true);
+
+    let coverImageUrl = formData.coverImageUrl || '';
+    if (coverImageFile) {
+      setIsUploadingCover(true);
+      const uploadResult = await dispatch(uploadCampaignCover(coverImageFile));
+      setIsUploadingCover(false);
+      if (uploadCampaignCover.fulfilled.match(uploadResult)) {
+        coverImageUrl = uploadResult.payload;
+      } else {
+        setErrorMsg((uploadResult.payload as string) || 'Failed to upload campaign cover.');
+        setIsSaving(false);
+        return;
+      }
+    }
     
     // Strict Payload Generation to match Zod exactly
     const payload = {
       title: formData.title.trim(),
       description: formData.description.trim(),
       category: formData.category,
+      coverImageUrl: coverImageUrl || undefined,
       targetCountries: formData.targetCountries,
       requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
       requiredFreeTier: formData.requiredFreeTier,
-      baseRewardSats: Number(formData.baseRewardSats),
+      baseRewardSats: Number(derivedBaseReward),
+      xpReward: Number(formData.xpReward),
+      doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
+      doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
       maxCompletions: Number(formData.maxCompletions),
       tierRewardMatrix: formData.tierRewardMatrix,
     };
@@ -123,7 +161,7 @@ export default function AddCampaignPage() {
         
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
           
-          {/* ─── Header Sticky Bar ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Header Sticky Bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl">
             <button 
               type="button"
@@ -156,7 +194,7 @@ export default function AddCampaignPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             
-            {/* ─── LEFT COLUMN: Metadata & Access ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEFT COLUMN: Metadata & Access Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
               
               {/* CARD 1: Basic Information */}
@@ -169,6 +207,24 @@ export default function AddCampaignPage() {
                     <input type="text" name="title" value={formData.title} onChange={handleChange} required minLength={5} placeholder="e.g. Follow SatsEarn on Twitter" className={inputCls} />
                   </InputWrapper>
                   
+                  <InputWrapper label="Campaign Cover Image">
+                    <div className="space-y-3">
+                      <input type="file" accept="image/*" onChange={(e) => setCoverImageFile(e.target.files?.[0] || null)} className={inputCls} />
+                      <input type="url" name="coverImageUrl" value={formData.coverImageUrl} onChange={handleChange} placeholder="Or paste image URL https://..." className={inputCls} />
+                      {(coverImageFile || formData.coverImageUrl) && (
+                        <div className="relative h-36 w-full overflow-hidden rounded-2xl border border-[#1a1a1a]">
+                          <Image
+                            src={coverImageFile ? URL.createObjectURL(coverImageFile) : formData.coverImageUrl}
+                            alt="Campaign cover preview"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </InputWrapper>
+
                   <InputWrapper label="Description" required>
                     <textarea name="description" value={formData.description} onChange={handleChange} required minLength={10} placeholder="Explain the high-level goal of this campaign..." className={`${inputCls} min-h-[120px] resize-none`} />
                   </InputWrapper>
@@ -246,7 +302,7 @@ export default function AddCampaignPage() {
               </div>
             </div>
 
-            {/* ─── RIGHT COLUMN: Economics ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Economics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="flex flex-col h-full gap-6 md:gap-8">
               <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
                 
@@ -255,27 +311,64 @@ export default function AddCampaignPage() {
                 </h2>
 
                 <div className="grid grid-cols-1 gap-6 mb-8 border-b border-[#1a1a1a] pb-8">
-                  <InputWrapper label="Fallback Reward (Sats)" required>
-                    <div className="relative">
-                      <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sats-orange-500" />
-                      <input type="number" name="baseRewardSats" min="1" value={formData.baseRewardSats || ''} onChange={handleNumberChange} required placeholder="0" className={`${inputCls} pl-11 text-lg font-black text-sats-orange-500`} />
-                    </div>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
-                      Used only if a tier reward is missing from the matrix.
-                    </p>
-                  </InputWrapper>
-
                   <InputWrapper label="Max Completions (Budget Cap)" required>
                     <input type="number" name="maxCompletions" min="1" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
                       Worst-Case Liability: <span className="text-yellow-500">{projectedMaxLiability.toLocaleString()} Sats</span>
                     </p>
                   </InputWrapper>
+
+                  <InputWrapper label="Campaign XP Reward" required>
+                    <input type="number" name="xpReward" min="0" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
+                      Base XP users get for this campaign. During active 2x period, XP also doubles.
+                    </p>
+                  </InputWrapper>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InputWrapper label="2x Start Date">
+                      <input
+                        type="datetime-local"
+                        value={formData.doubleRewardsStartAt ? formData.doubleRewardsStartAt.slice(0, 16) : ''}
+                        onChange={(e) => setFormData((prev) => ({
+                          ...prev,
+                          doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : '',
+                        }))}
+                        className={inputCls}
+                      />
+                    </InputWrapper>
+
+                    <InputWrapper label="2x End Date">
+                      <input
+                        type="datetime-local"
+                        value={formData.doubleRewardsEndAt ? formData.doubleRewardsEndAt.slice(0, 16) : ''}
+                        onChange={(e) => setFormData((prev) => ({
+                          ...prev,
+                          doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : '',
+                        }))}
+                        className={inputCls}
+                      />
+                    </InputWrapper>
+                  </div>
                 </div>
 
                 {/* Dense Tier Matrix Grid */}
                 <div>
-                  <h3 className="text-sm font-bold text-white mb-4">Tier Reward Matrix</h3>
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="text-sm font-bold text-white">Tier Reward Matrix</h3>
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                        Active 2x period doubles both sats rewards and XP rewards.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDoubleAllRewards}
+                      className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-wider hover:bg-yellow-500/20 transition-all"
+                    >
+                      2x All Rewards
+                    </button>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {visibleRewardTiers.map(tier => (
                       <div key={tier} className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-2.5 flex items-center justify-between">
@@ -303,7 +396,7 @@ export default function AddCampaignPage() {
   );
 }
 
-// ─── Input Wrapper Helper ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Input Wrapper Helper Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 function InputWrapper({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">

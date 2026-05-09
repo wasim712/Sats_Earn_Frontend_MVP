@@ -3,12 +3,13 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAllCampaigns, toggleCampaignStatus, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
 import type { Campaign } from '@/features/admin/adminCampaignsSlice';
 import { 
-  Plus, Loader2, AlertTriangle, ShieldAlert, 
-  Zap, Calendar, Crown, Target, Trash2, Edit3, Eye, Shield,
+  Plus, ShieldAlert, 
+  Zap, Calendar, Crown, Target, Trash2, Shield,
   ArrowUpRight
 } from 'lucide-react';
 
@@ -126,6 +127,13 @@ interface CampaignCardProps {
 function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const visibleRewardTiers = campaign.isPremiumOnly
+    ? ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER']
+    : ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
+  const topTierReward = visibleRewardTiers.reduce(
+    (max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)),
+    0,
+  );
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -196,7 +204,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
               <Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Reward
             </span>
             <span className="text-sm font-black text-sats-orange-400 truncate mt-0.5">
-              ~ {(campaign.baseRewardSats || 0).toLocaleString()} <span className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Sats</span>
+              Up to {topTierReward.toLocaleString()} <span className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Sats</span>
             </span>
           </div>
 

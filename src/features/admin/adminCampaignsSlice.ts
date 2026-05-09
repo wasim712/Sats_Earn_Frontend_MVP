@@ -118,6 +118,30 @@ export const createCampaign = createAsyncThunk(
   }
 );
 
+export const uploadCampaignCover = createAsyncThunk(
+  'adminCampaigns/uploadCover',
+  async (file: File, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const formData = new FormData();
+      formData.append('coverImage', file);
+
+      const response = await fetch(`${API_URL}/admin/campaigns/upload-cover`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const resData = await response.json();
+      if (!response.ok) throw new Error(resData.error || 'Failed to upload campaign cover');
+      return resData.coverImageUrl as string;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const createTask = createAsyncThunk(
   'adminCampaigns/createTask',
   async ({ campaignId, data }: { campaignId: string; data: Partial<Task> }, { getState, rejectWithValue }) => {

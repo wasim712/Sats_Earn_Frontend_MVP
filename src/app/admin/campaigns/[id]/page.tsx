@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { updateCampaign, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
+import { updateCampaign, deleteCampaign, uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
+import type { Campaign, AdminTask } from '@/types/admin';
 import { 
-  ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Calendar, Trash2, 
-  BarChart3, Activity, CheckCircle2, Clock, XCircle, Globe2, Medal, 
+  ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Trash2, 
+  BarChart3, Activity, CheckCircle2, Clock, XCircle, Medal, 
   Zap, Target, Crown, Users, Plus, Check
 } from 'lucide-react';
 
@@ -19,7 +21,38 @@ const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 const PLATFORMS = ["TWITTER", "YOUTUBE", "INSTAGRAM", "TELEGRAM", "FACEBOOK", "LINKEDIN", "APP_STORE", "PLAY_STORE", "WEBSITE"];
 const PROOF_TYPES = ["SCREENSHOT", "URL", "TEXT_RESPONSE", "API_VERIFIED"];
 
-// ─── Platform Logo Helper ───
+type CampaignAnalytics = {
+  totalSubmissions?: number;
+  statusCounts?: { verified?: number; pending?: number; rejected?: number };
+  tierDistribution?: Record<string, number>;
+};
+
+type CampaignEditForm = Partial<Campaign> & {
+  title:string;
+  description:string;
+  targetCountries: string[];
+  tierRewardMatrix: Record<string, number>;
+  xpReward: number;
+  doubleRewardsStartAt?: string | null;
+  doubleRewardsEndAt?: string | null;
+};
+
+type TaskFormState = {
+  title: string;
+  description: string;
+  requiredPlatform: string;
+  proofType: string;
+  targetUrl: string;
+};
+
+type EditableTask = AdminTask & {
+  proofType?: string;
+  requiredPlatform?: string;
+};
+
+type ValidationIssue = { path?: string; message: string };
+
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Platform Logo Helper Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 export const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, className?: string }) => {
   if (!url) return <LinkIcon className={className} />;
   const lowerUrl = url.toLowerCase();
@@ -42,8 +75,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const dispatch = useAppDispatch();
   const { countries } = useAppSelector((state) => state.adminCountries);
   
-  const [campaign, setCampaign] = useState<any>(null);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [campaign, setCampaign] = useState<(Campaign & { tasks?: EditableTask[] }) | null>(null);
+  const [analytics, setAnalytics] = useState<CampaignAnalytics | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -51,18 +84,27 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isDeleting, setIsDeleting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Update Successful");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   
-  const [editForm, setEditForm] = useState<any>({});
+  const [editForm, setEditForm] = useState<CampaignEditForm>({
+    title:'',
+    description:'',
+    targetCountries: [],
+    tierRewardMatrix: {},
+    xpReward: 0,
+    coverImageUrl: '',
+  });
 
-  // ─── TASK CREATION & EDITING STATE ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CREATION & EDITING STATE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
-  const [taskForm, setTaskForm] = useState({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'',
+  const [taskForm, setTaskForm] = useState<TaskFormState>({
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'',
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [editingTaskForm, setEditingTaskForm] = useState<any>({});
+  const [editingTaskForm, setEditingTaskForm] = useState<EditableTask>({} as EditableTask);
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
   const [isDeletingTask, setIsDeletingTask] = useState<string | null>(null);
 
@@ -79,7 +121,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       if (campRes.ok) {
         const campData = await campRes.json();
         setCampaign(campData);
-        setEditForm(campData);
+        setEditForm({
+          ...campData,
+          targetCountries: campData.targetCountries || [],
+          tierRewardMatrix: campData.tierRewardMatrix || {},
+          xpReward: campData.xpReward || 0,
+          coverImageUrl: campData.coverImageUrl || '',
+          doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
+          doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
+        });
       }
 
       if (analyticsRes.ok) {
@@ -95,7 +145,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   }, [id]);
   const handleMatrixChange = (tier: string, value: string) => {
-  setEditForm((prev: any) => ({
+  setEditForm((prev) => ({
     ...prev,
     tierRewardMatrix: {
       ...prev.tierRewardMatrix,
@@ -105,10 +155,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 };
 
   const handleCountryToggle = (country: string) => {
-    setEditForm((prev: any) => ({
+    setEditForm((prev) => ({
       ...prev,
       targetCountries: prev.targetCountries?.includes(country)
-        ? prev.targetCountries.filter((item: string) => item !== country)
+        ? prev.targetCountries.filter((item) => item !== country)
         : [...(prev.targetCountries || []), country],
     }));
   };
@@ -128,22 +178,42 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  // ─── CAMPAIGN CRUD ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CAMPAIGN CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSave = async () => {
+    if (!campaign) return;
     setIsSaving(true);
+
+    let coverImageUrl = editForm.coverImageUrl || '';
+    if (coverImageFile) {
+      setIsUploadingCover(true);
+      const uploadResult = await dispatch(uploadCampaignCover(coverImageFile));
+      setIsUploadingCover(false);
+      if (uploadCampaignCover.fulfilled.match(uploadResult)) {
+        coverImageUrl = uploadResult.payload;
+      } else {
+        alert((uploadResult.payload as string) || 'Failed to upload campaign cover.');
+        setIsSaving(false);
+        return;
+      }
+    }
+
     const payload = {
       title: editForm.title.trim(),
       description: editForm.description.trim(),
       category: editForm.category,
+      coverImageUrl: coverImageUrl?.trim() || null,
       targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
-      baseRewardSats: Number(editForm.baseRewardSats),
+      baseRewardSats: Number(visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(editForm.tierRewardMatrix?.[tier] || 0)), 0)),
+      xpReward: Number(editForm.xpReward || 0),
       maxCompletions: Number(editForm.maxCompletions),
       tierRewardMatrix: editForm.tierRewardMatrix,
       isActive: editForm.isActive,
       targetUrl: editForm.targetUrl?.trim() || undefined,
       socialHandleTarget: editForm.socialHandleTarget?.trim() || undefined,
+      doubleRewardsStartAt: editForm.doubleRewardsStartAt || null,
+      doubleRewardsEndAt: editForm.doubleRewardsEndAt || null,
     };
 
     const result = await dispatch(updateCampaign({ id: campaign.id, data: payload }));
@@ -159,6 +229,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   };
 
   const handleDelete = async () => {
+    if (!campaign) return;
     if (window.confirm(`Are you sure you want to delete "${campaign.title}"? All user submissions and associated tasks will be lost forever.`)) {
       setIsDeleting(true);
       const result = await dispatch(deleteCampaign(campaign.id));
@@ -171,7 +242,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  // ─── TASK CRUD ───
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingTask(true);
@@ -194,17 +265,17 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         const errorData = await res.json();
         // Zod validation parser so you see EXACTLY why it failed!
         if (errorData.details) {
-          throw new Error(errorData.details.map((d: any) => `${d.path}: ${d.message}`).join(' | '));
+          throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
         }
         throw new Error(errorData.error || "Failed to create task");
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT',targetUrl:'' });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'' });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
-    } catch (err: any) {
-      alert(`Validation Error: \n${err.message}`);
+    } catch (err) {
+      alert(`Validation Error: \n${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsSubmittingTask(false);
     }
@@ -222,28 +293,27 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         // AFTER
         body: JSON.stringify({
-          title: editingTaskForm.title,
-          description: editingTaskForm.description,
-          proofType: editingTaskForm.proofType,
-          requirements: {
-            ...(editingTaskForm.requirements || {}),
-            requiredPlatform: editingTaskForm.requiredPlatform,
-          },
-          ...(editingTaskForm.targetUrl !== undefined && { targetUrl: editingTaskForm.targetUrl }),
-        })
+      title: editingTaskForm.title,
+      description: editingTaskForm.description,
+      proofType: editingTaskForm.proofType,
+      // Send at top level — backend reads it here and stores it in requirements JSON
+      requiredPlatform: (editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || '',
+      // Only include targetUrl if it has actual content — omit entirely when blank
+      ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
+    })
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        if (errorData.details) throw new Error(errorData.details.map((d: any) => `${d.path}: ${d.message}`).join(' | '));
+        if (errorData.details) throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
         throw new Error(errorData.error || "Failed to update task");
       }
 
       await fetchCampaignData();
       setEditingTaskId(null);
       triggerSuccess("Task Updated Successfully.");
-    } catch (err: any) {
-      alert(`Update Failed: \n${err.message}`);
+    } catch (err) {
+      alert(`Update Failed: \n${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsUpdatingTask(false);
     }
@@ -264,8 +334,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
       await fetchCampaignData();
       triggerSuccess("Task Deleted Successfully.");
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsDeletingTask(null);
     }
@@ -280,11 +350,12 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const visibleRewardTiers = editForm.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
 
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
       
-      {/* ─── SUCCESS TOAST ─── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ SUCCESS TOAST Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-sats-black-900 border border-green-500/30 text-green-400 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(34,197,94,0.15)] transition-all duration-500 ${showSuccess ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0'}`}>
         <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
           <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -296,8 +367,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="max-w-350 mx-auto w-full flex flex-col gap-6 md:gap-8">
+        {campaign.coverImageUrl && (
+          <div className="relative h-56 md:h-72 overflow-hidden rounded-3xl border border-[#1a1a1a]">
+            <Image
+              src={campaign.coverImageUrl}
+              alt={campaign.title}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-black/35 to-transparent" />
+          </div>
+        )}
         
-        {/* ─── STICKY HEADER ─── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ STICKY HEADER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl mt-4">
           <button onClick={() => router.push('/admin/campaigns')} className="flex items-center text-gray-400 hover:text-white bg-sats-black-900 border border-[#1a1a1a] hover:bg-[#111] px-5 py-2.5 rounded-xl transition-all font-bold w-full sm:w-auto justify-center shadow-sm">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
@@ -315,11 +399,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </>
             ) : (
               <>
-                <button onClick={() => { setEditForm(campaign); setIsEditing(false); }} className="flex items-center text-gray-400 hover:text-white px-4 py-2.5 transition-colors font-bold">
+                <button onClick={() => { setEditForm({ ...campaign, targetCountries: campaign.targetCountries || [], tierRewardMatrix: campaign.tierRewardMatrix || {}, xpReward: campaign.xpReward || 0, coverImageUrl: campaign.coverImageUrl || '', doubleRewardsStartAt: campaign.doubleRewardsStartAt || '', doubleRewardsEndAt: campaign.doubleRewardsEndAt || '' }); setIsEditing(false); }} className="flex items-center text-gray-400 hover:text-white px-4 py-2.5 transition-colors font-bold">
                   <X className="w-5 h-5 mr-1.5" /> Cancel
                 </button>
                 <button onClick={handleSave} disabled={isSaving} className="flex items-center bg-green-500 hover:bg-green-400 text-black font-black px-6 py-2.5 rounded-xl transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(34,197,94,0.3)] active:scale-95">
-                  {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />} Save Changes
+                  {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />} {isUploadingCover ? 'Uploading Cover...' : 'Save Changes'}
                 </button>
               </>
             )}
@@ -328,7 +412,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
           
-          {/* ─── LEFT COLUMN (Spans 2): Campaign Details ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEFT COLUMN (Spans 2): Campaign Details Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <div className="xl:col-span-2 flex flex-col gap-6 md:gap-8">
             <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
               
@@ -347,6 +431,33 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     <div className="space-y-4">
                       <input type="text" value={editForm.title} required minLength={5} onChange={e => setEditForm({...editForm, title: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-white text-xl font-bold px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 transition-all" placeholder="Campaign Title (Min 5 chars)" />
                       <textarea value={editForm.description} required minLength={10} onChange={e => setEditForm({...editForm, description: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-gray-300 px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 min-h-30 transition-all" placeholder="Description (Min 10 chars)" />
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 space-y-3">
+                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest">Campaign Cover Image</label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => setCoverImageFile(e.target.files?.[0] || null)}
+                          className={inputCls}
+                        />
+                        <input
+                          type="url"
+                          value={editForm.coverImageUrl || ''}
+                          onChange={e => setEditForm({ ...editForm, coverImageUrl: e.target.value })}
+                          placeholder="Or paste image URL https://..."
+                          className={inputCls}
+                        />
+                        {(coverImageFile || editForm.coverImageUrl) && (
+                          <div className="relative h-40 w-full overflow-hidden rounded-2xl border border-[#1a1a1a]">
+                            <Image
+                              src={coverImageFile ? URL.createObjectURL(coverImageFile) : (editForm.coverImageUrl || '')}
+                              alt="Campaign cover preview"
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -363,8 +474,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Base Reward</p>
-                    <span className="text-sats-orange-500 font-black text-3xl">~ {campaign.baseRewardSats.toLocaleString()} <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Sats</span></span>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Top Tier Reward</p>
+                    <span className="text-sats-orange-500 font-black text-3xl">~ {topTierReward.toLocaleString()} <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Sats</span></span>
                   </div>
                 </div>
                 <div className="w-full bg-[#111] border border-[#2a2a2a] rounded-full h-3 overflow-hidden shadow-inner">
@@ -407,7 +518,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
                           {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
-                        <button type="button" onClick={() => setEditForm((prev: any) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
+                        <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
                         <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
                       </button>
                     </div>
@@ -426,7 +537,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               : 'All Devices'}
                       </span>
                     ) : (
-                      <select value={editForm.requiredPlatform || 'NONE'} onChange={e => setEditForm({ ...editForm, requiredPlatform: e.target.value })} className={inputCls}>
+                      <select value={editForm.requiredPlatform || 'NONE'} onChange={e => setEditForm({ ...editForm, requiredPlatform: e.target.value as Campaign['requiredPlatform'] })} className={inputCls}>
                         {DEVICE_OPTIONS.map(device => (
                           <option key={device} value={device}>
                             {device === 'NONE' ? 'All Devices' : device === 'DESKTOP' ? 'Desktop Only' : device === 'ANDROID' ? 'Android Only' : 'iOS Only'}
@@ -466,14 +577,90 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     )}
                   </Field>
 
-                <Field title="Base Economics">
+                <Field title="Campaign Economics">
                   {!isEditing ? (
-                    <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> {campaign.baseRewardSats.toLocaleString()} Sats Base</span>
-                  ) : (
-                    <div className="flex gap-4">
-                      <input type="number" required min={1} value={editForm.baseRewardSats} onChange={e => setEditForm({...editForm, baseRewardSats: Number(e.target.value)})} placeholder="Base Sats" className={inputCls} />
-                      <input type="number" required min={1} value={editForm.maxCompletions} onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} placeholder="Max Users" className={inputCls} />
+                    <div className="space-y-1">
+                      <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
+                      <p className="text-xs text-gray-400 font-medium">XP Reward: {campaign.xpReward || 0}</p>
+                      {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
+                        <p className="text-xs text-yellow-400 font-medium">2x Window: {formatDate(campaign.doubleRewardsStartAt)} - {formatDate(campaign.doubleRewardsEndAt)}</p>
+                      )}
                     </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Max Users */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Max Completions (Users)
+                          </label>
+                          <input 
+                            type="number" 
+                            required 
+                            min={0} 
+                            value={editForm.maxCompletions || ''} 
+                            onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} 
+                            placeholder="Max Users" 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                        {/* XP Reward */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Campaign XP Reward
+                          </label>
+                          <input 
+                            type="number" 
+                            min={1} 
+                            value={editForm.xpReward || ''} 
+                            onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} 
+                            placeholder="Campaign XP Reward" 
+                            className={inputCls} 
+                            formTarget='Xp' 
+                          />
+                        </div>
+
+                        {/* Tier Reward Action */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Bulk Action
+                          </label>
+                          <button 
+                            type="button" 
+                            onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} 
+                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all"
+                          >
+                            2x All Tier Rewards
+                          </button>
+                        </div>
+
+                        {/* Double Rewards Start */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Double Rewards Start Date
+                          </label>
+                          <input 
+                            type="datetime-local" 
+                            value={typeof editForm.doubleRewardsStartAt === 'string' ? editForm.doubleRewardsStartAt.slice(0,16) : ''} 
+                            onChange={e => setEditForm({...editForm, doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                        {/* Double Rewards End */}
+                        <div>
+                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                            Double Rewards End Date
+                          </label>
+                          <input 
+                            type="datetime-local" 
+                            value={typeof editForm.doubleRewardsEndAt === 'string' ? editForm.doubleRewardsEndAt.slice(0,16) : ''} 
+                            onChange={e => setEditForm({...editForm, doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
+                            className={inputCls} 
+                          />
+                        </div>
+
+                      </div>
                   )}
                 </Field>
                 
@@ -495,7 +682,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       {visibleRewardTiers.map(tier => (
                         <div key={tier} className="bg-sats-black-900 border border-[#1a1a1a] rounded-lg p-2 flex flex-col gap-1">
                           <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
-                          <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || 0} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
+                          <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || ''} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
                         </div>
                       ))}
                     </div>
@@ -504,7 +691,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </div>
             </div>
             
-            {/* ─── TASK MANAGEMENT ZONE ─── */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK MANAGEMENT ZONE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden">
               <div className="flex items-center justify-between mb-6 border-b border-[#1a1a1a] pb-4">
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
@@ -567,7 +754,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </div>
                       {taskForm.targetUrl && !/^https?:\/\/.+/.test(taskForm.targetUrl) && (
                         <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                          <span>⚠</span> Must start with http:// or https://
+                          <span>Ã¢Å¡Â </span> Must start with http:// or https://
                         </p>
                       )}
                     </div>
@@ -584,31 +771,31 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               {/* Task List Display */}
               {campaign.tasks && campaign.tasks.length > 0 ? (
                 <div className="space-y-4">
-                  {campaign.tasks.map((task:any, index: number) => (
+                  {campaign.tasks.map((task: EditableTask, index: number) => (
                     <div key={task.id} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5 group hover:border-[#2a2a2a] transition-all">
                       
                       {/* Inline Task Editor */}
                       {editingTaskId === task.id ? (
                         <form onSubmit={handleUpdateTask} className="space-y-4 animate-in fade-in">
                           <div>
-                            <input required type="text" value={editingTaskForm.title} onChange={e => setEditingTaskForm({...editingTaskForm, title: e.target.value})} className={inputCls} />
+                            <input required type="text" value={editingTaskForm.title || ''} onChange={e => setEditingTaskForm({...editingTaskForm, title: e.target.value})} className={inputCls} />
                           </div>
                           <div>
-                            <textarea required value={editingTaskForm.description} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
+                            <textarea required value={editingTaskForm.description || ''} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select
-                            value={editingTaskForm.requirements?.requiredPlatform || ''}
-                            onChange={e => setEditingTaskForm({
-                              ...editingTaskForm,
-                              requiredPlatform: e.target.value, // keep for local state
-                              requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
-                            })}
+                              value={(editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || ''}
+                                onChange={e => setEditingTaskForm({
+                                  ...editingTaskForm,
+                                  requiredPlatform: e.target.value,
+                                  requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
+                                })}
                             className={inputCls}
                           >
                               {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
-                            <select value={editingTaskForm.proofType} onChange={e => setEditingTaskForm({...editingTaskForm, proofType: e.target.value})} className={inputCls}>
+                            <select value={editingTaskForm.proofType || 'SCREENSHOT'} onChange={e => setEditingTaskForm({...editingTaskForm, proofType: e.target.value})} className={inputCls}>
                               {PROOF_TYPES.map(p => <option key={p} value={p}>{p.replace('_', ' ')}</option>)}
                             </select>
                           </div>
@@ -634,7 +821,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           {editingTaskForm.targetUrl && !/^https?:\/\/.+/.test(editingTaskForm.targetUrl) && (
                             <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                              <span>⚠</span> Must start with http:// or https://
+                              <span>Ã¢Å¡Â </span> Must start with http:// or https://
                             </p>
                           )}
                         </div>
@@ -655,18 +842,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             </div>
                             <p className="text-sm text-gray-400 leading-relaxed ml-9">{task.description}</p>
                             
-                            <div className="flex items-center gap-3 mt-4 ml-9">
+                            <div className="flex items-center gap-3 mt-4 ml-9 flex-wrap">
                               <span className="px-2.5 py-1 bg-[#111] border border-[#2a2a2a] rounded-md text-[10px] font-bold text-gray-300 uppercase tracking-wider">
-                                {task.requiredPlatform || 'UNKNOWN'}
+                                {task.requiredPlatform || (task.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || 'UNKNOWN'}
                               </span>
                               <span className="px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
+                              </span>
+                              <span className="px-2.5 py-1 bg-purple-500/10 border border-purple-500/20 rounded-md text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                                XP: {campaign.xpReward || 0}
                               </span>
                             </div>
                           </div>
                           
                           {/* Edit / Delete Buttons */}
-                          <div className="flex sm:flex-col gap-2 justify-end shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex sm:flex-col gap-2 justify-end shrink-0 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button 
                               onClick={() => { setEditingTaskId(task.id); setEditingTaskForm({ ...task }); }}
                               className="p-2 bg-[#111] border border-[#2a2a2a] hover:text-white text-gray-400 rounded-lg transition-colors"
@@ -698,7 +888,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* ─── RIGHT COLUMN: Real-Time Analytics ─── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Real-Time Analytics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {analytics && (
             <div className="xl:col-span-1 flex flex-col gap-6 md:gap-8">
               <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
@@ -727,7 +917,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
                       {Object.keys(analytics.tierDistribution || {}).length > 0 ? (
                         <ul className="space-y-3">
-                          {Object.entries(analytics.tierDistribution).map(([tier, count]) => (
+                          {Object.entries(analytics.tierDistribution || {}).map(([tier, count]) => (
                             <li key={tier} className="flex justify-between items-center text-sm">
                               <span className="text-gray-400 uppercase tracking-widest text-[10px] font-black">{tier}</span>
                               <span className="font-bold text-white px-2 py-0.5 bg-[#111] border border-[#2a2a2a] rounded-md">{String(count)}</span>
@@ -750,7 +940,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   );
 }
 
-// ─── Micro-Components ───
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function Field({ title, children }: { title: string, children: React.ReactNode }) {
   return (

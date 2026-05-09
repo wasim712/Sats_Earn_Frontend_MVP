@@ -61,6 +61,8 @@ export interface UserDashboard {
     currentStreak: number;
     xpDisplay: string;
     progressPercent: number;
+    nextTier?: string | null;
+    xpToNextTier?: number;
     tasksCompleted: number;
     activeReferrals: number;
   };
@@ -80,6 +82,7 @@ export interface UserDashboard {
     unlockAt: string | null;
     creditedAt: string | null;
     rewardSats: number;
+    xpReward?: number;
     remainingMs: number;
   }>;
 }
@@ -135,6 +138,7 @@ export interface TodayQuiz {
   id: string;
   title: string;
   rewardSats: number;
+  xpReward?: number;
   questions: TodayQuizQuestion[];
 }
 
@@ -143,6 +147,8 @@ export interface QuizResult {
   passed: boolean;
   score: number;
   rewardEarned: number;
+  xpEarned?: number;
+  streakBonusSats?: number;
 }
 
 export interface UserWithdrawal {
@@ -164,5 +170,6 @@ export interface UserSubmissionHistoryItem {
   unlockAt: string | null;
   creditedAt: string | null;
   rewardSats: number;
+  xpReward?: number;
   remainingMs: number;
 }

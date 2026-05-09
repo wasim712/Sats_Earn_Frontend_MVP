@@ -24,7 +24,6 @@ const RuleItem = ({ met, text }: { met: boolean, text: string }) => (
     <span>{text}</span>
   </div>
 );
-
 const getThirteenYearsAgoDate = () => {
   const d = new Date();
   d.setFullYear(d.getFullYear() - 13);

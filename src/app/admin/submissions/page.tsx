@@ -185,8 +185,8 @@ export default function AdminSubmissionsPage() {
             ) : (
               <div className="divide-y divide-[#141414]">
                 {filteredSubmissions.map((submission) => {
-                  // Fallback for reward calculation
-                  const reward = submission.task?.rewardSatsOverride ?? submission.task?.campaign?.baseRewardSats ?? 0;
+                  const reward = submission.task?.rewardSatsOverride
+                    ?? Math.max(...Object.values(submission.task?.campaign?.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0);
                   const isSelected = selectedSubmission?.id === submission.id;
 
                   return (

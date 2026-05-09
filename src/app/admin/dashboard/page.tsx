@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAdminMetrics } from '@/features/admin/adminSlice';
-import { Users, Activity, FileWarning, Loader2, UserPlus, CheckCircle } from 'lucide-react';
+import { Users, Activity, FileWarning, Loader2, UserPlus, CheckCircle, Crown, Wallet, TrendingUp, XCircle, BarChart3 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const dispatch = useAppDispatch();
@@ -69,6 +69,33 @@ export default function AdminDashboardPage() {
           textColor={metrics?.submissions?.pendingManualReview ? 'text-sats-orange-400' : 'text-white'}
         />
 
+        <MetricCard 
+          title="Premium Users" 
+          value={metrics?.users?.premium || 0}
+          subtitle="Currently premium active"
+          icon={<Crown className="w-6 h-6 text-yellow-400" />} 
+          bg="bg-yellow-500/10" 
+          borderColor="border-yellow-500/20"
+        />
+
+        <MetricCard 
+          title="2x Campaigns" 
+          value={metrics?.campaigns?.doubleRewardsConfigured || 0}
+          subtitle="Campaigns with 2x reward windows"
+          icon={<TrendingUp className="w-6 h-6 text-pink-400" />} 
+          bg="bg-pink-500/10" 
+          borderColor="border-pink-500/20"
+        />
+
+        <MetricCard 
+          title="Pending Sats Pool" 
+          value={metrics?.sats?.pendingPool || 0}
+          subtitle="Current pending rewards"
+          icon={<Wallet className="w-6 h-6 text-cyan-400" />} 
+          bg="bg-cyan-500/10" 
+          borderColor="border-cyan-500/20"
+        />
+
       </div>
 
       <h2 className="text-xl font-bold text-white pt-4 border-t border-sats-black-800">24-Hour Velocity</h2>
@@ -92,13 +119,49 @@ export default function AdminDashboardPage() {
           borderColor="border-green-500/20"
         />
 
+        <MetricCard 
+          title="Rejected Tasks (Last 24h)" 
+          value={metrics?.submissions?.rejectedLast24h || 0}
+          subtitle="Rejected submissions today"
+          icon={<XCircle className="w-6 h-6 text-red-400" />} 
+          bg="bg-red-500/10" 
+          borderColor="border-red-500/20"
+        />
+
+        <MetricCard 
+          title="Paid Withdrawals" 
+          value={metrics?.withdrawals?.paid || 0}
+          subtitle="Successfully paid out"
+          icon={<BarChart3 className="w-6 h-6 text-emerald-400" />} 
+          bg="bg-emerald-500/10" 
+          borderColor="border-emerald-500/20"
+        />
+
+      </div>
+
+      <h2 className="text-xl font-bold text-white pt-4 border-t border-sats-black-800">Trend Graphs</h2>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <MiniChartCard
+          title="User Signups (7d)"
+          color="bg-blue-500"
+          data={(metrics?.charts?.signupsLast7d || []).map((item) => ({ label: item.date.slice(5), value: item.count }))}
+        />
+        <MiniChartCard
+          title="Approved Submissions (7d)"
+          color="bg-green-500"
+          data={(metrics?.charts?.submissionsLast7d || []).map((item) => ({ label: item.date.slice(5), value: item.approved }))}
+        />
+        <MiniChartCard
+          title="Sats Distributed (7d)"
+          color="bg-sats-orange-500"
+          data={(metrics?.charts?.satsDistributedLast7d || []).map((item) => ({ label: item.date.slice(5), value: item.sats }))}
+        />
       </div>
     </div>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function MetricCard({ title, value, subtitle, icon, bg, borderColor, textColor = "text-white" }: any) {
+function MetricCard({ title, value, subtitle, icon, bg, borderColor, textColor = "text-white" }: { title: string; value: number; subtitle?: string; icon: React.ReactNode; bg: string; borderColor: string; textColor?: string }) {
   return (
     <div className={`bg-sats-black-950 border ${borderColor} rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}>
       {/* Subtle background glow inside the card */}
@@ -113,6 +176,27 @@ function MetricCard({ title, value, subtitle, icon, bg, borderColor, textColor =
         <p className="text-gray-400 text-sm font-medium">{title}</p>
         <h3 className={`text-4xl font-extrabold mt-1 tracking-tight ${textColor}`}>{value}</h3>
         {subtitle && <p className="text-xs text-gray-500 mt-3 font-medium">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+function MiniChartCard({ title, data, color }: { title: string; data: Array<{ label: string; value: number }>; color: string }) {
+  const maxValue = Math.max(...data.map((item) => item.value), 1);
+
+  return (
+    <div className="bg-sats-black-950 border border-sats-black-800 rounded-2xl p-6">
+      <h3 className="text-white font-bold mb-5">{title}</h3>
+      <div className="flex items-end gap-3 h-44">
+        {data.map((item) => (
+          <div key={item.label} className="flex-1 flex flex-col items-center justify-end gap-2">
+            <span className="text-[10px] text-gray-500 font-bold">{item.value}</span>
+            <div className="w-full bg-sats-black-900 rounded-t-lg overflow-hidden h-32 flex items-end">
+              <div className={`${color} w-full rounded-t-lg transition-all`} style={{ height: `${(item.value / maxValue) * 100}%` }}></div>
+            </div>
+            <span className="text-[10px] text-gray-600 font-medium">{item.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

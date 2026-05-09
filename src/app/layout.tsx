@@ -5,7 +5,6 @@ import { StoreProvider } from '@/store/StoreProvider';
 import { InteractiveBackground } from '@/components/layout/InteractiveBackground';
 import { RouteWrapper } from '@/components/layout/RouteWrapper';
 import { NavbarWrapper } from '@/components/layout/NavbarWrapper';
-import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 
 export const metadata: Metadata = {
   title: 'SatsEarn | The #1 Gamified Platform to Earn Bitcoin',

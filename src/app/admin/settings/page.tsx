@@ -195,15 +195,15 @@ export default function AdminSettingsPage() {
 
               <div className="space-y-6">
                 <InputWrapper label="Welcome Bonus (Sats)" icon={<Zap className="w-4 h-4 text-yellow-500" />}>
-                  <input type="number" name="welcomeBonusSats" min="0" value={formData.welcomeBonusSats} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="welcomeBonusSats" min="0" value={formData.welcomeBonusSats ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Minimum Withdrawal (Sats)" icon={<Coins className="w-4 h-4 text-green-500" />}>
-                  <input type="number" name="minWithdrawalSats" min="1000" value={formData.minWithdrawalSats} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="minWithdrawalSats" min="1000" value={formData.minWithdrawalSats||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Security Lock Period (Days)" icon={<Shield className="w-4 h-4 text-blue-500" />}>
-                  <input type="number" name="securityLockDays" min="0" value={formData.securityLockDays} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="securityLockDays" min="0" value={formData.securityLockDays||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
               </div>
             </div>
@@ -223,15 +223,15 @@ export default function AdminSettingsPage() {
               <div className="space-y-6">
                 {/* We keep the Default Percent as a fallback for users with NO tier */}
                 <InputWrapper label="Default System Fallback (%)" icon={<Users className="w-4 h-4 text-purple-500" />}>
-                  <input type="number" name="referralBonusPercent" min="0" max="100" value={formData.referralBonusPercent} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="referralBonusPercent" min="0" max="100" value={formData.referralBonusPercent||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Base XP Per Task" icon={<Target className="w-4 h-4 text-sats-orange-500" />}>
-                  <input type="number" name="baseXpPerTask" min="1" value={formData.baseXpPerTask} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="baseXpPerTask" min="1" value={formData.baseXpPerTask ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Daily Streak Bonus XP" icon={<Clock className="w-4 h-4 text-red-500" />}>
-                  <input type="number" name="dailyStreakBonusXp" min="0" value={formData.dailyStreakBonusXp} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="number" name="dailyStreakBonusXp" min="0" value={formData.dailyStreakBonusXp || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
               </div>
             </div>

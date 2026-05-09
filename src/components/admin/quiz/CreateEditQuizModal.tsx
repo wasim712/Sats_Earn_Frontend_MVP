@@ -32,6 +32,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
     title: '',
     date: '',
     rewardSats: 15,
+    xpReward: 0,
     isActive: false, // Added for Edit mode
   });
   
@@ -53,12 +54,13 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
         title: quiz.title,
         date: '', // Uneditable in edit mode
         rewardSats: quiz.rewardSats,
+        xpReward: quiz.xpReward || 0,
         isActive: quiz.isActive || false,
       });
       // We explicitly DO NOT load questions here since they aren't editable
     } else {
       // CREATE MODE: Reset everything
-      setForm({ title: '', date: '', rewardSats: 15, isActive: false });
+      setForm({ title: '', date: '', rewardSats: 15, xpReward: 0, isActive: false });
       setQuestions([{ id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
     }
     setError(null);
@@ -73,7 +75,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
 
   const addQuestion = () => setQuestions([...questions, { id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
   const removeQuestion = (id: string) => questions.length > 1 && setQuestions(questions.filter(q => q.id !== id));
-  const updateQuestion = (id: string, field: keyof QuestionInput, value: any) => setQuestions(questions.map(q => q.id === id ? { ...q, [field]: value } : q));
+  const updateQuestion = (id: string, field: keyof QuestionInput, value: string | string[]) => setQuestions(questions.map(q => q.id === id ? { ...q, [field]: value } : q));
   
   const updateOption = (qId: string, optIndex: number, value: string) => {
     setQuestions(questions.map(q => {
@@ -92,6 +94,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   const validate = (): string | null => {
     if (!form.title.trim()) return 'Quiz title is required.';
     if (Number(form.rewardSats) < 1) return 'Reward must be at least 1 Sat.';
+    if (Number(form.xpReward) < 0) return 'XP reward cannot be negative.';
     
     if (!isEditMode) {
       if (!form.date) return 'Quiz date is required.';
@@ -120,6 +123,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
         const editPayload = {
           title: form.title.trim(),
           rewardSats: Number(form.rewardSats),
+          xpReward: Number(form.xpReward),
           isActive: form.isActive
         };
         await dispatch(updateQuiz({ id: quiz.id, data: editPayload })).unwrap();
@@ -129,6 +133,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
           title: form.title.trim(),
           date: new Date(form.date).toISOString(),
           rewardSats: Number(form.rewardSats),
+          xpReward: Number(form.xpReward),
           questions: questions.map((q, index) => ({
             questionText: q.questionText.trim(),
             options: q.options.map(o => o.trim()),
@@ -139,7 +144,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
         await dispatch(createQuiz(createPayload)).unwrap();
       }
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(typeof err === 'string' ? err : 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -211,13 +216,30 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 <div className="relative max-w-xs">
                   <input
                     type="number"
-                    value={form.rewardSats}
+                    value={form.rewardSats||''}
                     onChange={(e) => setFormField('rewardSats', Number(e.target.value))}
                     min={1}
                     className={`${inputCls} pr-16 font-mono text-lg`}
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-sats-orange-500 select-none">
                     SATS
+                  </span>
+                </div>
+              </Field>
+            </div>
+
+            <div className={!isEditMode ? "md:col-span-3" : ""}>
+              <Field label="XP Reward" required>
+                <div className="relative max-w-xs">
+                  <input
+                    type="number"
+                    value={form.xpReward ||''}
+                    onChange={(e) => setFormField('xpReward', Number(e.target.value))}
+                    min={0}
+                    className={`${inputCls} pr-12 font-mono text-lg`}
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-green-400 select-none">
+                    XP
                   </span>
                 </div>
               </Field>

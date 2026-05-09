@@ -20,6 +20,7 @@ export interface AdminSubmissionTask {
   campaign: {
     title: string;
     baseRewardSats: number;
+    tierRewardMatrix?: Record<string, number> | null;
   };
 }
 
