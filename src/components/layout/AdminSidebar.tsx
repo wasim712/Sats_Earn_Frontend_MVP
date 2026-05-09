@@ -6,8 +6,8 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
   List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, Megaphone, Lightbulb,
-  MonitorCog, Bell,
-  ShieldAlert
+  MonitorCog, Bell, Bug,
+  ShieldAlert, BookOpen
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
@@ -71,9 +71,9 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
   const navLinks = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Users', href: '/admin/users', icon: Users },
-    // Inject the dynamic count here
     { name: 'Alerts', href: '/admin/notifications', icon: Bell, count: unreadCount },
     { name: 'Submissions', href: '/admin/submissions', icon: CheckSquare },
+    { name: 'Bug Reports', href: '/admin/bug-reports', icon: Bug },
     { type: 'divider', name: 'Campaigns' }, 
     { name: 'Security', href: '/admin/fraud', icon: ShieldAlert },
     { name: 'All Campaigns', href: '/admin/campaigns', icon: List },
@@ -82,6 +82,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Quiz', href: '/admin/quiz', icon: Lightbulb },
     { type: 'divider', name: 'System' },
     { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
+    { name: 'Blogs', href: '/admin/blogs', icon: BookOpen },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
     { name: 'Payments', href: '/admin/payments', icon: MonitorCog },
   ];

@@ -1,6 +1,6 @@
 import React  from 'react';
 import Link from 'next/link';
-import { Zap, Clock, ChevronRight, LinkIcon, CheckCircle2 } from 'lucide-react';
+import { Zap, Clock, ChevronRight, LinkIcon, CheckCircle2, Monitor, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 import { Campaign } from '@/features/admin/adminCampaignsSlice';
 // --- PLATFORM LOGO COMPONENT ---
@@ -42,6 +42,9 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
     (max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)),
     0,
   );
+  const requiredPlatform = String((campaign as any).requiredPlatform || 'NONE').toUpperCase();
+  const RequiredPlatformIcon = requiredPlatform === 'DESKTOP' ? Monitor : requiredPlatform === 'ANDROID' || requiredPlatform === 'IOS' ? Smartphone : null;
+  const requiredPlatformLabel = requiredPlatform === 'NONE' ? 'All Devices' : requiredPlatform === 'IOS' ? 'iOS Only' : requiredPlatform === 'ANDROID' ? 'Android Only' : 'Desktop Only';
   
   return (
     <div className={`group relative bg-sats-black-900 border rounded-3xl flex flex-col h-full transition-all duration-300 hover:-translate-y-1 overflow-hidden ${isCompleted ? 'border-green-500/30 hover:shadow-[0_10px_30px_rgba(34,197,94,0.12)]' : 'border-sats-black-800 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] hover:border-sats-black-700'}`}>
@@ -97,6 +100,10 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
             <span>{completedTasksCount}/{totalTasksCount} completed</span>
           </div>
         )}
+        <div className="mt-3 inline-flex items-center gap-2 rounded-xl border border-[#1a1a1a] bg-black/40 px-3 py-2 text-xs font-bold text-gray-300">
+          {RequiredPlatformIcon && <RequiredPlatformIcon className="w-3.5 h-3.5 text-sats-orange-400" />}
+          <span>Required Platform: {requiredPlatformLabel}</span>
+        </div>
       </div>
 
       <div className="relative z-10 mt-auto space-y-5">

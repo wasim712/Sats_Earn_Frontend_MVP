@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, ListChecks, Users, Trophy, Wallet, 
   Bell, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,
-  Lightbulb, FileCheck2
+  Lightbulb, FileCheck2, Bug
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -71,6 +71,8 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
     { name: 'Alerts', href: '/user/notifications', icon: Bell, count: unreadCount }, // <-- NEW
     { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
+    { name: 'My Submissions', href: '/user/submissions', icon: FileCheck2 },
+    { name: 'Bug Bounty', href: '/user/bug-bounty', icon: Bug },
     { name: 'Daily Quiz', href: '/user/quiz', icon: Lightbulb },
     { name: 'Referrals', href: '/user/referrals', icon: Users },
     { name: 'Leaderboard', href: '/user/leaderboard', icon: Trophy },

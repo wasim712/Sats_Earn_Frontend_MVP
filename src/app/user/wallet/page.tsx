@@ -143,6 +143,7 @@ export default function UserWithdrawalsPage() {
       try {
         const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
         const headers = { 'Authorization': `Bearer ${token}` };
+        let activeTier: string | undefined;
 
         // Fetch user dashboard data (for balances), withdrawal history, and platform settings
         const [dashRes, historyRes, settingsRes] = await Promise.all([
@@ -154,6 +155,7 @@ export default function UserWithdrawalsPage() {
         if (dashRes.ok) {
           const dashData = await dashRes.json();
           setBalances(dashData.balances);
+          activeTier = dashData?.gamification?.activeTier;
         }
         
         if (historyRes.ok) {
@@ -163,7 +165,11 @@ export default function UserWithdrawalsPage() {
 
         if (settingsRes.ok) {
           const settingsData = await settingsRes.json();
-          if (settingsData.minWithdrawalSats) setMinWithdrawal(settingsData.minWithdrawalSats);
+          const tierMin = activeTier
+            ? settingsData?.tierMinWithdrawalMatrix?.[activeTier]
+            : undefined;
+          if (tierMin !== undefined && tierMin !== null) setMinWithdrawal(Number(tierMin));
+          else if (settingsData.minWithdrawalSats) setMinWithdrawal(settingsData.minWithdrawalSats);
         }
 
       } catch (err) {

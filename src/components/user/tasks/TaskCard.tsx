@@ -5,6 +5,54 @@ import { AlertTriangle, CheckCircle2, ChevronRight, ExternalLink, Link as LinkIc
 import { PROOF_META } from './taskPage.helpers';
 import type { ProofMeta, UserTaskPageTask, UserTaskResult, UserTaskStatus } from './taskPage.types';
 
+function inferTaskPlatform(task: UserTaskPageTask) {
+  const rawPlatform = String(task.requiredPlatform || '').trim().toUpperCase();
+  const url = String(task.targetUrl || '').toLowerCase();
+
+  if (rawPlatform && rawPlatform !== 'NONE') {
+    const labels: Record<string, string> = {
+      TWITTER: 'Twitter',
+      X: 'X',
+      LINKEDIN: 'LinkedIn',
+      INSTAGRAM: 'Instagram',
+      TELEGRAM: 'Telegram',
+      FACEBOOK: 'Facebook',
+      YOUTUBE: 'YouTube',
+      DISCORD: 'Discord',
+      TIKTOK: 'TikTok',
+      REDDIT: 'Reddit',
+      DESKTOP: 'Desktop',
+      ANDROID: 'Android',
+      IOS: 'iOS',
+    };
+
+    return labels[rawPlatform] || rawPlatform.charAt(0) + rawPlatform.slice(1).toLowerCase();
+  }
+
+  if (url.includes('linkedin.com')) return 'LinkedIn';
+  if (url.includes('twitter.com') || url.includes('x.com')) return 'Twitter';
+  if (url.includes('instagram.com')) return 'Instagram';
+  if (url.includes('t.me') || url.includes('telegram.')) return 'Telegram';
+  if (url.includes('facebook.com')) return 'Facebook';
+  if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube';
+  if (url.includes('discord.com')) return 'Discord';
+  if (url.includes('tiktok.com')) return 'TikTok';
+  if (url.includes('reddit.com')) return 'Reddit';
+
+  return 'General Task';
+}
+
+function formatProofLabel(proofType: UserTaskPageTask['proofType']) {
+  const labels: Record<UserTaskPageTask['proofType'], string> = {
+    SCREENSHOT: 'Screenshot Proof',
+    URL: 'Link Proof',
+    TEXT_RESPONSE: 'Text Proof',
+    API_VERIFIED: 'Auto Verified',
+  };
+
+  return labels[proofType];
+}
+
 function ScreenshotInput({
   taskId,
   file,
@@ -147,6 +195,8 @@ export function TaskCard({
   onSubmit: (id: string, proofType: string) => void;
 }) {
   const meta = PROOF_META[task.proofType] ?? PROOF_META.TEXT_RESPONSE;
+  const taskPlatform = inferTaskPlatform(task);
+  const proofLabel = formatProofLabel(task.proofType);
   const isCompleted = taskStatus === 'completed' || taskStatus === 'pending_review';
   const isSubmitDisabled = isSubmitting || isCompleted || (task.proofType === 'SCREENSHOT' && !selectedFile) || ((task.proofType === 'URL' || task.proofType === 'TEXT_RESPONSE') && !textInput.trim());
 
@@ -166,8 +216,8 @@ export function TaskCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 mb-4 pl-12">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/6 text-[10px] font-bold uppercase tracking-wider text-white/30">{task.requiredPlatform}</span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sats-orange-500/5 border border-sats-orange-500/15 text-[10px] font-bold uppercase tracking-wider text-sats-orange-500/60">{meta.icon}{meta.label}</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/6 text-[10px] font-bold uppercase tracking-wider text-white/50">{taskPlatform}</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sats-orange-500/5 border border-sats-orange-500/15 text-[10px] font-bold uppercase tracking-wider text-sats-orange-500/70">{meta.icon}{proofLabel}</span>
           <span className="sm:hidden"><StatusBadge status={taskStatus} /></span>
         </div>
 
@@ -176,7 +226,7 @@ export function TaskCard({
             <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[#0d0d0d] border border-[#1e1e1e] group/link">
               <div className="shrink-0 w-6 h-6 rounded-lg bg-sats-orange-500/8 border border-sats-orange-500/15 flex items-center justify-center"><span className="text-[9px] font-black text-sats-orange-500/70">1</span></div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/25 mb-0.5">Step 1 ? Open on {task.requiredPlatform}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-white/25 mb-0.5">Step 1 • Open on {taskPlatform}</p>
                 <p className="text-xs text-white/40 truncate">{task.targetUrl}</p>
               </div>
               <a href={task.targetUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sats-orange-500/8 border border-sats-orange-500/20 text-sats-orange-500 text-xs font-bold hover:bg-sats-orange-500/15 hover:border-sats-orange-500/35 transition-all"><span> Open </span><ExternalLink className="w-3 h-3" /></a>
