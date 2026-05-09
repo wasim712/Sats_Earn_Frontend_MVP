@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
   List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, Megaphone, Lightbulb,
   MonitorCog, Bell, Bug,
-  ShieldAlert, BookOpen
+  ShieldAlert, BookOpen, CircleHelp
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
@@ -83,6 +83,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { type: 'divider', name: 'System' },
     { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
     { name: 'Blogs', href: '/admin/blogs', icon: BookOpen },
+    { name: 'FAQs', href: '/admin/faqs', icon: CircleHelp },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
     { name: 'Payments', href: '/admin/payments', icon: MonitorCog },
   ];

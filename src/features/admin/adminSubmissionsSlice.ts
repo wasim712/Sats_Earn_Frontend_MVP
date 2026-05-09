@@ -65,7 +65,7 @@ export const fetchPendingSubmissions = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
-      const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const token = state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
       if (!token) {
         throw new Error('No authentication token found');
@@ -95,7 +95,7 @@ export const reviewSubmission = createAsyncThunk(
   async ({ id, status, rejectionReason }: ReviewPayload, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
-      const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const token = state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
       if (!token) {
         throw new Error('No authentication token found');

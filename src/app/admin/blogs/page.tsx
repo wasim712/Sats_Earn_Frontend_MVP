@@ -1,40 +1,21 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, Eye, Loader2, Save, Send, Trash2 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-type BlogPost = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt?: string | null;
-  content: string;
-  coverImageUrl?: string | null;
-  isPublished: boolean;
-  publishedAt?: string | null;
-  createdAt: string;
-};
-
-const toolbarActions = [
-  { label: 'B', command: 'bold' },
-  { label: 'I', command: 'italic' },
-  { label: 'U', command: 'underline' },
-  { label: 'H2', command: 'formatBlock', value: 'h2' },
-  { label: 'H3', command: 'formatBlock', value: 'h3' },
-  { label: '• List', command: 'insertUnorderedList' },
-  { label: '1. List', command: 'insertOrderedList' },
-];
+import React, { useEffect, useRef, useState } from 'react';
+import { Heading1, Heading2, ImageIcon, Link2, List, ListOrdered, Loader2, Quote, Save, Send, Type, Undo2 } from 'lucide-react';
+import { API_URL, EMPTY_BLOG_HTML, getStoredToken, slugify } from '../content/content.helpers';
+import type { BlogPost, EditorButton } from '../content/content.types';
+import { BlogEditorToolbar } from './BlogEditorToolbar';
+import { BlogPostList } from './BlogPostList';
 
 export default function AdminBlogsPage() {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [coverImageUrl, setCoverImageUrl] = useState('');
-  const [content, setContent] = useState('<p>Start writing your blog post...</p>');
+  const [content, setContent] = useState(EMPTY_BLOG_HTML);
   const [isPublished, setIsPublished] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,16 +23,33 @@ export default function AdminBlogsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const token = useMemo(
-    () => (typeof window !== 'undefined' ? sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token') : null),
-    [],
-  );
+  const token = getStoredToken();
+
+  const syncEditor = (html?: string) => {
+    const value = html ?? content;
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+    }
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setTitle('');
+    setSlug('');
+    setExcerpt('');
+    setCoverImageUrl('');
+    setContent(EMPTY_BLOG_HTML);
+    setIsPublished(false);
+    setIsPreview(false);
+    setTimeout(() => syncEditor(EMPTY_BLOG_HTML), 0);
+  };
 
   const loadPosts = async () => {
     try {
       const res = await fetch(`${API_URL}/admin/blogs`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Failed to load blog posts.');
-      setPosts(await res.json());
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load blog posts.');
+      setPosts(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load blog posts.');
     } finally {
@@ -64,65 +62,84 @@ export default function AdminBlogsPage() {
   }, []);
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== content) {
-      editorRef.current.innerHTML = content;
-    }
+    syncEditor();
   }, [content]);
 
   useEffect(() => {
     if (!slug && title) {
-      setSlug(
-        title
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-'),
-      );
+      setSlug(slugify(title));
     }
   }, [title, slug]);
 
-  const execCommand = (command: string, value?: string) => {
+  const exec = (command: string, value?: string) => {
+    editorRef.current?.focus();
     document.execCommand(command, false, value);
     setContent(editorRef.current?.innerHTML || '');
   };
+
+  const insertLink = () => {
+    const url = window.prompt('Enter the URL');
+    if (!url) return;
+    exec('createLink', url);
+  };
+
+  const insertImage = () => {
+    const url = window.prompt('Enter the image URL');
+    if (!url) return;
+    exec('insertImage', url);
+  };
+
+  const toolbar: EditorButton[] = [
+    { label: 'Paragraph', icon: Type, action: () => exec('formatBlock', 'p') },
+    { label: 'H1', icon: Heading1, action: () => exec('formatBlock', 'h1') },
+    { label: 'H2', icon: Heading2, action: () => exec('formatBlock', 'h2') },
+    { label: 'Quote', icon: Quote, action: () => exec('formatBlock', 'blockquote') },
+    { label: 'Bullets', icon: List, action: () => exec('insertUnorderedList') },
+    { label: 'Numbers', icon: ListOrdered, action: () => exec('insertOrderedList') },
+    { label: 'Link', icon: Link2, action: insertLink },
+    { label: 'Image', icon: ImageIcon, action: insertImage },
+    { label: 'Undo', icon: Undo2, action: () => exec('undo') },
+  ];
 
   const handleSave = async () => {
     setError(null);
     setSuccess(null);
     setIsSaving(true);
+
     try {
-      const res = await fetch(`${API_URL}/admin/blogs`, {
-        method: 'POST',
+      const url = editingId ? `${API_URL}/admin/blogs/${editingId}` : `${API_URL}/admin/blogs`;
+      const method = editingId ? 'PATCH' : 'POST';
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title,
-          slug,
-          excerpt,
-          content,
-          coverImageUrl,
-          isPublished,
-        }),
+        body: JSON.stringify({ title, slug, excerpt, content, coverImageUrl, isPublished }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save blog post.');
-      setSuccess(isPublished ? 'Blog published successfully.' : 'Draft saved successfully.');
-      setTitle('');
-      setSlug('');
-      setExcerpt('');
-      setCoverImageUrl('');
-      setContent('<p>Start writing your blog post...</p>');
-      setIsPublished(false);
-      if (editorRef.current) editorRef.current.innerHTML = '<p>Start writing your blog post...</p>';
+
+      setSuccess(editingId ? 'Blog post updated successfully.' : isPublished ? 'Blog published successfully.' : 'Draft saved successfully.');
+      resetForm();
       await loadPosts();
     } catch (err: any) {
       setError(err.message || 'Failed to save blog post.');
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleEdit = (post: BlogPost) => {
+    setEditingId(post.id);
+    setTitle(post.title);
+    setSlug(post.slug);
+    setExcerpt(post.excerpt || '');
+    setCoverImageUrl(post.coverImageUrl || '');
+    setContent(post.content);
+    setIsPublished(post.isPublished);
+    setIsPreview(false);
+    setTimeout(() => syncEditor(post.content), 0);
   };
 
   const handleDelete = async (id: string) => {
@@ -133,6 +150,7 @@ export default function AdminBlogsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to delete blog post.');
+      if (editingId === id) resetForm();
       await loadPosts();
     } catch (err: any) {
       setError(err.message || 'Failed to delete blog post.');
@@ -144,7 +162,7 @@ export default function AdminBlogsPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-black text-white">Blog Editor</h1>
-          <p className="text-sm text-gray-400 mt-1">Create formatted blog posts for your admin-managed content hub.</p>
+          <p className="text-sm text-gray-400 mt-1">Create polished blogs with a better toolbar, preview, and editing support.</p>
         </div>
 
         {error && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
@@ -152,6 +170,15 @@ export default function AdminBlogsPage() {
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.9fr] gap-6">
           <div className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-6 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl font-black text-white">{editingId ? 'Edit Blog Post' : 'Create Blog Post'}</h2>
+              {editingId && (
+                <button onClick={resetForm} className="rounded-xl border border-[#2a2a2a] px-4 py-2 text-xs font-bold text-white hover:border-sats-orange-500 hover:text-sats-orange-400">
+                  New Post
+                </button>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Blog title" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
               <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
@@ -160,32 +187,17 @@ export default function AdminBlogsPage() {
             <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short excerpt" className="w-full min-h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
             <input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="Cover image URL" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
 
-            <div className="flex flex-wrap gap-2 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-3">
-              {toolbarActions.map((action) => (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => execCommand(action.command, action.value)}
-                  className="rounded-lg border border-[#2a2a2a] px-3 py-2 text-xs font-bold text-white hover:border-sats-orange-500 hover:text-sats-orange-400"
-                >
-                  {action.label}
-                </button>
-              ))}
-              <button type="button" onClick={() => setIsPreview((prev) => !prev)} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-[#2a2a2a] px-3 py-2 text-xs font-bold text-white hover:border-sats-orange-500 hover:text-sats-orange-400">
-                <Eye className="w-4 h-4" />
-                {isPreview ? 'Edit' : 'Preview'}
-              </button>
-            </div>
+            <BlogEditorToolbar buttons={toolbar} isPreview={isPreview} onTogglePreview={() => setIsPreview((prev) => !prev)} />
 
             {isPreview ? (
-              <div className="min-h-[360px] rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-5 text-white prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+              <div className="min-h-[420px] rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-5 text-white prose prose-invert max-w-none overflow-auto" dangerouslySetInnerHTML={{ __html: content }} />
             ) : (
               <div
                 ref={editorRef}
                 contentEditable
                 suppressContentEditableWarning
                 onInput={(e) => setContent((e.target as HTMLDivElement).innerHTML)}
-                className="min-h-[360px] rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-5 text-white focus:outline-none"
+                className="min-h-[420px] rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-5 text-white focus:outline-none overflow-auto"
               />
             )}
 
@@ -196,46 +208,12 @@ export default function AdminBlogsPage() {
               </label>
               <button onClick={handleSave} disabled={isSaving} className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-5 py-3 font-black text-black disabled:opacity-50">
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : isPublished ? <Send className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                {isPublished ? 'Publish Blog' : 'Save Draft'}
+                {editingId ? 'Update Post' : isPublished ? 'Publish Blog' : 'Save Draft'}
               </button>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-5 h-5 text-sats-orange-500" />
-              <h2 className="text-xl font-black text-white">Existing Posts</h2>
-            </div>
-            <div className="space-y-3">
-              {isLoading ? (
-                <div className="text-sm text-gray-400">Loading blog posts...</div>
-              ) : posts.length === 0 ? (
-                <div className="text-sm text-gray-400">No blog posts yet.</div>
-              ) : (
-                posts.map((post) => (
-                  <div key={post.id} className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-sm font-black text-white">{post.title}</h3>
-                        <p className="text-xs text-gray-500 mt-1">/{post.slug}</p>
-                      </div>
-                      <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${post.isPublished ? 'bg-green-500/10 text-green-300' : 'bg-yellow-500/10 text-yellow-300'}`}>
-                        {post.isPublished ? 'Published' : 'Draft'}
-                      </span>
-                    </div>
-                    {post.excerpt && <p className="text-xs text-gray-400 mt-3">{post.excerpt}</p>}
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-[11px] text-gray-500">{new Date(post.createdAt).toLocaleString()}</span>
-                      <button onClick={() => handleDelete(post.id)} className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20">
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <BlogPostList posts={posts} isLoading={isLoading} onEdit={handleEdit} onDelete={handleDelete} />
         </div>
       </div>
     </div>
