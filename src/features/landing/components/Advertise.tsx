@@ -79,7 +79,7 @@ export const Advertise = () => {
             </div>
 
             {/* CTA Button */}
-            <Button size="lg" onClick={() => router.push('/for-brands')} className="gap-2 group shadow-[0_0_20px_rgba(249,115,22,0.2)]">
+            <Button size="xl" onClick={() => router.push('/for-brands')} className=" gap-2 group shadow-[0_0_20px_rgba(249,115,22,0.2)]">
               <Megaphone className="w-5 h-5" />
               Advertise With Us
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />

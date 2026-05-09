@@ -8,6 +8,7 @@ import {
   User, Phone, Send, MessageSquare, 
   CheckCircle2, ArrowLeft, Loader2, AlertTriangle, ShieldCheck
 } from 'lucide-react';
+import Image from 'next/image';
 
 // ─── Custom Inline SVGs for Brands ──────────────────────────────────────────
 const TwitterIcon = ({ className }: { className?: string }) => (
@@ -186,16 +187,24 @@ export default function UserSettingsPage() {
                   </InputWrapper>
 
                   <InputWrapper label="Discord Username">
-                    <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                    <input 
-                      type="text" 
-                      value={form.discordHandle}
-                      onChange={(e) => handleUpdate('discordHandle', e.target.value)}
-                      className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl pl-11 pr-4 py-3.5 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-indigo-400/40 focus:bg-indigo-400/5 transition-all"
-                      placeholder="username#1234"
-                    />
-                  </InputWrapper>
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                          <Image
+                            src="/discord.svg"
+                            alt="discord logo"
+                            width={18}
+                            height={18}
+                            className="opacity-70"
+                          />
+                        </div>
 
+                        <input
+                          type="text"
+                          value={form.discordHandle}
+                          onChange={(e) => handleUpdate('discordHandle', e.target.value)}
+                          className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl pl-11 pr-4 py-3.5 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-indigo-400/40 focus:bg-indigo-400/5 transition-all"
+                          placeholder="username#1234"
+                        />
+                      </InputWrapper>
                   <InputWrapper label="Telegram Handle">
                     <Send className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input 

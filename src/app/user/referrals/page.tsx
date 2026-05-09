@@ -6,15 +6,22 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import ReferralHero from '@/components/user/referrals/ReferralHero';
 import ReferralStats from '@/components/user/referrals/ReferralStats';
 import ReferralList from '@/components/user/referrals/ReferralList';
+import ReferralLimits from '@/components/user/referrals/ReferralLimits';
 import { fetchUserReferrals } from '@/features/user/userReferralsSlice';
 
 export default function ReferralsPage() {
   const dispatch = useAppDispatch();
   const { data, isLoading, error } = useAppSelector((state) => state.userReferrals);
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchUserReferrals());
   }, [dispatch]);
+
+  // Determine if the user is on a free tier 
+  // (Basic, Copper, Bronze, Silver, Gold are the free tiers based on your previous config)
+  const freeTiers = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
+  const isFreeTier = freeTiers.includes((user?.activeTier || 'BASIC').toUpperCase());
 
   if (error) {
     return (
@@ -28,18 +35,74 @@ export default function ReferralsPage() {
 
   if (isLoading || !data) {
     return (
-      <div className="space-y-8 animate-pulse pb-20 p-2 md:p-4 lg:p-6">
+      <div className="space-y-8 animate-pulse pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
+        {/* Header Skeleton */}
         <div>
           <div className="h-10 w-48 bg-[#1a1a1a] rounded-xl mb-3"></div>
           <div className="h-5 w-72 bg-[#1a1a1a] rounded-lg"></div>
         </div>
-        <div className="h-48 w-full bg-sats-black-950 border border-[#1a1a1a] rounded-[28px]"></div>
+
+        {/* ReferralHero Skeleton (Perfectly matches ReferralHero layout) */}
+        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 space-y-8">
+          {/* Top Row: Title & Quick Shares */}
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+            <div className="space-y-3">
+              <div className="h-8 w-48 bg-[#1a1a1a] rounded-lg"></div>
+              <div className="h-4 w-64 bg-[#1a1a1a] rounded-md"></div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-2.5 w-16 bg-[#1a1a1a] rounded mr-2"></div>
+              <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+              <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+              <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+            </div>
+          </div>
+          {/* Bottom Row: Link Box & Code Box */}
+          <div className="flex flex-col lg:flex-row items-stretch gap-4 w-full">
+            <div className="flex-1 h-[56px] bg-[#050505] border border-[#1a1a1a] rounded-2xl"></div>
+            <div className="h-[56px] w-full lg:w-[220px] bg-[#1a1a1a] rounded-2xl"></div>
+          </div>
+        </div>
+
+        {/* ReferralStats Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="h-32 bg-sats-black-950 border border-[#1a1a1a] rounded-3xl"></div>
+            <div key={item} className="h-[120px] bg-black border border-[#1a1a1a] rounded-3xl p-6 flex flex-col justify-between">
+              <div className="flex justify-between items-start">
+                <div className="h-8 w-12 bg-[#1a1a1a] rounded-lg"></div>
+                <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+              </div>
+              <div className="h-3 w-28 bg-[#1a1a1a] rounded-md mt-auto"></div>
+            </div>
           ))}
         </div>
-        <div className="h-64 w-full bg-sats-black-950 border border-[#1a1a1a] rounded-[28px]"></div>
+
+        {/* ReferralLimits Skeleton (Matches the visual weight of the limit box) */}
+        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[100px]">
+          <div className="flex items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[#1a1a1a] shrink-0"></div>
+            <div className="space-y-2 w-full">
+              <div className="flex gap-3 items-center">
+                <div className="h-5 w-32 bg-[#1a1a1a] rounded-md"></div>
+                <div className="h-5 w-14 bg-[#1a1a1a] rounded-full"></div>
+              </div>
+              <div className="h-3 w-full max-w-[300px] bg-[#1a1a1a] rounded-md"></div>
+              <div className="h-3 w-[200px] bg-[#1a1a1a] rounded-md md:hidden"></div>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
+            <div className="flex flex-col gap-2 w-full md:w-48">
+               <div className="h-2 w-full bg-[#1a1a1a] rounded-full"></div>
+            </div>
+            <div className="w-full md:w-28 h-10 bg-[#1a1a1a] rounded-xl shrink-0"></div>
+          </div>
+        </div>
+
+        {/* ReferralList Skeleton */}
+        <div className="space-y-4 pt-4">
+          <div className="h-7 w-40 bg-[#1a1a1a] rounded-lg"></div>
+          <div className="h-64 w-full bg-black border border-[#1a1a1a] rounded-[28px]"></div>
+        </div>
       </div>
     );
   }
@@ -47,7 +110,7 @@ export default function ReferralsPage() {
   const referralUrl = `https://sats-earn-frontend.vercel.app/signup?ref=${data.referralCode}`;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
       <div>
         <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Referrals</h1>
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards.</p>
@@ -55,6 +118,12 @@ export default function ReferralsPage() {
 
       <ReferralHero code={data.referralCode} url={referralUrl} />
       <ReferralStats stats={data.stats} />
+      
+      {/* Conditionally render the Referral Limits component for free tier users */}
+      {isFreeTier && (
+        <ReferralLimits currentReferrals={data.stats?.totalInvited || 0} limit={20} />
+      )}
+      
       <ReferralList list={data.referralsList} />
     </div>
   );

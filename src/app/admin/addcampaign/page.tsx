@@ -319,7 +319,7 @@ export default function AddCampaignPage() {
                   </InputWrapper>
 
                   <InputWrapper label="Campaign XP Reward" required>
-                    <input type="number" name="xpReward" min="0" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
+                    <input type="number" name="xpReward" min="1" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
                       Base XP users get for this campaign. During active 2x period, XP also doubles.
                     </p>

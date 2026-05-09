@@ -5,7 +5,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
   AlertTriangle, CheckCircle2, Clock3, LockKeyhole, XCircle, 
   Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy,
-  Clock4
+  Clock4,
+  TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -98,7 +99,7 @@ export default function UserDashboardPage() {
             <div className="h-5 w-48 bg-white/[0.03] rounded-lg" />
           </div>
           <div className="flex gap-3">
-            {[1, 2, 3].map(i => <div key={i} className="h-10 w-28 bg-white/5 rounded-full" />)}
+            {[1, 2, 3,4].map(i => <div key={i} className="h-8 w-28 bg-white/5 rounded-full" />)}
           </div>
         </div>
 
@@ -127,6 +128,7 @@ export default function UserDashboardPage() {
   const currentStreak = data.gamification?.currentStreak || 0;
   const activeTier = data.gamification?.activeTier || 'Basic';
   const currentLevel = data.gamification?.level || 1;
+  const userXp = data.gamification?.totalXp;
   const unreadStreakReward = notifications.find(
     (notification) => !notification.isRead && notification.title.toLowerCase().includes('streak milestone reward unlocked'),
   );
@@ -170,6 +172,10 @@ export default function UserDashboardPage() {
             {unreadStreakReward && <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
             <Flame className="w-4 h-4 text-sats-orange-500" />
             <span className="text-xs font-bold text-white">{currentStreak} Day Streak</span>
+          </div>
+          <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
+            <Zap className="w-4 h-4 text-purple-500" />
+            <span className="text-xs font-bold text-white"> XP  {userXp}</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Medal className={`w-4 h-4 ${getTierColor(activeTier)}`} />
@@ -267,7 +273,7 @@ export default function UserDashboardPage() {
         <div className="bg-[#080808] overflow-hidden border border-[#1a1a1a] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between group hover:-translate-y-1 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] transition-all duration-300">
           <div className="flex flex-col gap-4">
             <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
-              <Activity className="w-5 h-5 text-green-500" />
+              <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Total Earned</p>
           </div>
