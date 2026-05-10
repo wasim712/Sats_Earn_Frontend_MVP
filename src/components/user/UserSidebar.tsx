@@ -6,8 +6,9 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, ListChecks, Users, Trophy, Wallet, 
   Bell, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen,
-  Lightbulb, FileCheck2, Bug,
-  Medal
+  Lightbulb, Bug,
+  Medal,
+  BookOpen
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -76,6 +77,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     { name: 'Daily Quiz', href: '/user/quiz', icon: Lightbulb },
     { name: 'Referrals', href: '/user/referrals', icon: Users },
     { name: 'Rewards', href: '/user/rewards', icon: Medal },
+    { name: 'Blogs', href: '/user/blogs', icon: BookOpen },
     { name: 'Leaderboard', href: '/user/leaderboard', icon: Trophy },
     { name: 'Withdraw', href: '/user/wallet', icon: Wallet },
     { name: 'Settings', href: '/user/settings', icon: Settings },
@@ -248,3 +250,6 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     </>
   );
 };
+
+
+

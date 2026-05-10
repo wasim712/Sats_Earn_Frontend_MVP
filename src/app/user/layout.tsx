@@ -17,6 +17,7 @@ const DOCK_LINKS = [
   { label: 'Dashboard', path: '/user/dashboard', icon: Home },
   { label: 'Tasks', path: '/user/tasks', icon: Target }, 
   { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
+  { label: 'Blogs', path: '/user/blogs', icon: FileCheck2 },
 ];
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
@@ -85,6 +86,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     if (path.includes('/referrals')) return 'Referrals';
     if (path.includes('/leaderboard')) return 'Leaderboard';
     if (path.includes('/settings')) return 'Settings';
+    if (path.includes('/blogs')) return 'Blogs';
     if (path.includes('/profile')) return 'User Profile';
     
     // Fallback: Capitalize the last word in the URL
@@ -113,7 +115,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         
         {/* ─── Mobile Header ─── */}
         <header className="lg:hidden h-16 border-b border-[#1a1a1a] bg-sats-black-900/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full">
             <button 
               onClick={() => setIsSidebarOpen(true)}
               className="p-2 text-gray-400 hover:text-white bg-[#111] rounded-xl border border-[#1a1a1a] transition-colors active:scale-95"
@@ -122,8 +124,8 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             </button>
             
             {/* Dynamic Page Title */}
-            <div className="flex items-center justify-end pr-1">
-              <h1 className="font-black tracking-tight text-lg text-white">
+            <div className="flex items-center justify-items-center grow w-full text-center justify-center pr-15">
+              <h1 className="font-black tracking-tight text-xl text-white text-center">
                 {getPageTitle()}
               </h1>
             </div>
@@ -194,3 +196,4 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     </div>
   );
 }
+
