@@ -40,7 +40,7 @@ function parseDateTimeValue(value: string) {
   }
 
   const hours24 = parsed.getHours();
-  const period = hours24 >= 12 ? 'PM' : 'AM';
+  const period: 'AM' | 'PM' = hours24 >= 12 ? 'PM' : 'AM';
   const hour12 = hours24 % 12 || 12;
 
   return {
