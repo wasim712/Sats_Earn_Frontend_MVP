@@ -13,6 +13,7 @@ import adminFraudReducer from '../features/admin/adminFraudSlice'
 import adminNotificationsReducer from '../features/admin/adminNotificationsSlice'
 import adminPaymentsReducer from '../features/admin/adminPaymentsSlice'
 import adminSettingsReducer from '../features/admin/adminSettingsSlice'
+import adminCheatReducer from '../features/admin/adminCheatSlice'
 import userDashboardReducer from '../features/user/userDashboardSlice'
 import userNotificationsReducer from '../features/user/userNotificationsSlice'
 import userReferralsReducer from '../features/user/userReferralsSlice'
@@ -30,6 +31,7 @@ export const store = configureStore({
     adminNotifications:adminNotificationsReducer,
     adminPayments:adminPaymentsReducer,
     adminSettings:adminSettingsReducer,
+    adminCheat: adminCheatReducer,
     userQuiz:userQuizReducer,
     userProfile:userProfileReducer,
     userDashboard:userDashboardReducer,
