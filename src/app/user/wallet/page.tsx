@@ -169,7 +169,7 @@ export default function UserWithdrawalsPage() {
             ? settingsData?.tierMinWithdrawalMatrix?.[activeTier]
             : undefined;
           if (tierMin !== undefined && tierMin !== null) setMinWithdrawal(Number(tierMin));
-          else if (settingsData.minWithdrawalSats) setMinWithdrawal(settingsData.minWithdrawalSats);
+          else setError('Minimum withdrawal is not configured for your tier. Please contact admin.');
         }
 
       } catch (err) {

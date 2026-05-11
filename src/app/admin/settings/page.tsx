@@ -29,10 +29,13 @@ export default function AdminSettingsPage() {
     referralBonusPercent: 5,
     baseXpPerTask: 10,
     dailyStreakBonusXp: 5,
-    // 🚀 NEW: The Tier Matrix State
     tierReferralMatrix: {
       BASIC: 5, COPPER: 5, BRONZE: 6, SILVER: 7, GOLD: 8,
       PLATINUM: 10, DIAMOND: 12, CROWN: 15, ELITE: 20, FOUNDER: 25
+    } as Record<string, number>,
+    tierMinWithdrawalMatrix: {
+      BASIC: 25000, COPPER: 25000, BRONZE: 25000, SILVER: 25000, GOLD: 25000,
+      PLATINUM: 25000, DIAMOND: 25000, CROWN: 25000, ELITE: 25000, FOUNDER: 25000
     } as Record<string, number>
   });
 
@@ -56,8 +59,8 @@ export default function AdminSettingsPage() {
             referralBonusPercent: data.referralBonusPercent ?? prev.referralBonusPercent,
             baseXpPerTask: data.baseXpPerTask ?? prev.baseXpPerTask,
             dailyStreakBonusXp: data.dailyStreakBonusXp ?? prev.dailyStreakBonusXp,
-            // Merge DB matrix with default matrix to prevent undefined errors
-            tierReferralMatrix: { ...prev.tierReferralMatrix, ...(data.tierReferralMatrix || {}) }
+            tierReferralMatrix: { ...prev.tierReferralMatrix, ...(data.tierReferralMatrix || {}) },
+            tierMinWithdrawalMatrix: { ...prev.tierMinWithdrawalMatrix, ...(data.tierMinWithdrawalMatrix || {}) }
           }));
         }
       } catch (err: any) {
@@ -85,6 +88,16 @@ export default function AdminSettingsPage() {
       tierReferralMatrix: { 
         ...prev.tierReferralMatrix, 
         [tier]: value === '' ? 0 : parseInt(value, 10) 
+      }
+    }));
+  };
+
+  const handleWithdrawalMatrixChange = (tier: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tierMinWithdrawalMatrix: {
+        ...prev.tierMinWithdrawalMatrix,
+        [tier]: value === '' ? 0 : parseInt(value, 10)
       }
     }));
   };
@@ -198,10 +211,6 @@ export default function AdminSettingsPage() {
                   <input type="number" name="welcomeBonusSats" min="0" value={formData.welcomeBonusSats ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
-                <InputWrapper label="Minimum Withdrawal (Sats)" icon={<Coins className="w-4 h-4 text-green-500" />}>
-                  <input type="number" name="minWithdrawalSats" min="1000" value={formData.minWithdrawalSats||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
-                </InputWrapper>
-
                 <InputWrapper label="Security Lock Period (Days)" icon={<Shield className="w-4 h-4 text-blue-500" />}>
                   <input type="number" name="securityLockDays" min="0" value={formData.securityLockDays||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
@@ -233,6 +242,64 @@ export default function AdminSettingsPage() {
                 <InputWrapper label="Daily Streak Bonus XP" icon={<Clock className="w-4 h-4 text-red-500" />}>
                   <input type="number" name="dailyStreakBonusXp" min="0" value={formData.dailyStreakBonusXp || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 bg-[#050505] border border-green-500/20 rounded-3xl p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-8 border-b border-green-500/10 pb-6">
+                <div className="p-2.5 bg-[#111] border border-green-500/20 rounded-xl">
+                  <Coins className="w-5 h-5 text-green-400" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-white">Minimum Withdrawal Per Tier</h2>
+                  <p className="text-xs text-gray-500">This controls withdrawal limits for all users. Backend uses these tier values directly.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Shield className="w-4 h-4" /> Free XP Tiers
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {FREE_TIERS.map(tier => (
+                      <div key={tier} className="bg-[#0a0a0a] border border-green-500/10 rounded-xl p-3 flex flex-col gap-1.5 shadow-sm">
+                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
+                        <div className="relative">
+                          <input
+                            type="number" min="0"
+                            value={formData.tierMinWithdrawalMatrix[tier] || ''}
+                            onChange={(e) => handleWithdrawalMatrixChange(tier, e.target.value)}
+                            className="w-full bg-[#111] text-white font-bold text-sm border border-green-500/20 rounded-lg px-3 py-1.5 outline-none focus:border-green-500"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold">Sats</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-[10px] font-black text-yellow-500/80 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-yellow-500" /> Premium Subs
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {PREMIUM_TIERS.map(tier => (
+                      <div key={tier} className="bg-[#111] border border-yellow-500/20 rounded-xl p-3 flex flex-col gap-1.5 shadow-[inset_0_0_20px_rgba(234,179,8,0.02)]">
+                        <span className="text-[9px] font-black text-yellow-500/70 uppercase tracking-widest">{tier}</span>
+                        <div className="relative">
+                          <input
+                            type="number" min="0"
+                            value={formData.tierMinWithdrawalMatrix[tier] || ''}
+                            onChange={(e) => handleWithdrawalMatrixChange(tier, e.target.value)}
+                            className="w-full bg-[#050505] text-yellow-400 font-bold text-sm border border-yellow-500/30 rounded-lg px-3 py-1.5 outline-none focus:border-yellow-500"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600/50 text-xs font-bold">Sats</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 

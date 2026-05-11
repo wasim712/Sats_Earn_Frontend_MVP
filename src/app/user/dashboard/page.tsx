@@ -24,6 +24,8 @@ export default function UserDashboardPage() {
   const [showBtc, setShowBtc] = useState(false);
   // Fiat Currency Converter State (INR or USD)
   const [fiatCurrency, setFiatCurrency] = useState<'INR' | 'USD'>('INR');
+  const isIndiaUser = user?.country?.trim().toLowerCase() === 'india';
+
   useEffect(() => {
     dispatch(fetchUserDashboard());
     dispatch(fetchUserNotifications());
@@ -64,8 +66,8 @@ export default function UserDashboardPage() {
   // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
     const btcAmount = sats / 100000000;
-    
-    if (fiatCurrency === 'USD') {
+
+    if (!isIndiaUser || fiatCurrency === 'USD') {
       // Assuming 1 BTC = ~$90,000 USD (Adjust as needed)
       const usdValue = btcAmount * 90000;
       return `≈ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
@@ -91,31 +93,116 @@ export default function UserDashboardPage() {
   // ══════════════════════════════════════════════════════════════════════════════
   if (isLoading || !data || !data.balances || !data.gamification) {
     return (
-      <div className="space-y-8 animate-pulse pb-20 w-full p-4 md:p-8 max-w-[1600px] mx-auto">
-        {/* Header Skeleton */}
-        <div className="flex justify-between items-center w-full">
+      <div className="space-y-8 animate-pulse pb-20 w-full p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <div className="h-10 w-64 bg-white/5 rounded-xl mb-2" />
-            <div className="h-5 w-48 bg-white/[0.03] rounded-lg" />
+            <div className="h-10 w-64 rounded-xl bg-[#111] mb-3" />
+            <div className="h-5 w-56 rounded-lg bg-[#0d0d0d]" />
           </div>
-          <div className="flex gap-3">
-            {[1, 2, 3,4].map(i => <div key={i} className="h-8 w-28 bg-white/5 rounded-full" />)}
+
+          <div className="flex flex-wrap items-center gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-10 w-32 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            ))}
           </div>
         </div>
 
-        {/* 4 Cards Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="h-[160px] bg-sats-orange-500/10 rounded-[24px] p-6" />
-          {[1, 2, 3].map(i => <div key={i} className="h-[160px] bg-[#0a0a0a] rounded-[24px] border border-[#1a1a1a]" />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+          <div className="lg:col-span-1 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)] shadow-[0_0_20px_rgba(255,255,255,0.02)]" />
+                <div className="h-4 w-28 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+              </div>
+              <div className="h-9 w-20 rounded-full border border-[#232323] bg-[linear-gradient(180deg,#101010_0%,#0a0a0a_100%)]" />
+            </div>
+            <div className="h-10 w-40 rounded-xl bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)] mb-3" />
+            <div className="h-4 w-28 rounded bg-[linear-gradient(90deg,#131313_0%,#1a1a1a_50%,#131313_100%)] mb-6" />
+            <div className="flex gap-2">
+              <div className="h-8 w-16 rounded-full bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)]" />
+              <div className="h-8 w-20 rounded-full bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)]" />
+            </div>
+          </div>
+
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)] shadow-[0_0_20px_rgba(255,255,255,0.02)]" />
+                  <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+                </div>
+                <div className="w-5 h-5 rounded-full bg-[linear-gradient(180deg,#161616_0%,#111111_100%)]" />
+              </div>
+              <div className="h-9 w-32 rounded-xl bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)] mb-3" />
+              <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#131313_0%,#1a1a1a_50%,#131313_100%)] mb-6" />
+              <div className="space-y-2">
+                <div className="h-3 w-full rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+                <div className="h-3 w-4/5 rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Weekly Streak Skeleton */}
-        <div className="h-[120px] bg-[#0a0a0a] rounded-[24px] border border-[#1a1a1a]" />
+        <div className="rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="h-6 w-40 rounded bg-[linear-gradient(90deg,#171717_0%,#212121_50%,#171717_100%)] mb-2" />
+              <div className="h-4 w-56 rounded bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)]" />
+            </div>
+            <div className="h-10 w-28 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#121212_0%,#0c0c0c_100%)]" />
+          </div>
+          <div className="grid grid-cols-7 gap-3">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="space-y-3 text-center">
+                <div className="h-3 w-8 mx-auto rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+                <div className="w-10 h-10 mx-auto rounded-full border border-[#202020] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)]" />
+                <div className="h-3 w-6 mx-auto rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* Bottom Grid Skeleton */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 h-[400px] bg-[#0a0a0a] rounded-[24px] border border-[#1a1a1a]" />
-          <div className="xl:col-span-1 h-[400px] bg-[#0a0a0a] rounded-[24px] border border-[#1a1a1a]" />
+          <div className="xl:col-span-2 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <div className="h-6 w-44 rounded bg-[linear-gradient(90deg,#171717_0%,#212121_50%,#171717_100%)] mb-2" />
+                <div className="h-4 w-64 rounded bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)]" />
+              </div>
+              <div className="h-9 w-24 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#121212_0%,#0c0c0c_100%)]" />
+            </div>
+            <div className="space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-2xl border border-[#151515] bg-[#080808] p-4 shadow-[0_0_18px_rgba(255,255,255,0.015)]">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full border border-[#202020] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)]" />
+                    <div>
+                      <div className="h-4 w-48 rounded bg-[linear-gradient(90deg,#171717_0%,#202020_50%,#171717_100%)] mb-2" />
+                      <div className="h-3 w-28 rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+                    </div>
+                  </div>
+                  <div className="h-4 w-20 rounded bg-[linear-gradient(90deg,#171717_0%,#202020_50%,#171717_100%)]" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="xl:col-span-1 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+            <div className="h-6 w-36 rounded bg-[linear-gradient(90deg,#171717_0%,#212121_50%,#171717_100%)] mb-2" />
+            <div className="h-4 w-44 rounded bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)] mb-6" />
+            <div className="space-y-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-2xl border border-[#151515] bg-[#080808] p-4 shadow-[0_0_18px_rgba(255,255,255,0.015)]">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#171717_0%,#202020_50%,#171717_100%)]" />
+                    <div className="h-4 w-12 rounded bg-[linear-gradient(90deg,#171717_0%,#202020_50%,#171717_100%)]" />
+                  </div>
+                  <div className="h-3 w-full rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)] mb-2" />
+                  <div className="h-3 w-3/4 rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -168,7 +255,7 @@ export default function UserDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
+          <div className="relative hidden md:flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             {unreadStreakReward && <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
             <Flame className="w-4 h-4 text-sats-orange-500" />
             <span className="text-xs font-bold text-white">{currentStreak} Day Streak</span>
@@ -196,11 +283,11 @@ export default function UserDashboardPage() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
           
           <div className="flex justify-between items-start mb-6 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+            <div className="flex items-center gap-3 flex-col ">
+              <div className="self-start w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
                 <Wallet className="w-5 h-5 text-blue-400" />
               </div>
-              <p className="text-xs font-black text-blue-200 uppercase tracking-widest">Available Balance</p>
+              <p className=" font-black text-blue-200 uppercase tracking-normal text-nowrap">Available Balance</p>
             </div>
 
             {/* Premium BTC Toggle */}
@@ -228,15 +315,16 @@ export default function UserDashboardPage() {
               <p className="text-sm font-medium text-blue-200/60">
                 {getFiatValue(data.balances?.available || 0)}
               </p>
-              
-              {/* Fiat Currency Toggle Button */}
-              <button 
-                onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
-                className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
-                title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
-              >
-                {fiatCurrency === 'INR' ? '$' : '₹'}
-              </button>
+
+              {isIndiaUser ? (
+                <button
+                  onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
+                  className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
+                  title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
+                >
+                  {fiatCurrency === 'INR' ? '$' : '₹'}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -251,7 +339,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending Sats</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()}</h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>Sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
           </div>
         </div>
@@ -265,7 +353,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Locked Balance</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()}</h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> Sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
@@ -279,7 +367,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}
-              <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span></h3>
+              <span className="text-2xl font-bold text-white ml-1 mb-1">Sats</span></h3>
               
             <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
           </div>

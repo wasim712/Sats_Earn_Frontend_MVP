@@ -1,26 +1,32 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserProfile } from '@/features/user/userProfileSlice';
+import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { 
   Mail, Phone, MapPin, Calendar, 
   Copy, CheckCircle2, Edit3, ShieldCheck, 
-  Share2, UserPlus, AlertTriangle
+  Share2, UserPlus, AlertTriangle, Flame, Zap
 } from 'lucide-react';
 
 export default function UserProfilePage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { data: profile, isLoading, error } = useAppSelector((state) => state.userProfile);
+  const { data: dashboardData } = useAppSelector((state) => state.userDashboard);
   
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
-  }, [dispatch]);
+    if (!dashboardData) {
+      dispatch(fetchUserDashboard());
+    }
+  }, [dashboardData, dispatch]);
 
   const handleCopyReferral = () => {
     if (profile?.referralCode) {
@@ -35,9 +41,16 @@ export default function UserProfilePage() {
     return (
       <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8">
         <div className="max-w-6xl mx-auto space-y-6 md:space-y-8 animate-pulse">
-          <div className="flex justify-between items-center mb-8">
-            <div className="h-8 w-40 bg-[#1a1a1a] rounded-lg" />
-            <div className="h-10 w-32 bg-[#1a1a1a] rounded-xl" />
+          <div className="flex flex-col xl:flex-row xl:justify-between xl:items-start gap-4 mb-8">
+            <div className="space-y-3">
+              <div className="h-8 w-40 bg-[#1a1a1a] rounded-lg" />
+              <div className="h-4 w-64 bg-[#111] rounded-lg" />
+            </div>
+            <div className="flex w-full xl:w-auto flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap items-stretch gap-3 xl:justify-end">
+              <div className="h-20 flex-1 min-w-[140px] sm:min-w-[156px] bg-[#050505] border border-[#1a1a1a] rounded-2xl" />
+              <div className="h-20 flex-1 min-w-[140px] sm:min-w-[156px] bg-[#050505] border border-[#1a1a1a] rounded-2xl" />
+              <div className="h-10 w-full sm:w-32 bg-[#1a1a1a] rounded-xl" />
+            </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             <div className="lg:col-span-2 space-y-6">
@@ -81,23 +94,40 @@ export default function UserProfilePage() {
     .substring(0, 2)
     .toUpperCase();
 
+  const currentStreak = dashboardData?.gamification?.currentStreak ?? 0;
+  const totalXp = dashboardData?.gamification?.totalXp ?? 0;
+
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32">
       <div className="max-w-6xl mx-auto">
         
         {/* Header Area */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-10">
+        <div className="flex flex-col xl:flex-row xl:justify-between xl:items-start gap-4 mb-8 md:mb-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Player Identity</h1>
             <p className="text-gray-400 text-sm mt-1">Manage your personal details and Web3 social presence.</p>
           </div>
-          <button 
-            onClick={() => router.push('/user/settings')}
-            className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-white font-bold hover:bg-[#111] hover:border-[#333] transition-all active:scale-[0.98] shadow-sm"
-          >
-            <Edit3 className="w-4 h-4 text-gray-400" /> Edit Profile
-          </button>
+          <div className="flex w-full xl:w-auto flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap items-stretch gap-3 xl:justify-end">
+            <ProfileStatCard
+              icon={Flame}
+              label="Current Streak"
+              value={`${currentStreak} Days`}
+              accent="text-sats-orange-500"
+            />
+            <ProfileStatCard
+              icon={Zap}
+              label="Total XP"
+              value={totalXp.toLocaleString()}
+              accent="text-purple-400"
+            />
+            <button 
+              onClick={() => router.push('/user/settings')}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-white font-bold hover:bg-[#111] hover:border-[#333] transition-all active:scale-[0.98] shadow-sm whitespace-nowrap"
+            >
+              <Edit3 className="w-4 h-4 text-gray-400" /> Edit Profile
+            </button>
+          </div>
         </div>
 
         {/* Main Grid Layout */}
@@ -218,7 +248,7 @@ export default function UserProfilePage() {
 
 // ─── Reusable Micro-Components ──────────────────────────────────────────────
 
-function InfoRow({ icon: Icon, label, value, fallback }: { icon:any, label: string, value: string | null | undefined, fallback?: string }) {
+function InfoRow({ icon: Icon, label, value, fallback }: { icon: LucideIcon, label: string, value: string | null | undefined, fallback?: string }) {
   const displayValue = value || fallback;
   const isFallback = !value;
 
@@ -267,3 +297,30 @@ function SocialBox({ iconSrc, platform, handle, hoverAccent }: { iconSrc: string
     </div>
   );
 }
+
+function ProfileStatCard({
+  icon: Icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  accent: string;
+}) {
+  return (
+    <div className="min-w-[140px] sm:min-w-[156px] rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-3.5 transition-colors hover:border-[#2a2a2a]">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#232323] bg-[#0a0a0a]">
+          <Icon className={`h-4 w-4 ${accent}`} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">{label}</p>
+          <p className="mt-1 text-base md:text-lg font-black text-white truncate">{value}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
