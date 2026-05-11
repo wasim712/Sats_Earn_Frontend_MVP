@@ -181,26 +181,26 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-4 lg:p-6">
-      <section className="rounded-[30px] border border-[#1a1a1a] bg-black p-5 sm:p-6 lg:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-sats-orange-400">
-              <Sparkles className="h-4 w-4" />
+      <section className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 sm:p-6 lg:p-6 shadow-[0_18px_48px_rgba(0,0,0,0.32)]">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <div className="max-w-3xl space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sats-orange-400">
+              <Sparkles className="h-3.5 w-3.5" />
               Reward Campaigns
             </div>
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Available Tasks</h1>
-              <p className="mt-2 text-sm sm:text-base font-medium leading-7 text-gray-400">
-                Complete campaigns, stack sats, and move faster through the reward loop with a cleaner, more focused task browsing experience.
+            <div className="space-y-2">
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">Available Tasks</h1>
+              <p className="text-sm sm:text-[15px] font-medium leading-7 text-gray-400">
+                Complete tasks and stack sats faster.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:min-w-[520px]">
-            <SummaryCard label="Total" value={summary.total} icon={LayoutGrid} />
-            <SummaryCard label="Available" value={summary.available} icon={Target} />
-            <SummaryCard label="Completed" value={summary.completed} icon={CheckCircle2} />
-            <SummaryCard label="2x Live" value={summary.doubleRewards} icon={Flame} />
+            <SummaryCard label="Total" value={summary.total} icon={LayoutGrid} tone="blue" />
+            <SummaryCard label="Available" value={summary.available} icon={Target} tone="green" />
+            <SummaryCard label="Completed" value={summary.completed} icon={CheckCircle2} tone="purple" />
+            <SummaryCard label="2x Live" value={summary.doubleRewards} icon={Flame} tone="yellow" />
           </div>
         </div>
       </section>
@@ -302,20 +302,51 @@ function SummaryCard({
   label,
   value,
   icon: Icon,
+  tone,
 }: {
   label: string;
   value: number;
   icon: React.ComponentType<{ className?: string }>;
+  tone: 'blue' | 'green' | 'purple' | 'yellow';
 }) {
+  const toneStyles = {
+    blue: {
+      card: 'border-sky-500/16 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.12),transparent_38%),#050505]',
+      badge: 'border-sky-400/20 bg-sky-500/12 text-sky-300',
+      icon: 'text-sky-300',
+      value: 'text-white',
+    },
+    green: {
+      card: 'border-emerald-500/16 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.12),transparent_38%),#050505]',
+      badge: 'border-emerald-400/20 bg-emerald-500/12 text-emerald-300',
+      icon: 'text-emerald-300',
+      value: 'text-white',
+    },
+    purple: {
+      card: 'border-violet-500/16 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.12),transparent_38%),#050505]',
+      badge: 'border-violet-400/20 bg-violet-500/12 text-violet-300',
+      icon: 'text-violet-300',
+      value: 'text-white',
+    },
+    yellow: {
+      card: 'border-amber-500/16 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.12),transparent_38%),#050505]',
+      badge: 'border-amber-400/20 bg-amber-500/12 text-amber-300',
+      icon: 'text-amber-300',
+      value: 'text-white',
+    },
+  } as const;
+
+  const style = toneStyles[tone];
+
   return (
-    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
-      <div className="flex items-start justify-between gap-3">
+    <div className={`rounded-2xl border px-4 py-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${style.card}`}>
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">{label}</p>
-          <p className="mt-2 text-2xl font-black text-white">{value}</p>
+          <p className="text-[10px] font-black uppercase ] text-gray-500">{label}</p>
+          <p className={`mt-2 text-2xl font-black ${style.value}`}>{value}</p>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#232323] bg-[#0a0a0a]">
-          <Icon className="h-4 w-4 text-gray-400" />
+        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-[0_10px_25px_rgba(0,0,0,0.2)] ${style.badge}`}>
+          <Icon className={`h-5 w-5 ${style.icon}`} />
         </div>
       </div>
     </div>
@@ -506,4 +537,3 @@ function TaskCardSkeleton() {
     </div>
   );
 }
-

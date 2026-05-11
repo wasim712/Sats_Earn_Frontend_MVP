@@ -2,6 +2,7 @@ export interface AuthUser {
   id: string;
   email: string;
   fullName: string | null;
+  country?: string | null;
   role: string;
   activeTier: string;
   isPremium: boolean;

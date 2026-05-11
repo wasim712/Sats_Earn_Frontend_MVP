@@ -86,6 +86,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     if (path.includes('/referrals')) return 'Referrals';
     if (path.includes('/leaderboard')) return 'Leaderboard';
     if (path.includes('/settings')) return 'Settings';
+    if (path.includes('/help')) return 'Help Center';
     if (path.includes('/blogs')) return 'Blogs';
     if (path.includes('/profile')) return 'User Profile';
     

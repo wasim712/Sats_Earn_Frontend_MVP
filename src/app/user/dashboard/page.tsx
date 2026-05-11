@@ -24,6 +24,8 @@ export default function UserDashboardPage() {
   const [showBtc, setShowBtc] = useState(false);
   // Fiat Currency Converter State (INR or USD)
   const [fiatCurrency, setFiatCurrency] = useState<'INR' | 'USD'>('INR');
+  const isIndiaUser = user?.country?.trim().toLowerCase() === 'india';
+
   useEffect(() => {
     dispatch(fetchUserDashboard());
     dispatch(fetchUserNotifications());
@@ -64,8 +66,8 @@ export default function UserDashboardPage() {
   // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
     const btcAmount = sats / 100000000;
-    
-    if (fiatCurrency === 'USD') {
+
+    if (!isIndiaUser || fiatCurrency === 'USD') {
       // Assuming 1 BTC = ~$90,000 USD (Adjust as needed)
       const usdValue = btcAmount * 90000;
       return `≈ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
@@ -313,15 +315,16 @@ export default function UserDashboardPage() {
               <p className="text-sm font-medium text-blue-200/60">
                 {getFiatValue(data.balances?.available || 0)}
               </p>
-              
-              {/* Fiat Currency Toggle Button */}
-              <button 
-                onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
-                className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
-                title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
-              >
-                {fiatCurrency === 'INR' ? '$' : '₹'}
-              </button>
+
+              {isIndiaUser ? (
+                <button
+                  onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
+                  className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
+                  title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
+                >
+                  {fiatCurrency === 'INR' ? '$' : '₹'}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
