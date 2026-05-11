@@ -1,10 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, CheckCircle2, Circle, AlertTriangle, Info } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { X, Plus, Trash2, CheckCircle2, Circle, AlertTriangle, Info, CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppDispatch } from '@/store/hooks';
 import { createQuiz, updateQuiz } from '@/features/admin/adminQuizSlice';
 import type { Quiz } from '@/features/admin/adminQuizSlice';
+
+const CALENDAR_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const CALENDAR_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+function toLocalDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function startOfToday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function parseDateInput(value: string) {
+  if (!value) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+}
 
 // ─── Types & Props ────────────────────────────────────────────────────────────
 
@@ -26,6 +53,12 @@ interface Props {
 export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   const dispatch = useAppDispatch();
   const isEditMode = !!quiz;
+  const today = useMemo(() => startOfToday(), []);
+  const tomorrow = useMemo(() => {
+    const nextDay = new Date(today);
+    nextDay.setDate(nextDay.getDate() + 1);
+    return nextDay;
+  }, [today]);
 
   // Unified form state
   const [form, setForm] = useState({
@@ -43,6 +76,10 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState<number>(today.getMonth());
+  const [calendarYear, setCalendarYear] = useState<number>(today.getFullYear());
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   // Sync state when modal opens
   useEffect(() => {
@@ -60,13 +97,28 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
       // We explicitly DO NOT load questions here since they aren't editable
     } else {
       // CREATE MODE: Reset everything
-      setForm({ title: '', date: '', rewardSats: 15, xpReward: 0, isActive: false });
+      setForm({ title: '', date: toLocalDateInputValue(today), rewardSats: 15, xpReward: 0, isActive: false });
       setQuestions([{ id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
+      setCalendarMonth(today.getMonth());
+      setCalendarYear(today.getFullYear());
     }
+    setIsCalendarOpen(false);
     setError(null);
-  }, [isOpen, quiz]);
+  }, [isOpen, quiz, today]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isCalendarOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCalendarOpen]);
+
 
   // ── Helpers & State Handlers ───────────────────────────────────────────────
 
@@ -90,6 +142,53 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   };
 
   const setCorrectOption = (qId: string, optionValue: string) => updateQuestion(qId, 'correctAnswer', optionValue);
+
+  const selectedQuizDate = parseDateInput(form.date);
+
+  const calendarDays = useMemo(() => {
+    const firstDay = new Date(calendarYear, calendarMonth, 1);
+    const lastDay = new Date(calendarYear, calendarMonth + 1, 0);
+    const leadingDays = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+    const cells: Array<{ key: string; date: Date | null }> = [];
+
+    for (let index = 0; index < leadingDays; index += 1) {
+      cells.push({ key: `empty-start-${index}`, date: null });
+    }
+
+    for (let day = 1; day <= totalDays; day += 1) {
+      cells.push({ key: `day-${day}`, date: new Date(calendarYear, calendarMonth, day) });
+    }
+
+    while (cells.length % 7 !== 0) {
+      cells.push({ key: `empty-end-${cells.length}`, date: null });
+    }
+
+    return cells;
+  }, [calendarMonth, calendarYear]);
+
+  const canGoPrevMonth = useMemo(() => {
+    const startOfVisibleMonth = new Date(calendarYear, calendarMonth, 1);
+    return startOfVisibleMonth > new Date(today.getFullYear(), today.getMonth(), 1);
+  }, [calendarMonth, calendarYear, today]);
+
+  const setQuizDate = (date: Date) => {
+    if (date < today) return;
+    setFormField('date', toLocalDateInputValue(date));
+    setCalendarMonth(date.getMonth());
+    setCalendarYear(date.getFullYear());
+    setIsCalendarOpen(false);
+  };
+
+  const moveMonth = (direction: 'prev' | 'next') => {
+    const nextMonth = direction === 'next' ? calendarMonth + 1 : calendarMonth - 1;
+    const nextDate = new Date(calendarYear, nextMonth, 1);
+    if (direction === 'prev' && nextDate < new Date(today.getFullYear(), today.getMonth(), 1)) return;
+    setCalendarMonth(nextDate.getMonth());
+    setCalendarYear(nextDate.getFullYear());
+  };
+
+  if (!isOpen) return null;
 
   const validate = (): string | null => {
     if (!form.title.trim()) return 'Quiz title is required.';
@@ -199,18 +298,6 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
               </Field>
             </div>
 
-            {/* Date is ONLY visible during creation */}
-            {!isEditMode && (
-              <Field label="Date" required>
-                <input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => setFormField('date', e.target.value)}
-                  className={`${inputCls} [color-scheme:dark]`}
-                />
-              </Field>
-            )}
-
             <div className={!isEditMode ? "md:col-span-3" : ""}>
               <Field label="Reward Pool (Sats per user)" required>
                 <div className="relative max-w-xs">
@@ -227,7 +314,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 </div>
               </Field>
             </div>
-
+            
             <div className={!isEditMode ? "md:col-span-3" : ""}>
               <Field label="XP Reward" required>
                 <div className="relative max-w-xs">
@@ -244,7 +331,104 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 </div>
               </Field>
             </div>
+            {/* Date is ONLY visible during creation */}
+            {!isEditMode && (
+              <Field label="Date" required>
+                <div className="relative" ref={calendarRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsCalendarOpen((prev) => !prev)}
+                    className={`${inputCls} flex items-center justify-between text-left`}
+                  >
+                    <div>
+                      <p className="text-white font-medium">{selectedQuizDate ? selectedQuizDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : 'Select a date'}</p>
+                      <p className="mt-1 text-xs text-gray-500">Only today or future dates are allowed</p>
+                    </div>
+                    <CalendarDays className="h-5 w-5 text-sats-orange-400 shrink-0" />
+                  </button>
 
+                  {isCalendarOpen && (
+                    <div className="absolute left-0 top-[calc(100%+12px)] z-30 w-full min-w-[280px] rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:w-[320px]">
+                      <div className="mb-4 flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setQuizDate(today)}
+                          className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300 transition hover:bg-emerald-500/15"
+                        >
+                          Today
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setQuizDate(tomorrow)}
+                          className="rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1.5 text-xs font-bold text-sky-300 transition hover:bg-sky-500/15"
+                        >
+                          Tomorrow
+                        </button>
+                      </div>
+
+                      <div className="mb-3 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => moveMonth('prev')}
+                          disabled={!canGoPrevMonth}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1a1a1a] bg-[#111] text-gray-400 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <p className="text-sm font-black text-white">
+                          {CALENDAR_MONTHS[calendarMonth]} {calendarYear}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => moveMonth('next')}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1a1a1a] bg-[#111] text-gray-400 transition hover:text-white"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-7 gap-2 text-center text-[11px] font-bold uppercase tracking-wide text-gray-500">
+                        {CALENDAR_DAYS.map((day) => (
+                          <div key={day} className="py-1">{day}</div>
+                        ))}
+                      </div>
+
+                      <div className="mt-2 grid grid-cols-7 gap-2">
+                        {calendarDays.map((entry) => {
+                          if (!entry.date) {
+                            return <div key={entry.key} className="h-10" />;
+                          }
+
+                          const isPast = entry.date < today;
+                          const isSelected = form.date === toLocalDateInputValue(entry.date);
+                          const isToday = toLocalDateInputValue(entry.date) === toLocalDateInputValue(today);
+
+                          return (
+                            <button
+                              key={entry.key}
+                              type="button"
+                              disabled={isPast}
+                              onClick={() => setQuizDate(entry.date as Date)}
+                              className={`h-10 rounded-xl text-sm font-bold transition-all ${
+                                isSelected
+                                  ? 'bg-sats-orange-500 text-black shadow-[0_0_18px_rgba(238,139,18,0.18)]'
+                                  : isPast
+                                    ? 'cursor-not-allowed bg-[#0e0e0e] text-gray-700'
+                                    : isToday
+                                      ? 'border border-sky-500/30 bg-sky-500/10 text-sky-300 hover:bg-sky-500/15'
+                                      : 'bg-[#111] text-gray-300 hover:bg-[#171717] hover:text-white'
+                              }`}
+                            >
+                              {entry.date.getDate()}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Field>
+            )}
             {/* IsActive Toggle is ONLY visible during Editing */}
             {isEditMode && (
               <div className="mt-2 p-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between">
