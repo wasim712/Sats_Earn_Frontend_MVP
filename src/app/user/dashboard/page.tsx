@@ -63,18 +63,18 @@ export default function UserDashboardPage() {
     );
   };
 
-  // Assuming 1 BTC = ~â‚¹5,500,000 INR for estimated conversion
+  // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
     const btcAmount = sats / 100000000;
 
     if (!isIndiaUser || fiatCurrency === 'USD') {
       // Assuming 1 BTC = ~$90,000 USD (Adjust as needed)
       const usdValue = btcAmount * 90000;
-      return `â‰ˆ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+      return `≈ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     } else {
       // Current INR Rate
       const inrValue = btcAmount * 7500406;
-      return `â‰ˆ â‚¹${inrValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR`;
+      return `≈ ₹${inrValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR`;
     }
   };
 
@@ -286,7 +286,8 @@ export default function UserDashboardPage() {
             Welcome back, <span className="text-blue-400">{getFirstName()}</span>!
           </h1>
           <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium flex items-center gap-2">
-            Let&apos;s earn some rewards today <span className="text-lg">ðŸŽ¯</span>
+            Let&apos;s earn some rewards today <span className="text-lg">
+🎯</span>
           </p>
         </div>
 
@@ -338,7 +339,7 @@ export default function UserDashboardPage() {
                 onClick={() => setShowBtc(true)} 
                 className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
               >
-                â‚¿
+                ₿
               </button>
             </div>
           </div>
@@ -358,7 +359,7 @@ export default function UserDashboardPage() {
                   className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
                   title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
                 >
-                  {fiatCurrency === 'INR' ? '$' : 'â‚¹'}
+                  {fiatCurrency === 'INR' ? '$' : '₹'}
                 </button>
               ) : null}
             </div>
