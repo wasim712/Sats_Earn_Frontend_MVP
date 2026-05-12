@@ -60,6 +60,7 @@ export interface UserDashboard {
     isPremium: boolean;
     premiumExpiresAt: string | null;
     currentStreak: number;
+    lastClaimedStreakMilestone?: number | null;
     xpDisplay: string;
     progressPercent: number;
     nextTier?: string | null;
@@ -117,6 +118,7 @@ export interface UserReferralDashboardView {
   referralCode: string;
   stats: UserReferralStats;
   referralsList: UserReferral[];
+  activeTier?: string;
 }
 
 export interface UserUnlockItem {

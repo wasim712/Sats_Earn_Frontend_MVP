@@ -7,11 +7,13 @@ import Link from 'next/link';
 interface ReferralLimitsProps {
   currentReferrals: number;
   limit?: number;
+  isFreeTier: boolean;
+  activeTier: string;
 }
 
-export default function ReferralLimits({ currentReferrals, limit = 20 }: ReferralLimitsProps) {
-  const progress = Math.min((currentReferrals / limit) * 100, 100);
-  const isAtLimit = currentReferrals >= limit;
+export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTier, activeTier }: ReferralLimitsProps) {
+  const progress = isFreeTier ? Math.min((currentReferrals / limit) * 100, 100) : 100;
+  const isAtLimit = isFreeTier && currentReferrals >= limit;
 
   return (
     <div className={`relative bg-[#050505] border rounded-[24px] p-6 sm:p-8 overflow-hidden group transition-all duration-300 ${
@@ -35,13 +37,21 @@ export default function ReferralLimits({ currentReferrals, limit = 20 }: Referra
           </div>
           <div>
             <h3 className="text-xl font-black text-white tracking-tight mb-1.5 flex items-center gap-2">
-              Free Tier Limit
+              {isFreeTier ? 'Free Tier Limit' : 'Premium Referral Access'}
               <span className="px-2.5 py-0.5 rounded-md bg-[#111] border border-[#2a2a2a] text-[10px] font-bold text-gray-500 tracking-widest">
-                {currentReferrals} / {limit}
+                {isFreeTier ? `${currentReferrals} / ${limit}` : `${activeTier} · NO CAP`}
               </span>
             </h3>
             <p className="text-sm text-gray-400 font-medium max-w-lg leading-relaxed">
-              Basic accounts can invite up to {limit} friends. Upgrade to a premium tier to unlock <strong className="text-gray-200">unlimited referrals</strong> and maximize your passive earning potential.
+              {isFreeTier ? (
+                <>
+                  Free-tier accounts can invite up to {limit} friends. Upgrade to a premium tier to unlock <strong className="text-gray-200">unlimited referrals</strong> and maximize your passive earning potential.
+                </>
+              ) : (
+                <>
+                  Your <strong className="text-gray-200">{activeTier}</strong> tier has <strong className="text-gray-200">no referral limit</strong>, so you can grow your network without a cap.
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -51,14 +61,16 @@ export default function ReferralLimits({ currentReferrals, limit = 20 }: Referra
           <div className="w-full">
             <div className="flex justify-between items-end mb-2">
               <span className={`text-[10px] font-black uppercase tracking-widest ${isAtLimit ? 'text-red-400' : 'text-gray-500'}`}>
-                {isAtLimit ? 'Limit Reached' : `${limit - currentReferrals} Spots Left`}
+                {isFreeTier ? (isAtLimit ? 'Limit Reached' : `${limit - currentReferrals} Spots Left`) : 'Unlimited Referrals'}
               </span>
-              <span className="text-xs font-bold text-gray-300">{progress.toFixed(0)}%</span>
+              <span className="text-xs font-bold text-gray-300">{isFreeTier ? `${progress.toFixed(0)}%` : '∞'}</span>
             </div>
             <div className="h-1.5 w-full bg-[#111] rounded-full overflow-hidden border border-[#1a1a1a]">
               <div
                 className={`h-full rounded-full transition-all duration-1000 ${
-                  isAtLimit 
+                  !isFreeTier
+                    ? 'bg-gradient-to-r from-emerald-500 to-sky-400 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                    : isAtLimit 
                     ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
                     : 'bg-gradient-to-r from-sats-orange-600 to-yellow-400 shadow-[0_0_15px_rgba(249,115,22,0.4)]'
                 }`}
@@ -67,13 +79,20 @@ export default function ReferralLimits({ currentReferrals, limit = 20 }: Referra
             </div>
           </div>
 
-          <Link
-            href="/user/rewards"
-            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-sats-orange-500 to-yellow-500 hover:from-sats-orange-400 hover:to-yellow-400 text-black font-black text-sm transition-all shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] active:scale-95"
-          >
-            <Crown className="w-4 h-4" />
-            Upgrade
-          </Link>
+          {isFreeTier ? (
+            <Link
+              href="/user/rewards"
+              className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-sats-orange-500 to-yellow-500 hover:from-sats-orange-400 hover:to-yellow-400 text-black font-black text-sm transition-all shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] active:scale-95"
+            >
+              <Crown className="w-4 h-4" />
+              Upgrade
+            </Link>
+          ) : (
+            <div className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 font-black text-sm">
+              <Crown className="w-4 h-4" />
+              Unlimited Active
+            </div>
+          )}
         </div>
 
       </div>

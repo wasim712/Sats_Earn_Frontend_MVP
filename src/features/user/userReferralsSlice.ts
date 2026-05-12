@@ -18,7 +18,7 @@ const initialState: UserReferralsState = {
 
 const getToken = (state: RootState) => state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
-const mapReferralDashboard = (payload: UserReferralDashboard): UserReferralDashboardView => ({
+const mapReferralDashboard = (payload: UserReferralDashboard, activeTier?: string): UserReferralDashboardView => ({
   referralCode: payload.referralCode,
   stats: {
     totalInvited: payload.totalReferrals,
@@ -27,6 +27,7 @@ const mapReferralDashboard = (payload: UserReferralDashboard): UserReferralDashb
     lifetimeEarningsSats: 0,
   },
   referralsList: payload.referrals,
+  activeTier,
 });
 
 export const fetchUserReferrals = createAsyncThunk(
@@ -44,7 +45,25 @@ export const fetchUserReferrals = createAsyncThunk(
 
       if (!response.ok) throw new Error('Failed to load referral data');
       const payload = (await response.json()) as UserReferralDashboard;
-      return mapReferralDashboard(payload);
+
+      let activeTier: string | undefined;
+      try {
+        const dashboardResponse = await fetch(`${API_URL}/users/dashboard`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (dashboardResponse.ok) {
+          const dashboardPayload = await dashboardResponse.json();
+          activeTier = dashboardPayload?.gamification?.activeTier;
+        }
+      } catch {
+      }
+
+      return mapReferralDashboard(payload, activeTier);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
