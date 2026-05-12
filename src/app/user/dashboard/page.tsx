@@ -219,53 +219,16 @@ export default function UserDashboardPage() {
   const unreadStreakReward = notifications.find(
     (notification) => !notification.isRead && notification.title.toLowerCase().includes('streak milestone reward unlocked'),
   );
-  const streakMilestones = [
-    { days: 7, sats: 70 },
-    { days: 21, sats: 210 },
-    { days: 60, sats: 600 },
-    { days: 90, sats: 900 },
-    { days: 180, sats: 1800 },
-    { days: 365, sats: 3650 },
-  ];
-  const validMilestones = new Set(streakMilestones.map((milestone) => milestone.days));
-  const streakTexts = [
-    ...notifications
-      .filter((notification) => notification.title.toLowerCase().includes('streak milestone reward unlocked'))
-      .map((notification) => notification.message || ''),
-    ...(data.recentActivity || [])
-      .filter((activity) => activity.type === 'STREAK_BONUS')
-      .map((activity) => activity.description || ''),
-  ];
-
-  const claimedDays = streakTexts
-    .map((text) => {
-      const matchedDay = text.match(/(\d+)\s*[- ]?day/i) || text.match(/reached:\s*(\d+)/i);
-      return matchedDay ? Number(matchedDay[1]) : 0;
-    })
-    .filter((days) => validMilestones.has(days));
-
-  const derivedLastClaimedStreakMilestone = claimedDays.length ? Math.max(...claimedDays) : 0;
-
-  const lastClaimedStreakMilestone = Math.max(
-    data.gamification?.lastClaimedStreakMilestone || 0,
-    derivedLastClaimedStreakMilestone,
-  );
-  const nextStreakMilestone = streakMilestones.find((milestone) => milestone.days > lastClaimedStreakMilestone) || null;
-  const previousClaimedMilestone = lastClaimedStreakMilestone;
-  const streakProgressPercent = nextStreakMilestone
-    ? Math.max(
-        0,
-        Math.min(
-          ((currentStreak - previousClaimedMilestone) / (nextStreakMilestone.days - previousClaimedMilestone)) * 100,
-          100,
-        ),
-      )
-    : 100;
-  const currentRunDays = Math.max(currentStreak - previousClaimedMilestone, 0);
-  const daysRemainingToNextMilestone = nextStreakMilestone
-    ? Math.max(nextStreakMilestone.days - currentStreak, 0)
-    : 0;
-  const totalClaimedMilestones = streakMilestones.filter((milestone) => milestone.days <= lastClaimedStreakMilestone).length;
+  const streakData = data.gamification?.streak;
+  const streakMilestones = streakData?.milestones || [];
+  const lastClaimedStreakMilestone = streakData?.lastClaimedMilestone || data.gamification?.lastClaimedStreakMilestone || 0;
+  const nextStreakMilestone = streakData?.nextMilestone || null;
+  const nextStreakRewardSats = streakData?.nextRewardSats || 0;
+  const streakProgressPercent = streakData?.progressPercent || 0;
+  const currentRunDays = currentStreak;
+  const daysRemainingToNextMilestone = streakData?.daysRemaining || 0;
+  const totalClaimedMilestones = streakData?.claimedMilestonesCount || 0;
+  const totalStreakMilestones = streakData?.totalMilestones || streakMilestones.length;
 
   // Dummy Leaderboard Data
   const dummyLeaderboard = [
@@ -451,13 +414,13 @@ export default function UserDashboardPage() {
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
               <p className="text-sm font-black text-sats-orange-500 mt-1">
                 {nextStreakMilestone
-                  ? `${nextStreakMilestone.days} Days • +${nextStreakMilestone.sats.toLocaleString()} Sats`
+                  ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats`
                   : 'All Rewards Unlocked'}
               </p>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Claimed Rewards</p>
-              <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{streakMilestones.length}</p>
+              <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{totalStreakMilestones}</p>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Current Run</p>
@@ -478,8 +441,8 @@ export default function UserDashboardPage() {
             />
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
-            <span>{previousClaimedMilestone > 0 ? `${previousClaimedMilestone} days claimed` : 'Start'}</span>
-            <span>{nextStreakMilestone ? `${nextStreakMilestone.days} days target` : 'Completed'}</span>
+            <span>{lastClaimedStreakMilestone > 0 ? `${lastClaimedStreakMilestone} days last claimed` : 'Start'}</span>
+            <span>{nextStreakMilestone ? `${nextStreakMilestone} days target` : 'Completed'}</span>
           </div>
         </div>
 
@@ -489,9 +452,9 @@ export default function UserDashboardPage() {
 
             <div className="flex items-start justify-between relative z-10 gap-3">
               {streakMilestones.map((milestone) => {
-                const achieved = milestone.days <= lastClaimedStreakMilestone;
-                const reachedInCurrentRun = !achieved && currentStreak >= milestone.days;
-                const isNext = nextStreakMilestone?.days === milestone.days;
+                const achieved = milestone.claimed;
+                const reachedInCurrentRun = milestone.reachedInCurrentRun;
+                const isNext = milestone.isNext;
                 const cardTone = achieved
                   ? 'border-emerald-500/30 bg-emerald-500/10'
                   : reachedInCurrentRun
@@ -527,7 +490,7 @@ export default function UserDashboardPage() {
                         {milestone.days} Days
                       </p>
                       <p className={`text-[10px] font-bold mt-0.5 ${achieved || reachedInCurrentRun || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
-                        +{milestone.sats} sats
+                        +{milestone.rewardSats} sats
                       </p>
                       <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-yellow-300/90' : 'text-gray-600'}`}>
                         {achieved ? 'Claimed' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}

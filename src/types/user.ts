@@ -61,6 +61,23 @@ export interface UserDashboard {
     premiumExpiresAt: string | null;
     currentStreak: number;
     lastClaimedStreakMilestone?: number | null;
+    streak?: {
+      currentStreak: number;
+      lastClaimedMilestone: number;
+      nextMilestone: number | null;
+      nextRewardSats: number;
+      daysRemaining: number;
+      progressPercent: number;
+      totalMilestones: number;
+      claimedMilestonesCount: number;
+      milestones: Array<{
+        days: number;
+        rewardSats: number;
+        claimed: boolean;
+        reachedInCurrentRun: boolean;
+        isNext: boolean;
+      }>;
+    };
     xpDisplay: string;
     progressPercent: number;
     nextTier?: string | null;
