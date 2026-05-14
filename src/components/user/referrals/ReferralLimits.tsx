@@ -1,80 +1,63 @@
 'use client';
 
 import React from 'react';
-import { Users, Crown, Info } from 'lucide-react';
+import { Users, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 interface ReferralLimitsProps {
   currentReferrals: number;
-  limit?: number;
   isFreeTier: boolean;
   activeTier: string;
+  rewardCapSats?: number | null;
 }
 
-export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTier, activeTier }: ReferralLimitsProps) {
-  const progress = isFreeTier ? Math.min((currentReferrals / limit) * 100, 100) : 100;
-  const isAtLimit = isFreeTier && currentReferrals >= limit;
-
+export default function ReferralLimits({ currentReferrals, isFreeTier, activeTier, rewardCapSats }: ReferralLimitsProps) {
   return (
-    <div className={`relative bg-[#050505] border rounded-[24px] p-6 sm:p-8 overflow-hidden group transition-all duration-300 ${
-      isAtLimit ? 'border-red-500/20' : 'border-[#1a1a1a] hover:border-[#2a2a2a]'
-    }`}>
-      {/* Background Ambient Glow */}
-      <div className={`absolute right-0 top-0 w-64 h-64 rounded-full blur-[80px] pointer-events-none transition-all duration-500 ${
-        isAtLimit ? 'bg-red-500/5' : 'bg-sats-orange-500/5'
-      }`} />
+    <div className="relative bg-[#050505] border border-[#1a1a1a] rounded-[24px] p-6 sm:p-8 overflow-hidden group transition-all duration-300 hover:border-[#2a2a2a]">
+      <div className="absolute right-0 top-0 w-64 h-64 rounded-full blur-[80px] pointer-events-none bg-sats-orange-500/5" />
 
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-        
-        {/* Left Side: Info & Messaging */}
         <div className="flex items-start gap-5">
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-inner ${
-            isAtLimit 
-              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
-              : 'bg-[#111] border-[#2a2a2a] text-gray-400 group-hover:text-sats-orange-500 transition-colors'
-          }`}>
-            {isAtLimit ? <Info className="w-6 h-6" /> : <Users className="w-6 h-6" />}
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-inner bg-[#111] border-[#2a2a2a] text-gray-400 group-hover:text-sats-orange-500 transition-colors">
+            <Users className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-xl font-black text-white tracking-tight mb-1.5 flex items-center gap-2">
-              {isFreeTier ? 'Free Tier Limit' : 'Premium Referral Access'}
+              {isFreeTier ? 'Free Tier Referral Rewards' : 'Premium Referral Access'}
               <span className="px-2.5 py-0.5 rounded-md bg-[#111] border border-[#2a2a2a] text-[10px] font-bold text-gray-500 tracking-widest">
-                {isFreeTier ? `${currentReferrals} / ${limit}` : `${activeTier} · NO CAP`}
+                {isFreeTier ? `${currentReferrals} INVITES` : `${activeTier} · NO CAP`}
               </span>
             </h3>
             <p className="text-sm text-gray-400 font-medium max-w-lg leading-relaxed">
               {isFreeTier ? (
                 <>
-                  Free-tier accounts can invite up to {limit} friends. Upgrade to a premium tier to unlock <strong className="text-gray-200">unlimited referrals</strong> and maximize your passive earning potential.
+                  Free-tier accounts on <strong className="text-gray-200">{activeTier}</strong> can invite <strong className="text-gray-200">as many users as they want</strong>, but referral earnings are capped at <strong className="text-gray-200">{(rewardCapSats || 0).toLocaleString()} sats</strong>. Upgrade to premium for uncapped referral earnings.
                 </>
               ) : (
                 <>
-                  Your <strong className="text-gray-200">{activeTier}</strong> tier has <strong className="text-gray-200">no referral limit</strong>, so you can grow your network without a cap.
+                  Your <strong className="text-gray-200">{activeTier}</strong> tier has <strong className="text-gray-200">no referral cap</strong>, so you can grow your network and earnings without limits.
                 </>
               )}
             </p>
           </div>
         </div>
 
-        {/* Right Side: Progress Bar & Upgrade Button */}
         <div className="flex flex-col sm:flex-row items-center gap-6 lg:min-w-[380px] shrink-0">
           <div className="w-full">
             <div className="flex justify-between items-end mb-2">
-              <span className={`text-[10px] font-black uppercase tracking-widest ${isAtLimit ? 'text-red-400' : 'text-gray-500'}`}>
-                {isFreeTier ? (isAtLimit ? 'Limit Reached' : `${limit - currentReferrals} Spots Left`) : 'Unlimited Referrals'}
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                {isFreeTier ? `Earnings capped at ${(rewardCapSats || 0).toLocaleString()} sats` : 'Unlimited Referrals'}
               </span>
-              <span className="text-xs font-bold text-gray-300">{isFreeTier ? `${progress.toFixed(0)}%` : '∞'}</span>
+              <span className="text-xs font-bold text-gray-300">{isFreeTier ? 'CAP' : '∞'}</span>
             </div>
             <div className="h-1.5 w-full bg-[#111] rounded-full overflow-hidden border border-[#1a1a1a]">
               <div
                 className={`h-full rounded-full transition-all duration-1000 ${
                   !isFreeTier
                     ? 'bg-gradient-to-r from-emerald-500 to-sky-400 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
-                    : isAtLimit 
-                    ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
                     : 'bg-gradient-to-r from-sats-orange-600 to-yellow-400 shadow-[0_0_15px_rgba(249,115,22,0.4)]'
                 }`}
-                style={{ width: `${progress}%` }}
+                style={{ width: '100%' }}
               />
             </div>
           </div>
@@ -94,7 +77,6 @@ export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTie
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

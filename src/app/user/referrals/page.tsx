@@ -121,7 +121,12 @@ export default function ReferralsPage() {
       <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} />
       <ReferralStats stats={data.stats} />
 
-      <ReferralLimits currentReferrals={data.stats?.totalInvited || 0} limit={20} isFreeTier={isFreeTier} activeTier={activeTier} />
+      <ReferralLimits
+        currentReferrals={data.stats?.totalInvited || 0}
+        isFreeTier={isFreeTier}
+        activeTier={activeTier}
+        rewardCapSats={data.stats?.referralRewardCapSats}
+      />
       <ReferralTierCommission activeTier={activeTier} />
 
       <ReferralList list={data.referralsList} />

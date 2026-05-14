@@ -121,6 +121,7 @@ export interface UserReferralStats {
   activeReferrals: number;
   inactiveReferrals: number;
   lifetimeEarningsSats: number;
+  referralRewardCapSats?: number | null;
 }
 
 export interface UserReferralDashboard {
@@ -128,6 +129,9 @@ export interface UserReferralDashboard {
   totalReferrals: number;
   activeReferrals: number;
   inactiveReferrals: number;
+  lifetimeEarningsSats: number;
+  activeTier?: string;
+  referralRewardCapSats?: number | null;
   referrals: UserReferral[];
 }
 
@@ -192,4 +196,21 @@ export interface UserSubmissionHistoryItem {
   rewardSats: number;
   xpReward?: number;
   remainingMs: number;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  fullName: string;
+  username: string;
+  avatarUrl: string | null;
+  value: number;
+}
+
+export interface UserLeaderboard {
+  daily: LeaderboardEntry[];
+  weekly: LeaderboardEntry[];
+  monthly: LeaderboardEntry[];
+  streaks: LeaderboardEntry[];
+  generatedAt: string;
 }

@@ -24,10 +24,11 @@ const mapReferralDashboard = (payload: UserReferralDashboard, activeTier?: strin
     totalInvited: payload.totalReferrals,
     activeReferrals: payload.activeReferrals,
     inactiveReferrals: payload.inactiveReferrals,
-    lifetimeEarningsSats: 0,
+    lifetimeEarningsSats: payload.lifetimeEarningsSats,
+    referralRewardCapSats: payload.referralRewardCapSats,
   },
   referralsList: payload.referrals,
-  activeTier,
+  activeTier: payload.activeTier || activeTier,
 });
 
 export const fetchUserReferrals = createAsyncThunk(

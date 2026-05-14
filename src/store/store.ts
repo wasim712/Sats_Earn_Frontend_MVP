@@ -15,6 +15,7 @@ import adminPaymentsReducer from '../features/admin/adminPaymentsSlice'
 import adminSettingsReducer from '../features/admin/adminSettingsSlice'
 import adminCheatReducer from '../features/admin/adminCheatSlice'
 import userDashboardReducer from '../features/user/userDashboardSlice'
+import userLeaderboardReducer from '../features/user/userLeaderboardSlice'
 import userNotificationsReducer from '../features/user/userNotificationsSlice'
 import userReferralsReducer from '../features/user/userReferralsSlice'
 import userSubmissionsReducer from '../features/user/userSubmissionsSlice'
@@ -35,6 +36,7 @@ export const store = configureStore({
     userQuiz:userQuizReducer,
     userProfile:userProfileReducer,
     userDashboard:userDashboardReducer,
+    userLeaderboard:userLeaderboardReducer,
     userNotifications:userNotificationsReducer,
     userReferrals:userReferralsReducer,
     userSubmissions:userSubmissionsReducer,
