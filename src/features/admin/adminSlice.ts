@@ -2,6 +2,7 @@
 // export default adminSlice.reducer;
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store'; // Ensure this path points to your store
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -40,7 +41,7 @@ export const fetchAdminMetrics = createAsyncThunk(
 
       if (!token) throw new Error('No authentication token found');
       
-      const response = await fetch(`${API_URL}/admin/metrics`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/metrics`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +49,7 @@ export const fetchAdminMetrics = createAsyncThunk(
         },
       });
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<AdminMetrics & { error?: string; message?: string }>(response);
       if (!response.ok) throw new Error(data.error || data.message || 'Failed to fetch metrics');
 
       return data as AdminMetrics;

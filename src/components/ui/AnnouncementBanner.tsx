@@ -12,6 +12,19 @@ interface Announcement {
   type: 'INFO' | 'WARNING' | 'SUCCESS' | 'PROMOTION';
 }
 
+function normalizeAnnouncements(data: unknown): Announcement[] {
+  if (Array.isArray(data)) return data as Announcement[];
+
+  if (data && typeof data === 'object') {
+    const payload = data as { data?: unknown; announcements?: unknown; items?: unknown };
+    if (Array.isArray(payload.data)) return payload.data as Announcement[];
+    if (Array.isArray(payload.announcements)) return payload.announcements as Announcement[];
+    if (Array.isArray(payload.items)) return payload.items as Announcement[];
+  }
+
+  return [];
+}
+
 // ─── Type Config ──────────────────────────────────────────────────────────────
 const getUIConfig = (type: string) => {
   switch (type) {
@@ -67,11 +80,14 @@ export function AnnouncementBanner() {
 
     const fetchAnnouncements = async () => {
       try {
-        const res = await fetch(`${API_URL}/public/announcements/active`);
+        const res = await fetch(`${API_URL}/public/announcements/active`, {
+          cache: 'no-store',
+        });
         if (res.ok) {
           const data = await res.json();
-          const list = Array.isArray(data) ? data : data?.data;
-          if (Array.isArray(list)) setAnnouncements(list);
+          setAnnouncements(normalizeAnnouncements(data));
+        } else {
+          console.error('Failed to fetch announcements', res.status, res.statusText);
         }
       } catch (err) {
         console.error('Failed to fetch announcements', err);

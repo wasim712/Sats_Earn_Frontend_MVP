@@ -161,9 +161,16 @@ export interface TodayQuizQuestion {
 export interface TodayQuiz {
   id: string;
   title: string;
+  description?: string;
   rewardSats: number;
   xpReward?: number;
   questions: TodayQuizQuestion[];
+}
+
+export interface TodayQuizResponse {
+  status: 'available' | 'submitted';
+  quiz: TodayQuiz;
+  result?: QuizResult;
 }
 
 export interface QuizResult {

@@ -3,6 +3,17 @@
 import { useEffect } from 'react';
 import { decryptPayload, encryptPayload } from '@/lib/crypto';
 
+function isTransportEnvelope(data: unknown): data is { payload: string } {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return false;
+  }
+
+  const record = data as Record<string, unknown>;
+  const keys = Object.keys(record);
+
+  return keys.length === 1 && keys[0] === 'payload' && typeof record.payload === 'string' && record.payload.startsWith('enc:');
+}
+
 type WrappedFetch = typeof fetch & {
   __satsWrapped?: boolean;
 };
@@ -17,12 +28,25 @@ const UPLOAD_PATHS = [
   '/admin/campaigns/upload-cover',
 ];
 
+const RAW_BYPASS_PATHS = [
+  '/api/public/announcements/active',
+];
+
 function getRequestUrl(input: RequestInfo | URL) {
   return typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
 }
 
 function isApiUrl(input: RequestInfo | URL) {
   return getRequestUrl(input).includes('/api/');
+}
+
+function isAuthUrl(input: RequestInfo | URL) {
+  return getRequestUrl(input).includes('/api/auth/');
+}
+
+function isRawBypassUrl(input: RequestInfo | URL) {
+  const url = getRequestUrl(input);
+  return RAW_BYPASS_PATHS.some((path) => url.includes(path));
 }
 
 function getMethod(input: RequestInfo | URL, init?: RequestInit) {
@@ -79,6 +103,14 @@ export function ApiObfuscationProvider() {
       const nextInit: RequestInit = { ...(init || {}) };
       const headers = new Headers(nextInit.headers || {});
       const body = nextInit.body;
+
+      if (isAuthUrl(input)) {
+        return originalFetch(input, init);
+      }
+
+      if (isRawBypassUrl(input)) {
+        return originalFetch(input, init);
+      }
 
       if (shouldBypassObfuscation(method, body)) {
         headers.set('x-obfuscated-response', '1');
@@ -139,7 +171,7 @@ export function ApiObfuscationProvider() {
 
       try {
         const data = await responseClone.json();
-        if (!data || typeof data !== 'object' || typeof data.payload !== 'string') {
+        if (!isTransportEnvelope(data)) {
           return response;
         }
 

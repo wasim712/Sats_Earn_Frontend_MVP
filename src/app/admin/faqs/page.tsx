@@ -1,61 +1,33 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Loader2, Plus, Save } from 'lucide-react';
-import { API_URL, getStoredToken } from '../content/content.helpers';
 import type { FaqItem } from '../content/content.types';
 import { FaqList } from './FaqList';
+import { createAdminFaq, deleteAdminFaq, fetchAdminFaqs } from '@/features/admin/adminFaqsSlice';
 
 export default function AdminFaqsPage() {
-  const [items, setItems] = useState<FaqItem[]>([]);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [category, setCategory] = useState('');
   const [sortOrder, setSortOrder] = useState(0);
   const [isActive, setIsActive] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const loadFaqs = async () => {
-    try {
-      const token = getStoredToken();
-      const res = await fetch(`${API_URL}/admin/faqs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load FAQs.');
-      setItems(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load FAQs.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const { items, isLoading, isSaving, error } = useAppSelector((state) => state.adminFaqs);
 
   useEffect(() => {
-    loadFaqs();
-  }, []);
+    dispatch(fetchAdminFaqs());
+  }, [dispatch]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLocalError(null);
     setSuccess(null);
-    setIsSaving(true);
-
     try {
-      const token = getStoredToken();
-      const res = await fetch(`${API_URL}/admin/faqs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ question, answer, category, sortOrder, isActive }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to create FAQ item.');
+      await dispatch(createAdminFaq({ question, answer, category, sortOrder, isActive })).unwrap();
 
       setQuestion('');
       setAnswer('');
@@ -63,26 +35,16 @@ export default function AdminFaqsPage() {
       setSortOrder(0);
       setIsActive(true);
       setSuccess('FAQ item created successfully.');
-      await loadFaqs();
     } catch (err: any) {
-      setError(err.message || 'Failed to create FAQ item.');
-    } finally {
-      setIsSaving(false);
+      setLocalError(err.message || 'Failed to create FAQ item.');
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const token = getStoredToken();
-      const res = await fetch(`${API_URL}/admin/faqs/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete FAQ item.');
-      await loadFaqs();
+      await dispatch(deleteAdminFaq(id)).unwrap();
     } catch (err: any) {
-      setError(err.message || 'Failed to delete FAQ item.');
+      setLocalError(err.message || 'Failed to delete FAQ item.');
     }
   };
 
@@ -94,7 +56,7 @@ export default function AdminFaqsPage() {
           <p className="text-sm text-gray-400 mt-1">Create and manage FAQ blocks. Tell me later where you want them pasted.</p>
         </div>
 
-        {error && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
+        {(localError || error) && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{localError || error}</div>}
         {success && <div className="rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300">{success}</div>}
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-6">

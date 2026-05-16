@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Heading1, Heading2, ImageIcon, Link2, List, ListOrdered, Loader2, Quote, Save, Send, Type, Undo2 } from 'lucide-react';
-import { API_URL, EMPTY_BLOG_HTML, getStoredToken, slugify } from '../content/content.helpers';
+import { EMPTY_BLOG_HTML, slugify } from '../content/content.helpers';
 import type { BlogPost, EditorButton } from '../content/content.types';
 import { BlogEditorToolbar } from './BlogEditorToolbar';
 import { BlogPostList } from './BlogPostList';
+import { deleteAdminBlog, fetchAdminBlogs, saveAdminBlog } from '@/features/admin/adminBlogsSlice';
 
 export default function AdminBlogsPage() {
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -17,13 +18,12 @@ export default function AdminBlogsPage() {
   const [coverImageUrl, setCoverImageUrl] = useState('');
   const [content, setContent] = useState(EMPTY_BLOG_HTML);
   const [isPublished, setIsPublished] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [isPreview, setIsPreview] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const token = getStoredToken();
+  const dispatch = useAppDispatch();
+  const { posts, isLoading, isSaving, error } = useAppSelector((state) => state.adminBlogs);
 
   const syncEditor = (html?: string) => {
     const value = html ?? content;
@@ -44,22 +44,9 @@ export default function AdminBlogsPage() {
     setTimeout(() => syncEditor(EMPTY_BLOG_HTML), 0);
   };
 
-  const loadPosts = async () => {
-    try {
-      const res = await fetch(`${API_URL}/admin/blogs`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load blog posts.');
-      setPosts(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load blog posts.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadPosts();
-  }, []);
+    dispatch(fetchAdminBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     syncEditor();
@@ -102,31 +89,19 @@ export default function AdminBlogsPage() {
   ];
 
   const handleSave = async () => {
-    setError(null);
+    setLocalError(null);
     setSuccess(null);
-    setIsSaving(true);
 
     try {
-      const url = editingId ? `${API_URL}/admin/blogs/${editingId}` : `${API_URL}/admin/blogs`;
-      const method = editingId ? 'PATCH' : 'POST';
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, slug, excerpt, content, coverImageUrl, isPublished }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to save blog post.');
+      await dispatch(saveAdminBlog({
+        id: editingId,
+        data: { title, slug, excerpt, content, coverImageUrl, isPublished },
+      })).unwrap();
 
       setSuccess(editingId ? 'Blog post updated successfully.' : isPublished ? 'Blog published successfully.' : 'Draft saved successfully.');
       resetForm();
-      await loadPosts();
     } catch (err: any) {
-      setError(err.message || 'Failed to save blog post.');
-    } finally {
-      setIsSaving(false);
+      setLocalError(err.message || 'Failed to save blog post.');
     }
   };
 
@@ -144,16 +119,10 @@ export default function AdminBlogsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/admin/blogs/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete blog post.');
+      await dispatch(deleteAdminBlog(id)).unwrap();
       if (editingId === id) resetForm();
-      await loadPosts();
     } catch (err: any) {
-      setError(err.message || 'Failed to delete blog post.');
+      setLocalError(err.message || 'Failed to delete blog post.');
     }
   };
 
@@ -165,7 +134,7 @@ export default function AdminBlogsPage() {
           <p className="text-sm text-gray-400 mt-1">Create polished blogs with a better toolbar, preview, and editing support.</p>
         </div>
 
-        {error && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
+        {(localError || error) && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{localError || error}</div>}
         {success && <div className="rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300">{success}</div>}
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.9fr] gap-6">

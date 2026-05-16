@@ -13,6 +13,7 @@ export default function UserDailyQuizPage() {
 
   // Local state to track user's selected answers map: { questionId: selectedOption }
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const quizQuestions = Array.isArray(quiz?.questions) ? quiz.questions : [];
   const alreadyCompleted = Boolean(
     error &&
       (error.toLowerCase().includes('already completed') ||
@@ -41,7 +42,7 @@ export default function UserDailyQuizPage() {
   };
 
   // Check if every question has an answer
-  const isAllAnswered = quiz ? Object.keys(answers).length === quiz.questions.length : false;
+  const isAllAnswered = quizQuestions.length > 0 && Object.keys(answers).length === quizQuestions.length;
 
   // ─── Loading Skeleton State ────────────────────────────────────────────────
   if (isLoading) {

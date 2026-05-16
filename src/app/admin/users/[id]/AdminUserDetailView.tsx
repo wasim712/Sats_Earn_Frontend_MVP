@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { AdminUserDetail, AdminUserTransaction } from '@/types/admin';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchUserDetail, performUserAction } from '@/features/admin/adminUsersSlice';
 import {
   ArrowLeft,
   ArrowDownToLine,
@@ -17,38 +19,19 @@ import {
   Zap,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
 type ActionState = {
   loading: boolean;
   error: string | null;
 };
 
 export function AdminUserDetailView({ userId }: { userId: string }) {
-  const [detail, setDetail] = useState<AdminUserDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { selectedUserDetail: detail, detailLoading: loading, detailError: error, actionLoading } = useAppSelector((state) => state.adminUsers);
   const [actionState, setActionState] = useState<ActionState>({ loading: false, error: null });
 
   const fetchDetail = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to load user details');
-      setDetail(data);
-    } catch (detailError) {
-      const message = detailError instanceof Error ? detailError.message : 'Failed to load user details';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+    await dispatch(fetchUserDetail(userId));
+  }, [dispatch, userId]);
 
   useEffect(() => {
     fetchDetail();
@@ -64,21 +47,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
     setActionState({ loading: true, error: null });
 
     try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const method = action === 'delete' ? 'DELETE' : 'POST';
-      const endpoint =
-        action === 'ban'
-          ? `${API_URL}/admin/users/${detail.id}/ban`
-          : action === 'activate'
-            ? `${API_URL}/admin/users/${detail.id}/activate`
-            : `${API_URL}/admin/users/${detail.id}`;
-
-      const response = await fetch(endpoint, {
-        method,
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || `Failed to ${actionLabel} user`);
+      await dispatch(performUserAction({ userId: detail.id, action })).unwrap();
 
       if (action === 'delete') {
         window.location.href = '/admin/users';
@@ -110,11 +79,11 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
           </div>
           <div className="flex flex-wrap gap-3">
             {detail.isActive ? (
-              <ActionButton icon={<Ban className="w-4 h-4" />} label="Ban User" onClick={() => handleAction('ban')} disabled={actionState.loading || detail.role === 'SUPER_ADMIN'} tone="danger" />
+              <ActionButton icon={<Ban className="w-4 h-4" />} label="Ban User" onClick={() => handleAction('ban')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
             ) : (
-              <ActionButton icon={<RefreshCcw className="w-4 h-4" />} label="Reactivate" onClick={() => handleAction('activate')} disabled={actionState.loading || detail.role === 'SUPER_ADMIN'} tone="success" />
+              <ActionButton icon={<RefreshCcw className="w-4 h-4" />} label="Reactivate" onClick={() => handleAction('activate')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="success" />
             )}
-            <ActionButton icon={<Trash2 className="w-4 h-4" />} label="Delete Account" onClick={() => handleAction('delete')} disabled={actionState.loading || detail.role === 'SUPER_ADMIN'} tone="danger" />
+            <ActionButton icon={<Trash2 className="w-4 h-4" />} label="Delete Account" onClick={() => handleAction('delete')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
             <button onClick={fetchDetail} className="inline-flex items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#111] px-4 py-3 text-sm font-semibold hover:bg-[#1a1a1a]">
               <RefreshCcw className="w-4 h-4" /> Refresh
             </button>

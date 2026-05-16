@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -43,7 +44,7 @@ export const fetchHighRiskQueue = createAsyncThunk(
   'adminFraud/fetchHighRiskQueue',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/security/fraud/high-risk`, {
+      const response = await obfuscatedFetch(`${API_URL}/security/fraud/high-risk`, {
         headers: getAuthHeaders(),
       });
       
@@ -54,7 +55,7 @@ export const fetchHighRiskQueue = createAsyncThunk(
         throw new Error(`Server returned non-JSON response. Check your API route (${response.status})`);
       }
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch high-risk queue');
 
       return data as FraudReport[];
@@ -70,11 +71,11 @@ export const fetchUserFraudReport = createAsyncThunk(
   'adminFraud/fetchUserFraudReport',
   async (userId: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/security/fraud/users/${userId}`, {
+      const response = await obfuscatedFetch(`${API_URL}/security/fraud/users/${userId}`, {
         headers: getAuthHeaders(),
       });
       
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch user fraud report');
 
       return data as FraudReport;

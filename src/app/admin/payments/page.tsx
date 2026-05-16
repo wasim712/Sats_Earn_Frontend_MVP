@@ -1,67 +1,32 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
   AlertTriangle, BadgeCheck, Clock, Copy, Check, Eye, 
   Loader2, RefreshCw, Search, Wallet, XCircle, Zap, ShieldAlert 
 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-// --- TYPES ---
-interface AdminWithdrawal {
-  id: string;
-  amountSats: number;
-  lightningInvoice: string;
-  paymentProof: string | null;
-  status: 'PENDING' | 'PAID' | 'REJECTED';
-  createdAt: string;
-  user: {
-    id: string;
-    fullName: string | null;
-    email: string;
-    totalXp: number;
-  };
-}
+import { approveWithdrawal, fetchAdminWithdrawals, rejectWithdrawal } from '@/features/admin/adminPaymentsSlice';
+import type { AdminWithdrawal } from '@/types/admin';
 
 export default function AdminWithdrawalsPage() {
-  const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { withdrawals, isLoading, isProcessing, error } = useAppSelector((state) => state.adminPayments);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   
-  // Action states
-  const [isProcessing, setIsProcessing] = useState(false);
   const [paymentProof, setPaymentProof] = useState('');
   const [copied, setCopied] = useState(false);
 
   // 1. FETCH QUEUE
   const fetchWithdrawals = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = sessionStorage.getItem('sats_token');
-      // Assuming you create this GET route in admin.controller.ts
-      const res = await fetch(`${API_URL}/admin/withdrawals`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      console.log(res.body);
-      
-      if (!res.ok) throw new Error("Failed to fetch withdrawals queue.");
-      const data = await res.json();
-      setWithdrawals(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    await dispatch(fetchAdminWithdrawals());
   };
 
   useEffect(() => {
     fetchWithdrawals();
-  }, []);
+  }, [dispatch]);
 
   // 2. DERIVED DATA
   const filteredWithdrawals = useMemo(() => {
@@ -93,26 +58,11 @@ export default function AdminWithdrawalsPage() {
     
     if (!window.confirm("Are you sure you have paid this invoice? This cannot be undone.")) return;
 
-    setIsProcessing(true);
     try {
-      const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/withdrawals/${selectedId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ paymentProof: paymentProof.trim() })
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to approve withdrawal.");
-      }
-
-      await fetchWithdrawals();
+      await dispatch(approveWithdrawal({ id: selectedId, paymentProof: paymentProof.trim() })).unwrap();
       setPaymentProof('');
     } catch (err: any) {
       alert(err.message);
-    } finally {
-      setIsProcessing(false);
     }
   };
 
@@ -121,24 +71,10 @@ export default function AdminWithdrawalsPage() {
     if (!selectedId) return;
     if (!window.confirm("Are you sure you want to reject this? The funds should be returned to the user's available balance.")) return;
 
-    setIsProcessing(true);
     try {
-      const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/withdrawals/${selectedId}/reject`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to reject withdrawal.");
-      }
-
-      await fetchWithdrawals();
+      await dispatch(rejectWithdrawal(selectedId)).unwrap();
     } catch (err: any) {
       alert(err.message);
-    } finally {
-      setIsProcessing(false);
     }
   };
 

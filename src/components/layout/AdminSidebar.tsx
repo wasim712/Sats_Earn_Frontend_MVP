@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -26,6 +27,42 @@ interface NotificationItem {
   isRead?: boolean;
 }
 
+function isNotificationArray(value: unknown): value is NotificationItem[] {
+  return Array.isArray(value);
+}
+
+function normalizeNotifications(data: unknown): NotificationItem[] {
+  if (isNotificationArray(data)) return data;
+
+  if (data && typeof data === 'object') {
+    const payload = data as {
+      data?: unknown;
+      notifications?: unknown;
+      items?: unknown;
+      announcement?: unknown;
+      item?: unknown;
+      notification?: unknown;
+      results?: unknown;
+    };
+    if (isNotificationArray(payload.data)) return payload.data;
+    if (isNotificationArray(payload.notifications)) return payload.notifications;
+    if (isNotificationArray(payload.items)) return payload.items;
+    if (isNotificationArray(payload.results)) return payload.results;
+
+    if (isNotificationArray(payload.notification)) return payload.notification;
+
+    if (payload.data && typeof payload.data === 'object') {
+      const nested = payload.data as { notifications?: unknown; items?: unknown; results?: unknown; data?: unknown };
+      if (isNotificationArray(nested.notifications)) return nested.notifications;
+      if (isNotificationArray(nested.items)) return nested.items;
+      if (isNotificationArray(nested.results)) return nested.results;
+      if (isNotificationArray(nested.data)) return nested.data;
+    }
+  }
+
+  return [];
+}
+
 export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout }: AdminSidebarProps) => {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -36,18 +73,21 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
       const token = sessionStorage.getItem('sats_token');
       if (!token) return;
 
-      const res = await fetch(`${API_URL}/admin/notifications`, {
+      const res = await obfuscatedFetch(`${API_URL}/admin/notifications`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (res.ok) {
-        const data = await res.json() as NotificationItem[];
-        // Count how many are NOT read
-        const unread = data.filter((notification) => !notification.isRead).length;
+        const data = await parseObfuscatedJson<unknown>(res);
+        const notifications = normalizeNotifications(data);
+        const unread = notifications.filter((notification) => !notification.isRead).length;
         setUnreadCount(unread);
+      } else {
+        setUnreadCount(0);
       }
     } catch (err) {
-      console.error("Failed to fetch sidebar notifications count", err);
+      console.error('Failed to fetch sidebar notifications count', err);
+      setUnreadCount(0);
     }
   };
 

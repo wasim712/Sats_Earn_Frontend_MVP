@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { clearUsersState, fetchAllUsers } from '@/features/admin/adminUsersSlice';
+import { clearUsersState, fetchAllUsers, fetchUserDetail as fetchUserDetailThunk, performUserAction } from '@/features/admin/adminUsersSlice';
 import type { AdminUserDetail, AdminUserTransaction } from '@/types/admin';
 import {  ArrowDownToLine,
   Ban,  Coins,
@@ -20,8 +20,6 @@ import {  ArrowDownToLine,
   Zap,
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
 type ActionState = {
   loading: boolean;
   error: string | null;
@@ -29,13 +27,10 @@ type ActionState = {
 
 export default function AdminUsersPage() {
   const dispatch = useAppDispatch();
-  const { users, isLoading, error } = useAppSelector((state) => state.adminUsers);
+  const { users, isLoading, error, selectedUserDetail, detailLoading, detailError, actionLoading } = useAppSelector((state) => state.adminUsers);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [selectedUserDetail, setSelectedUserDetail] = useState<AdminUserDetail | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
   const [actionState, setActionState] = useState<ActionState>({ loading: false, error: null });
 
   useEffect(() => {
@@ -55,24 +50,8 @@ export default function AdminUsersPage() {
 
   const fetchUserDetail = async (userId: string) => {
     setSelectedUserId(userId);
-    setDetailLoading(true);
-    setDetailError(null);
     setActionState({ loading: false, error: null });
-
-    try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to fetch user details');
-      setSelectedUserDetail(data);
-    } catch (detailFetchError) {
-      const message = detailFetchError instanceof Error ? detailFetchError.message : 'Failed to fetch user details';
-      setDetailError(message);
-    } finally {
-      setDetailLoading(false);
-    }
+    await dispatch(fetchUserDetailThunk(userId));
   };
 
   const refreshUsers = () => {
@@ -89,26 +68,11 @@ export default function AdminUsersPage() {
     setActionState({ loading: true, error: null });
 
     try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const method = action === 'delete' ? 'DELETE' : 'POST';
-      const endpoint =
-        action === 'ban'
-          ? `${API_URL}/admin/users/${selectedUserDetail.id}/ban`
-          : action === 'activate'
-            ? `${API_URL}/admin/users/${selectedUserDetail.id}/activate`
-            : `${API_URL}/admin/users/${selectedUserDetail.id}`;
-
-      const response = await fetch(endpoint, {
-        method,
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || `Failed to ${actionLabel} user`);
+      await dispatch(performUserAction({ userId: selectedUserDetail.id, action })).unwrap();
 
       await refreshUsers();
 
       if (action === 'delete') {
-        setSelectedUserDetail(null);
         setSelectedUserId(null);
       } else {
         await fetchUserDetail(selectedUserDetail.id);
@@ -271,11 +235,9 @@ export default function AdminUsersPage() {
           detail={selectedUserDetail}
           loading={detailLoading}
           error={detailError || actionState.error}
-          actionLoading={actionState.loading}
+          actionLoading={actionState.loading || actionLoading}
           onClose={() => {
             setSelectedUserId(null);
-            setSelectedUserDetail(null);
-            setDetailError(null);
             setActionState({ loading: false, error: null });
           }}
           onBan={() => handleUserAction('ban')}

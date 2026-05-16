@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -21,17 +22,30 @@ const initialState: AdminPaymentsState = {
 
 const getToken = (state: RootState) => state.auth.token || sessionStorage.getItem('sats_token');
 
+function normalizeWithdrawals(data: unknown): AdminWithdrawal[] {
+  if (Array.isArray(data)) return data as AdminWithdrawal[];
+
+  if (data && typeof data === 'object') {
+    const payload = data as { data?: unknown; withdrawals?: unknown; items?: unknown };
+    if (Array.isArray(payload.data)) return payload.data as AdminWithdrawal[];
+    if (Array.isArray(payload.withdrawals)) return payload.withdrawals as AdminWithdrawal[];
+    if (Array.isArray(payload.items)) return payload.items as AdminWithdrawal[];
+  }
+
+  return [];
+}
+
 export const fetchAdminWithdrawals = createAsyncThunk(
   'adminPayments/fetchAll',
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/withdrawals`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/withdrawals`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch withdrawals queue.');
-      return data as AdminWithdrawal[];
+      return normalizeWithdrawals(data);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -43,7 +57,7 @@ export const approveWithdrawal = createAsyncThunk(
   async ({ id, paymentProof }: { id: string; paymentProof: string }, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/withdrawals/${id}/approve`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/withdrawals/${id}/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +65,7 @@ export const approveWithdrawal = createAsyncThunk(
         },
         body: JSON.stringify({ paymentProof }),
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to approve withdrawal.');
       return id;
     } catch (error: any) {
@@ -65,11 +79,11 @@ export const rejectWithdrawal = createAsyncThunk(
   async (id: string, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/withdrawals/${id}/reject`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/withdrawals/${id}/reject`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to reject withdrawal.');
       return id;
     } catch (error: any) {
