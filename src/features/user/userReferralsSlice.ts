@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { UserReferralDashboard, UserReferralDashboardView } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -36,7 +37,7 @@ export const fetchUserReferrals = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/referrals`, {
+      const payload = await obfuscatedJsonRequest<UserReferralDashboard>(`${API_URL}/users/referrals`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -44,12 +45,9 @@ export const fetchUserReferrals = createAsyncThunk(
         },
       });
 
-      if (!response.ok) throw new Error('Failed to load referral data');
-      const payload = (await response.json()) as UserReferralDashboard;
-
       let activeTier: string | undefined;
       try {
-        const dashboardResponse = await fetch(`${API_URL}/users/dashboard`, {
+        const dashboardPayload = await obfuscatedJsonRequest<any>(`${API_URL}/users/dashboard`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -57,10 +55,7 @@ export const fetchUserReferrals = createAsyncThunk(
           },
         });
 
-        if (dashboardResponse.ok) {
-          const dashboardPayload = await dashboardResponse.json();
-          activeTier = dashboardPayload?.gamification?.activeTier;
-        }
+        activeTier = dashboardPayload?.gamification?.activeTier;
       } catch {
       }
 

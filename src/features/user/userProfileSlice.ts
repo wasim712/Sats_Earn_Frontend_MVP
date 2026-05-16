@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 import type { UserProfile } from '@/types/user';
 
@@ -7,6 +8,28 @@ interface UserProfileState {
   data: UserProfile | null;
   isLoading: boolean;
   error: string | null;
+}
+
+function normalizeProfileResponse(data: unknown): UserProfile | null {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const payload = data as { data?: unknown; profile?: unknown; user?: unknown };
+
+  if (payload.data && typeof payload.data === 'object') {
+    return payload.data as UserProfile;
+  }
+
+  if (payload.profile && typeof payload.profile === 'object') {
+    return payload.profile as UserProfile;
+  }
+
+  if (payload.user && typeof payload.user === 'object') {
+    return payload.user as UserProfile;
+  }
+
+  return data as UserProfile;
 }
 
 const initialState: UserProfileState = {
@@ -24,13 +47,10 @@ export const fetchUserProfile = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
 
-      const response = await fetch(`${API_URL}/users/profile`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || data.message || 'Failed to fetch profile');
-      return data as UserProfile;
+      return normalizeProfileResponse(data);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -50,7 +70,7 @@ export const updateUserProfile = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
 
-      const response = await fetch(`${API_URL}/users/profile`, {
+      await obfuscatedJsonRequest(`${API_URL}/users/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -58,9 +78,6 @@ export const updateUserProfile = createAsyncThunk(
         },
         body: JSON.stringify(data),
       });
-
-      const resData = await response.json();
-      if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to update profile');
       
       // We return the payload data so we can update the local Redux state instantly
       return data; 

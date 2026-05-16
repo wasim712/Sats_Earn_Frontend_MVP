@@ -5,6 +5,7 @@ import {
   Zap, Wallet, Clock, CheckCircle2, AlertTriangle, 
   ArrowRight, Shield, XCircle, ArrowUpRight, Loader2, History
 } from 'lucide-react';
+import { obfuscatedFetch, obfuscatedJsonRequest, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -148,24 +149,24 @@ export default function UserWithdrawalsPage() {
 
         // Fetch user dashboard data (for balances), withdrawal history, and platform settings
         const [dashRes, historyRes, settingsRes] = await Promise.all([
-          fetch(`${API_URL}/users/dashboard`, { headers }),
-          fetch(`${API_URL}/users/withdrawals`, { headers }), // Assuming you have this route!
-          fetch(`${API_URL}/users/settings`, { headers })     // Assuming public settings route
+          obfuscatedFetch(`${API_URL}/users/dashboard`, { headers }),
+          obfuscatedFetch(`${API_URL}/users/withdrawals`, { headers }),
+          obfuscatedFetch(`${API_URL}/users/settings`, { headers })
         ]);
 
         if (dashRes.ok) {
-          const dashData = await dashRes.json();
+          const dashData = await parseObfuscatedJson<any>(dashRes);
           setBalances(dashData.balances);
           activeTier = dashData?.gamification?.activeTier;
         }
         
         if (historyRes.ok) {
-          const historyData = await historyRes.json();
-          setHistory(historyData);
+          const historyData = await parseObfuscatedJson<Withdrawal[] | { data?: Withdrawal[] }>(historyRes);
+          setHistory(Array.isArray(historyData) ? historyData : historyData?.data || []);
         }
 
         if (settingsRes.ok) {
-          const settingsData = await settingsRes.json();
+          const settingsData = await parseObfuscatedJson<any>(settingsRes);
           const tierMin = activeTier
             ? settingsData?.tierMinWithdrawalMatrix?.[activeTier]
             : undefined;
@@ -214,7 +215,7 @@ export default function UserWithdrawalsPage() {
 
     try {
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/users/withdrawals`, {
+      const data = await obfuscatedJsonRequest<{ withdrawal?: Withdrawal }>(`${API_URL}/users/withdrawals`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -226,17 +227,15 @@ export default function UserWithdrawalsPage() {
         })
       });
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Failed to process withdrawal.");
-
       setSuccess("Withdrawal requested successfully! It is now pending admin review.");
       setAmount('');
       setInvoice('');
       
       // Optimistically update the UI
       setBalances(prev => prev ? { ...prev, available: prev.available - withdrawAmount } : null);
-      setHistory(prev => [data.withdrawal, ...prev]); // Assuming backend returns the new withdrawal
+      if (data.withdrawal) {
+        setHistory(prev => [data.withdrawal as Withdrawal, ...prev]);
+      }
 
     } catch (err: any) {
       setError(err.message);

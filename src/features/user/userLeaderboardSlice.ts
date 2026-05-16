@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { UserLeaderboard } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -8,6 +9,24 @@ interface UserLeaderboardState {
   data: UserLeaderboard | null;
   isLoading: boolean;
   error: string | null;
+}
+
+function normalizeLeaderboardResponse(data: unknown): UserLeaderboard | null {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const payload = data as { data?: unknown; leaderboard?: unknown };
+
+  if (payload.data && typeof payload.data === 'object') {
+    return payload.data as UserLeaderboard;
+  }
+
+  if (payload.leaderboard && typeof payload.leaderboard === 'object') {
+    return payload.leaderboard as UserLeaderboard;
+  }
+
+  return data as UserLeaderboard;
 }
 
 const initialState: UserLeaderboardState = {
@@ -23,15 +42,13 @@ export const fetchUserLeaderboard = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/leaderboard`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/leaderboard`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error('Failed to fetch leaderboard data.');
-      return (await response.json()) as UserLeaderboard;
+      return normalizeLeaderboardResponse(data);
     } catch (error: any) {
       return rejectWithValue(error.message || 'An unexpected error occurred.');
     }

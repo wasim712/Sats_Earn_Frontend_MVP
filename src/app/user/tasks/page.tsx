@@ -18,6 +18,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 import type { Campaign } from '@/types/admin';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -123,20 +124,14 @@ export default function TasksPage() {
       try {
         const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
-        const response = await fetch(`${API_URL}/users/campaigns`, {
+        const data = await obfuscatedJsonRequest<Campaign[]>(`${API_URL}/users/campaigns`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch available tasks');
-        }
-
-        const data = await response.json();
-        setCampaigns(data);
+        setCampaigns(Array.isArray(data) ? data : []);
       } catch (err: unknown) {
         console.error('Error fetching tasks:', err);
         setError(err instanceof Error ? err.message : 'An unexpected error occurred.');

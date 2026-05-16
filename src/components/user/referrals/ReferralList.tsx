@@ -16,52 +16,63 @@ export default function ReferralList({ list }: ReferralListProps) {
       <div className="min-h-[200px] flex flex-col items-center justify-center">
         {list.length > 0 ? (
           <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {list.map((referral) => (
-              <div
-                key={referral.id}
-                className="rounded-[24px] border border-[#1a1a1a] bg-[#050505] p-5 transition-all duration-300 hover:border-sats-orange-500/20"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-black text-white tracking-tight">
-                      {referral.fullName?.trim() || referral.email.split('@')[0]}
-                    </h3>
-                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-400">
-                      <Mail className="w-4 h-4 text-sky-400" />
-                      <span className="truncate">{referral.email}</span>
+            {list.map((referral) => {
+              const fallbackName = typeof referral.email === 'string' && referral.email.includes('@')
+                ? referral.email.split('@')[0]
+                : 'Referral User';
+              const displayName = referral.fullName?.trim() || fallbackName;
+              const displayEmail = referral.email || 'No email available';
+              const joinedAt = referral.joinedAt ? new Date(referral.joinedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+              const totalXp = Number(referral.totalXp || 0).toLocaleString();
+              const activeDays = `${Number(referral.daysActiveLast30 || 0)}/30`;
+
+              return (
+                <div
+                  key={referral.id}
+                  className="rounded-[24px] border border-[#1a1a1a] bg-[#050505] p-5 transition-all duration-300 hover:border-sats-orange-500/20"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-black text-white tracking-tight">
+                        {displayName}
+                      </h3>
+                      <div className="mt-2 flex items-center gap-2 text-sm text-gray-400">
+                        <Mail className="w-4 h-4 text-sky-400" />
+                        <span className="truncate">{displayEmail}</span>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] ${
+                        referral.isActive
+                          ? 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-300'
+                          : 'border border-white/10 bg-white/[0.03] text-gray-400'
+                      }`}
+                    >
+                      {referral.isActive ? 'Active' : 'Inactive'}
                     </div>
                   </div>
 
-                  <div
-                    className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] ${
-                      referral.isActive
-                        ? 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-300'
-                        : 'border border-white/10 bg-white/[0.03] text-gray-400'
-                    }`}
-                  >
-                    {referral.isActive ? 'Active' : 'Inactive'}
+                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <InfoTile
+                      icon={<CalendarDays className="w-4 h-4 text-sats-orange-400" />}
+                      label="Joined"
+                      value={joinedAt}
+                    />
+                    <InfoTile
+                      icon={<Sparkles className="w-4 h-4 text-violet-400" />}
+                      label="Total XP"
+                      value={totalXp}
+                    />
+                    <InfoTile
+                      icon={<Activity className="w-4 h-4 text-emerald-400" />}
+                      label="Active Days"
+                      value={activeDays}
+                    />
                   </div>
                 </div>
-
-                <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <InfoTile
-                    icon={<CalendarDays className="w-4 h-4 text-sats-orange-400" />}
-                    label="Joined"
-                    value={new Date(referral.joinedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
-                  />
-                  <InfoTile
-                    icon={<Sparkles className="w-4 h-4 text-violet-400" />}
-                    label="Total XP"
-                    value={referral.totalXp.toLocaleString()}
-                  />
-                  <InfoTile
-                    icon={<Activity className="w-4 h-4 text-emerald-400" />}
-                    label="Active Days"
-                    value={`${referral.daysActiveLast30}/30`}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-10">

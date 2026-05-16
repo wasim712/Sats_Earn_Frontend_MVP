@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Copy, Check, Send, ShieldCheck } from 'lucide-react';
 
-export default function ReferralHero({ code, url, activeTier }: { code: string; url: string; activeTier: string }) {
+export default function ReferralHero({ code, url, activeTier }: { code: string; url: string; activeTier?: string }) {
   const [linkCopied, setLinkCopied] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
 
@@ -61,7 +61,7 @@ export default function ReferralHero({ code, url, activeTier }: { code: string; 
             <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1.5 mt-2">
               <ShieldCheck className="w-3.5 h-3.5 text-sats-orange-400" />
               <span className="text-[10px] font-black uppercase tracking-[0.18em] text-sats-orange-400">
-                Current Tier: {activeTier}
+                Current Tier: {activeTier || 'BASIC'}
               </span>
             </div>
           </div>

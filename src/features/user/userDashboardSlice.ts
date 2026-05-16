@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { UserDashboard } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -8,6 +9,24 @@ interface UserDashboardState {
   data: UserDashboard | null;
   isLoading: boolean;
   error: string | null;
+}
+
+function normalizeDashboardResponse(data: unknown): UserDashboard | null {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const payload = data as { data?: unknown; dashboard?: unknown };
+
+  if (payload.data && typeof payload.data === 'object') {
+    return payload.data as UserDashboard;
+  }
+
+  if (payload.dashboard && typeof payload.dashboard === 'object') {
+    return payload.dashboard as UserDashboard;
+  }
+
+  return data as UserDashboard;
 }
 
 const initialState: UserDashboardState = {
@@ -23,16 +42,14 @@ export const fetchUserDashboard = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/dashboard`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/dashboard`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error('Failed to fetch dashboard data. Please try again.');
-      return (await response.json()) as UserDashboard;
+      return normalizeDashboardResponse(data);
     } catch (error: any) {
       return rejectWithValue(error.message || 'An unexpected error occurred.');
     }

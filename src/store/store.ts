@@ -19,6 +19,7 @@ import userLeaderboardReducer from '../features/user/userLeaderboardSlice'
 import userNotificationsReducer from '../features/user/userNotificationsSlice'
 import userReferralsReducer from '../features/user/userReferralsSlice'
 import userSubmissionsReducer from '../features/user/userSubmissionsSlice'
+import { userApi } from './services/userApi';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -40,8 +41,10 @@ export const store = configureStore({
     userNotifications:userNotificationsReducer,
     userReferrals:userReferralsReducer,
     userSubmissions:userSubmissionsReducer,
-    adminFraud: adminFraudReducer
+    adminFraud: adminFraudReducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(userApi.middleware),
 });
 
 // These types are crucial for TypeScript to understand what is inside your Redux store

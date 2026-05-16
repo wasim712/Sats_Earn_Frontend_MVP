@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, Bug, Loader2, Send } from 'lucide-react';
+import { obfuscatedFetch, obfuscatedJsonRequest, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -26,8 +27,11 @@ export default function BugBountyPage() {
 
   const load = async () => {
     const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-    const res = await fetch(`${API_URL}/users/bug-reports`, { headers: { Authorization: `Bearer ${token}` } });
-    if (res.ok) setHistory(await res.json());
+    const res = await obfuscatedFetch(`${API_URL}/users/bug-reports`, { headers: { Authorization: `Bearer ${token}` } });
+    if (res.ok) {
+      const data = await parseObfuscatedJson<BugReport[] | { data?: BugReport[] }>(res);
+      setHistory(Array.isArray(data) ? data : data?.data || []);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -43,13 +47,11 @@ export default function BugBountyPage() {
       formData.append('title', title);
       formData.append('description', description);
       if (file) formData.append('screenshot', file);
-      const res = await fetch(`${API_URL}/users/bug-reports`, {
+      const data = await obfuscatedJsonRequest<{ success?: boolean }>(`${API_URL}/users/bug-reports`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to submit bug report.');
       setSuccess('Bug report submitted successfully. Admin will review it.');
       setTitle('');
       setDescription('');
