@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store'; 
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -20,6 +21,17 @@ const initialState: AdminCampaignsState = {
   error: null,
 };
 
+function normalizeCampaigns(data: unknown): Campaign[] {
+  if (Array.isArray(data)) return data as Campaign[];
+  if (data && typeof data === 'object') {
+    const payload = data as { data?: unknown; campaigns?: unknown; items?: unknown };
+    if (Array.isArray(payload.data)) return payload.data as Campaign[];
+    if (Array.isArray(payload.campaigns)) return payload.campaigns as Campaign[];
+    if (Array.isArray(payload.items)) return payload.items as Campaign[];
+  }
+  return [];
+}
+
 // --- THUNKS ---
 
 export const fetchAllCampaigns = createAsyncThunk(
@@ -30,13 +42,13 @@ export const fetchAllCampaigns = createAsyncThunk(
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       if (!token) throw new Error('No authentication token found');
       
-      const response = await fetch(`${API_URL}/admin/campaigns`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch campaigns');
-      return data as Campaign[];
+      return normalizeCampaigns(data);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -50,7 +62,7 @@ export const toggleCampaignStatus = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/campaigns/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -59,7 +71,7 @@ export const toggleCampaignStatus = createAsyncThunk(
         body: JSON.stringify({ isActive }),
       });
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update campaign');
       return { id, isActive }; 
     } catch (error: any) {
@@ -75,7 +87,7 @@ export const updateCampaign = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/campaigns/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -84,7 +96,7 @@ export const updateCampaign = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to update campaign');
       return resData as Campaign; 
     } catch (error: any) {
@@ -100,7 +112,7 @@ export const createCampaign = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/campaigns`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -109,7 +121,7 @@ export const createCampaign = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create campaign');
       return resData as Campaign; 
     } catch (error: any) {
@@ -127,13 +139,13 @@ export const uploadCampaignCover = createAsyncThunk(
       const formData = new FormData();
       formData.append('coverImage', file);
 
-      const response = await fetch(`${API_URL}/admin/campaigns/upload-cover`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/upload-cover`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to upload campaign cover');
       return resData.coverImageUrl as string;
     } catch (error: any) {
@@ -149,7 +161,7 @@ export const createTask = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
 
-      const response = await fetch(`${API_URL}/admin/campaigns/${campaignId}/tasks`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${campaignId}/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +170,7 @@ export const createTask = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create task');
       return resData as Task;
     } catch (error: any) {
@@ -177,7 +189,7 @@ export const updateTask = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
 
-      const response = await fetch(`${API_URL}/admin/campaigns/${campaignId}/tasks/${taskId}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${campaignId}/tasks/${taskId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +198,7 @@ export const updateTask = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to update task');
       return resData as Task;
     } catch (error: any) {
@@ -202,13 +214,13 @@ export const deleteCampaign = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/campaigns/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await parseObfuscatedJson<any>(response);
         throw new Error(data.error || 'Failed to delete campaign');
       }
       return id; 

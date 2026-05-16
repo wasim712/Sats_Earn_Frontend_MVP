@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { AdminQuiz, AdminQuizQuestion } from '@/types/admin';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -34,8 +35,8 @@ export const fetchAllQuizzes = createAsyncThunk(
     try {
       const token = getToken(getState() as RootState);
       if (!token) throw new Error('No authentication token found');
-      const response = await fetch(`${API_URL}/admin/quiz/daily`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await response.json();
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch quizzes');
       return data as Quiz[];
     } catch (error: any) {
@@ -50,8 +51,8 @@ export const fetchSingleQuiz = createAsyncThunk(
     try {
       const token = getToken(getState() as RootState);
       if (!token) throw new Error('No authentication token found');
-      const response = await fetch(`${API_URL}/admin/quiz/daily/single/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await response.json();
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily/single/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch quiz details');
       return data as Quiz;
     } catch (error: any) {
@@ -65,12 +66,12 @@ export const toggleQuizStatus = createAsyncThunk(
   async ({ id, isActive }: { id: string; isActive: boolean }, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/quiz/daily/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ isActive }),
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update quiz');
       return { id, isActive };
     } catch (error: any) {
@@ -84,12 +85,12 @@ export const createQuiz = createAsyncThunk(
   async (data: { title: string; date: string; rewardSats: number; xpReward: number; questions: Array<{ questionText: string; options: string[]; correctAnswer: string; order: number; }>; }, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/quiz/daily`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
       });
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to create quiz');
       return (resData.quiz || resData) as Quiz;
     } catch (error: any) {
@@ -103,12 +104,12 @@ export const updateQuiz = createAsyncThunk(
   async ({ id, data }: { id: string; data: Partial<Quiz> }, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/quiz/daily/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
       });
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to update quiz');
       return (resData.quiz || resData) as Quiz;
     } catch (error: any) {
@@ -122,11 +123,11 @@ export const deleteQuiz = createAsyncThunk(
   async (id: string, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/quiz/daily/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/quiz/daily/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-      const resData = await response.json();
+      const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to delete quiz');
       return id;
     } catch (error: any) {

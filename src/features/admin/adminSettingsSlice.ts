@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -35,10 +36,10 @@ export const fetchAdminSettings = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/settings`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/settings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to load platform settings.');
       return data as AdminSettings;
     } catch (error: any) {
@@ -52,7 +53,7 @@ export const updateAdminSettings = createAsyncThunk(
   async (payload: AdminSettings, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/settings`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ export const updateAdminSettings = createAsyncThunk(
         },
         body: JSON.stringify(payload),
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update settings.');
       return data as AdminSettings;
     } catch (error: any) {

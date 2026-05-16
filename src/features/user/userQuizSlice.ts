@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
-import type { TodayQuiz, QuizResult } from '@/types/user';
+import type { TodayQuiz, TodayQuizResponse, QuizResult } from '@/types/user';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 interface UserQuizState {
@@ -27,8 +27,13 @@ export const fetchTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-      const data = await obfuscatedJsonRequest<TodayQuiz>(`${API_URL}/users/quiz/today`, { headers: { Authorization: `Bearer ${token}` } });
-      return data as TodayQuiz;
+      const data = await obfuscatedJsonRequest<TodayQuiz | TodayQuizResponse>(`${API_URL}/users/quiz/today`, { headers: { Authorization: `Bearer ${token}` } });
+
+      if (data && typeof data === 'object' && 'quiz' in data) {
+        return data as TodayQuizResponse;
+      }
+
+      return { status: 'available', quiz: data as TodayQuiz } as TodayQuizResponse;
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -66,7 +71,11 @@ const userQuizSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodayQuiz.pending, (state) => { state.isLoading = true; state.error = null; })
-      .addCase(fetchTodayQuiz.fulfilled, (state, action) => { state.isLoading = false; state.quiz = action.payload; })
+      .addCase(fetchTodayQuiz.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.quiz = action.payload.quiz;
+        state.result = action.payload.result ?? null;
+      })
       .addCase(fetchTodayQuiz.rejected, (state, action) => { state.isLoading = false; state.error = action.payload as string; })
       .addCase(submitTodayQuiz.pending, (state) => { state.isSubmitting = true; state.error = null; })
       .addCase(submitTodayQuiz.fulfilled, (state, action) => { state.isSubmitting = false; state.result = action.payload; })

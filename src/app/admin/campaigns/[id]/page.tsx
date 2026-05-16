@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateCampaign, deleteCampaign, uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import type { Campaign, AdminTask } from '@/types/admin';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 import { 
   ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Trash2, 
   BarChart3, Activity, CheckCircle2, Clock, XCircle, Medal, 
@@ -115,12 +116,12 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       const headers = { 'Authorization': `Bearer ${token}` };
 
       const [campRes, analyticsRes] = await Promise.all([
-  fetch(`${API_URL}/admin/campaigns/${id}`, { headers, cache: 'no-store' }),
-  fetch(`${API_URL}/admin/campaigns/${id}/analytics`, { headers, cache: 'no-store' })
+  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}`, { headers, cache: 'no-store' }),
+  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/analytics`, { headers, cache: 'no-store' })
 ]);
 
       if (campRes.ok) {
-        const campData = await campRes.json();
+        const campData = await parseObfuscatedJson<any>(campRes);
         setCampaign(campData);
         setEditForm({
           ...campData,
@@ -134,8 +135,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       if (analyticsRes.ok) {
-  const analyticsData = await analyticsRes.json();
-  setAnalytics(analyticsData);
+        const analyticsData = await parseObfuscatedJson<any>(analyticsRes);
+        setAnalytics(analyticsData);
 } else {
   setAnalytics(null); // or fallback
 }
@@ -278,7 +279,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
     try {
       const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
+      const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
@@ -291,7 +292,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errorData = await parseObfuscatedJson<any>(res);
         // Zod validation parser so you see EXACTLY why it failed!
         if (errorData.details) {
           throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
@@ -317,7 +318,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
     try {
       const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/campaigns/${id}/tasks/${editingTaskId}`, {
+      const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks/${editingTaskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         // AFTER
@@ -333,7 +334,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errorData = await parseObfuscatedJson<any>(res);
         if (errorData.details) throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
         throw new Error(errorData.error || "Failed to update task");
       }
@@ -354,7 +355,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
     try {
       const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/campaigns/${id}/tasks/${taskId}`, {
+      const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks/${taskId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

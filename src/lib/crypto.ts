@@ -1,11 +1,37 @@
 const ENCRYPTION_PREFIX = 'enc:';
+const DEFAULT_TRANSPORT_SECRET = 'satsearn-transport-key';
+const DEFAULT_BACKEND_JWT_SECRET = 'your_super_long_random_secret_string_here_do_not_share';
+
+function splitSecrets(value?: string) {
+  if (!value) return [];
+
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 function getSecret() {
-  return process.env.NEXT_PUBLIC_TRANSPORT_OBFUSCATION_KEY || 'satsearn-transport-key';
+  return process.env.NEXT_PUBLIC_TRANSPORT_OBFUSCATION_KEY || DEFAULT_TRANSPORT_SECRET;
+}
+
+function getSecrets() {
+  return Array.from(new Set([
+    process.env.NEXT_PUBLIC_TRANSPORT_OBFUSCATION_KEY,
+    ...splitSecrets(process.env.NEXT_PUBLIC_TRANSPORT_OBFUSCATION_KEYS),
+    process.env.NEXT_PUBLIC_FIELD_ENCRYPTION_KEY,
+    process.env.NEXT_PUBLIC_JWT_SECRET,
+    DEFAULT_TRANSPORT_SECRET,
+    DEFAULT_BACKEND_JWT_SECRET,
+  ].filter((value): value is string => Boolean(value))));
 }
 
 async function getKeyMaterial() {
   return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(getSecret()));
+}
+
+async function getKeyMaterialForSecret(secret: string) {
+  return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret));
 }
 
 function toHex(buffer: ArrayBuffer) {
@@ -22,6 +48,11 @@ function fromHex(hex: string) {
 
 async function getCryptoKey() {
   const raw = await getKeyMaterial();
+  return window.crypto.subtle.importKey('raw', raw, { name: 'AES-CBC' }, false, ['encrypt', 'decrypt']);
+}
+
+async function getCryptoKeyForSecret(secret: string) {
+  const raw = await getKeyMaterialForSecret(secret);
   return window.crypto.subtle.importKey('raw', raw, { name: 'AES-CBC' }, false, ['encrypt', 'decrypt']);
 }
 
@@ -48,12 +79,20 @@ export async function decryptPayload(value?: string | null) {
   const [ivHex, encryptedHex] = payload.split(':');
   if (!ivHex || !encryptedHex) return value;
 
-  const key = await getCryptoKey();
-  const decrypted = await window.crypto.subtle.decrypt(
-    { name: 'AES-CBC', iv: fromHex(ivHex) },
-    key,
-    fromHex(encryptedHex),
-  );
+  for (const secret of getSecrets()) {
+    try {
+      const key = await getCryptoKeyForSecret(secret);
+      const decrypted = await window.crypto.subtle.decrypt(
+        { name: 'AES-CBC', iv: fromHex(ivHex) },
+        key,
+        fromHex(encryptedHex),
+      );
 
-  return new TextDecoder().decode(decrypted);
+      return new TextDecoder().decode(decrypted);
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error('Unable to decrypt transport payload with known frontend keys.');
 }

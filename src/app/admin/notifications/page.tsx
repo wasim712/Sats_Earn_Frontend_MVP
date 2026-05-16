@@ -2,63 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
   Bell, CheckSquare, Wallet, Loader2, CheckCheck, 
   RefreshCw, AlertTriangle, ArrowRight, Activity
 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-interface AdminNotification {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
-  isRead: boolean;
-  referenceId: string | null;
-  createdAt: string;
-}
+import { fetchAdminNotifications, markAdminNotificationRead, markAllAdminNotificationsRead } from '@/features/admin/adminNotificationsSlice';
+import type { AdminNotification } from '@/types/admin';
 
 export default function AdminNotificationsPage() {
   const router = useRouter();
-  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { notifications, isLoading, error } = useAppSelector((state) => state.adminNotifications);
 
   const fetchNotifications = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = sessionStorage.getItem('sats_token');
-      // Update this route to match your exact express setup
-      const res = await fetch(`${API_URL}/admin/notifications`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch notifications.");
-      const data = await res.json();
-      setNotifications(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    await dispatch(fetchAdminNotifications());
   };
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [dispatch]);
 
 const handleMarkAllRead = async () => {
   try {
-    const token = sessionStorage.getItem('sats_token');
-    await fetch(`${API_URL}/admin/notifications/read-all`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    
-    // 🚀 NEW: Instantly tell the sidebar to update!
+    await dispatch(markAllAdminNotificationsRead()).unwrap();
     window.dispatchEvent(new Event('notifications-updated'));
     
   } catch (err) {
@@ -67,17 +34,7 @@ const handleMarkAllRead = async () => {
 };
 const handleMarkAsRead = async (id: string) => {
   try {
-    const token = sessionStorage.getItem('sats_token');
-    await fetch(`${API_URL}/admin/notifications/${id}/read`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, isRead: true } : n)
-    );
-
-    // 🚀 NEW: Instantly tell the sidebar to update!
+    await dispatch(markAdminNotificationRead(id)).unwrap();
     window.dispatchEvent(new Event('notifications-updated'));
 
   } catch (err) {

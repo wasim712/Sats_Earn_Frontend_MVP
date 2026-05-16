@@ -2,22 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
   Save, Loader2, Settings, Shield, Zap, Users, 
   Coins, Clock, CheckCircle2, AlertTriangle, ArrowLeft,
   Medal, Crown,
   Target
 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+import { fetchAdminSettings, updateAdminSettings } from '@/features/admin/adminSettingsSlice';
 
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
 const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
 
 export default function AdminSettingsPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const dispatch = useAppDispatch();
+  const { settings, isLoading, isSaving, error } = useAppSelector((state) => state.adminSettings);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -41,37 +41,23 @@ export default function AdminSettingsPage() {
 
   // 1. FETCH INITIAL SETTINGS
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const token = sessionStorage.getItem('sats_token');
-        const res = await fetch(`${API_URL}/admin/settings`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+    dispatch(fetchAdminSettings());
+  }, [dispatch]);
 
-        if (!res.ok) throw new Error("Failed to load platform settings.");
-        
-        const data = await res.json();
-        if (data) {
-          setFormData(prev => ({
-            welcomeBonusSats: data.welcomeBonusSats ?? prev.welcomeBonusSats,
-            minWithdrawalSats: data.minWithdrawalSats ?? prev.minWithdrawalSats,
-            securityLockDays: data.securityLockDays ?? prev.securityLockDays,
-            referralBonusPercent: data.referralBonusPercent ?? prev.referralBonusPercent,
-            baseXpPerTask: data.baseXpPerTask ?? prev.baseXpPerTask,
-            dailyStreakBonusXp: data.dailyStreakBonusXp ?? prev.dailyStreakBonusXp,
-            tierReferralMatrix: { ...prev.tierReferralMatrix, ...(data.tierReferralMatrix || {}) },
-            tierMinWithdrawalMatrix: { ...prev.tierMinWithdrawalMatrix, ...(data.tierMinWithdrawalMatrix || {}) }
-          }));
-        }
-      } catch (err: any) {
-        setErrorMsg(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  useEffect(() => {
+    if (!settings) return;
 
-    fetchSettings();
-  }, []);
+    setFormData(prev => ({
+      welcomeBonusSats: settings.welcomeBonusSats ?? prev.welcomeBonusSats,
+      minWithdrawalSats: settings.minWithdrawalSats ?? prev.minWithdrawalSats,
+      securityLockDays: settings.securityLockDays ?? prev.securityLockDays,
+      referralBonusPercent: settings.referralBonusPercent ?? prev.referralBonusPercent,
+      baseXpPerTask: settings.baseXpPerTask ?? prev.baseXpPerTask,
+      dailyStreakBonusXp: settings.dailyStreakBonusXp ?? prev.dailyStreakBonusXp,
+      tierReferralMatrix: { ...prev.tierReferralMatrix, ...(settings.tierReferralMatrix || {}) },
+      tierMinWithdrawalMatrix: { ...prev.tierMinWithdrawalMatrix, ...(settings.tierMinWithdrawalMatrix || {}) }
+    }));
+  }, [settings]);
 
   // 2. HANDLE INPUT CHANGES
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,31 +92,15 @@ export default function AdminSettingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
-    setIsSaving(true);
 
     try {
-      const token = sessionStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/admin/settings`, {
-        method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to update settings.");
-      }
+      await dispatch(updateAdminSettings(formData)).unwrap();
 
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
       
     } catch (err: any) {
       setErrorMsg(err.message);
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -186,9 +156,9 @@ export default function AdminSettingsPage() {
             </button>
           </div>
 
-          {errorMsg && (
+          {(errorMsg || error) && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-4 rounded-xl font-medium flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5" /> {errorMsg}
+              <AlertTriangle className="w-5 h-5" /> {errorMsg || error}
             </div>
           )}
 

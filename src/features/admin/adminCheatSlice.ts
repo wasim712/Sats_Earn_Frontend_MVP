@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { CheatUserState } from '@/app/admin/cheat/cheat.types';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -39,10 +40,10 @@ export const fetchCheatUser = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/cheat-user`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/cheat-user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to load cheat user.');
       return data as CheatUserState;
     } catch (error: any) {
@@ -56,7 +57,7 @@ export const updateCheatUser = createAsyncThunk(
   async (payload: UpdateCheatPayload, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/cheat-user`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/cheat-user`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export const updateCheatUser = createAsyncThunk(
         },
         body: JSON.stringify(payload),
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update cheat user.');
       return data.user as CheatUserState;
     } catch (error: any) {

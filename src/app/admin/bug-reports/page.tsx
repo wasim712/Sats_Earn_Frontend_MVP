@@ -1,61 +1,27 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Bug, CheckCircle2, Loader2, XCircle } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
-type BugReport = {
-  id: string;
-  title: string;
-  description: string;
-  screenshotUrl?: string | null;
-  status: 'OPEN' | 'REWARDED' | 'REJECTED';
-  rewardSats: number;
-  adminNotes?: string | null;
-  createdAt: string;
-  user: { fullName?: string | null; email: string };
-};
+import { fetchAdminBugReports, reviewAdminBugReport } from '@/features/admin/adminBugReportsSlice';
 
 export default function AdminBugReportsPage() {
-  const [items, setItems] = useState<BugReport[]>([]);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [rewards, setRewards] = useState<Record<string, number>>({});
-  const [loadingId, setLoadingId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { items, loadingId, error } = useAppSelector((state) => state.adminBugReports);
 
-  const load = async () => {
-    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-    const res = await fetch(`${API_URL}/admin/bug-reports`, { headers: { Authorization: `Bearer ${token}` } });
-    if (res.ok) setItems(await res.json());
-  };
-
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    dispatch(fetchAdminBugReports());
+  }, [dispatch]);
 
   const review = async (id: string, status: 'REWARDED' | 'REJECTED') => {
     if (loadingId) return;
 
-    setLoadingId(id);
-    setError(null);
-
     try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const response = await fetch(`${API_URL}/admin/bug-reports/${id}/review`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status, rewardSats: rewards[id] || 0, adminNotes: notes[id] || '' }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to review bug report.');
-      }
-
-      await load();
-    } catch (err: any) {
-      setError(err.message || 'Failed to review bug report.');
-    } finally {
-      setLoadingId(null);
+      await dispatch(reviewAdminBugReport({ id, status, rewardSats: rewards[id] || 0, adminNotes: notes[id] || '' })).unwrap();
+      dispatch(fetchAdminBugReports());
+    } catch {
     }
   };
 

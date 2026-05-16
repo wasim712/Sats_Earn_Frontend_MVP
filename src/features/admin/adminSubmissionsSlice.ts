@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -71,13 +72,13 @@ export const fetchPendingSubmissions = createAsyncThunk(
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch(`${API_URL}/admin/submissions/pending`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/submissions/pending`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
 
       if (!response.ok) {
         throw new Error(data.error || data.message || 'Failed to fetch pending submissions');
@@ -101,7 +102,7 @@ export const reviewSubmission = createAsyncThunk(
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch(`${API_URL}/admin/submissions/${id}/review`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/submissions/${id}/review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ export const reviewSubmission = createAsyncThunk(
         body: JSON.stringify({ status, rejectionReason }),
       });
 
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
 
       if (!response.ok) {
         throw new Error(data.error || data.message || 'Failed to review submission');

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -19,6 +20,19 @@ const initialState: AdminNotificationsState = {
   error: null,
 };
 
+function normalizeAdminNotifications(data: unknown): AdminNotification[] {
+  if (Array.isArray(data)) return data as AdminNotification[];
+
+  if (data && typeof data === 'object') {
+    const payload = data as { data?: unknown; notifications?: unknown; items?: unknown };
+    if (Array.isArray(payload.data)) return payload.data as AdminNotification[];
+    if (Array.isArray(payload.notifications)) return payload.notifications as AdminNotification[];
+    if (Array.isArray(payload.items)) return payload.items as AdminNotification[];
+  }
+
+  return [];
+}
+
 const getToken = (state: RootState) => state.auth.token || sessionStorage.getItem('sats_token');
 
 export const fetchAdminNotifications = createAsyncThunk(
@@ -26,12 +40,12 @@ export const fetchAdminNotifications = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/notifications`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
+      const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch notifications.');
-      return data as AdminNotification[];
+      return normalizeAdminNotifications(data);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -43,12 +57,12 @@ export const markAllAdminNotificationsRead = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/notifications/read-all`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/notifications/read-all`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
-        const data = await response.json();
+        const data = await parseObfuscatedJson<any>(response);
         throw new Error(data.error || 'Failed to mark all notifications as read.');
       }
       return true;
@@ -63,12 +77,12 @@ export const markAdminNotificationRead = createAsyncThunk(
   async (id: string, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/admin/notifications/${id}/read`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
-        const data = await response.json();
+        const data = await parseObfuscatedJson<any>(response);
         throw new Error(data.error || 'Failed to mark notification as read.');
       }
       return id;

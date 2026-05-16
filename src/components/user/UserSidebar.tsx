@@ -33,24 +33,41 @@ interface NotificationItem {
   isRead?: boolean;
 }
 
+function isNotificationArray(value: unknown): value is NotificationItem[] {
+  return Array.isArray(value);
+}
+
 function normalizeNotificationsResponse(data: unknown): NotificationItem[] {
-  if (Array.isArray(data)) {
-    return data as NotificationItem[];
+  if (isNotificationArray(data)) {
+    return data;
   }
 
   if (data && typeof data === 'object') {
-    const payload = data as { notifications?: unknown; data?: unknown; items?: unknown };
+    const payload = data as { notifications?: unknown; data?: unknown; items?: unknown; results?: unknown };
 
-    if (Array.isArray(payload.notifications)) {
-      return payload.notifications as NotificationItem[];
+    if (isNotificationArray(payload.notifications)) {
+      return payload.notifications;
     }
 
-    if (Array.isArray(payload.data)) {
-      return payload.data as NotificationItem[];
+    if (isNotificationArray(payload.data)) {
+      return payload.data;
     }
 
-    if (Array.isArray(payload.items)) {
-      return payload.items as NotificationItem[];
+    if (isNotificationArray(payload.items)) {
+      return payload.items;
+    }
+
+    if (isNotificationArray(payload.results)) {
+      return payload.results;
+    }
+
+    if (payload.data && typeof payload.data === 'object') {
+      const nested = payload.data as { notifications?: unknown; items?: unknown; results?: unknown; data?: unknown };
+
+      if (isNotificationArray(nested.notifications)) return nested.notifications;
+      if (isNotificationArray(nested.items)) return nested.items;
+      if (isNotificationArray(nested.results)) return nested.results;
+      if (isNotificationArray(nested.data)) return nested.data;
     }
   }
 
@@ -65,7 +82,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
   // --- FETCH UNREAD ALERTS ---
   const fetchUnreadCount = async () => {
     try {
-      const notifications = Array.isArray(notificationsData)
+      const notifications = isNotificationArray(notificationsData)
         ? notificationsData
         : normalizeNotificationsResponse(notificationsData);
       const unread = notifications.filter((notification) => !notification.isRead).length;

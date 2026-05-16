@@ -1,5 +1,6 @@
  import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -33,12 +34,12 @@ export const fetchAllAnnouncements = createAsyncThunk(
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       if (!token) throw new Error('No authentication token found');
       
-      const response = await fetch(`${API_URL}/admin/announcements`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/announcements`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to fetch announcements');
+      const data = await parseObfuscatedJson<Announcement[] | { error?: string }>(response);
+      if (!response.ok) throw new Error((data as { error?: string }).error || 'Failed to fetch announcements');
       return data as Announcement[];
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -53,7 +54,7 @@ export const toggleAnnouncementStatus = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/announcements/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/announcements/${id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ export const toggleAnnouncementStatus = createAsyncThunk(
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await parseObfuscatedJson<{ error?: string }>(response);
         throw new Error(data.error || 'Failed to update announcement');
       }
       return { id, isActive }; 
@@ -80,13 +81,13 @@ export const deleteAnnouncement = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/announcements/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/announcements/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await parseObfuscatedJson<{ error?: string }>(response);
         throw new Error(data.error || 'Failed to delete announcement');
       }
       return id; 
@@ -103,7 +104,7 @@ export const createAnnouncement = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/announcements`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/announcements`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -112,9 +113,9 @@ export const createAnnouncement = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
-      if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create announcement');
-      return resData as Announcement; 
+      const resData = await parseObfuscatedJson<Announcement | { error?: string; message?: string; announcement?: Announcement }>(response);
+      if (!response.ok) throw new Error((resData as { error?: string; message?: string }).error || (resData as { error?: string; message?: string }).message || 'Failed to create announcement');
+      return ((resData as { announcement?: Announcement }).announcement || resData) as Announcement; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -128,7 +129,7 @@ export const updateAnnouncement = createAsyncThunk(
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       
-      const response = await fetch(`${API_URL}/admin/announcements/${id}`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/announcements/${id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -137,9 +138,9 @@ export const updateAnnouncement = createAsyncThunk(
         body: JSON.stringify(data),
       });
 
-      const resData = await response.json();
-      if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to update announcement');
-      return resData as Announcement; 
+      const resData = await parseObfuscatedJson<Announcement | { error?: string; message?: string; announcement?: Announcement }>(response);
+      if (!response.ok) throw new Error((resData as { error?: string; message?: string }).error || (resData as { error?: string; message?: string }).message || 'Failed to update announcement');
+      return ((resData as { announcement?: Announcement }).announcement || resData) as Announcement; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
