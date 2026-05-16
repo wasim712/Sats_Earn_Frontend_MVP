@@ -10,7 +10,7 @@ import type { Campaign, AdminTask } from '@/types/admin';
 import { 
   ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Trash2, 
   BarChart3, Activity, CheckCircle2, Clock, XCircle, Medal, 
-  Zap, Target, Crown, Users, Plus, Check
+  Zap, Target, Crown, Users, Plus, Check, CalendarDays, Clock3
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -86,6 +86,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [successMessage, setSuccessMessage] = useState("Update Successful");
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -163,6 +164,24 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }));
   };
 
+  const filteredCountries = countries.filter((country) =>
+    country.toLowerCase().includes(countrySearch.trim().toLowerCase())
+  );
+
+  const handleSelectAllCountries = () => {
+    setEditForm((prev) => ({
+      ...prev,
+      targetCountries: [...countries],
+    }));
+  };
+
+  const handleClearAllCountries = () => {
+    setEditForm((prev) => ({
+      ...prev,
+      targetCountries: [],
+    }));
+  };
+
   useEffect(() => {
     if (countries.length === 0) {
       dispatch(fetchCountries());
@@ -181,6 +200,16 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CAMPAIGN CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSave = async () => {
     if (!campaign) return;
+
+    if (
+      editForm.doubleRewardsStartAt &&
+      editForm.doubleRewardsEndAt &&
+      new Date(editForm.doubleRewardsEndAt).getTime() < new Date(editForm.doubleRewardsStartAt).getTime()
+    ) {
+      alert('Double rewards end time cannot be earlier than the start time.');
+      return;
+    }
+
     setIsSaving(true);
 
     let coverImageUrl = editForm.coverImageUrl || '';
@@ -484,7 +513,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </div>
 
               {/* Metadata Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-x-8 gap-y-6">
                 <Field title="Campaign Status">
                   {!isEditing ? (
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${campaign.isActive ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-white/5 text-gray-400 border-[#2a2a2a]'}`}>
@@ -547,6 +576,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     )}
                   </Field>
 
+                  <div className="sm:col-span-2">
                   <Field title="Target Countries">
                     {!isEditing ? (
                       <div className="flex flex-wrap gap-2">
@@ -557,9 +587,36 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         )) : <span className="text-gray-500 text-sm">All countries</span>}
                       </div>
                     ) : (
-                      <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 max-h-56 overflow-y-auto">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                          {countries.map((country) => {
+                      <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 space-y-4 col-span-2 w-full">
+                        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+                          <input
+                            type="text"
+                            value={countrySearch}
+                            onChange={(e) => setCountrySearch(e.target.value)}
+                            placeholder="Search countries..."
+                            className="flex-1 bg-black border border-[#1a1a1a] text-white text-sm font-medium px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500/50 transition-all"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={handleSelectAllCountries}
+                              className="px-4 py-3 rounded-xl border border-sats-orange-500/30 bg-sats-orange-500/10 text-sats-orange-400 text-xs font-bold hover:bg-sats-orange-500/20 transition-all"
+                            >
+                              Select All
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleClearAllCountries}
+                              className="px-4 py-3 rounded-xl border border-[#2a2a2a] bg-[#111] text-gray-300 text-xs font-bold hover:border-[#3a3a3a] transition-all"
+                            >
+                              Deselect All
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="max-h-56 overflow-y-auto pr-1">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+                          {filteredCountries.map((country) => {
                             const selected = editForm.targetCountries?.includes(country);
                             return (
                               <button
@@ -572,11 +629,17 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               </button>
                             );
                           })}
+                          </div>
+                          {filteredCountries.length === 0 && (
+                            <p className="text-sm text-gray-500 py-4 text-center">No countries found.</p>
+                          )}
                         </div>
                       </div>
                     )}
                   </Field>
+                  </div>
 
+                <div className="sm:col-span-2">
                 <Field title="Campaign Economics">
                   {!isEditing ? (
                     <div className="space-y-1">
@@ -587,7 +650,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       )}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-5">
+                      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-5 items-start">
                         {/* Max Users */}
                         <div>
                           <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
@@ -633,36 +697,34 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             2x All Tier Rewards
                           </button>
                         </div>
+                      </div>
 
-                        {/* Double Rewards Start */}
-                        <div>
-                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                            Double Rewards Start Date
-                          </label>
-                          <input 
-                            type="datetime-local" 
-                            value={typeof editForm.doubleRewardsStartAt === 'string' ? editForm.doubleRewardsStartAt.slice(0,16) : ''} 
-                            onChange={e => setEditForm({...editForm, doubleRewardsStartAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
-                            className={inputCls} 
-                          />
-                        </div>
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-5 items-start">
+                            <div>
+                              <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                                Double Rewards Start Date
+                              </label>
+                              <DateTimePickerInput
+                                value={editForm.doubleRewardsStartAt || ''}
+                                onChange={(val) => setEditForm({ ...editForm, doubleRewardsStartAt: val })}
+                              />
+                            </div>
 
-                        {/* Double Rewards End */}
-                        <div>
-                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                            Double Rewards End Date
-                          </label>
-                          <input 
-                            type="datetime-local" 
-                            value={typeof editForm.doubleRewardsEndAt === 'string' ? editForm.doubleRewardsEndAt.slice(0,16) : ''} 
-                            onChange={e => setEditForm({...editForm, doubleRewardsEndAt: e.target.value ? new Date(e.target.value).toISOString() : ''})} 
-                            className={inputCls} 
-                          />
-                        </div>
-
+                            {/* Double Rewards End */}
+                            <div>
+                              <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                                Double Rewards End Date
+                              </label>
+                              <DateTimePickerInput
+                                value={editForm.doubleRewardsEndAt || ''}
+                                onChange={(val) => setEditForm({ ...editForm, doubleRewardsEndAt: val })}
+                              />
+                            </div>
+                      </div>
                       </div>
                   )}
                 </Field>
+                </div>
                 
                 {/* TIER MATRIX */}
                 <div className="col-span-full mt-4 pt-6 border-t border-[#1a1a1a]">
@@ -962,5 +1024,128 @@ function AnalyticStatCard({ title, value, icon, color }: { title: string, value:
     </div>
   );
 }
+// ─── DateTime helpers ────────────────────────────────────────────────────────
 
+function toLocalDateValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getTodayDateValue() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return toLocalDateValue(today);
+}
+
+function parseDateTimeValue(value: string) {
+  if (!value) {
+    return { date: '', hour: '12', minute: '00', period: 'AM' as 'AM' | 'PM' };
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return { date: '', hour: '12', minute: '00', period: 'AM' as 'AM' | 'PM' };
+  }
+  const hours24 = parsed.getHours();
+  const period = hours24 >= 12 ? 'PM' : 'AM';
+  const hour12 = hours24 % 12 || 12;
+  return {
+    date: toLocalDateValue(parsed),
+    hour: String(hour12).padStart(2, '0'),
+    minute: String(parsed.getMinutes()).padStart(2, '0'),
+    period,
+  };
+}
+
+function buildDateTimeIso(date: string, hour: string, minute: string, period: 'AM' | 'PM') {
+  if (!date) return '';
+  const [year, month, day] = date.split('-').map(Number);
+  if (!year || !month || !day) return '';
+  let hours24 = Number(hour) % 12;
+  if (period === 'PM') hours24 += 12;
+  if (period === 'AM' && Number(hour) === 12) hours24 = 0;
+  return new Date(year, month - 1, day, hours24, Number(minute), 0, 0).toISOString();
+}
+
+function getDatePart(value?: string | null) {
+  if (!value) return '';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+  return toLocalDateValue(parsed);
+}
+
+function DateTimePickerInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const today = getTodayDateValue();
+  const parts = parseDateTimeValue(value);
+
+  const updateValue = (next: Partial<typeof parts>) => {
+    const merged = { ...parts, ...next };
+    onChange(buildDateTimeIso(merged.date, merged.hour, merged.minute, merged.period as 'AM' | 'PM'));
+  };
+
+  return (
+    <div className="rounded-xl border border-[#2a2a2a] bg-[#111] p-3.5 shadow-inner">
+      <div className="flex flex-col gap-2.5">
+        {/* Date — full width native picker */}
+        <div className="relative">
+          <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sats-orange-400 z-10" />
+          <input
+            type="date"
+            min={value ? getDatePart(value) || today : today}
+            value={parts.date}
+            onChange={(e) => updateValue({ date: e.target.value })}
+            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-10 pr-3 text-sm font-medium text-white outline-none transition-all hover:border-[#3a3a3a] focus:border-sats-orange-500/50 [color-scheme:dark]"
+          />
+        </div>
+
+        {/* Time — three selects */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="relative">
+            <Clock3 className="pointer-events-none absolut  text-sky-400 z-10 md:hidden" />
+            <select
+              value={parts.hour}
+              onChange={(e) => updateValue({ hour: e.target.value })}
+              className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-8 pr-2 text-sm font-bold text-white outline-none focus:border-sats-orange-500/50 cursor-pointer"
+            >
+              {Array.from({ length: 12 }, (_, i) => {
+                const h = String(i + 1).padStart(2, '0');
+                return <option key={h} value={h}>{h}</option>;
+              })}
+            </select>
+          </div>
+          <select
+            value={parts.minute}
+            onChange={(e) => updateValue({ minute: e.target.value })}
+            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-bold text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
+          >
+            {['00','05','10','15','20','25','30','35','40','45','50','55'].map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select
+            value={parts.period}
+            onChange={(e) => updateValue({ period: e.target.value as 'AM' | 'PM' })}
+            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-black text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
+          >
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+
+        <p className="text-[10px] text-gray-500 font-medium px-1">
+          Choose the date first, then set the exact time for the 2x rewards window.
+        </p>
+
+        {/* Preview */}
+        {parts.date && (
+          <p className="text-[10px] text-white/25 font-medium px-1">
+            {new Date(buildDateTimeIso(parts.date, parts.hour, parts.minute, parts.period as 'AM' | 'PM'))
+              .toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 const inputCls = "w-full bg-[#111] border border-[#2a2a2a] text-white text-sm font-medium px-4 py-2.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#151515] transition-all";

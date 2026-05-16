@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
+import { obfuscatedFetch, obfuscatedJsonRequest, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 import {
   mapSubmissionStatusToTaskStatus,
   PageSkeleton,
@@ -61,13 +62,13 @@ export default function CampaignDetailsPage() {
         const token =
           sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
-        const response = await fetch(`${API_URL}/users/campaigns/${campaignId}`, {
+        const response = await obfuscatedFetch(`${API_URL}/users/campaigns/${campaignId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!response.ok) throw new Error('Failed to fetch campaign details.');
 
-        const data: Campaign = await response.json();
+        const data: Campaign = await parseObfuscatedJson<Campaign>(response);
         setCampaign(data);
 
         // Pre-populate task statuses from campaign response
@@ -85,11 +86,11 @@ export default function CampaignDetailsPage() {
         if (!hasAnyEmbedded && data.tasks?.length) {
           const statusFetches = data.tasks.map(async (task) => {
             try {
-              const r = await fetch(`${API_URL}/users/tasks/${task.id}/status`, {
+              const r = await obfuscatedFetch(`${API_URL}/users/tasks/${task.id}/status`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               if (!r.ok) return;
-              const s = await r.json();
+              const s = await parseObfuscatedJson<{ status?: string }>(r);
               const mapped = mapSubmissionStatusToTaskStatus(s?.status);
               setTaskStatuses((prev) => ({ ...prev, [task.id]: mapped }));
             } catch {
@@ -155,8 +156,8 @@ export default function CampaignDetailsPage() {
         fetchOptions.body = JSON.stringify({ triggerVerification: true });
       }
 
-      const response = await fetch(`${API_URL}/users/tasks/${taskId}/submit`, fetchOptions);
-      const data = await response.json();
+      const response = await obfuscatedFetch(`${API_URL}/users/tasks/${taskId}/submit`, fetchOptions);
+      const data = await parseObfuscatedJson<{ error?: string; status?: string; submissionId?: string; message?: string }>(response);
 
       if (!response.ok) throw new Error(data.error || 'Submission failed.');
 

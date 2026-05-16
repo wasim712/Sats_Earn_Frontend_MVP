@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { UserSubmissionHistoryItem } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -8,6 +9,30 @@ interface UserSubmissionsState {
   items: UserSubmissionHistoryItem[];
   isLoading: boolean;
   error: string | null;
+}
+
+function normalizeSubmissionsResponse(data: unknown): UserSubmissionHistoryItem[] {
+  if (Array.isArray(data)) {
+    return data as UserSubmissionHistoryItem[];
+  }
+
+  if (data && typeof data === 'object') {
+    const payload = data as { data?: unknown; items?: unknown; submissions?: unknown };
+
+    if (Array.isArray(payload.data)) {
+      return payload.data as UserSubmissionHistoryItem[];
+    }
+
+    if (Array.isArray(payload.items)) {
+      return payload.items as UserSubmissionHistoryItem[];
+    }
+
+    if (Array.isArray(payload.submissions)) {
+      return payload.submissions as UserSubmissionHistoryItem[];
+    }
+  }
+
+  return [];
 }
 
 const initialState: UserSubmissionsState = {
@@ -23,16 +48,14 @@ export const fetchUserSubmissions = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/submissions`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/submissions`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error('Failed to load submission history');
-      return (await response.json()) as UserSubmissionHistoryItem[];
+      return normalizeSubmissionsResponse(data);
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to load submission history');
     }

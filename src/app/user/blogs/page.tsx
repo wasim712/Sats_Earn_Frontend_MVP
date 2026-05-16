@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AlertTriangle, ArrowLeft, BookOpen, Search, Sparkles } from 'lucide-react';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 import { BlogSidebarList } from '@/components/user/content/BlogSidebarList';
 import {
   USER_API_URL,
@@ -26,15 +27,9 @@ export default function UserBlogsPage() {
       setError(null);
 
       const token = getStoredUserToken();
-      const response = await fetch(`${USER_API_URL}/users/blogs`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${USER_API_URL}/users/blogs`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.error || data?.message || 'Failed to load blog posts.');
-      }
 
       const safeData = Array.isArray(data) ? data : [];
       setBlogs(safeData);

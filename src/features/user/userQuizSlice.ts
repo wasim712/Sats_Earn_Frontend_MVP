@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { TodayQuiz, QuizResult } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 interface UserQuizState {
   quiz: TodayQuiz | null;
@@ -26,9 +27,7 @@ export const fetchTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-      const response = await fetch(`${API_URL}/users/quiz/today`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || data.message || 'Failed to fetch quiz');
+      const data = await obfuscatedJsonRequest<TodayQuiz>(`${API_URL}/users/quiz/today`, { headers: { Authorization: `Bearer ${token}` } });
       return data as TodayQuiz;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -42,13 +41,11 @@ export const submitTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-      const response = await fetch(`${API_URL}/users/quiz/today/submit`, {
+      const data = await obfuscatedJsonRequest<QuizResult>(`${API_URL}/users/quiz/today/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ answers }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || data.message || 'Failed to submit quiz');
       return data as QuizResult;
     } catch (error: any) {
       return rejectWithValue(error.message);

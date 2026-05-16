@@ -12,6 +12,7 @@ import {
   CircleHelp
 } from 'lucide-react';
 import Image from 'next/image';
+import { useGetUserNotificationsQuery } from '@/store/services/userApi';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -32,25 +33,43 @@ interface NotificationItem {
   isRead?: boolean;
 }
 
+function normalizeNotificationsResponse(data: unknown): NotificationItem[] {
+  if (Array.isArray(data)) {
+    return data as NotificationItem[];
+  }
+
+  if (data && typeof data === 'object') {
+    const payload = data as { notifications?: unknown; data?: unknown; items?: unknown };
+
+    if (Array.isArray(payload.notifications)) {
+      return payload.notifications as NotificationItem[];
+    }
+
+    if (Array.isArray(payload.data)) {
+      return payload.data as NotificationItem[];
+    }
+
+    if (Array.isArray(payload.items)) {
+      return payload.items as NotificationItem[];
+    }
+  }
+
+  return [];
+}
+
 export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, onLogout, user }: UserSidebarProps) => {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
+  const { data: notificationsData, refetch } = useGetUserNotificationsQuery();
 
   // --- FETCH UNREAD ALERTS ---
   const fetchUnreadCount = async () => {
     try {
-      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      if (!token) return;
-
-      const res = await fetch(`${API_URL}/users/notifications`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (res.ok) {
-        const data = await res.json() as NotificationItem[];
-        const unread = data.filter((notification) => !notification.isRead).length;
-        setUnreadCount(unread);
-      }
+      const notifications = Array.isArray(notificationsData)
+        ? notificationsData
+        : normalizeNotificationsResponse(notificationsData);
+      const unread = notifications.filter((notification) => !notification.isRead).length;
+      setUnreadCount(unread);
     } catch (err) {
       console.error("Failed to fetch sidebar notifications count", err);
     }
@@ -61,14 +80,17 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     const interval = setInterval(fetchUnreadCount, 60000); // Poll every 60s
     
     // Listen for custom event from the notifications page to clear badge instantly
-    const handleInstantUpdate = () => fetchUnreadCount();
+    const handleInstantUpdate = () => {
+      refetch();
+      fetchUnreadCount();
+    };
     window.addEventListener('user-notifications-updated', handleInstantUpdate);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener('user-notifications-updated', handleInstantUpdate);
     };
-  }, []);
+  }, [notificationsData, refetch]);
 
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },

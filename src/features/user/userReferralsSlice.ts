@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import type { UserReferralDashboard, UserReferralDashboardView } from '@/types/user';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -18,15 +19,17 @@ const initialState: UserReferralsState = {
 
 const getToken = (state: RootState) => state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
 
-const mapReferralDashboard = (payload: UserReferralDashboard): UserReferralDashboardView => ({
+const mapReferralDashboard = (payload: UserReferralDashboard, activeTier?: string): UserReferralDashboardView => ({
   referralCode: payload.referralCode,
   stats: {
     totalInvited: payload.totalReferrals,
     activeReferrals: payload.activeReferrals,
     inactiveReferrals: payload.inactiveReferrals,
-    lifetimeEarningsSats: 0,
+    lifetimeEarningsSats: payload.lifetimeEarningsSats,
+    referralRewardCapSats: payload.referralRewardCapSats,
   },
   referralsList: payload.referrals,
+  activeTier: payload.activeTier || activeTier,
 });
 
 export const fetchUserReferrals = createAsyncThunk(
@@ -34,7 +37,7 @@ export const fetchUserReferrals = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/referrals`, {
+      const payload = await obfuscatedJsonRequest<UserReferralDashboard>(`${API_URL}/users/referrals`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,9 +45,21 @@ export const fetchUserReferrals = createAsyncThunk(
         },
       });
 
-      if (!response.ok) throw new Error('Failed to load referral data');
-      const payload = (await response.json()) as UserReferralDashboard;
-      return mapReferralDashboard(payload);
+      let activeTier: string | undefined;
+      try {
+        const dashboardPayload = await obfuscatedJsonRequest<any>(`${API_URL}/users/dashboard`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        activeTier = dashboardPayload?.gamification?.activeTier;
+      } catch {
+      }
+
+      return mapReferralDashboard(payload, activeTier);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

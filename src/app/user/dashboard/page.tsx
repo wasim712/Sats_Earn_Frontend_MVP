@@ -88,9 +88,9 @@ export default function UserDashboardPage() {
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // SKELETON LOADER
-  // ══════════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   if (isLoading || !data || !data.balances || !data.gamification) {
     return (
       <div className="space-y-8 animate-pulse pb-20 w-full p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
@@ -208,9 +208,9 @@ export default function UserDashboardPage() {
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // CALCULATED VALUES
-  // ══════════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   const totalLifetimeEarned = (data.balances?.available || 0) + (data.balances?.locked || 0) + (data.balances?.pending || 0); // Mocking total earned
   const currentStreak = data.gamification?.currentStreak || 0;
   const activeTier = data.gamification?.activeTier || 'Basic';
@@ -219,17 +219,16 @@ export default function UserDashboardPage() {
   const unreadStreakReward = notifications.find(
     (notification) => !notification.isRead && notification.title.toLowerCase().includes('streak milestone reward unlocked'),
   );
-  const streakMilestones = [
-    { days: 7, sats: 70 },
-    { days: 21, sats: 210 },
-    { days: 60, sats: 600 },
-    { days: 90, sats: 900 },
-    { days: 180, sats: 1800 },
-    { days: 365, sats: 3650 },
-  ];
-  const nextStreakMilestone = streakMilestones.find((milestone) => currentStreak < milestone.days) || null;
-  const streakProgressMax = nextStreakMilestone?.days || 365;
-  const streakProgressPercent = Math.min((currentStreak / streakProgressMax) * 100, 100);
+  const streakData = data.gamification?.streak;
+  const streakMilestones = streakData?.milestones || [];
+  const lastClaimedStreakMilestone = streakData?.lastClaimedMilestone || data.gamification?.lastClaimedStreakMilestone || 0;
+  const nextStreakMilestone = streakData?.nextMilestone || null;
+  const nextStreakRewardSats = streakData?.nextRewardSats || 0;
+  const streakProgressPercent = streakData?.progressPercent || 0;
+  const currentRunDays = currentStreak;
+  const daysRemainingToNextMilestone = streakData?.daysRemaining || 0;
+  const totalClaimedMilestones = streakData?.claimedMilestonesCount || 0;
+  const totalStreakMilestones = streakData?.totalMilestones || streakMilestones.length;
 
   // Dummy Leaderboard Data
   const dummyLeaderboard = [
@@ -243,14 +242,15 @@ export default function UserDashboardPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
-      {/* ─── 1. HEADER & TOP BADGES ─── */}
+      {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
             Welcome back, <span className="text-blue-400">{getFirstName()}</span>!
           </h1>
           <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium flex items-center gap-2">
-            Let&apos;s earn some rewards today <span className="text-lg">🎯</span>
+            Let&apos;s earn some rewards today <span className="text-lg">
+🎯</span>
           </p>
         </div>
 
@@ -275,7 +275,7 @@ export default function UserDashboardPage() {
         </div>
       </div>
 
-      {/* ─── 2. STATS GRID (4 Cards) ─── */}
+      {/* â”€â”€â”€ 2. STATS GRID (4 Cards) â”€â”€â”€ */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         
         {/* Card 1: Main Balance (The Blue/Orange one from the design) */}
@@ -376,99 +376,126 @@ export default function UserDashboardPage() {
 
       </div>
 
-      {/* ─── 3. STREAK MILESTONES ─── */}
+      {/* 3. STREAK MILESTONES */}
       {unreadStreakReward && (
         <div className="mb-6 rounded-[20px] border border-green-500/20 bg-green-500/10 px-5 py-4 flex items-start gap-3 shadow-[0_0_20px_rgba(34,197,94,0.08)] backdrop-blur-sm transition-all">
           <div className="mt-1 w-3 h-3 rounded-full bg-green-500 animate-pulse shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
           <div>
-            <p className="text-sm font-black text-white tracking-tight">Milestone Unlocked! 🏆</p>
+            <p className="text-sm font-black text-white tracking-tight">Milestone Unlocked!</p>
             <p className="text-sm text-green-100/80 mt-0.5 font-medium">{unreadStreakReward.message}</p>
             <Link href="/user/notifications" className="inline-flex mt-2 text-xs font-bold text-green-400 hover:text-green-300 transition-colors">
-              Claim Reward &rarr;
+              View notification &rarr;
             </Link>
           </div>
         </div>
       )}
 
       <div className="mb-6 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-8 shadow-xl relative overflow-hidden group">
-        {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-sats-orange-500/5 blur-[80px] pointer-events-none" />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#111] border border-[#2a2a2a] flex items-center justify-center shrink-0">
-              <span className="text-xl">🔥</span>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8 relative z-10">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-sats-orange-500/10 border border-sats-orange-500/20 flex items-center justify-center shrink-0">
+              <Flame className="w-5 h-5 text-sats-orange-500" />
             </div>
             <div>
               <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Current Streak</p>
               <h3 className="text-2xl font-black text-white tracking-tight mt-0.5">{currentStreak} <span className="text-gray-400 text-lg">Days</span></h3>
+              <p className="text-xs text-gray-500 font-medium mt-1">
+                {nextStreakMilestone
+                  ? `${daysRemainingToNextMilestone} day${daysRemainingToNextMilestone === 1 ? '' : 's'} to next streak reward`
+                  : 'All streak rewards already unlocked'}
+              </p>
             </div>
           </div>
-          
-          <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-5 py-3 text-left sm:text-right">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
-            <p className="text-sm font-black text-sats-orange-500 mt-1">
-              {nextStreakMilestone
-                ? `${nextStreakMilestone.days} Days • +${nextStreakMilestone.sats.toLocaleString()} Sats`
-                : 'All Rewards Unlocked 🎉'}
-            </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-[420px]">
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
+              <p className="text-sm font-black text-sats-orange-500 mt-1">
+                {nextStreakMilestone
+                  ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats`
+                  : 'All Rewards Unlocked'}
+              </p>
+            </div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Claimed Rewards</p>
+              <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{totalStreakMilestones}</p>
+            </div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Current Run</p>
+              <p className="text-sm font-black text-blue-400 mt-1">{currentRunDays} Day{currentRunDays === 1 ? '' : 's'}</p>
+            </div>
           </div>
         </div>
 
-        {/* ─── THE NEW STEPPER UI ─── */}
-        {/* Added overflow-x-auto so it scrolls beautifully on small mobile screens without squishing */}
-        <div className="relative pt-4 pb-2 overflow-x-auto custom-scrollbar">
-          <div className="min-w-[600px] sm:min-w-full relative px-2">
-            
-            {/* Background Track */}
+        <div className="relative z-10 mb-6">
+          <div className="mb-3 flex items-center justify-between gap-4 text-[11px] font-semibold text-gray-500">
+            <span>Progress to next unclaimed reward</span>
+            <span className="text-sats-orange-400">{Math.round(streakProgressPercent)}%</span>
+          </div>
+          <div className="h-2.5 w-full overflow-hidden rounded-full border border-[#1f1f1f] bg-[#121212]">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-amber-400 to-yellow-300 transition-all duration-700"
+              style={{ width: `${streakProgressPercent}%` }}
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+            <span>{lastClaimedStreakMilestone > 0 ? `${lastClaimedStreakMilestone} days last claimed` : 'Start'}</span>
+            <span>{nextStreakMilestone ? `${nextStreakMilestone} days target` : 'Completed'}</span>
+          </div>
+        </div>
+
+        <div className="relative pt-2 pb-2 overflow-x-auto custom-scrollbar">
+          <div className="min-w-[640px] sm:min-w-full relative px-2">
             <div className="absolute left-4 right-4 top-[15px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
 
-            {/* Active Track Fill */}
-            <div
-              className="absolute left-4 top-[15px] h-1.5 bg-gradient-to-r from-sats-orange-500 to-yellow-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
-              style={{ 
-                // Calculate percentage based on the index of milestones achieved, not raw days
-                width: `calc(${(streakMilestones.findIndex(m => m.days === nextStreakMilestone?.days) > 0 
-                  ? (streakMilestones.findIndex(m => m.days === nextStreakMilestone?.days) / (streakMilestones.length - 1)) * 100 
-                  : currentStreak >= Math.max(...streakMilestones.map(m => m.days)) ? 100 : 0)}% - 2rem)` 
-              }}
-            />
-
-            <div className="flex items-center justify-between relative z-10">
+            <div className="flex items-start justify-between relative z-10 gap-3">
               {streakMilestones.map((milestone) => {
-                const achieved = currentStreak >= milestone.days;
-                const isNext = nextStreakMilestone?.days === milestone.days;
+                const achieved = milestone.claimed;
+                const reachedInCurrentRun = milestone.reachedInCurrentRun;
+                const isNext = milestone.isNext;
+                const cardTone = achieved
+                  ? 'border-emerald-500/30 bg-emerald-500/10'
+                  : reachedInCurrentRun
+                    ? 'border-blue-500/30 bg-blue-500/10'
+                    : isNext
+                      ? 'border-yellow-400/30 bg-yellow-400/10'
+                      : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
-                  <div key={milestone.days} className="flex flex-col items-center gap-3 relative group/node cursor-default w-16">
-                    
-                    {/* The Node */}
+                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[96px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center border-[3px] transition-all duration-500 ${
                         achieved
-                          ? 'bg-[#111] border-sats-orange-500 text-sats-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]'
-                          : isNext
-                            ? 'bg-[#111] border-yellow-400 text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] scale-110'
-                            : 'bg-[#0a0a0a] border-[#2a2a2a] text-gray-600'
+                          ? 'bg-[#111] border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]'
+                          : reachedInCurrentRun
+                            ? 'bg-[#111] border-blue-400 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]'
+                            : isNext
+                              ? 'bg-[#111] border-yellow-400 text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] scale-110'
+                              : 'bg-[#0a0a0a] border-[#2a2a2a] text-gray-600'
                       }`}
                     >
                       {achieved ? (
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      ) : reachedInCurrentRun ? (
+                        <Trophy className="w-4 h-4" />
                       ) : (
                         <span className="text-[10px] font-black">{milestone.days}</span>
                       )}
                     </div>
 
-                    {/* The Text */}
                     <div className="text-center">
-                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-sats-orange-500' : isNext ? 'text-white' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-white' : 'text-gray-500'}`}>
                         {milestone.days} Days
                       </p>
-                      <p className={`text-[10px] font-bold mt-0.5 ${achieved || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
-                        +{ milestone.sats}
+                      <p className={`text-[10px] font-bold mt-0.5 ${achieved || reachedInCurrentRun || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
+                        +{milestone.rewardSats} sats
+                      </p>
+                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-yellow-300/90' : 'text-gray-600'}`}>
+                        {achieved ? 'Claimed' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}
                       </p>
                     </div>
-
                   </div>
                 );
               })}
@@ -476,15 +503,23 @@ export default function UserDashboardPage() {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-[#1a1a1a] flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-sats-orange-500/50" />
-          <p className="text-xs text-gray-500 font-medium">
-            Complete at least <strong className="text-gray-300">1 valid task or quiz</strong> each day to advance your path.
-          </p>
+        <div className="mt-8 pt-4 border-t border-[#1a1a1a] grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="flex items-start gap-2">
+            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sats-orange-500/50 shrink-0" />
+            <p className="text-xs text-gray-500 font-medium">
+              Complete at least <strong className="text-gray-300">1 valid task or quiz</strong> each day to keep your streak moving.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400/50 shrink-0" />
+            <p className="text-xs text-gray-500 font-medium">
+              Streak milestone rewards are <strong className="text-gray-300">awarded automatically once</strong>, so already claimed rewards never become claimable again.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* ─── 4. BOTTOM GRID (Submissions & Extras) ─── */}
+      {/* â”€â”€â”€ 4. BOTTOM GRID (Submissions & Extras) â”€â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
         
         {/* LEFT COLUMN: Recent Submissions */}
@@ -600,7 +635,7 @@ export default function UserDashboardPage() {
   );
 }
 
-// ─── HELPER FUNCTIONS ───
+// â”€â”€â”€ HELPER FUNCTIONS â”€â”€â”€
 
 function getSubmissionStatusUi(status: string) {
   switch (status) {

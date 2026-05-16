@@ -7,6 +7,7 @@ import ReferralHero from '@/components/user/referrals/ReferralHero';
 import ReferralStats from '@/components/user/referrals/ReferralStats';
 import ReferralList from '@/components/user/referrals/ReferralList';
 import ReferralLimits from '@/components/user/referrals/ReferralLimits';
+import ReferralTierCommission from '@/components/user/referrals/ReferralTierCommission';
 import { fetchUserReferrals } from '@/features/user/userReferralsSlice';
 
 export default function ReferralsPage() {
@@ -21,7 +22,8 @@ export default function ReferralsPage() {
   // Determine if the user is on a free tier 
   // (Basic, Copper, Bronze, Silver, Gold are the free tiers based on your previous config)
   const freeTiers = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
-  const isFreeTier = freeTiers.includes((user?.activeTier || 'BASIC').toUpperCase());
+  const activeTier = (data?.activeTier || user?.activeTier || 'BASIC').toUpperCase();
+  const isFreeTier = freeTiers.includes(activeTier);
 
   if (error) {
     return (
@@ -116,14 +118,17 @@ export default function ReferralsPage() {
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards.</p>
       </div>
 
-      <ReferralHero code={data.referralCode} url={referralUrl} />
+      <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} />
       <ReferralStats stats={data.stats} />
-      
-      {/* Conditionally render the Referral Limits component for free tier users */}
-      {isFreeTier && (
-        <ReferralLimits currentReferrals={data.stats?.totalInvited || 0} limit={20} />
-      )}
-      
+
+      <ReferralLimits
+        currentReferrals={data.stats?.totalInvited || 0}
+        isFreeTier={isFreeTier}
+        activeTier={activeTier}
+        rewardCapSats={data.stats?.referralRewardCapSats}
+      />
+      <ReferralTierCommission activeTier={activeTier} />
+
       <ReferralList list={data.referralsList} />
     </div>
   );

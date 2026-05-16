@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Send, ShieldCheck } from 'lucide-react';
 
-export default function ReferralHero({ code, url }: { code: string; url: string }) {
+export default function ReferralHero({ code, url, activeTier }: { code: string; url: string; activeTier?: string }) {
   const [linkCopied, setLinkCopied] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
 
@@ -25,6 +25,26 @@ export default function ReferralHero({ code, url }: { code: string; url: string 
   const waShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n\nUse my link: ' + url)}`;
   const tgShareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
 
+  const shareAnywhere = async () => {
+    const payload = {
+      title: 'SatsEarn Referral',
+      text: `${shareText}\n\nUse my link: ${url}`,
+      url,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        return;
+      } catch {
+      }
+    }
+
+    navigator.clipboard.writeText(payload.text);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
+
   return (
     <div className="relative bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 overflow-hidden group hover:border-sats-orange-500/30 transition-all duration-500">
       
@@ -38,6 +58,12 @@ export default function ReferralHero({ code, url }: { code: string; url: string 
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-white tracking-tight">Share your link</h2>
             <p className="text-gray-400 text-sm font-medium">Your friends get a headstart, and you get rewarded.</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1.5 mt-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-sats-orange-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-sats-orange-400">
+                Current Tier: {activeTier || 'BASIC'}
+              </span>
+            </div>
           </div>
 
           {/* Quick Share Buttons */}
@@ -69,8 +95,17 @@ export default function ReferralHero({ code, url }: { code: string; url: string 
                 <stop offset="1" stopColor="#007DBB"/>
                 </linearGradient>
                 </defs>
-                </svg>
+              </svg>
             </a>
+
+            <button
+              type="button"
+              onClick={shareAnywhere}
+              title="Share Anywhere"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1a1a1a] text-gray-300 hover:border-sats-orange-500/30 hover:text-white transition-all"
+            >
+              <Send className="w-4 h-4" />
+            </button>
           </div>
         </div>
 

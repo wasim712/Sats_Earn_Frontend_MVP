@@ -5,6 +5,7 @@ import {
   Zap, Wallet, Clock, CheckCircle2, AlertTriangle, 
   ArrowRight, Shield, XCircle, ArrowUpRight, Loader2, History
 } from 'lucide-react';
+import { obfuscatedFetch, obfuscatedJsonRequest, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -126,7 +127,8 @@ function WithdrawalSkeleton() {
 export default function UserWithdrawalsPage() {
   const [balances, setBalances] = useState<Balances | null>(null);
   const [history, setHistory] = useState<Withdrawal[]>([]);
-  const [minWithdrawal, setMinWithdrawal] = useState<number>(25000); // Default fallback
+  const [minWithdrawal, setMinWithdrawal] = useState<number | null>(null);
+  const [isWithdrawalConfigured, setIsWithdrawalConfigured] = useState(true);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,29 +149,39 @@ export default function UserWithdrawalsPage() {
 
         // Fetch user dashboard data (for balances), withdrawal history, and platform settings
         const [dashRes, historyRes, settingsRes] = await Promise.all([
-          fetch(`${API_URL}/users/dashboard`, { headers }),
-          fetch(`${API_URL}/users/withdrawals`, { headers }), // Assuming you have this route!
-          fetch(`${API_URL}/users/settings`, { headers })     // Assuming public settings route
+          obfuscatedFetch(`${API_URL}/users/dashboard`, { headers }),
+          obfuscatedFetch(`${API_URL}/users/withdrawals`, { headers }),
+          obfuscatedFetch(`${API_URL}/users/settings`, { headers })
         ]);
 
         if (dashRes.ok) {
-          const dashData = await dashRes.json();
+          const dashData = await parseObfuscatedJson<any>(dashRes);
           setBalances(dashData.balances);
           activeTier = dashData?.gamification?.activeTier;
         }
         
         if (historyRes.ok) {
-          const historyData = await historyRes.json();
-          setHistory(historyData);
+          const historyData = await parseObfuscatedJson<Withdrawal[] | { data?: Withdrawal[] }>(historyRes);
+          setHistory(Array.isArray(historyData) ? historyData : historyData?.data || []);
         }
 
         if (settingsRes.ok) {
-          const settingsData = await settingsRes.json();
+          const settingsData = await parseObfuscatedJson<any>(settingsRes);
           const tierMin = activeTier
             ? settingsData?.tierMinWithdrawalMatrix?.[activeTier]
             : undefined;
-          if (tierMin !== undefined && tierMin !== null) setMinWithdrawal(Number(tierMin));
-          else setError('Minimum withdrawal is not configured for your tier. Please contact admin.');
+          if (tierMin !== undefined && tierMin !== null && !Number.isNaN(Number(tierMin))) {
+            setMinWithdrawal(Number(tierMin));
+            setIsWithdrawalConfigured(true);
+          } else {
+            setMinWithdrawal(null);
+            setIsWithdrawalConfigured(false);
+            setError('Minimum withdrawal is not configured for your tier. Please contact admin.');
+          }
+        } else {
+          setMinWithdrawal(null);
+          setIsWithdrawalConfigured(false);
+          setError('Unable to load withdrawal settings right now. Please try again later.');
         }
 
       } catch (err) {
@@ -192,6 +204,9 @@ export default function UserWithdrawalsPage() {
 
     // Frontend Validations
     if (!balances) return;
+    if (!isWithdrawalConfigured || minWithdrawal === null) {
+      return setError('Minimum withdrawal is not configured for your tier. Please contact admin.');
+    }
     if (withdrawAmount < minWithdrawal) return setError(`Minimum withdrawal is ${minWithdrawal.toLocaleString()} Sats.`);
     if (withdrawAmount > balances.available) return setError("You cannot withdraw more than your available balance.");
     if (!invoice.trim().toLowerCase().startsWith('lnbc')) return setError("Please enter a valid Lightning Network invoice (starts with 'lnbc').");
@@ -200,7 +215,7 @@ export default function UserWithdrawalsPage() {
 
     try {
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const res = await fetch(`${API_URL}/users/withdrawals`, {
+      const data = await obfuscatedJsonRequest<{ withdrawal?: Withdrawal }>(`${API_URL}/users/withdrawals`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -212,17 +227,15 @@ export default function UserWithdrawalsPage() {
         })
       });
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Failed to process withdrawal.");
-
       setSuccess("Withdrawal requested successfully! It is now pending admin review.");
       setAmount('');
       setInvoice('');
       
       // Optimistically update the UI
       setBalances(prev => prev ? { ...prev, available: prev.available - withdrawAmount } : null);
-      setHistory(prev => [data.withdrawal, ...prev]); // Assuming backend returns the new withdrawal
+      if (data.withdrawal) {
+        setHistory(prev => [data.withdrawal as Withdrawal, ...prev]);
+      }
 
     } catch (err: any) {
       setError(err.message);
@@ -318,14 +331,15 @@ export default function UserWithdrawalsPage() {
                 <input 
                   type="text"
                   inputMode='numeric' 
-                  min={minWithdrawal}
+                  min={minWithdrawal || 0}
                   max={balances?.available || 0}
                   value={amount}
                   onChange={(e) =>{
                     const onlyNums = e.target.value.replace(/[^0-9]/g, "");
                      setAmount(onlyNums)}}
-                  placeholder={`Min. ${minWithdrawal.toLocaleString()}`}
+                  placeholder={minWithdrawal !== null ? `Min. ${minWithdrawal.toLocaleString()}` : 'Withdrawal unavailable'}
                   required
+                  disabled={!isWithdrawalConfigured}
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-lg font-black px-4 py-4 pl-12 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"
                 />
               </div>
@@ -339,6 +353,7 @@ export default function UserWithdrawalsPage() {
                 placeholder="lnbc..."
                 required
                 rows={4}
+                disabled={!isWithdrawalConfigured}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm font-mono px-4 py-4 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all resize-none"
               />
               <p className="text-[10px] text-gray-500 mt-2 font-medium">
@@ -348,7 +363,7 @@ export default function UserWithdrawalsPage() {
 
             <button 
               type="submit" 
-              disabled={isSubmitting || balances?.available === 0}
+              disabled={isSubmitting || balances?.available === 0 || !isWithdrawalConfigured || minWithdrawal === null}
               className="w-full flex items-center justify-center gap-2 bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-black text-lg py-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.2)] active:scale-95"
             >
               {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <ArrowUpRight className="w-6 h-6" />}

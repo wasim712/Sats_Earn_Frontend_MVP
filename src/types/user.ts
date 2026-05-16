@@ -60,6 +60,24 @@ export interface UserDashboard {
     isPremium: boolean;
     premiumExpiresAt: string | null;
     currentStreak: number;
+    lastClaimedStreakMilestone?: number | null;
+    streak?: {
+      currentStreak: number;
+      lastClaimedMilestone: number;
+      nextMilestone: number | null;
+      nextRewardSats: number;
+      daysRemaining: number;
+      progressPercent: number;
+      totalMilestones: number;
+      claimedMilestonesCount: number;
+      milestones: Array<{
+        days: number;
+        rewardSats: number;
+        claimed: boolean;
+        reachedInCurrentRun: boolean;
+        isNext: boolean;
+      }>;
+    };
     xpDisplay: string;
     progressPercent: number;
     nextTier?: string | null;
@@ -103,6 +121,7 @@ export interface UserReferralStats {
   activeReferrals: number;
   inactiveReferrals: number;
   lifetimeEarningsSats: number;
+  referralRewardCapSats?: number | null;
 }
 
 export interface UserReferralDashboard {
@@ -110,6 +129,9 @@ export interface UserReferralDashboard {
   totalReferrals: number;
   activeReferrals: number;
   inactiveReferrals: number;
+  lifetimeEarningsSats: number;
+  activeTier?: string;
+  referralRewardCapSats?: number | null;
   referrals: UserReferral[];
 }
 
@@ -117,6 +139,7 @@ export interface UserReferralDashboardView {
   referralCode: string;
   stats: UserReferralStats;
   referralsList: UserReferral[];
+  activeTier?: string;
 }
 
 export interface UserUnlockItem {
@@ -173,4 +196,21 @@ export interface UserSubmissionHistoryItem {
   rewardSats: number;
   xpReward?: number;
   remainingMs: number;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  fullName: string;
+  username: string;
+  avatarUrl: string | null;
+  value: number;
+}
+
+export interface UserLeaderboard {
+  daily: LeaderboardEntry[];
+  weekly: LeaderboardEntry[];
+  monthly: LeaderboardEntry[];
+  streaks: LeaderboardEntry[];
+  generatedAt: string;
 }

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -20,6 +21,30 @@ interface UserNotificationsState {
   error: string | null;
 }
 
+function normalizeNotificationsResponse(data: unknown): UserNotification[] {
+  if (Array.isArray(data)) {
+    return data as UserNotification[];
+  }
+
+  if (data && typeof data === 'object') {
+    const payload = data as { notifications?: unknown; data?: unknown; items?: unknown };
+
+    if (Array.isArray(payload.notifications)) {
+      return payload.notifications as UserNotification[];
+    }
+
+    if (Array.isArray(payload.data)) {
+      return payload.data as UserNotification[];
+    }
+
+    if (Array.isArray(payload.items)) {
+      return payload.items as UserNotification[];
+    }
+  }
+
+  return [];
+}
+
 const initialState: UserNotificationsState = {
   notifications: [],
   isLoading: false,
@@ -34,12 +59,13 @@ export const fetchUserNotifications = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/notifications`, {
+      const response = await obfuscatedFetch(`${API_URL}/users/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to fetch alerts.');
-      return data as UserNotification[];
+      const data = await parseObfuscatedJson<unknown>(response);
+      const errorPayload = data as { error?: string } | null;
+      if (!response.ok) throw new Error(errorPayload?.error || 'Failed to fetch alerts.');
+      return normalizeNotificationsResponse(data);
     } catch (error: unknown) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch alerts.');
     }
@@ -51,7 +77,7 @@ export const markUserNotificationRead = createAsyncThunk(
   async (id: string, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/notifications/${id}/read`, {
+      const response = await obfuscatedFetch(`${API_URL}/users/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -68,7 +94,7 @@ export const markAllUserNotificationsRead = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getToken(getState() as RootState);
-      const response = await fetch(`${API_URL}/users/notifications/read-all`, {
+      const response = await obfuscatedFetch(`${API_URL}/users/notifications/read-all`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });

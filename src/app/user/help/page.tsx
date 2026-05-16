@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { HelpContentSection } from '@/components/user/content/HelpContentSection';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 import {
   USER_API_URL,
   getContentErrorMessage,
@@ -31,15 +32,9 @@ export default function UserHelpPage() {
       setBlogError(null);
 
       const token = getStoredUserToken();
-      const response = await fetch(`${USER_API_URL}/users/blogs`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${USER_API_URL}/users/blogs`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.error || data?.message || 'Failed to load blog posts.');
-      }
 
       setBlogs(Array.isArray(data) ? data : []);
       setBlogState('success');
@@ -56,15 +51,9 @@ export default function UserHelpPage() {
       setFaqError(null);
 
       const token = getStoredUserToken();
-      const response = await fetch(`${USER_API_URL}/users/faqs`, {
+      const data = await obfuscatedJsonRequest<unknown>(`${USER_API_URL}/users/faqs`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.error || data?.message || 'Failed to load FAQs.');
-      }
 
       setFaqs(Array.isArray(data) ? data : []);
       setFaqState('success');
