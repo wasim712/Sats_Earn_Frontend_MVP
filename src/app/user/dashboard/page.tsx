@@ -12,6 +12,7 @@ import Link from 'next/link';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
+import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
 
 export default function UserDashboardPage() {
@@ -19,6 +20,7 @@ export default function UserDashboardPage() {
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
   const { notifications } = useAppSelector((state) => state.userNotifications);
+  const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -29,6 +31,7 @@ export default function UserDashboardPage() {
   useEffect(() => {
     dispatch(fetchUserDashboard());
     dispatch(fetchUserNotifications());
+    dispatch(fetchUserLeaderboard());
   }, [dispatch]);
 
   // --- HELPERS ---
@@ -234,14 +237,7 @@ export default function UserDashboardPage() {
   const totalClaimedMilestones = streakData?.claimedMilestonesCount || 0;
   const totalStreakMilestones = streakData?.totalMilestones || streakMilestones.length;
 
-  // Dummy Leaderboard Data
-  const dummyLeaderboard = [
-    { rank: 1, name: 'beckham2yyy', handle: 'BSC4To...hy1b', amount: '$18.81' },
-    { rank: 2, name: 'yobrosol', handle: 'ENTn1j...jkjh', amount: '$17.06' },
-    { rank: 3, name: 'Vic_Xavy', handle: 'H6moJj...VpJo', amount: '$16.56' },
-    { rank: 4, name: 'katerinaram...', handle: '9cEUXn...vzFU', amount: '$16.17' },
-    { rank: 5, name: 'LadyZeefi', handle: '4uPSfK...f4FD', amount: '$14.36' },
-  ];
+  const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
@@ -583,7 +579,7 @@ export default function UserDashboardPage() {
         {/* RIGHT COLUMN: Account Stats & Leaderboard */}
         <div className="xl:col-span-1 space-y-6">
           
-          {/* Dummy Leaderboard */}
+          {/* Monthly Leaderboard */}
           <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-sats-orange-500/20 rounded-[24px] p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-sats-orange-500/10 blur-[40px] pointer-events-none" />
             
@@ -594,38 +590,45 @@ export default function UserDashboardPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white tracking-tight">Leaderboard</h2>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Top 5 Earners</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Monthly Top Earners</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 relative z-10">
-              {dummyLeaderboard.map((user) => {
+              {monthlyTopEarners.length > 0 ? monthlyTopEarners.map((entry) => {
                 let rankColor = "text-gray-500 bg-[#111] border-[#2a2a2a]";
-                if (user.rank === 1) rankColor = "text-black bg-yellow-500 border-yellow-400";
-                if (user.rank === 2) rankColor = "text-black bg-gray-300 border-gray-200";
-                if (user.rank === 3) rankColor = "text-black bg-[#cd7f32] border-[#b87333]";
+                if (entry.rank === 1) rankColor = "text-black bg-yellow-500 border-yellow-400";
+                if (entry.rank === 2) rankColor = "text-black bg-gray-300 border-gray-200";
+                if (entry.rank === 3) rankColor = "text-black bg-[#cd7f32] border-[#b87333]";
+
+                const displayName = entry.fullName?.trim() || entry.username || 'Anonymous';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return (
-                  <div key={user.rank} className="flex items-center justify-between p-3 bg-[#080808] border border-transparent rounded-[16px] hover:border-[#2a2a2a] hover:bg-[#111] transition-all cursor-default">
+                  <div key={entry.userId} className="flex items-center justify-between p-3 bg-[#080808] border border-transparent rounded-[16px] hover:border-[#2a2a2a] hover:bg-[#111] transition-all cursor-default">
                     <div className="flex items-center gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 border ${rankColor}`}>
-                        {user.rank}
+                        {entry.rank}
                       </div>
                       <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-sats-orange-500 to-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                        {user.name.substring(0, 2).toUpperCase()}
+                        {initials}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white leading-tight">{user.name}</p>
-                        <p className="text-[10px] text-gray-500 font-mono">{user.handle}</p>
+                        <p className="text-sm font-bold text-white leading-tight truncate max-w-[132px]">{displayName}</p>
+                        <p className="text-[10px] text-gray-500 font-mono truncate max-w-[132px]">@{entry.username}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-black text-green-500">{user.amount}</span>
+                      <span className="text-sm font-black text-green-500">{entry.value.toLocaleString()} Sats</span>
                     </div>
                   </div>
                 );
-              })}
+              }) : (
+                <div className="rounded-[16px] border border-dashed border-[#2a2a2a] px-4 py-8 text-center text-sm text-gray-500 bg-[#080808]">
+                  No monthly leaderboard data yet.
+                </div>
+              )}
             </div>
             
             <Link href="/user/leaderboard" className="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#111] text-sm font-bold text-gray-300 hover:text-white hover:bg-[#1a1a1a] transition-colors relative z-10 border border-[#2a2a2a]">
