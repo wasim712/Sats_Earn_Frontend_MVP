@@ -100,9 +100,14 @@ export default function UserDashboardPage() {
             <div className="h-5 w-56 rounded-lg bg-[#0d0d0d]" />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="md:flex flex-wrap items-center gap-3 hidden">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="h-10 w-32 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3 md:hidden">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-8 w-25 rounded-full border border-[#2a2a2a] bg-[#111]" />
             ))}
           </div>
         </div>
@@ -131,7 +136,6 @@ export default function UserDashboardPage() {
                   <div className="w-10 h-10 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)] shadow-[0_0_20px_rgba(255,255,255,0.02)]" />
                   <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
                 </div>
-                <div className="w-5 h-5 rounded-full bg-[linear-gradient(180deg,#161616_0%,#111111_100%)]" />
               </div>
               <div className="h-9 w-32 rounded-xl bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)] mb-3" />
               <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#131313_0%,#1a1a1a_50%,#131313_100%)] mb-6" />

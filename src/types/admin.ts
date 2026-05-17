@@ -185,6 +185,7 @@ export interface AdminUserDetail extends AdminUser {
 export interface AdminQuizQuestion {
   id: string;
   questionText: string;
+  explanation?: string | null;
   options: string[];
   correctAnswer: string;
   order: number;

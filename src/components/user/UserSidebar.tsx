@@ -118,10 +118,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
     { name: 'Referrals', href: '/user/referrals', icon: Users },
     { name: 'Rewards', href: '/user/rewards', icon: Medal },
     // { name: 'Blogs', href: '/user/blogs', icon: BookOpen },
-    { name: 'Help', href: '/user/help', icon: CircleHelp },
     { name: 'Leaderboard', href: '/user/leaderboard', icon: Trophy },
     { name: 'Withdraw', href: '/user/wallet', icon: Wallet },
     { name: 'Settings', href: '/user/settings', icon: Settings },
+    { name: 'Help', href: '/user/help', icon: CircleHelp },
   ];
 
   const getInitials = (name?: string) => {
