@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import {
   CalendarDays,
-  ChevronUp,
   Coins,
   Flame,
   Loader2,
@@ -20,9 +19,9 @@ type LeaderboardTab = 'streaks' | 'earners';
 type EarnersFilter = 'daily' | 'weekly' | 'monthly';
 
 const earnersFilterOptions: Array<{ key: EarnersFilter; label: string }> = [
-  { key: 'daily', label: 'Last 24 Hours' },
+  { key: 'daily', label: '24 Hours' },
   { key: 'weekly', label: 'Weekly' },
-  { key: 'monthly', label: 'This Month' },
+  { key: 'monthly', label: 'Monthly' },
 ];
 
 const tabOptions: Array<{ key: LeaderboardTab; label: string; icon: React.ReactNode }> = [
@@ -107,7 +106,7 @@ function FilterPill({ active, onClick, label }: { active: boolean; onClick: () =
       className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors sm:text-sm ${
         active
           ? 'border-sats-orange-500/30 bg-sats-orange-500/12 text-sats-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.12)]'
-          : 'border-[#222] bg-[#080808] text-gray-500 hover:border-[#333] hover:text-white'
+          : 'border-[#222] bg-[#080808] text-gray-500 hover:border-[#333] hover:bg-[#0f0f0f] hover:text-white'
       }`}
     >
       {label}
@@ -118,10 +117,10 @@ function FilterPill({ active, onClick, label }: { active: boolean; onClick: () =
 function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: LeaderboardTab }) {
   if (entries.length === 0) return null;
 
-  const ordered = [entries[1], entries[0], entries[2]].filter(Boolean) as LeaderboardEntry[];
+  const ordered = [entries[0], entries[1], entries[2]].filter(Boolean) as LeaderboardEntry[];
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-end">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-stretch lg:gap-4">
       {ordered.map((entry) => {
         const style = topRankStyles[entry.rank as 1 | 2 | 3] ?? topRankStyles[3];
         const metricLabel = mode === 'streaks' ? 'Current Streak' : 'Earned';
@@ -131,7 +130,7 @@ function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: L
         return (
           <div
             key={`${mode}-top-${entry.userId}`}
-            className={`rounded-[26px] border bg-[linear-gradient(180deg,rgba(13,13,13,0.96),rgba(7,7,7,0.98))] p-5 transition-colors ${style.border} ${style.glow} ${style.scale}`}
+            className={`rounded-[24px] border bg-[linear-gradient(180deg,rgba(13,13,13,0.96),rgba(7,7,7,0.98))] p-4 transition-colors hover:border-sats-orange-500/25 hover:bg-[linear-gradient(180deg,rgba(16,16,16,0.98),rgba(9,9,9,0.98))] ${style.border} ${style.glow} sm:min-h-[220px] ${style.scale}`}
           >
             <div className="mb-4 flex items-center justify-between gap-3">
               <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-black ${style.badge}`}>
@@ -200,52 +199,35 @@ function LeaderboardRows({ entries, mode }: { entries: LeaderboardEntry[]; mode:
 
   return (
     <div className="overflow-hidden rounded-[24px] border border-[#171717] bg-[linear-gradient(180deg,rgba(10,10,10,0.96),rgba(6,6,6,0.98))]">
-      <div className="hidden grid-cols-[72px,minmax(0,1.4fr),minmax(0,0.9fr),minmax(0,0.8fr)] gap-4 border-b border-[#171717] px-5 py-4 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 md:grid">
+      <div className="hidden grid-cols-[56px,minmax(0,1fr),auto] gap-4 border-b border-[#171717] px-5 py-4 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 md:grid">
         <span>Rank</span>
         <span>User</span>
-        <span>{mode === 'streaks' ? 'Streak Info' : 'Performance'}</span>
         <span className="text-right">{mode === 'streaks' ? 'Days' : 'Sats'}</span>
       </div>
 
       <div className="divide-y divide-[#141414]">
         {restEntries.map((entry, index) => {
-          const trend = getTrendMeta(entry.rank);
           const stripe = index % 2 === 0 ? 'bg-white/[0.01]' : 'bg-transparent';
-          const tasks = getTasksCompleted(entry.rank, entry.value, mode);
-          const secondaryText = mode === 'streaks' ? `Longest: ${entry.value + Math.max(2, 9 - entry.rank)} days` : `${tasks} tasks completed`;
 
           return (
             <div
               key={`${mode}-row-${entry.userId}`}
-              className={`grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-white/[0.02] md:grid-cols-[72px,minmax(0,1.4fr),minmax(0,0.9fr),minmax(0,0.8fr)] md:px-5 ${stripe}`}
+              className={`grid grid-cols-[36px,minmax(0,1fr),auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.03] md:grid-cols-[56px,minmax(0,1fr),auto] md:px-5 ${stripe}`}
             >
               <div className="flex items-center gap-3 md:gap-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#252525] bg-[#0d0d0d] text-sm font-black text-sats-orange-400 md:h-11 md:w-11">
-                  #{entry.rank}
-                </div>
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-gray-500 md:hidden">Rank</span>
+                <div className="text-sm font-black text-gray-400 md:text-base">{entry.rank}</div>
               </div>
 
               <div className="flex items-center gap-3 min-w-0">
                 <Avatar entry={entry} />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-black text-white sm:text-base">{entry.fullName}</p>
-                  <p className="truncate text-xs text-gray-500">@{entry.username}</p>
+                  <p className="mt-1 truncate text-xs text-gray-500">@{entry.username}</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-3 md:justify-start">
-                <div>
-                  <p className="text-sm font-bold text-gray-200">{secondaryText}</p>
-                  <div className={`mt-1 inline-flex items-center gap-1 text-xs font-black ${trend.tone}`}>
-                    <ChevronUp className="h-3.5 w-3.5" />
-                    <span>{trend.text}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-left md:text-right">
-                <p className="text-base font-black text-white">{formatCompactValue(entry.value)}</p>
+              <div className="text-right">
+                <p className="text-base font-black text-sats-orange-400">{formatCompactValue(entry.value)}</p>
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">{mode === 'streaks' ? 'Days' : 'Sats'}</p>
               </div>
             </div>
@@ -315,14 +297,22 @@ export default function UserLeaderboardPage() {
     dispatch(fetchUserLeaderboard());
   }, [dispatch]);
 
+  const sanitizeEntries = (entries: LeaderboardEntry[]) =>
+    entries
+      .filter((entry) => {
+        const username = (entry.username || '').trim().toLowerCase();
+        const fullName = (entry.fullName || '').trim().toLowerCase();
+        return username !== 'admin@satsearn.com' && fullName !== 'admin@satsearn.com' && !username.includes('admin@satsearn.com') && !fullName.includes('admin@satsearn.com');
+      })
+      .map((entry, index) => ({ ...entry, rank: index + 1 }));
+
   const earnersEntries = useMemo(() => {
     if (!data) return [] as LeaderboardEntry[];
-    if (activeEarnersFilter === 'daily') return data.daily;
-    if (activeEarnersFilter === 'weekly') return data.weekly;
-    return data.monthly;
+    const source = activeEarnersFilter === 'daily' ? data.daily : activeEarnersFilter === 'weekly' ? data.weekly : data.monthly;
+    return sanitizeEntries(source);
   }, [data, activeEarnersFilter]);
 
-  const streakEntries = data?.streaks ?? [];
+  const streakEntries = useMemo(() => sanitizeEntries(data?.streaks ?? []), [data]);
   const currentEntries = activeTab === 'streaks' ? streakEntries : earnersEntries;
 
   return (
@@ -350,16 +340,16 @@ export default function UserLeaderboardPage() {
           </div>
         </div>
 
-        <div className="rounded-[28px] border border-[#171717] bg-[linear-gradient(180deg,rgba(9,9,9,0.96),rgba(5,5,5,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:p-5">
-          <div className="flex flex-col gap-4">
-            <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#1f1f1f] bg-[#060606] p-1.5">
+        <div className="p-1 sm:p-2">
+          <div className="flex flex-col items-center gap-4">
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-[#060606] p-1.5">
               {tabOptions.map((tab) => (
                 <SectionPill key={tab.key} active={activeTab === tab.key} onClick={() => setActiveTab(tab.key)} label={tab.label} icon={tab.icon} />
               ))}
             </div>
 
             {activeTab === 'earners' && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 {earnersFilterOptions.map((filter) => (
                   <FilterPill key={filter.key} active={activeEarnersFilter === filter.key} onClick={() => setActiveEarnersFilter(filter.key)} label={filter.label} />
                 ))}
