@@ -409,16 +409,16 @@ export default function UserDashboardPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-[420px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-105">
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
               <p className="text-sm font-black text-sats-orange-500 mt-1">
                 {nextStreakMilestone
                   ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats`
-                  : 'All Rewards Unlocked'}
+                  : 'All Rewards Unlocked'}   
               </p>
             </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
+            <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Claimed Rewards</p>
               <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{totalStreakMilestones}</p>
             </div>
@@ -448,7 +448,7 @@ export default function UserDashboardPage() {
 
         <div className="relative pt-2 pb-2 overflow-x-auto custom-scrollbar">
           <div className="min-w-[640px] sm:min-w-full relative px-2">
-            <div className="absolute left-4 right-4 top-[15px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
+            <div className="absolute left-5 right-4 top-[23px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
 
             <div className="flex items-start justify-between relative z-10 gap-3">
               {streakMilestones.map((milestone) => {
@@ -464,7 +464,7 @@ export default function UserDashboardPage() {
                       : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
-                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[96px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
+                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[120px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center border-[3px] transition-all duration-500 ${
                         achieved
@@ -538,26 +538,30 @@ export default function UserDashboardPage() {
                   const statusUi = getSubmissionStatusUi(submission.status);
                   
                   return (
-                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 group">
+                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row  sm:items-center justify-between gap-4 transition-all duration-300 group grow">
                       <div className="flex items-center gap-4">
                         {/* Minimal Status Icon */}
-                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
+                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center  border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
                           {statusUi.icon}
                         </div>
                         
                         <div>
-                          <h3 className="text-white font-bold text-[15px] leading-snug">{submission.taskTitle}</h3>
+                          <div className='flex  w-full items-center gap-2 '>
+                          <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">{submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}</h3>
+                          <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">{submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}</h3>
+                          
+                          </div>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 20)}...</span>
-                            <span className={`px-2 py-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
-                              {statusUi.label}
-                            </span>
+                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="sm:text-right shrink-0">
-                        <span className="text-base font-black text-green-500">
+                      <div className="sm:text-right  flex-col shrink-0  flex">
+                        <span className={`p-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
+                              {statusUi.label}
+                            </span>
+                        <span className="text-[14px] font-black text-green-500">
                           +{submission.rewardSats.toLocaleString()} Sats
                         </span>
                       </div>

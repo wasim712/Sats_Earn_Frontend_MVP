@@ -82,6 +82,18 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   const [calendarYear, setCalendarYear] = useState<number>(today.getFullYear());
   const calendarRef = useRef<HTMLDivElement>(null);
 
+  const handleRequestClose = () => {
+    if (isEditMode) {
+      onClose();
+      return;
+    }
+
+    const shouldClose = window.confirm('Are you sure you want to cancel? It will not save the current quiz.');
+    if (shouldClose) {
+      onClose();
+    }
+  };
+
   // Sync state when modal opens
   useEffect(() => {
     if (!isOpen) return;
@@ -260,7 +272,6 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className={`w-full ${modalWidthClass} flex flex-col bg-[#050505] border border-[#1a1a1a] rounded-3xl relative shadow-2xl shadow-black transition-all duration-300`}>
         
@@ -276,7 +287,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 {isEditMode ? 'Update the metadata for this campaign.' : 'Configure the metadata and questions.'}
               </p>
             </div>
-            <button onClick={onClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={handleRequestClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -556,7 +567,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
           )}
           <div className="flex gap-4 justify-end">
             <button
-              onClick={onClose}
+              onClick={handleRequestClose}
               className="px-6 py-3 rounded-xl border border-[#1a1a1a] text-gray-400 text-sm font-bold hover:border-gray-600 hover:text-white transition-all"
             >
               Cancel

@@ -70,6 +70,11 @@ const formatDate = (isoString: string) => {
   return new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
+const normalizeCampaignPayload = (data: any) => {
+  if (!data || typeof data !== 'object') return null;
+  return data.campaign || data.data || data.item || data;
+};
+
 export default function SingleCampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const router = useRouter();
@@ -121,7 +126,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 ]);
 
       if (campRes.ok) {
-        const campData = await parseObfuscatedJson<any>(campRes);
+        const rawCampaignData = await parseObfuscatedJson<any>(campRes);
+        const campData = normalizeCampaignPayload(rawCampaignData);
+        if (!campData) {
+          throw new Error('Invalid campaign response received.');
+        }
         setCampaign(campData);
         setEditForm({
           ...campData,

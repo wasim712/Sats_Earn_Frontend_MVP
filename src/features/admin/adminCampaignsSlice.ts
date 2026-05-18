@@ -32,6 +32,20 @@ function normalizeCampaigns(data: unknown): Campaign[] {
   return [];
 }
 
+function normalizeCampaign(data: unknown): Campaign | null {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const payload = data as { campaign?: unknown; data?: unknown; item?: unknown };
+
+  if (payload.campaign && typeof payload.campaign === 'object') return payload.campaign as Campaign;
+  if (payload.data && typeof payload.data === 'object') return payload.data as Campaign;
+  if (payload.item && typeof payload.item === 'object') return payload.item as Campaign;
+
+  return data as Campaign;
+}
+
 // --- THUNKS ---
 
 export const fetchAllCampaigns = createAsyncThunk(
@@ -98,7 +112,9 @@ export const updateCampaign = createAsyncThunk(
 
       const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || 'Failed to update campaign');
-      return resData as Campaign; 
+      const campaign = normalizeCampaign(resData);
+      if (!campaign) throw new Error('Failed to update campaign');
+      return campaign; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -123,7 +139,9 @@ export const createCampaign = createAsyncThunk(
 
       const resData = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(resData.error || resData.message || 'Failed to create campaign');
-      return resData as Campaign; 
+      const campaign = normalizeCampaign(resData);
+      if (!campaign) throw new Error('Failed to create campaign');
+      return campaign; 
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

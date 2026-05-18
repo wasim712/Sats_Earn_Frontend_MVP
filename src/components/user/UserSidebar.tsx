@@ -151,15 +151,17 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
   
   return (
     <>
-      <div 
-        className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden transition-opacity ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
-        onClick={onClose} 
+      <div
+        className={`fixed inset-0 z-40 bg-black/80 backdrop-blur-sm transition-opacity lg:hidden ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={onClose}
+        aria-hidden="true"
       />
 
       <aside 
         className={`group/sidebar fixed top-0 left-0 h-screen bg-sats-black-950 border-r border-sats-black-800 z-50 flex flex-col transition-all duration-300 ease-in-out shadow-[5px_0_30px_rgba(0,0,0,0.5)] 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 
         ${isCollapsed ? 'w-20' : 'w-[280px]'}`}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER SECTION */}
         <div className={`h-24 flex items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>

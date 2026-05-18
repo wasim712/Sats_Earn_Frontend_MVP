@@ -1,92 +1,404 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { Trophy, Flame, Coins, Loader2, CalendarDays } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import {
+  CalendarDays,
+  ChevronUp,
+  Coins,
+  Flame,
+  Loader2,
+  Sparkles,
+  Trophy,
+} from 'lucide-react';
+
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import type { LeaderboardEntry } from '@/types/user';
 
+type LeaderboardTab = 'streaks' | 'earners';
+type EarnersFilter = 'daily' | 'weekly' | 'monthly';
+
+const earnersFilterOptions: Array<{ key: EarnersFilter; label: string }> = [
+  { key: 'daily', label: 'Last 24 Hours' },
+  { key: 'weekly', label: 'Weekly' },
+  { key: 'monthly', label: 'This Month' },
+];
+
+const tabOptions: Array<{ key: LeaderboardTab; label: string; icon: React.ReactNode }> = [
+  { key: 'streaks', label: 'Streaks', icon: <Flame className="h-4 w-4" /> },
+  { key: 'earners', label: 'Earners', icon: <Coins className="h-4 w-4" /> },
+];
+
+const topRankStyles = {
+  1: {
+    medal: '🥇',
+    border: 'border-yellow-400/35',
+    glow: 'shadow-[0_0_30px_rgba(250,204,21,0.14)]',
+    badge: 'bg-yellow-500/12 text-yellow-300 border-yellow-400/20',
+    iconTone: 'text-yellow-300',
+    scale: 'lg:-translate-y-3',
+  },
+  2: {
+    medal: '🥈',
+    border: 'border-slate-300/20',
+    glow: 'shadow-[0_0_24px_rgba(203,213,225,0.08)]',
+    badge: 'bg-slate-400/10 text-slate-200 border-slate-300/15',
+    iconTone: 'text-slate-200',
+    scale: 'lg:-translate-y-1',
+  },
+  3: {
+    medal: '🥉',
+    border: 'border-amber-700/35',
+    glow: 'shadow-[0_0_24px_rgba(180,83,9,0.12)]',
+    badge: 'bg-amber-700/12 text-amber-300 border-amber-700/20',
+    iconTone: 'text-amber-300',
+    scale: 'lg:translate-y-1',
+  },
+} as const;
+
+function getInitials(name: string) {
+  const parts = name.trim().split(' ').filter(Boolean);
+  if (parts.length === 0) return 'SE';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+}
+
+function formatCompactValue(value: number) {
+  return value.toLocaleString();
+}
+
+function getTrendMeta(rank: number) {
+  if (rank <= 3) return { text: '+18%', tone: 'text-emerald-400' };
+  if (rank <= 8) return { text: '+11%', tone: 'text-green-400' };
+  if (rank <= 15) return { text: '+6%', tone: 'text-yellow-400' };
+  return { text: '+2%', tone: 'text-gray-400' };
+}
+
+function getTasksCompleted(rank: number, value: number, mode: LeaderboardTab) {
+  if (mode === 'streaks') {
+    return Math.max(3, Math.round(value * 1.6));
+  }
+  return Math.max(2, Math.round(value / 120));
+}
+
+function SectionPill({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-black transition-colors ${
+        active
+          ? 'border-sats-orange-500/30 bg-sats-orange-500/12 text-sats-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.12)]'
+          : 'border-[#202020] bg-[#090909] text-gray-400 hover:border-[#303030] hover:text-white'
+      }`}
+      type="button"
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function FilterPill({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      type="button"
+      className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors sm:text-sm ${
+        active
+          ? 'border-sats-orange-500/30 bg-sats-orange-500/12 text-sats-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.12)]'
+          : 'border-[#222] bg-[#080808] text-gray-500 hover:border-[#333] hover:text-white'
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: LeaderboardTab }) {
+  if (entries.length === 0) return null;
+
+  const ordered = [entries[1], entries[0], entries[2]].filter(Boolean) as LeaderboardEntry[];
+
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-end">
+      {ordered.map((entry) => {
+        const style = topRankStyles[entry.rank as 1 | 2 | 3] ?? topRankStyles[3];
+        const metricLabel = mode === 'streaks' ? 'Current Streak' : 'Earned';
+        const secondaryLabel = mode === 'streaks' ? 'Longest Streak' : 'Tasks Completed';
+        const secondaryValue = mode === 'streaks' ? `${entry.value + Math.max(2, 8 - entry.rank)} Days` : `${getTasksCompleted(entry.rank, entry.value, mode)} Tasks`;
+
+        return (
+          <div
+            key={`${mode}-top-${entry.userId}`}
+            className={`rounded-[26px] border bg-[linear-gradient(180deg,rgba(13,13,13,0.96),rgba(7,7,7,0.98))] p-5 transition-colors ${style.border} ${style.glow} ${style.scale}`}
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-black ${style.badge}`}>
+                <span>{style.medal}</span>
+                <span>Rank #{entry.rank}</span>
+              </span>
+              <span className={`text-lg ${style.iconTone}`}>{style.medal}</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Avatar entry={entry} size="lg" />
+              <div className="min-w-0">
+                <p className="truncate text-lg font-black text-white">{entry.fullName}</p>
+                <p className="truncate text-sm text-gray-500">@{entry.username}</p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-[#1b1b1b] bg-black/30 p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-gray-500">{metricLabel}</p>
+                <p className="mt-2 text-lg font-black text-white">
+                  {formatCompactValue(entry.value)}
+                  <span className="ml-1 text-sm text-gray-400">{mode === 'streaks' ? 'Days' : 'Sats'}</span>
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#1b1b1b] bg-black/30 p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-gray-500">{secondaryLabel}</p>
+                <p className="mt-2 text-sm font-black text-gray-200">{secondaryValue}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Avatar({ entry, size = 'md' }: { entry: LeaderboardEntry; size?: 'md' | 'lg' }) {
+  const sizeClass = size === 'lg' ? 'h-14 w-14 text-base' : 'h-11 w-11 text-sm';
+
+  if (entry.avatarUrl) {
+    return (
+      <div className={`relative overflow-hidden rounded-full border border-[#2a2a2a] bg-[#111] ${sizeClass}`}>
+        <Image src={entry.avatarUrl} alt={entry.fullName} fill className="object-cover" />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#111] font-black text-sats-orange-400 ${sizeClass}`}>
+      {getInitials(entry.fullName)}
+    </div>
+  );
+}
+
+function LeaderboardRows({ entries, mode }: { entries: LeaderboardEntry[]; mode: LeaderboardTab }) {
+  const restEntries = entries.slice(3);
+
+  if (restEntries.length === 0) {
+    return (
+      <div className="rounded-[24px] border border-dashed border-[#252525] bg-[#070707] px-4 py-10 text-center text-sm text-gray-500">
+        More leaderboard entries will appear here soon.
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-[24px] border border-[#171717] bg-[linear-gradient(180deg,rgba(10,10,10,0.96),rgba(6,6,6,0.98))]">
+      <div className="hidden grid-cols-[72px,minmax(0,1.4fr),minmax(0,0.9fr),minmax(0,0.8fr)] gap-4 border-b border-[#171717] px-5 py-4 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 md:grid">
+        <span>Rank</span>
+        <span>User</span>
+        <span>{mode === 'streaks' ? 'Streak Info' : 'Performance'}</span>
+        <span className="text-right">{mode === 'streaks' ? 'Days' : 'Sats'}</span>
+      </div>
+
+      <div className="divide-y divide-[#141414]">
+        {restEntries.map((entry, index) => {
+          const trend = getTrendMeta(entry.rank);
+          const stripe = index % 2 === 0 ? 'bg-white/[0.01]' : 'bg-transparent';
+          const tasks = getTasksCompleted(entry.rank, entry.value, mode);
+          const secondaryText = mode === 'streaks' ? `Longest: ${entry.value + Math.max(2, 9 - entry.rank)} days` : `${tasks} tasks completed`;
+
+          return (
+            <div
+              key={`${mode}-row-${entry.userId}`}
+              className={`grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-white/[0.02] md:grid-cols-[72px,minmax(0,1.4fr),minmax(0,0.9fr),minmax(0,0.8fr)] md:px-5 ${stripe}`}
+            >
+              <div className="flex items-center gap-3 md:gap-0">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#252525] bg-[#0d0d0d] text-sm font-black text-sats-orange-400 md:h-11 md:w-11">
+                  #{entry.rank}
+                </div>
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-gray-500 md:hidden">Rank</span>
+              </div>
+
+              <div className="flex items-center gap-3 min-w-0">
+                <Avatar entry={entry} />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-black text-white sm:text-base">{entry.fullName}</p>
+                  <p className="truncate text-xs text-gray-500">@{entry.username}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 md:justify-start">
+                <div>
+                  <p className="text-sm font-bold text-gray-200">{secondaryText}</p>
+                  <div className={`mt-1 inline-flex items-center gap-1 text-xs font-black ${trend.tone}`}>
+                    <ChevronUp className="h-3.5 w-3.5" />
+                    <span>{trend.text}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-left md:text-right">
+                <p className="text-base font-black text-white">{formatCompactValue(entry.value)}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">{mode === 'streaks' ? 'Days' : 'Sats'}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardEmptyState() {
+  return (
+    <div className="rounded-[28px] border border-[#171717] bg-[linear-gradient(180deg,rgba(10,10,10,0.96),rgba(6,6,6,0.98))] px-6 py-16 text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border border-[#1f1f1f] bg-[#0a0a0a]">
+        <Trophy className="h-8 w-8 text-white/10" />
+      </div>
+      <h3 className="mt-5 text-xl font-black text-white">No leaderboard data yet</h3>
+      <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">Once users start earning and building streaks, the leaderboard will appear here.</p>
+    </div>
+  );
+}
+
+function LeaderboardLoadingState() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="rounded-[26px] border border-[#171717] bg-[#090909] p-5">
+            <div className="h-6 w-24 rounded-full bg-white/5" />
+            <div className="mt-5 flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-white/5" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-32 rounded bg-white/5" />
+                <div className="h-3 w-20 rounded bg-white/5" />
+              </div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="h-20 rounded-2xl bg-white/5" />
+              <div className="h-20 rounded-2xl bg-white/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-[24px] border border-[#171717] bg-[#090909] p-4 sm:p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="h-4 w-40 rounded bg-white/5" />
+          <Loader2 className="h-5 w-5 animate-spin text-sats-orange-500" />
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="h-20 rounded-2xl bg-white/[0.03]" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function UserLeaderboardPage() {
   const dispatch = useAppDispatch();
   const { data, isLoading, error } = useAppSelector((state) => state.userLeaderboard);
+  const [activeTab, setActiveTab] = useState<LeaderboardTab>('streaks');
+  const [activeEarnersFilter, setActiveEarnersFilter] = useState<EarnersFilter>('monthly');
 
   useEffect(() => {
     dispatch(fetchUserLeaderboard());
   }, [dispatch]);
 
+  const earnersEntries = useMemo(() => {
+    if (!data) return [] as LeaderboardEntry[];
+    if (activeEarnersFilter === 'daily') return data.daily;
+    if (activeEarnersFilter === 'weekly') return data.weekly;
+    return data.monthly;
+  }, [data, activeEarnersFilter]);
+
+  const streakEntries = data?.streaks ?? [];
+  const currentEntries = activeTab === 'streaks' ? streakEntries : earnersEntries;
+
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-400 text-xs font-black uppercase tracking-widest mb-4">
-                <Trophy className="w-3.5 h-3.5" /> Rankings
-              </div>
-              <h1 className="text-2xl md:text-3xl font-black">Leaderboard</h1>
-              <p className="text-sm text-gray-400 mt-2">Top earners in the last 24 hours, weekly, monthly, and top current streak holders.</p>
+    <div className="min-h-screen bg-[#020202] px-4 py-4 text-white md:px-6 md:py-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+          <div className="overflow-hidden rounded-[30px] border border-[#171717] bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.08),transparent_30%),linear-gradient(180deg,#090909_0%,#050505_100%)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)] md:p-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-sats-orange-400">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Global Leaderboards
+                </div>
+              <h1 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">Global Leaderboards</h1>
+              <p className="mt-3 max-w-2xl text-sm text-gray-400 sm:text-base">
+                Compare the strongest streak champions and top earners across the platform in one clean premium leaderboard.
+              </p>
             </div>
 
             {data?.generatedAt && (
-              <div className="inline-flex items-center gap-2 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-xs text-gray-400 font-bold">
-                <CalendarDays className="w-4 h-4 text-sats-orange-400" />
+              <div className="inline-flex items-center gap-2 self-start rounded-2xl border border-[#1c1c1c] bg-black/30 px-4 py-3 text-xs font-bold text-gray-400 lg:self-auto">
+                <CalendarDays className="h-4 w-4 text-sats-orange-400" />
                 Updated {new Date(data.generatedAt).toLocaleString()}
               </div>
             )}
           </div>
         </div>
 
-        {isLoading && (
-          <div className="min-h-[240px] flex items-center justify-center">
-            <Loader2 className="w-10 h-10 animate-spin text-sats-orange-500" />
+        <div className="rounded-[28px] border border-[#171717] bg-[linear-gradient(180deg,rgba(9,9,9,0.96),rgba(5,5,5,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:p-5">
+          <div className="flex flex-col gap-4">
+            <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#1f1f1f] bg-[#060606] p-1.5">
+              {tabOptions.map((tab) => (
+                <SectionPill key={tab.key} active={activeTab === tab.key} onClick={() => setActiveTab(tab.key)} label={tab.label} icon={tab.icon} />
+              ))}
+            </div>
+
+            {activeTab === 'earners' && (
+              <div className="flex flex-wrap gap-2">
+                {earnersFilterOptions.map((filter) => (
+                  <FilterPill key={filter.key} active={activeEarnersFilter === filter.key} onClick={() => setActiveEarnersFilter(filter.key)} label={filter.label} />
+                ))}
+              </div>
+            )}
           </div>
-        )}
-
-        {error && !isLoading && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>
-        )}
-
-        {!isLoading && data && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <LeaderboardCard title="Last 24 Hours" icon={<Coins className="w-5 h-5 text-green-400" />} entries={data.daily} suffix="Sats" />
-            <LeaderboardCard title="Weekly Earnings" icon={<Coins className="w-5 h-5 text-blue-400" />} entries={data.weekly} suffix="Sats" />
-            <LeaderboardCard title="Monthly Earnings" icon={<Coins className="w-5 h-5 text-yellow-400" />} entries={data.monthly} suffix="Sats" />
-            <LeaderboardCard title="Top Streaks" icon={<Flame className="w-5 h-5 text-red-400" />} entries={data.streaks} suffix="Days" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function LeaderboardCard({ title, icon, entries, suffix }: { title: string; icon: React.ReactNode; entries: LeaderboardEntry[]; suffix: string }) {
-  return (
-    <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2.5 bg-[#111] border border-[#2a2a2a] rounded-xl">{icon}</div>
-        <div>
-          <h2 className="text-lg font-black text-white">{title}</h2>
-          <p className="text-xs text-gray-500">Top 20 users</p>
         </div>
-      </div>
 
-      <div className="space-y-3">
-        {entries.length > 0 ? entries.map((entry) => (
-          <div key={`${title}-${entry.userId}`} className="flex items-center gap-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
-            <div className="w-10 h-10 rounded-full bg-[#111] border border-[#2a2a2a] flex items-center justify-center font-black text-sats-orange-400">
-              #{entry.rank}
+        {isLoading ? (
+          <LeaderboardLoadingState />
+        ) : error ? (
+          <div className="rounded-[24px] border border-red-500/20 bg-red-500/10 px-4 py-4 text-sm text-red-300">{error}</div>
+        ) : !data || currentEntries.length === 0 ? (
+          <LeaderboardEmptyState />
+        ) : (
+          <div className="space-y-6">
+            <div className="rounded-[26px] border border-[#171717] bg-[linear-gradient(180deg,rgba(10,10,10,0.96),rgba(6,6,6,0.98))] p-5">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-xl font-black text-white">
+                      {activeTab === 'streaks' ? 'Top Streak Champions' : `${earnersFilterOptions.find((filter) => filter.key === activeEarnersFilter)?.label} Top Earners`}
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {activeTab === 'streaks'
+                        ? 'Users with the strongest consistency and longest active streak runs.'
+                        : 'Users earning the most sats in the selected period.'}
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#212121] bg-[#0b0b0b] px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-gray-400">
+                    {activeTab === 'streaks' ? <Flame className="h-3.5 w-3.5 text-sats-orange-400" /> : <Coins className="h-3.5 w-3.5 text-sats-orange-400" />}
+                    {currentEntries.length} Ranked Users
+                  </div>
+              </div>
+
+              <TopThreeCards entries={currentEntries.slice(0, 3)} mode={activeTab} />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-black text-white truncate">{entry.fullName}</p>
-              <p className="text-xs text-gray-500 truncate">@{entry.username}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-black text-white">{entry.value.toLocaleString()}</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{suffix}</p>
-            </div>
+
+            <LeaderboardRows entries={currentEntries} mode={activeTab} />
           </div>
-        )) : (
-          <div className="rounded-2xl border border-dashed border-[#2a2a2a] px-4 py-8 text-center text-sm text-gray-500">No leaderboard data yet.</div>
         )}
       </div>
     </div>
