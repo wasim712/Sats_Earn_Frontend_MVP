@@ -5,8 +5,9 @@ import type { LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchUserProfile } from '@/features/user/userProfileSlice';
+import { fetchUserProfile, submitPremiumInterest } from '@/features/user/userProfileSlice';
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
+import { syncUserTier } from '@/features/auth/authSlice';
 import { 
   Mail, Phone, MapPin, Calendar, 
   Copy, CheckCircle2, Edit3, ShieldCheck, 
@@ -20,6 +21,7 @@ export default function UserProfilePage() {
   const { data: dashboardData } = useAppSelector((state) => state.userDashboard);
   
   const [copied, setCopied] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -28,11 +30,32 @@ export default function UserProfilePage() {
     }
   }, [dashboardData, dispatch]);
 
+  useEffect(() => {
+    if (!profile?.activeTier) return;
+    dispatch(syncUserTier({
+      activeTier: profile.activeTier,
+      isPremium: profile.isPremium,
+      premiumExpiresAt: profile.premiumExpiresAt || null,
+    }));
+  }, [dispatch, profile?.activeTier, profile?.isPremium, profile?.premiumExpiresAt]);
+
   const handleCopyReferral = () => {
     if (profile?.referralCode) {
       navigator.clipboard.writeText(profile.referralCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleUpgradeClick = async () => {
+    try {
+      setUpgradeLoading(true);
+      const result = await dispatch(submitPremiumInterest({ plan: 'PLATINUM', intent: 'UPGRADE', source: 'profile-page' })).unwrap();
+      alert(result.message);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to send upgrade request.');
+    } finally {
+      setUpgradeLoading(false);
     }
   };
 
@@ -126,6 +149,13 @@ export default function UserProfilePage() {
               className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-white font-bold hover:bg-[#111] hover:border-[#333] transition-all active:scale-[0.98] shadow-sm whitespace-nowrap"
             >
               <Edit3 className="w-4 h-4 text-gray-400" /> Edit Profile
+            </button>
+            <button
+              onClick={handleUpgradeClick}
+              disabled={upgradeLoading}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-xl text-sats-orange-400 font-bold hover:bg-sats-orange-500/15 transition-all active:scale-[0.98] shadow-sm whitespace-nowrap disabled:opacity-60"
+            >
+              <Zap className="w-4 h-4" /> {upgradeLoading ? 'Sending...' : 'Upgrade Tier'}
             </button>
           </div>
         </div>

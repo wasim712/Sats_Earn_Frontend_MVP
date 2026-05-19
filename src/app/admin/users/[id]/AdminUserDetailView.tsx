@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { AdminUserDetail, AdminUserTransaction } from '@/types/admin';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchUserDetail, performUserAction } from '@/features/admin/adminUsersSlice';
+import { fetchUserDetail, performUserAction, updateUserPremium } from '@/features/admin/adminUsersSlice';
 import {
   ArrowLeft,
   ArrowDownToLine,
@@ -28,6 +28,8 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
   const dispatch = useAppDispatch();
   const { selectedUserDetail: detail, detailLoading: loading, detailError: error, actionLoading } = useAppSelector((state) => state.adminUsers);
   const [actionState, setActionState] = useState<ActionState>({ loading: false, error: null });
+  const [premiumTier, setPremiumTier] = useState<'' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER'>('');
+  const [premiumExpiresAt, setPremiumExpiresAt] = useState('');
 
   const fetchDetail = useCallback(async () => {
     await dispatch(fetchUserDetail(userId));
@@ -36,6 +38,12 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
   useEffect(() => {
     fetchDetail();
   }, [fetchDetail]);
+
+  useEffect(() => {
+    if (!detail) return;
+    setPremiumTier((detail.premiumTier as '' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER' | null) || '');
+    setPremiumExpiresAt(detail.premiumExpiresAt ? new Date(detail.premiumExpiresAt).toISOString().slice(0, 16) : '');
+  }, [detail]);
 
   const handleAction = async (action: 'ban' | 'activate' | 'delete') => {
     if (!detail) return;
@@ -58,6 +66,23 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
       setActionState({ loading: false, error: null });
     } catch (actionError) {
       const message = actionError instanceof Error ? actionError.message : 'Action failed';
+      setActionState({ loading: false, error: message });
+    }
+  };
+
+  const handlePremiumSave = async () => {
+    if (!detail) return;
+
+    setActionState({ loading: true, error: null });
+    try {
+      await dispatch(updateUserPremium({
+        userId: detail.id,
+        premiumTier: premiumTier || null,
+        premiumExpiresAt: premiumExpiresAt ? new Date(premiumExpiresAt).toISOString() : null,
+      })).unwrap();
+      setActionState({ loading: false, error: null });
+    } catch (actionError) {
+      const message = actionError instanceof Error ? actionError.message : 'Failed to update premium tier';
       setActionState({ loading: false, error: message });
     }
   };
@@ -117,6 +142,34 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
             <InfoRow label="Tier" value={`${detail.activeTier} ${detail.isPremium ? '(Premium)' : ''}`} />
             <InfoRow label="Premium Expiry" value={detail.premiumExpiresAt ? new Date(detail.premiumExpiresAt).toLocaleString() : '—'} />
             <InfoRow label="Account Active" value={detail.isActive ? 'Yes' : 'No'} />
+            <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4 space-y-3">
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Manual Premium Upgrade</p>
+              <select
+                value={premiumTier}
+                onChange={(e) => setPremiumTier(e.target.value as '' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER')}
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              >
+                <option value="">No Premium</option>
+                <option value="PLATINUM">Platinum</option>
+                <option value="DIAMOND">Diamond</option>
+                <option value="CROWN">Crown</option>
+                <option value="ELITE">Elite</option>
+                <option value="FOUNDER">Founder</option>
+              </select>
+              <input
+                type="datetime-local"
+                value={premiumExpiresAt}
+                onChange={(e) => setPremiumExpiresAt(e.target.value)}
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              />
+              <button
+                onClick={handlePremiumSave}
+                disabled={actionState.loading || actionLoading}
+                className="w-full rounded-xl border border-sats-orange-500/30 bg-sats-orange-500/10 px-4 py-3 text-sm font-bold text-sats-orange-400 hover:bg-sats-orange-500/15 disabled:opacity-60"
+              >
+                Save Premium Tier
+              </button>
+            </div>
           </Panel>
 
           <Panel title="Security & Social" icon={<ShieldAlert className="w-4 h-4" />}>

@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, CheckSquare, CopyPlus, 
   List, Settings, LogOut, X, PanelLeftClose, PanelLeftOpen, Megaphone, Lightbulb,
   MonitorCog, Bell, Bug,
-  ShieldAlert, BookOpen, CircleHelp, Sparkles
+  ShieldAlert, BookOpen, CircleHelp, Sparkles, Crown
 } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '../ui/LogoText';
@@ -112,6 +112,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Alerts', href: '/admin/notifications', icon: Bell, count: unreadCount },
+    { name: 'Premium Requests', href: '/admin/premium-requests', icon: Crown },
     { name: 'Submissions', href: '/admin/submissions', icon: CheckSquare },
     { name: 'Bug Reports', href: '/admin/bug-reports', icon: Bug },
     { type: 'divider', name: 'Campaigns' }, 

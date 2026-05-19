@@ -8,6 +8,13 @@ interface UserProfileState {
   data: UserProfile | null;
   isLoading: boolean;
   error: string | null;
+  premiumRequests: Array<{
+    id: string;
+    plan: string;
+    intent: 'NOTIFY_ME' | 'UPGRADE';
+    status: 'OPEN' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+  }>;
+  premiumMessage: string | null;
 }
 
 function normalizeProfileResponse(data: unknown): UserProfile | null {
@@ -36,6 +43,8 @@ const initialState: UserProfileState = {
   data: null,
   isLoading: false,
   error: null,
+  premiumRequests: [],
+  premiumMessage: null,
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -87,6 +96,51 @@ export const updateUserProfile = createAsyncThunk(
   }
 );
 
+export const submitPremiumInterest = createAsyncThunk(
+  'userProfile/premiumInterest',
+  async (
+    data: { plan: 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER'; intent: 'NOTIFY_ME' | 'UPGRADE'; source?: string },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+
+      return await obfuscatedJsonRequest<{ success: boolean; message: string }>(`${API_URL}/users/premium-interest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchPremiumInterests = createAsyncThunk(
+  'userProfile/fetchPremiumInterests',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+
+      return await obfuscatedJsonRequest<Array<{
+        id: string;
+        plan: string;
+        intent: 'NOTIFY_ME' | 'UPGRADE';
+        status: 'OPEN' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+      }>>(`${API_URL}/users/premium-interest`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const userProfileSlice = createSlice({
   name: 'userProfile',
   initialState,
@@ -120,6 +174,15 @@ const userProfileSlice = createSlice({
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(submitPremiumInterest.fulfilled, (state, action) => {
+        state.premiumMessage = action.payload.message;
+      })
+      .addCase(submitPremiumInterest.rejected, (state, action) => {
+        state.premiumMessage = action.payload as string;
+      })
+      .addCase(fetchPremiumInterests.fulfilled, (state, action) => {
+        state.premiumRequests = Array.isArray(action.payload) ? action.payload : [];
       });
   },
 });

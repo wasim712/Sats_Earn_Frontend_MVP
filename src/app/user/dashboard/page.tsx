@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { syncUserTier } from '@/features/auth/authSlice';
 import { 
   AlertTriangle, CheckCircle2, Clock3, LockKeyhole, XCircle, 
   Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy,
@@ -33,6 +34,15 @@ export default function UserDashboardPage() {
     dispatch(fetchUserNotifications());
     dispatch(fetchUserLeaderboard());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!data?.gamification?.activeTier) return;
+    dispatch(syncUserTier({
+      activeTier: data.gamification.activeTier,
+      isPremium: data.gamification.isPremium,
+      premiumExpiresAt: data.gamification.premiumExpiresAt || null,
+    }));
+  }, [data?.gamification?.activeTier, data?.gamification?.isPremium, data?.gamification?.premiumExpiresAt, dispatch]);
 
   // --- HELPERS ---
   const getFirstName = () => {

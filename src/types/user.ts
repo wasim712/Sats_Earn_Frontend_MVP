@@ -41,6 +41,10 @@ export interface UserProfile {
   discordHandle: string | null;
   referralCode: string;
   createdAt: string;
+  activeTier?: string;
+  isPremium?: boolean;
+  premiumTier?: string | null;
+  premiumExpiresAt?: string | null;
 }
 
 export interface UserBalances {
