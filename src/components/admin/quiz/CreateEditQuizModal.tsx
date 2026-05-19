@@ -38,6 +38,7 @@ function parseDateInput(value: string) {
 interface QuestionInput {
   id: string;
   questionText: string;
+  explanation: string;
   options: string[];
   correctAnswer: string;
 }
@@ -71,7 +72,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   
   // Questions state (Only used in Create mode)
   const [questions, setQuestions] = useState<QuestionInput[]>([
-    { id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }
+    { id: crypto.randomUUID(), questionText: '', explanation: '', options: ['', '', '', ''], correctAnswer: '' }
   ]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,6 +81,18 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   const [calendarMonth, setCalendarMonth] = useState<number>(today.getMonth());
   const [calendarYear, setCalendarYear] = useState<number>(today.getFullYear());
   const calendarRef = useRef<HTMLDivElement>(null);
+
+  const handleRequestClose = () => {
+    if (isEditMode) {
+      onClose();
+      return;
+    }
+
+    const shouldClose = window.confirm('Are you sure you want to cancel? It will not save the current quiz.');
+    if (shouldClose) {
+      onClose();
+    }
+  };
 
   // Sync state when modal opens
   useEffect(() => {
@@ -98,7 +111,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
     } else {
       // CREATE MODE: Reset everything
       setForm({ title: '', date: toLocalDateInputValue(today), rewardSats: 15, xpReward: 0, isActive: false });
-      setQuestions([{ id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
+      setQuestions([{ id: crypto.randomUUID(), questionText: '', explanation: '', options: ['', '', '', ''], correctAnswer: '' }]);
       setCalendarMonth(today.getMonth());
       setCalendarYear(today.getFullYear());
     }
@@ -125,7 +138,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   const setFormField = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const addQuestion = () => setQuestions([...questions, { id: crypto.randomUUID(), questionText: '', options: ['', '', '', ''], correctAnswer: '' }]);
+  const addQuestion = () => setQuestions([...questions, { id: crypto.randomUUID(), questionText: '', explanation: '', options: ['', '', '', ''], correctAnswer: '' }]);
   const removeQuestion = (id: string) => questions.length > 1 && setQuestions(questions.filter(q => q.id !== id));
   const updateQuestion = (id: string, field: keyof QuestionInput, value: string | string[]) => setQuestions(questions.map(q => q.id === id ? { ...q, [field]: value } : q));
   
@@ -235,6 +248,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
           xpReward: Number(form.xpReward),
           questions: questions.map((q, index) => ({
             questionText: q.questionText.trim(),
+            explanation: q.explanation.trim(),
             options: q.options.map(o => o.trim()),
             correctAnswer: q.correctAnswer.trim(),
             order: index + 1
@@ -258,7 +272,6 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className={`w-full ${modalWidthClass} flex flex-col bg-[#050505] border border-[#1a1a1a] rounded-3xl relative shadow-2xl shadow-black transition-all duration-300`}>
         
@@ -274,7 +287,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 {isEditMode ? 'Update the metadata for this campaign.' : 'Configure the metadata and questions.'}
               </p>
             </div>
-            <button onClick={onClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={handleRequestClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -488,8 +501,15 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                             placeholder="Enter your question here..."
                             className="w-full bg-transparent border-b border-[#1a1a1a] focus:border-sats-orange-500 pb-2 text-white font-medium focus:outline-none transition-colors"
                          />
+                         <textarea
+                            value={q.explanation}
+                            onChange={(e) => updateQuestion(q.id, 'explanation', e.target.value)}
+                            placeholder="Optional explanation shown after submission..."
+                            rows={3}
+                            className="mt-3 w-full rounded-2xl border border-[#1a1a1a] bg-[#111] px-4 py-3 text-sm text-gray-200 placeholder:text-gray-600 focus:border-sats-orange-500/40 focus:outline-none transition-colors resize-none"
+                         />
                        </div>
-                    </div>
+                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-12">
                        {q.options.map((opt, optIndex) => {
@@ -547,7 +567,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
           )}
           <div className="flex gap-4 justify-end">
             <button
-              onClick={onClose}
+              onClick={handleRequestClose}
               className="px-6 py-3 rounded-xl border border-[#1a1a1a] text-gray-400 text-sm font-bold hover:border-gray-600 hover:text-white transition-all"
             >
               Cancel

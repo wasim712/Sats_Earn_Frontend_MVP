@@ -17,6 +17,7 @@ import adminCheatReducer from '../features/admin/adminCheatSlice'
 import adminBlogsReducer from '../features/admin/adminBlogsSlice'
 import adminFaqsReducer from '../features/admin/adminFaqsSlice'
 import adminBugReportsReducer from '../features/admin/adminBugReportsSlice'
+import adminPremiumRequestsReducer from '../features/admin/adminPremiumRequestsSlice'
 import userDashboardReducer from '../features/user/userDashboardSlice'
 import userLeaderboardReducer from '../features/user/userLeaderboardSlice'
 import userNotificationsReducer from '../features/user/userNotificationsSlice'
@@ -40,6 +41,7 @@ export const store = configureStore({
     adminBlogs: adminBlogsReducer,
     adminFaqs: adminFaqsReducer,
     adminBugReports: adminBugReportsReducer,
+    adminPremiumRequests: adminPremiumRequestsReducer,
     userQuiz:userQuizReducer,
     userProfile:userProfileReducer,
     userDashboard:userDashboardReducer,

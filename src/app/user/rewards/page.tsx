@@ -1,13 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchPremiumInterests, submitPremiumInterest } from '@/features/user/userProfileSlice';
 import { 
   Flame, Calendar, Shield, Crown, Gem, Zap, 
   TrendingUp, Star, CheckCircle2, Lock,
-  Medal
+  Medal, Info
 } from 'lucide-react';
 
 export default function RewardsPage() {
+  const dispatch = useAppDispatch();
+  const { premiumRequests, premiumMessage } = useAppSelector((state) => state.userProfile);
+  const [loadingKey, setLoadingKey] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   // ─── STREAK MILESTONES DATA ───
   const streakMilestones = [
     { days: 7, sats: 70, title: 'Week Warrior', color: 'from-orange-500/10', border: 'border-orange-500/30', iconColor: 'text-orange-500', badge: 'bg-orange-500/10 text-orange-500' },
@@ -36,6 +42,36 @@ export default function RewardsPage() {
     { name: 'Founder', price: '$249.99/mo', icon: <TrendingUp className="w-6 h-6 text-[#ff4500]" />, color: 'text-[#ff4500]', border: 'border-[#ff4500]/50', bg: 'bg-[#ff4500]/5', perks: ['+150% Bonus Earnings', 'Revenue Share Pool', 'Legendary Status'] },
   ];
 
+  useEffect(() => {
+    dispatch(fetchPremiumInterests());
+  }, [dispatch]);
+
+  const requestMap = useMemo(() => {
+    return premiumRequests.reduce<Record<string, { notify: boolean; upgrade: boolean }>>((acc, request) => {
+      const key = request.plan.toUpperCase();
+      acc[key] = acc[key] || { notify: false, upgrade: false };
+      if (request.intent === 'NOTIFY_ME') acc[key].notify = true;
+      if (request.intent === 'UPGRADE') acc[key].upgrade = true;
+      return acc;
+    }, {});
+  }, [premiumRequests]);
+
+  const handlePremiumAction = async (
+    plan: 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER',
+    intent: 'NOTIFY_ME' | 'UPGRADE',
+  ) => {
+    try {
+      setLoadingKey(`${plan}-${intent}`);
+      const result = await dispatch(submitPremiumInterest({ plan, intent, source: 'rewards-page' })).unwrap();
+      setFeedback({ type: 'success', message: result.message });
+      await dispatch(fetchPremiumInterests());
+    } catch (error) {
+      setFeedback({ type: 'error', message: error instanceof Error ? error.message : 'Failed to submit request.' });
+    } finally {
+      setLoadingKey(null);
+    }
+  };
+
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
@@ -48,6 +84,13 @@ export default function RewardsPage() {
           Level up your account to unlock massive earning multipliers, or maintain your daily streak to earn free bonus sats!
         </p>
       </div>
+
+      {feedback && (
+        <div className={`rounded-2xl border px-4 py-3 text-sm flex items-start gap-3 ${feedback.type === 'success' ? 'border-green-500/20 bg-green-500/10 text-green-300' : 'border-red-500/20 bg-red-500/10 text-red-300'}`}>
+          <Info className="w-5 h-5 shrink-0 mt-0.5" />
+          <span>{feedback.message}</span>
+        </div>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════════════════
           1. STREAK BONUSES SECTION
@@ -161,6 +204,10 @@ export default function RewardsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
           {paidTiers.map((tier) => (
+            (() => {
+              const planKey = tier.name.toUpperCase();
+              const state = requestMap[planKey] || { notify: false, upgrade: false };
+              return (
             <div key={tier.name} className={`relative bg-[#050505] border ${tier.border} rounded-[24px] p-6 flex flex-col justify-between hover:-translate-y-2 transition-all duration-300 group`}>
               {/* Glowing Background Effect */}
               <div className={`absolute inset-0 ${tier.bg} blur-xl rounded-[24px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`} />
@@ -186,10 +233,30 @@ export default function RewardsPage() {
                 </div>
               </div>
 
-              <button className={`relative z-10 w-full py-3 rounded-xl border ${tier.border} ${tier.color} font-bold text-sm hover:bg-white/5 transition-colors`}>
-                Upgrade to {tier.name}
-              </button>
+              <div className="relative z-10 space-y-3">
+                <button
+                  onClick={() => handlePremiumAction(tier.name.toUpperCase() as 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER', 'UPGRADE')}
+                  disabled={loadingKey !== null || state.upgrade}
+                  className={`w-full py-3 rounded-xl border ${tier.border} ${tier.color} font-bold text-sm hover:bg-white/5 transition-colors disabled:opacity-60`}
+                >
+                  {state.upgrade ? 'Upgrade Requested' : loadingKey === `${tier.name.toUpperCase()}-UPGRADE` ? 'Sending...' : `Upgrade to ${tier.name}`}
+                </button>
+                <button
+                  onClick={() => handlePremiumAction(tier.name.toUpperCase() as 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER', 'NOTIFY_ME')}
+                  disabled={loadingKey !== null || state.notify}
+                  className="w-full py-3 rounded-xl border border-[#2a2a2a] text-gray-200 font-bold text-sm hover:bg-white/5 transition-colors disabled:opacity-60"
+                >
+                  {state.notify ? 'Already on Notify List' : loadingKey === `${tier.name.toUpperCase()}-NOTIFY_ME` ? 'Sending...' : 'Notify me'}
+                </button>
+                {(state.upgrade || state.notify) && (
+                  <div className="rounded-xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs text-sats-orange-300 font-medium">
+                    {state.upgrade ? 'Upgrade request submitted. Admin team will contact you manually.' : 'You are on the notify list for this plan.'}
+                  </div>
+                )}
+              </div>
             </div>
+              );
+            })()
           ))}
         </div>
       </div>

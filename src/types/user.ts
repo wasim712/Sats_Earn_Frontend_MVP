@@ -41,6 +41,10 @@ export interface UserProfile {
   discordHandle: string | null;
   referralCode: string;
   createdAt: string;
+  activeTier?: string;
+  isPremium?: boolean;
+  premiumTier?: string | null;
+  premiumExpiresAt?: string | null;
 }
 
 export interface UserBalances {
@@ -154,6 +158,7 @@ export interface UserUnlockItem {
 export interface TodayQuizQuestion {
   id: string;
   questionText: string;
+  explanation?: string | null;
   options: string[];
   order: number;
 }
@@ -177,9 +182,23 @@ export interface QuizResult {
   message: string;
   passed: boolean;
   score: number;
+  totalQuestions?: number;
+  quizTitle?: string;
+  quizDescription?: string;
   rewardEarned: number;
   xpEarned?: number;
   streakBonusSats?: number;
+  submittedAt?: string;
+  review?: Array<{
+    questionId: string;
+    questionText: string;
+    explanation?: string | null;
+    selectedAnswer: string;
+    correctAnswer: string;
+    isCorrect: boolean;
+    options: string[];
+    order: number;
+  }>;
 }
 
 export interface UserWithdrawal {

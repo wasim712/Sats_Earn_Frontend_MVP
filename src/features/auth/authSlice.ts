@@ -199,6 +199,11 @@ const authSlice = createSlice({
       sessionStorage.removeItem('sats_user');
       localStorage.removeItem('sats_token');
       localStorage.removeItem('sats_user');
+    },
+    syncUserTier: (state, action: PayloadAction<Partial<AuthUser>>) => {
+      if (!state.user) return;
+      state.user = { ...state.user, ...action.payload };
+      sessionStorage.setItem('sats_user', JSON.stringify(state.user));
     }
   },
   extraReducers: (builder) => {
@@ -257,5 +262,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthError, goBackToStep1, logout } = authSlice.actions;
+export const { resetAuthError, goBackToStep1, logout, syncUserTier } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { syncUserTier } from '@/features/auth/authSlice';
 import { 
   AlertTriangle, CheckCircle2, Clock3, LockKeyhole, XCircle, 
   Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy,
@@ -12,6 +13,7 @@ import Link from 'next/link';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
+import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
 
 export default function UserDashboardPage() {
@@ -19,6 +21,7 @@ export default function UserDashboardPage() {
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
   const { notifications } = useAppSelector((state) => state.userNotifications);
+  const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -29,7 +32,17 @@ export default function UserDashboardPage() {
   useEffect(() => {
     dispatch(fetchUserDashboard());
     dispatch(fetchUserNotifications());
+    dispatch(fetchUserLeaderboard());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!data?.gamification?.activeTier) return;
+    dispatch(syncUserTier({
+      activeTier: data.gamification.activeTier,
+      isPremium: data.gamification.isPremium,
+      premiumExpiresAt: data.gamification.premiumExpiresAt || null,
+    }));
+  }, [data?.gamification?.activeTier, data?.gamification?.isPremium, data?.gamification?.premiumExpiresAt, dispatch]);
 
   // --- HELPERS ---
   const getFirstName = () => {
@@ -100,9 +113,14 @@ export default function UserDashboardPage() {
             <div className="h-5 w-56 rounded-lg bg-[#0d0d0d]" />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="md:flex flex-wrap items-center gap-3 hidden">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="h-10 w-32 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3 md:hidden">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-8 w-25 rounded-full border border-[#2a2a2a] bg-[#111]" />
             ))}
           </div>
         </div>
@@ -131,7 +149,6 @@ export default function UserDashboardPage() {
                   <div className="w-10 h-10 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)] shadow-[0_0_20px_rgba(255,255,255,0.02)]" />
                   <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
                 </div>
-                <div className="w-5 h-5 rounded-full bg-[linear-gradient(180deg,#161616_0%,#111111_100%)]" />
               </div>
               <div className="h-9 w-32 rounded-xl bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)] mb-3" />
               <div className="h-4 w-24 rounded bg-[linear-gradient(90deg,#131313_0%,#1a1a1a_50%,#131313_100%)] mb-6" />
@@ -230,14 +247,7 @@ export default function UserDashboardPage() {
   const totalClaimedMilestones = streakData?.claimedMilestonesCount || 0;
   const totalStreakMilestones = streakData?.totalMilestones || streakMilestones.length;
 
-  // Dummy Leaderboard Data
-  const dummyLeaderboard = [
-    { rank: 1, name: 'beckham2yyy', handle: 'BSC4To...hy1b', amount: '$18.81' },
-    { rank: 2, name: 'yobrosol', handle: 'ENTn1j...jkjh', amount: '$17.06' },
-    { rank: 3, name: 'Vic_Xavy', handle: 'H6moJj...VpJo', amount: '$16.56' },
-    { rank: 4, name: 'katerinaram...', handle: '9cEUXn...vzFU', amount: '$16.17' },
-    { rank: 5, name: 'LadyZeefi', handle: '4uPSfK...f4FD', amount: '$14.36' },
-  ];
+  const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
@@ -409,16 +419,16 @@ export default function UserDashboardPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-[420px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-105">
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
               <p className="text-sm font-black text-sats-orange-500 mt-1">
                 {nextStreakMilestone
                   ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats`
-                  : 'All Rewards Unlocked'}
+                  : 'All Rewards Unlocked'}   
               </p>
             </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
+            <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Claimed Rewards</p>
               <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{totalStreakMilestones}</p>
             </div>
@@ -448,7 +458,7 @@ export default function UserDashboardPage() {
 
         <div className="relative pt-2 pb-2 overflow-x-auto custom-scrollbar">
           <div className="min-w-[640px] sm:min-w-full relative px-2">
-            <div className="absolute left-4 right-4 top-[15px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
+            <div className="absolute left-5 right-4 top-[23px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
 
             <div className="flex items-start justify-between relative z-10 gap-3">
               {streakMilestones.map((milestone) => {
@@ -464,7 +474,7 @@ export default function UserDashboardPage() {
                       : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
-                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[96px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
+                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[120px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center border-[3px] transition-all duration-500 ${
                         achieved
@@ -538,26 +548,30 @@ export default function UserDashboardPage() {
                   const statusUi = getSubmissionStatusUi(submission.status);
                   
                   return (
-                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 group">
+                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row  sm:items-center justify-between gap-4 transition-all duration-300 group grow">
                       <div className="flex items-center gap-4">
                         {/* Minimal Status Icon */}
-                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
+                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center  border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
                           {statusUi.icon}
                         </div>
                         
                         <div>
-                          <h3 className="text-white font-bold text-[15px] leading-snug">{submission.taskTitle}</h3>
+                          <div className='flex  w-full items-center gap-2 '>
+                          <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">{submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}</h3>
+                          <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">{submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}</h3>
+                          
+                          </div>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 20)}...</span>
-                            <span className={`px-2 py-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
-                              {statusUi.label}
-                            </span>
+                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="sm:text-right shrink-0">
-                        <span className="text-base font-black text-green-500">
+                      <div className="sm:text-right  flex-col shrink-0  flex">
+                        <span className={`p-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
+                              {statusUi.label}
+                            </span>
+                        <span className="text-[14px] font-black text-green-500">
                           +{submission.rewardSats.toLocaleString()} Sats
                         </span>
                       </div>
@@ -579,7 +593,7 @@ export default function UserDashboardPage() {
         {/* RIGHT COLUMN: Account Stats & Leaderboard */}
         <div className="xl:col-span-1 space-y-6">
           
-          {/* Dummy Leaderboard */}
+          {/* Monthly Leaderboard */}
           <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-sats-orange-500/20 rounded-[24px] p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-sats-orange-500/10 blur-[40px] pointer-events-none" />
             
@@ -590,38 +604,45 @@ export default function UserDashboardPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white tracking-tight">Leaderboard</h2>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Top 5 Earners</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Monthly Top Earners</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 relative z-10">
-              {dummyLeaderboard.map((user) => {
+              {monthlyTopEarners.length > 0 ? monthlyTopEarners.map((entry) => {
                 let rankColor = "text-gray-500 bg-[#111] border-[#2a2a2a]";
-                if (user.rank === 1) rankColor = "text-black bg-yellow-500 border-yellow-400";
-                if (user.rank === 2) rankColor = "text-black bg-gray-300 border-gray-200";
-                if (user.rank === 3) rankColor = "text-black bg-[#cd7f32] border-[#b87333]";
+                if (entry.rank === 1) rankColor = "text-black bg-yellow-500 border-yellow-400";
+                if (entry.rank === 2) rankColor = "text-black bg-gray-300 border-gray-200";
+                if (entry.rank === 3) rankColor = "text-black bg-[#cd7f32] border-[#b87333]";
+
+                const displayName = entry.fullName?.trim() || entry.username || 'Anonymous';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return (
-                  <div key={user.rank} className="flex items-center justify-between p-3 bg-[#080808] border border-transparent rounded-[16px] hover:border-[#2a2a2a] hover:bg-[#111] transition-all cursor-default">
+                  <div key={entry.userId} className="flex items-center justify-between p-3 bg-[#080808] border border-transparent rounded-[16px] hover:border-[#2a2a2a] hover:bg-[#111] transition-all cursor-default">
                     <div className="flex items-center gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 border ${rankColor}`}>
-                        {user.rank}
+                        {entry.rank}
                       </div>
                       <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-sats-orange-500 to-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                        {user.name.substring(0, 2).toUpperCase()}
+                        {initials}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white leading-tight">{user.name}</p>
-                        <p className="text-[10px] text-gray-500 font-mono">{user.handle}</p>
+                        <p className="text-sm font-bold text-white leading-tight truncate max-w-[132px]">{displayName}</p>
+                        <p className="text-[10px] text-gray-500 font-mono truncate max-w-[132px]">@{entry.username}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-black text-green-500">{user.amount}</span>
+                      <span className="text-sm font-black text-green-500">{entry.value.toLocaleString()} Sats</span>
                     </div>
                   </div>
                 );
-              })}
+              }) : (
+                <div className="rounded-[16px] border border-dashed border-[#2a2a2a] px-4 py-8 text-center text-sm text-gray-500 bg-[#080808]">
+                  No monthly leaderboard data yet.
+                </div>
+              )}
             </div>
             
             <Link href="/user/leaderboard" className="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#111] text-sm font-bold text-gray-300 hover:text-white hover:bg-[#1a1a1a] transition-colors relative z-10 border border-[#2a2a2a]">

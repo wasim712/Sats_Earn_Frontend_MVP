@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, Home, Target, Lightbulb, FileCheck2 } from 'lucide-react';
+import { Menu, Home, Target, Lightbulb, FileCheck2, Wallet } from 'lucide-react';
 
 import { UserSidebar } from '@/components/user/UserSidebar';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'; 
@@ -17,7 +17,7 @@ const DOCK_LINKS = [
   { label: 'Dashboard', path: '/user/dashboard', icon: Home },
   { label: 'Tasks', path: '/user/tasks', icon: Target }, 
   { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
-  { label: 'Blogs', path: '/user/blogs', icon: FileCheck2 },
+  { label: 'Wallet', path: '/user/withdraw', icon: Wallet },
 ];
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
@@ -45,6 +45,21 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [isSidebarOpen]);
 
   // ─── 2. Auth Guard ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -112,7 +127,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
       />
 
       {/* ─── Main Viewport (Handles Sidebar Offset) ─── */}
-      <div className={`transition-all duration-300 ease-in-out min-h-screen flex flex-col ${isCollapsed ? 'lg:pl-20' : 'lg:pl-72'}`}>
+      <div className={`transition-all duration-300 ease-in-out min-h-screen flex flex-col ${isCollapsed ? 'lg:pl-20' : 'lg:pl-72'} ${isSidebarOpen ? 'pointer-events-none lg:pointer-events-auto' : ''}`}>
         
         {/* ─── Mobile Header ─── */}
         <header className="lg:hidden h-16 border-b border-[#1a1a1a] bg-sats-black-900/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-4">
@@ -145,23 +160,20 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
       </div>
 {/* //*****************************************************************  */}
       {/* ─── Floating Bottom Navigation Dock (Mobile & Tablet Only) ─── */}
-      <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center pointer-events-none lg:hidden px-4">
+      <div className="fixed inset-x-0 bottom-3 z-40 flex justify-center pointer-events-none lg:hidden px-2.5 sm:px-4">
         
         {/* pointer-events-auto ensures you can click the dock, but transparent space around it allows clicking the page */}
-        <nav className="pointer-events-auto bg-sats-black-900/90 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-1.5 flex items-center justify-center gap-1 shadow-[0_10px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto">
+        <nav className="pointer-events-auto grid w-full max-w-[392px] grid-cols-5 gap-1 rounded-[22px] border border-[#1a1a1a] bg-sats-black-900/95 p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl">
           
           {/* Open Menu Button */}
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all shrink-0"
+            className="flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-gray-500 transition-all hover:bg-white/5 hover:text-white"
             title="Open Menu"
           >
-            <Menu className="w-5.5 h-[22px]" />
-            <span className="text-[10px] font-bold tracking-wide">Menu</span>
+            <Menu className="h-5 w-5 shrink-0" />
+            <span className="text-[9px] font-bold leading-none tracking-[0.02em] sm:text-[10px]">Menu</span>
           </button>
-          
-          {/* Vertical Divider Line */}
-          <div className="w-px h-8 bg-[#2a2a2a] mx-1 shrink-0" />
 
           {DOCK_LINKS.map((item) => {
             // Highlight if exactly matching OR if viewing a sub-page (like /user/tasks/123)
@@ -172,17 +184,17 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
                 key={item.path}
                 href={item.path}
                 onClick={(e) => handleLinkClick(e, item.path)}//prevented unnecesarry reloads
-                className={`flex flex-col items-center justify-center gap-1 min-w-[4.5rem] px-2 py-2 rounded-xl transition-all duration-300 shrink-0 ${
+                className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 transition-all duration-300 ${
                   isActive
                     ? 'bg-sats-orange-500/10 text-sats-orange-500'
                     : 'text-gray-500 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <div className={`relative transition-transform duration-300 ${isActive ? 'scale-110' : 'scale-100'}`}>
-                  <item.icon className="w-[22px] h-[22px]" />
+                  <item.icon className="h-5 w-5 shrink-0" />
                 </div>
                 {/* Text explicitly placed under the icon, tiny and highly readable */}
-                <span className={`text-[10px] font-bold tracking-wide ${isActive ? 'text-sats-orange-500' : 'text-gray-500'}`}>
+                <span className={`truncate text-[9px] font-bold leading-none tracking-[0.02em] sm:text-[10px] ${isActive ? 'text-sats-orange-500' : 'text-gray-500'}`}>
                   {item.label}
                 </span>
               </Link>

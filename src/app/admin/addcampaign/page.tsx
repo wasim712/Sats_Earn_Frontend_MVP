@@ -72,6 +72,7 @@ export default function AddCampaignPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
@@ -129,6 +130,24 @@ export default function AddCampaignPage() {
         : [...prev.targetCountries, country],
     }));
   };
+
+  const filteredCountries = countries.filter((country) =>
+    country.toLowerCase().includes(countrySearch.trim().toLowerCase())
+  );
+
+  // const handleSelectAllCountries = () => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     targetCountries: [...countries],
+  //   }));
+  // };
+
+  // const handleClearAllCountries = () => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     targetCountries: [],
+  //   }));
+  // };
 
   useEffect(() => {
     if (countries.length === 0) {
@@ -309,10 +328,35 @@ export default function AddCampaignPage() {
                   </div>
 
                   <div className="mb-8">
-                    <InputWrapper label="Target Countries">
+                    <InputWrapper label="Target Countries"> <span className='text-sm text-gray-500'>&nbsp; Leave selection empty to select all countries</span>
                       <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 max-h-56 overflow-y-auto">
+                        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                          <input
+                            type="text"
+                            value={countrySearch}
+                            onChange={(e) => setCountrySearch(e.target.value)}
+                            placeholder="Search countries..."
+                            className="flex-1 bg-black border border-[#1a1a1a] text-white text-sm font-medium px-4 py-2.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"
+                          />
+                          {/* <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={handleSelectAllCountries}
+                              className="px-4 py-2.5 rounded-xl border border-[#2a2a2a] bg-[#111] text-xs font-black uppercase tracking-wider text-gray-300 hover:text-white hover:border-sats-orange-500/40 transition-all"
+                            >
+                              Select All
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleClearAllCountries}
+                              className="px-4 py-2.5 rounded-xl border border-[#2a2a2a] bg-[#111] text-xs font-black uppercase tracking-wider text-gray-300 hover:text-white hover:border-sats-orange-500/40 transition-all"
+                            >
+                              Deselect All
+                            </button>
+                          </div> */}
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                          {countries.map((country) => {
+                          {filteredCountries.map((country) => {
                             const selected = formData.targetCountries.includes(country);
                             return (
                               <button
@@ -325,6 +369,11 @@ export default function AddCampaignPage() {
                               </button>
                             );
                           })}
+                          {filteredCountries.length === 0 && (
+                            <div className="col-span-full rounded-xl border border-dashed border-[#1a1a1a] bg-black/40 px-4 py-6 text-center text-sm text-gray-500">
+                              No countries match your search.
+                            </div>
+                          )}
                         </div>
                       </div>
                     </InputWrapper>

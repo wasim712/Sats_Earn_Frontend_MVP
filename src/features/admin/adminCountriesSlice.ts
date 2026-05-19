@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -18,14 +19,15 @@ export const fetchCountries = createAsyncThunk(
   'adminCountries/fetch',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/public/countries`, { cache: 'no-store' });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Failed to fetch countries');
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/public/countries`, { cache: 'no-store' });
+      if (Array.isArray(data)) return data;
+      if (data && typeof data === 'object') {
+        const payload = data as { data?: unknown; countries?: unknown; items?: unknown };
+        if (Array.isArray(payload.data)) return payload.data as string[];
+        if (Array.isArray(payload.countries)) return payload.countries as string[];
+        if (Array.isArray(payload.items)) return payload.items as string[];
       }
-
-      return Array.isArray(data) ? data : [];
+      return [];
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch countries');
     }

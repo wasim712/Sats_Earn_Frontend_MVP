@@ -90,6 +90,42 @@ export const performUserAction = createAsyncThunk(
   }
 );
 
+export const updateUserPremium = createAsyncThunk(
+  'adminUsers/updatePremium',
+  async (
+    {
+      userId,
+      premiumTier,
+      premiumExpiresAt,
+    }: {
+      userId: string;
+      premiumTier: 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER' | null;
+      premiumExpiresAt: string | null;
+    },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+      const response = await obfuscatedFetch(`${API_URL}/admin/users/${userId}/premium`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ premiumTier, premiumExpiresAt }),
+      });
+
+      const data = await parseObfuscatedJson<any>(response);
+      if (!response.ok) throw new Error(data.error || 'Failed to update user premium tier');
+      return data.user as AdminUserDetail;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update user premium tier';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 // ─── Thunks ───
 export const fetchAllUsers = createAsyncThunk(
   'adminUsers/fetchAll',
@@ -166,6 +202,29 @@ const adminUsersSlice = createSlice({
         }
       })
       .addCase(performUserAction.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.detailError = action.payload as string;
+      })
+      .addCase(updateUserPremium.pending, (state) => {
+        state.actionLoading = true;
+        state.detailError = null;
+      })
+      .addCase(updateUserPremium.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        state.selectedUserDetail = action.payload;
+        state.users = state.users.map((user) =>
+          user.id === action.payload.id
+            ? {
+                ...user,
+                premiumTier: action.payload.premiumTier,
+                premiumExpiresAt: action.payload.premiumExpiresAt,
+                activeTier: action.payload.activeTier,
+                isPremium: action.payload.isPremium,
+              }
+            : user,
+        );
+      })
+      .addCase(updateUserPremium.rejected, (state, action) => {
         state.actionLoading = false;
         state.detailError = action.payload as string;
       });
