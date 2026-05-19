@@ -548,34 +548,40 @@ export default function UserDashboardPage() {
                   const statusUi = getSubmissionStatusUi(submission.status);
                   
                   return (
-                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row  sm:items-center justify-between gap-4 transition-all duration-300 group grow">
-                      <div className="flex items-center gap-4">
-                        {/* Minimal Status Icon */}
-                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center  border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
-                          {statusUi.icon}
-                        </div>
-                        
-                        <div>
-                          <div className='flex  w-full items-center gap-2 '>
-                          <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">{submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}</h3>
-                          <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">{submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}</h3>
+                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row sm:items-center justify-between gap-4 transition-all duration-300 group grow">
+                        <div className="flex items-center gap-4">
+                          {/* Minimal Status Icon */}
+                          <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
+                            {statusUi.icon}
+                          </div>
                           
-                          </div>
-                          <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
+                          <div>
+                            <div className='flex w-full items-center gap-2'>
+                              <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">
+                                {submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}
+                              </h3>
+                              <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">
+                                {submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}
+                              </h3>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="sm:text-right  flex-col shrink-0  flex">
-                        <span className={`p-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
-                              {statusUi.label}
-                            </span>
-                        <span className="text-[14px] font-black text-green-500">
-                          +{submission.rewardSats.toLocaleString()} Sats
-                        </span>
+                        {/* FIXED SECTION: Added items-center and gap-1 */}
+                        <div className="flex flex-col items-center justify-center gap-1">
+                          {/* Added w-fit and adjusted padding to px-2 py-0.5 for a perfect pill shape */}
+                          <span className={`w-fit px-2 py-0.5 rounded border text-[9px] font-black uppercase {statusUi.lable=='Rejected'?'':tracking-widest'} ${statusUi.badge}`}>
+                            {statusUi.label}
+                          </span>
+                          {/* Added whitespace-nowrap to prevent text wrapping on small screens */}
+                          <span className="text-[14px] font-black text-green-500 whitespace-nowrap">
+                            +{submission.rewardSats.toLocaleString()} Sats
+                          </span>
+                        </div>
                       </div>
-                    </div>
                   );
                 })}
               </div>
