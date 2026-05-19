@@ -125,7 +125,6 @@ export default function ReferralsPage() {
         currentReferrals={data.stats?.totalInvited || 0}
         isFreeTier={isFreeTier}
         activeTier={activeTier}
-        rewardCapSats={data.stats?.referralRewardCapSats}
       />
       <ReferralTierCommission activeTier={activeTier} />
 

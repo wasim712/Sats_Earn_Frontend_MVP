@@ -17,11 +17,11 @@ type TierCard = {
 };
 
 const tierCards: TierCard[] = [
-  { name: 'BASIC', commission: '5%', subtitle: 'Unlimited invites · up to 2,000 sats', isFree: true, icon: Shield, tone: 'from-zinc-500/10 to-zinc-400/5 border-zinc-500/20' },
-  { name: 'COPPER', commission: '5%', subtitle: 'Unlimited invites · up to 4,000 sats', isFree: true, icon: Award, tone: 'from-amber-700/10 to-orange-500/5 border-amber-600/20' },
-  { name: 'BRONZE', commission: '5%', subtitle: 'Unlimited invites · up to 6,000 sats', isFree: true, icon: Trophy, tone: 'from-orange-700/10 to-orange-500/5 border-orange-600/20' },
-  { name: 'SILVER', commission: '5%', subtitle: 'Unlimited invites · up to 8,000 sats', isFree: true, icon: Star, tone: 'from-slate-400/10 to-slate-200/5 border-slate-400/20' },
-  { name: 'GOLD', commission: '5%', subtitle: 'Unlimited invites · up to 10,000 sats', isFree: true, icon: BadgeCheck, tone: 'from-yellow-500/10 to-amber-300/5 border-yellow-500/20' },
+  { name: 'BASIC', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Shield, tone: 'from-zinc-500/10 to-zinc-400/5 border-zinc-500/20' },
+  { name: 'COPPER', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Award, tone: 'from-amber-700/10 to-orange-500/5 border-amber-600/20' },
+  { name: 'BRONZE', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Trophy, tone: 'from-orange-700/10 to-orange-500/5 border-orange-600/20' },
+  { name: 'SILVER', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Star, tone: 'from-slate-400/10 to-slate-200/5 border-slate-400/20' },
+  { name: 'GOLD', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: BadgeCheck, tone: 'from-yellow-500/10 to-amber-300/5 border-yellow-500/20' },
   { name: 'PLATINUM', commission: '10%', subtitle: 'Unlimited referrals', isFree: false, icon: Gem, tone: 'from-emerald-500/12 to-teal-400/5 border-emerald-500/22' },
   { name: 'DIAMOND', commission: '15%', subtitle: 'Unlimited referrals', isFree: false, icon: Gem, tone: 'from-sky-500/12 to-blue-400/5 border-sky-500/22' },
   { name: 'CROWN', commission: '20%', subtitle: 'Unlimited referrals', isFree: false, icon: Crown, tone: 'from-violet-500/12 to-purple-400/5 border-violet-500/22' },
@@ -39,7 +39,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
         <div>
           <h2 className="text-xl font-black text-white tracking-tight">Commission by Tier</h2>
           <p className="text-sm text-gray-400 font-medium mt-1">
-            Free tiers keep the base referral reward with sats caps only, while paid tiers unlock higher commissions with no cap.
+            Free tiers keep the base referral reward, while paid tiers unlock higher commissions.
           </p>
         </div>
       </div>

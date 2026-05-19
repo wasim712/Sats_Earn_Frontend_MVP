@@ -29,7 +29,8 @@ type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
 type DeviceOption = {
   key: DeviceFilter;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconType: 'lucide' | 'image';
+  icon: React.ComponentType<{ className?: string }> | string;
 };
 
 const filterOptions: { key: FilterMode; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -39,10 +40,10 @@ const filterOptions: { key: FilterMode; label: string; icon: React.ComponentType
 ];
 
 const deviceOptions: DeviceOption[] = [
-  { key: 'ALL', label: 'All Devices', icon: LayoutGrid },
-  { key: 'DESKTOP', label: 'Desktop', icon: Monitor },
-  { key: 'ANDROID', label: 'Android', icon: Smartphone },
-  { key: 'IOS', label: 'iOS', icon: Smartphone },
+  { key: 'ALL', label: 'All Devices', iconType: 'lucide', icon: LayoutGrid },
+  { key: 'DESKTOP', label: 'Desktop', iconType: 'lucide', icon: Monitor },
+  { key: 'ANDROID', label: 'Android', iconType: 'image', icon: '/svgs/android.svg' },
+  { key: 'IOS', label: 'iOS', iconType: 'image', icon: '/svgs/ios.svg' },
 ];
 
 const formatCompact = (value: number) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
@@ -55,8 +56,8 @@ const getTopReward = (campaign: Campaign) => {
 const getRequiredPlatform = (campaign: Campaign) => {
   const platform = String(campaign.requiredPlatform || 'NONE').toUpperCase();
   if (platform === 'DESKTOP') return { icon: Monitor, label: 'Desktop Only' };
-  if (platform === 'ANDROID') return { icon: Smartphone, label: 'Android Only' };
-  if (platform === 'IOS') return { icon: Smartphone, label: 'iOS Only' };
+  if (platform === 'ANDROID') return { icon: null, iconSrc: '/svgs/android.svg', label: 'Android Only' };
+  if (platform === 'IOS') return { icon: null, iconSrc: '/svgs/ios.svg', label: 'iOS Only' };
   return { icon: LayoutGrid, label: 'All Devices' };
 };
 
@@ -144,7 +145,7 @@ export default function TasksPage() {
   }, []);
 
   const filteredCampaigns = useMemo(() => {
-    return campaigns.filter((campaign) => {
+    const filtered = campaigns.filter((campaign) => {
       const matchesSearch =
         campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         campaign.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -163,6 +164,22 @@ export default function TasksPage() {
             : !campaign.isCompleted;
 
       return matchesSearch && matchesFilter && matchesDevice;
+    });
+
+    if (filterMode !== 'ALL') {
+      return filtered;
+    }
+
+    const getOrderBucket = (campaign: Campaign) => {
+      if (campaign.isCompleted) return 2;
+      if (campaign.hasStarted) return 0;
+      return 1;
+    };
+
+    return [...filtered].sort((left, right) => {
+      const bucketDiff = getOrderBucket(left) - getOrderBucket(right);
+      if (bucketDiff !== 0) return bucketDiff;
+      return left.title.localeCompare(right.title);
     });
   }, [campaigns, searchQuery, filterMode, deviceFilter]);
 
@@ -222,32 +239,36 @@ export default function TasksPage() {
                   key={key}
                   type="button"
                   onClick={() => setFilterMode(key)}
-                  className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all ${
+                  className={`inline-flex items-center gap-2 rounded-2xl border px-2 md:px-4 py-2.5 text-sm font-bold transition-all ${
                     filterMode === key
                       ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_18px_rgba(238,139,18,0.08)]'
                       : 'border-[#1a1a1a] bg-[#050505] text-gray-400 hover:border-[#2a2a2a] hover:text-white'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {label}
+                  <span>{key === 'ALL' ? <><span className="md:hidden">All</span><span className="hidden md:inline">{label}</span></> : label}</span>
                 </button>
               ))}
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              {deviceOptions.map(({ key, label, icon: Icon }) => (
+              {deviceOptions.map(({ key, label, iconType, icon }) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => setDeviceFilter(key)}
-                  className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all ${
+                  className={`inline-flex ${key=='IOS'?'':'items-center'} justify-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all ${
                     deviceFilter === key
                       ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_18px_rgba(238,139,18,0.08)]'
                       : 'border-[#1a1a1a] bg-[#050505] text-gray-400 hover:border-[#2a2a2a] hover:text-white'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  {label}
+                  {iconType === 'image' ? (
+                    <Image src={icon as string} alt={label} width={16} height={16} className="h-4 w-4" />
+                  ) : (
+                    React.createElement(icon as React.ComponentType<{ className?: string }>, { className: 'h-4 w-4' })
+                  )}
+                  <span className={key === 'ALL' ? '' : 'hidden md:inline'}>{key === 'ALL' ? <><span className="md:hidden">All</span><span className="hidden md:inline">{label}</span></> : label}</span>
                 </button>
               ))}
             </div>
@@ -350,7 +371,11 @@ function SummaryCard({
 
 function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
   const topReward = getTopReward(campaign);
-  const { icon: DeviceIcon, label: deviceLabel } = getRequiredPlatform(campaign);
+  const { icon: DeviceIcon, iconSrc: deviceIconSrc, label: deviceLabel } = getRequiredPlatform(campaign) as {
+    icon?: React.ComponentType<{ className?: string }> | null;
+    iconSrc?: string;
+    label: string;
+  };
   const status = getCampaignStatus(campaign);
   const completedTasksCount = Number(campaign.completedTasksCount) || 0;
   const totalTasksCount = Number(campaign.totalTasksCount) || 0;
@@ -364,16 +389,53 @@ function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
 
         <div className="relative h-[208px] shrink-0 overflow-hidden border-b border-[#141414] bg-[#111]">
           {campaign.coverImageUrl ? (
-            <Image
-              src={campaign.coverImageUrl}
-              alt={campaign.title}
-              fill
-              className="object-cover opacity-75 transition-all duration-700 group-hover:scale-105 group-hover:opacity-95"
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-              unoptimized
-            />
+            <>
+              <Image
+                src={campaign.coverImageUrl}
+                alt={campaign.title}
+                fill
+                className="object-cover opacity-40 blur-2xl scale-110 transition-all duration-500"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-black/20" />
+              <div className="absolute inset-0 flex items-center justify-center p-6 ">
+                <div className="relative aspect-square h-[62%] w-[62%] max-h-[130px] max-w-[130px] ">
+                  <Image
+                    src={campaign.coverImageUrl}
+                    alt={campaign.title}
+                    fill
+                    className="object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] rounded-xl"
+                    sizes="240px"
+                    unoptimized
+                  />
+                </div>
+              </div>
+            </>
           ) : (
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,#121212_0%,#0b0b0b_60%,#080808_100%)]" />
+            <>
+            <Image
+                src='/round_logo.png'
+                alt={campaign.title}
+                fill
+                className="object-cover opacity-40 blur-2xl scale-110 transition-all duration-500"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-black/20" />
+              <div className="absolute inset-0 flex items-center justify-center p-6 ">
+                <div className="relative aspect-square h-[62%] w-[62%] max-h-[130px] max-w-[130px] ">
+                  <Image
+                   src='/round_logo.png'
+                    alt={campaign.title}
+                    fill
+                    className="object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] "
+                    sizes="240px"
+                    unoptimized
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/35 to-transparent" />
@@ -404,7 +466,7 @@ function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
           <div className="space-y-4">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <MetaPill icon={DeviceIcon} label={deviceLabel} />
+                <MetaPill icon={DeviceIcon} iconSrc={deviceIconSrc} label={deviceLabel} />
                 <MetaPill icon={ListChecks} label={stepsLabel} />
                 <MetaPill icon={Users} label={`${formatCompact(Math.max(status.spotsLeft, 0))} slots`} />
               </div>
@@ -464,14 +526,20 @@ function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
 
 function MetaPill({
   icon: Icon,
+  iconSrc,
   label,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }> | null;
+  iconSrc?: string;
   label: string;
 }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-2 text-[11px] font-bold text-gray-300 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
-      <Icon className="h-3.5 w-3.5 text-gray-500" />
+      {iconSrc ? (
+        <Image src={iconSrc} alt={label} width={14} height={14} className="h-3.5 w-3.5" />
+      ) : Icon ? (
+        <Icon className="h-3.5 w-3.5 text-gray-500" />
+      ) : null}
       <span>{label}</span>
     </div>
   );
