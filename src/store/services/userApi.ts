@@ -15,7 +15,7 @@ function getToken() {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fakeBaseQuery(),
-  tagTypes: ['UserNotifications'],
+  tagTypes: ['UserNotifications', 'MiniGameReward'],
   endpoints: (builder) => ({
     getUserNotifications: builder.query<UserNotification[], void>({
       async queryFn() {
@@ -40,7 +40,36 @@ export const userApi = createApi({
       },
       providesTags: ['UserNotifications'],
     }),
+    claimSatWormReward: builder.mutation<
+      { message?: string; reward?: { satsEarned: number; xpEarned: number } },
+      Record<string, unknown>
+    >({
+      async queryFn(payload) {
+        try {
+          const token = getToken();
+          const response = await obfuscatedFetch(`${API_URL}/users/minigames/sat-worm/claim`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await parseObfuscatedJson<{ message?: string; reward?: { satsEarned: number; xpEarned: number } }>(response);
+
+          if (!response.ok) {
+            return { error: { status: response.status, data } };
+          }
+
+          return { data };
+        } catch (error) {
+          return { error: { status: 'FETCH_ERROR', data: error instanceof Error ? error.message : 'Failed to claim SAT-WORM reward.' } };
+        }
+      },
+      invalidatesTags: ['UserNotifications', 'MiniGameReward'],
+    }),
   }),
 });
 
-export const { useGetUserNotificationsQuery } = userApi;
+export const { useGetUserNotificationsQuery, useClaimSatWormRewardMutation } = userApi;

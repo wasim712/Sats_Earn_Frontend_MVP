@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import type { AdminUserDetail, AdminUserTransaction } from '@/types/admin';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchUserDetail, performUserAction, updateUserPremium } from '@/features/admin/adminUsersSlice';
+import { adjustUserSubmissionReward, fetchUserDetail, performUserAction, updateUserPremium } from '@/features/admin/adminUsersSlice';
+import { EmptyBlock, InfoRow, MiniList, Panel, SectionCard, SubmissionTable, TransactionTable } from '@/components/admin/users/AdminUserDetailSections';
 import {
   ArrowLeft,
-  ArrowDownToLine,
   Ban,
   Coins,
   Fingerprint,
@@ -27,9 +26,14 @@ type ActionState = {
 export function AdminUserDetailView({ userId }: { userId: string }) {
   const dispatch = useAppDispatch();
   const { selectedUserDetail: detail, detailLoading: loading, detailError: error, actionLoading } = useAppSelector((state) => state.adminUsers);
+
   const [actionState, setActionState] = useState<ActionState>({ loading: false, error: null });
   const [premiumTier, setPremiumTier] = useState<'' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER'>('');
   const [premiumExpiresAt, setPremiumExpiresAt] = useState('');
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState('');
+  const [adjustmentAmount, setAdjustmentAmount] = useState('');
+  const [adjustmentNote, setAdjustmentNote] = useState('');
+  const [adjustmentMode, setAdjustmentMode] = useState<'DEDUCT' | 'ADD'>('DEDUCT');
 
   const fetchDetail = useCallback(async () => {
     await dispatch(fetchUserDetail(userId));
@@ -44,6 +48,11 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
     setPremiumTier((detail.premiumTier as '' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER' | null) || '');
     setPremiumExpiresAt(detail.premiumExpiresAt ? new Date(detail.premiumExpiresAt).toISOString().slice(0, 16) : '');
   }, [detail]);
+
+  const adjustableSubmissions = useMemo(
+    () => detail?.submissions.filter((submission) => submission.status !== 'REJECTED') || [],
+    [detail],
+  );
 
   const handleAction = async (action: 'ban' | 'activate' | 'delete') => {
     if (!detail) return;
@@ -87,40 +96,70 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
     }
   };
 
+  const handleAdjustmentSave = async () => {
+    if (!detail || !selectedSubmissionId) return;
+
+    const parsedAmount = Number(adjustmentAmount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      setActionState({ loading: false, error: 'Enter a valid sats adjustment amount.' });
+      return;
+    }
+
+    const amountSats = adjustmentMode === 'DEDUCT' ? -Math.abs(parsedAmount) : Math.abs(parsedAmount);
+
+    setActionState({ loading: true, error: null });
+    try {
+      await dispatch(adjustUserSubmissionReward({
+        userId: detail.id,
+        submissionId: selectedSubmissionId,
+        amountSats,
+        note: adjustmentNote,
+      })).unwrap();
+      setAdjustmentAmount('');
+      setAdjustmentNote('');
+      setActionState({ loading: false, error: null });
+    } catch (actionError) {
+      const message = actionError instanceof Error ? actionError.message : 'Failed to adjust submission reward';
+      setActionState({ loading: false, error: message });
+    }
+  };
+
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} onRetry={fetchDetail} />;
   if (!detail) return <ErrorState error="User not found." onRetry={fetchDetail} />;
 
   return (
-    <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 text-white">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#020202] p-4 text-white md:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
-            <Link href="/admin/users" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-3">
-              <ArrowLeft className="w-4 h-4" /> Back to users
+            <Link href="/admin/users" className="mb-3 inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white">
+              <ArrowLeft className="h-4 w-4" /> Back to users
             </Link>
             <h1 className="text-3xl font-black">{detail.fullName || 'Anonymous User'}</h1>
-            <p className="text-sm text-gray-400 mt-1">{detail.email}</p>
+            <p className="mt-1 text-sm text-gray-400">{detail.email}</p>
           </div>
           <div className="flex flex-wrap gap-3">
             {detail.isActive ? (
-              <ActionButton icon={<Ban className="w-4 h-4" />} label="Ban User" onClick={() => handleAction('ban')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
+              <ActionButton icon={<Ban className="h-4 w-4" />} label="Ban User" onClick={() => handleAction('ban')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
             ) : (
-              <ActionButton icon={<RefreshCcw className="w-4 h-4" />} label="Reactivate" onClick={() => handleAction('activate')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="success" />
+              <ActionButton icon={<RefreshCcw className="h-4 w-4" />} label="Reactivate" onClick={() => handleAction('activate')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="success" />
             )}
-            <ActionButton icon={<Trash2 className="w-4 h-4" />} label="Delete Account" onClick={() => handleAction('delete')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
+            <ActionButton icon={<Trash2 className="h-4 w-4" />} label="Delete Account" onClick={() => handleAction('delete')} disabled={actionState.loading || actionLoading || detail.role === 'SUPER_ADMIN'} tone="danger" />
             <button onClick={fetchDetail} className="inline-flex items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#111] px-4 py-3 text-sm font-semibold hover:bg-[#1a1a1a]">
-              <RefreshCcw className="w-4 h-4" /> Refresh
+              <RefreshCcw className="h-4 w-4" /> Refresh
             </button>
           </div>
         </div>
 
-        {actionState.error && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-300">{actionState.error}</div>
-        )}
+        {actionState.error ? (
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {actionState.error}
+          </div>
+        ) : null}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <Panel title="Profile" icon={<Fingerprint className="w-4 h-4" />}>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <Panel title="Profile" icon={<Fingerprint className="h-4 w-4" />}>
             <InfoRow label="Full Name" value={detail.fullName || 'Anonymous User'} />
             <InfoRow label="Email" value={detail.email} mono />
             <InfoRow label="Username" value={detail.username || '—'} />
@@ -133,7 +172,7 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
             <InfoRow label="Referral Code" value={detail.referralCode || '—'} mono />
           </Panel>
 
-          <Panel title="Balances & Access" icon={<Wallet className="w-4 h-4" />}>
+          <Panel title="Balances & Access" icon={<Wallet className="h-4 w-4" />}>
             <InfoRow label="Available" value={`${detail.balanceAvailable.toLocaleString()} sats`} accent="text-sats-orange-500" />
             <InfoRow label="Pending" value={`${detail.balancePending.toLocaleString()} sats`} accent="text-yellow-500" />
             <InfoRow label="Locked" value={`${detail.balanceLocked.toLocaleString()} sats`} accent="text-blue-400" />
@@ -142,8 +181,8 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
             <InfoRow label="Tier" value={`${detail.activeTier} ${detail.isPremium ? '(Premium)' : ''}`} />
             <InfoRow label="Premium Expiry" value={detail.premiumExpiresAt ? new Date(detail.premiumExpiresAt).toLocaleString() : '—'} />
             <InfoRow label="Account Active" value={detail.isActive ? 'Yes' : 'No'} />
-            <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4 space-y-3">
-              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Manual Premium Upgrade</p>
+
+            <SectionCard title="Manual Premium Upgrade" subtitle="Structured tier override with expiry control.">
               <select
                 value={premiumTier}
                 onChange={(e) => setPremiumTier(e.target.value as '' | 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER')}
@@ -169,10 +208,54 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
               >
                 Save Premium Tier
               </button>
-            </div>
+            </SectionCard>
+
+            <SectionCard title="Submission Sats Adjustment" subtitle="Select the task, see the earned sats basis, then add or deduct cleanly.">
+              <select
+                value={selectedSubmissionId}
+                onChange={(e) => setSelectedSubmissionId(e.target.value)}
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              >
+                <option value="">Select submission</option>
+                {adjustableSubmissions.map((submission) => (
+                  <option key={submission.id} value={submission.id}>
+                    {(submission.task?.campaign?.title || 'Campaign')} - {(submission.task?.title || 'Task')} - {submission.task?.campaign?.baseRewardSats?.toLocaleString?.() || 0} sats ({submission.status})
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={adjustmentAmount}
+                onChange={(e) => setAdjustmentAmount(e.target.value)}
+                placeholder="Enter sats amount"
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              />
+              <select
+                value={adjustmentMode}
+                onChange={(e) => setAdjustmentMode(e.target.value as 'DEDUCT' | 'ADD')}
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              >
+                <option value="DEDUCT">Deduct sats</option>
+                <option value="ADD">Add sats</option>
+              </select>
+              <input
+                type="text"
+                value={adjustmentNote}
+                onChange={(e) => setAdjustmentNote(e.target.value)}
+                placeholder="Reason for partial completion or adjustment"
+                className="w-full rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-2 text-sm text-white"
+              />
+              <button
+                onClick={handleAdjustmentSave}
+                disabled={actionState.loading || actionLoading || !selectedSubmissionId}
+                className="w-full rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300 hover:bg-red-500/15 disabled:opacity-60"
+              >
+                Apply Submission Adjustment
+              </button>
+            </SectionCard>
           </Panel>
 
-          <Panel title="Security & Social" icon={<ShieldAlert className="w-4 h-4" />}>
+          <Panel title="Security & Social" icon={<ShieldAlert className="h-4 w-4" />}>
             <InfoRow label="User ID" value={detail.id} mono />
             <InfoRow label="Registration IP" value={detail.registrationIp || '—'} mono />
             <InfoRow label="Last IP" value={detail.lastIpAddress || '—'} mono />
@@ -186,27 +269,14 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
           </Panel>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Panel title="Sats Transaction History" icon={<Coins className="w-4 h-4" />}>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <Panel title="Sats Transaction History" icon={<Coins className="h-4 w-4" />}>
             <TransactionTable transactions={detail.transactions} />
           </Panel>
-          <Panel title="Submission & Campaign History" icon={<Zap className="w-4 h-4" />}>
+          <Panel title="Submission & Campaign History" icon={<Zap className="h-4 w-4" />}>
             <SubmissionTable detail={detail} />
           </Panel>
-        </div>
-
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Panel title="Withdrawals" icon={<ArrowDownToLine className="w-4 h-4" />}>
-            <MiniList
-              items={detail.withdrawals.map((withdrawal) => ({
-                id: withdrawal.id,
-                title: `${withdrawal.amountSats.toLocaleString()} sats`,
-                subtitle: `${withdrawal.status} · ${new Date(withdrawal.createdAt).toLocaleString()}`,
-              }))}
-              empty="No withdrawals yet."
-            />
-          </Panel>
-          <Panel title="Notifications" icon={<Mail className="w-4 h-4" />}>
+          <Panel title="Recent Notifications" icon={<Mail className="h-4 w-4" />}>
             <MiniList
               items={detail.notifications.map((notification) => ({
                 id: notification.id,
@@ -216,125 +286,24 @@ export function AdminUserDetailView({ userId }: { userId: string }) {
               empty="No notifications found."
             />
           </Panel>
+          <Panel title="Withdrawals" icon={<Wallet className="h-4 w-4" />}>
+            {detail.withdrawals.length === 0 ? (
+              <EmptyBlock message="No withdrawals found." />
+            ) : (
+              <MiniList
+                items={detail.withdrawals.map((withdrawal) => ({
+                  id: withdrawal.id,
+                  title: `${withdrawal.amountSats.toLocaleString()} sats · ${withdrawal.status}`,
+                  subtitle: new Date(withdrawal.createdAt).toLocaleString(),
+                }))}
+                empty="No withdrawals found."
+              />
+            )}
+          </Panel>
         </div>
       </div>
     </div>
   );
-}
-
-function TransactionTable({ transactions }: { transactions: AdminUserTransaction[] }) {
-  if (transactions.length === 0) {
-    return <EmptyBlock message="No sats transactions found." />;
-  }
-
-  return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-500">
-          <tr>
-            <th className="text-left py-3 pr-4">When</th>
-            <th className="text-left py-3 pr-4">Amount</th>
-            <th className="text-left py-3 pr-4">Type</th>
-            <th className="text-left py-3 pr-4">Source</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction.id} className="border-t border-[#141414] align-top">
-              <td className="py-3 pr-4 text-gray-400">{new Date(transaction.createdAt).toLocaleString()}</td>
-              <td className={`py-3 pr-4 font-bold ${transaction.amountSats >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {transaction.amountSats >= 0 ? '+' : ''}{transaction.amountSats.toLocaleString()}
-              </td>
-              <td className="py-3 pr-4 text-white">{transaction.type}</td>
-              <td className="py-3 pr-4 text-gray-400">
-                <p>{transaction.description || '—'}</p>
-                {transaction.source?.kind === 'submission' && (
-                  <p className="text-xs text-sats-orange-500 mt-1">{transaction.source.campaignTitle || 'Campaign'} · {transaction.source.taskTitle || 'Task'} · {transaction.source.status}</p>
-                )}
-                {transaction.source?.kind === 'withdrawal' && (
-                  <p className="text-xs text-blue-400 mt-1">Withdrawal · {transaction.source.status}</p>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function SubmissionTable({ detail }: { detail: AdminUserDetail }) {
-  if (detail.submissions.length === 0) {
-    return <EmptyBlock message="No submission history found." />;
-  }
-
-  return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-500">
-          <tr>
-            <th className="text-left py-3 pr-4">Submitted</th>
-            <th className="text-left py-3 pr-4">Campaign</th>
-            <th className="text-left py-3 pr-4">Task</th>
-            <th className="text-left py-3 pr-4">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {detail.submissions.map((submission) => (
-            <tr key={submission.id} className="border-t border-[#141414] align-top">
-              <td className="py-3 pr-4 text-gray-400">{new Date(submission.submittedAt).toLocaleString()}</td>
-              <td className="py-3 pr-4 text-white">{submission.task?.campaign?.title || '—'}</td>
-              <td className="py-3 pr-4 text-gray-300">{submission.task?.title || 'Untitled Task'}</td>
-              <td className="py-3 pr-4">
-                <p className="text-white">{submission.status}</p>
-                {submission.rejectionReason && <p className="text-xs text-red-400 mt-1">{submission.rejectionReason}</p>}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function MiniList({ items, empty }: { items: Array<{ id: string; title: string; subtitle: string }>; empty: string }) {
-  if (items.length === 0) return <EmptyBlock message={empty} />;
-
-  return (
-    <div className="space-y-3">
-      {items.map((item) => (
-        <div key={item.id} className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4">
-          <p className="font-semibold text-white">{item.title}</p>
-          <p className="text-sm text-gray-400 mt-1">{item.subtitle}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Panel({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <div className="rounded-3xl border border-[#1a1a1a] bg-[#080808] p-5">
-      <div className="flex items-center gap-2 mb-4 text-white font-black">
-        {icon}
-        <h3>{title}</h3>
-      </div>
-      <div className="space-y-3">{children}</div>
-    </div>
-  );
-}
-
-function InfoRow({ label, value, mono = false, accent = 'text-white' }: { label: string; value: string; mono?: boolean; accent?: string }) {
-  return (
-    <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-      <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">{label}</p>
-      <p className={`${accent} ${mono ? 'font-mono text-xs break-all' : 'font-semibold text-sm'}`}>{value}</p>
-    </div>
-  );
-}
-
-function EmptyBlock({ message }: { message: string }) {
-  return <div className="rounded-2xl border border-dashed border-[#1a1a1a] p-6 text-sm text-gray-500 text-center">{message}</div>;
 }
 
 function ActionButton({ icon, label, onClick, disabled, tone }: { icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean; tone: 'danger' | 'success' }) {
@@ -357,7 +326,7 @@ function ActionButton({ icon, label, onClick, disabled, tone }: { icon: React.Re
 function LoadingState() {
   return (
     <div className="min-h-screen bg-[#020202] p-6 animate-pulse">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="mx-auto max-w-7xl space-y-6">
         <div className="h-10 w-56 rounded-xl bg-[#151515]" />
         <div className="rounded-3xl border border-[#1a1a1a] bg-[#090909] p-6 space-y-4">
           <div className="h-12 rounded-2xl bg-[#121212]" />
@@ -371,11 +340,11 @@ function LoadingState() {
 function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) {
   return (
     <div className="min-h-screen bg-[#020202] flex items-center justify-center p-4">
-      <div className="max-w-md w-full rounded-3xl border border-red-500/20 bg-sats-black-950 p-8 text-center">
-        <ShieldAlert className="w-12 h-12 mx-auto text-red-400 mb-4" />
-        <p className="text-red-300 font-semibold">{error}</p>
-        <button onClick={onRetry} className="mt-5 inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-[#111] border border-[#2a2a2a] hover:bg-[#191919]">
-          <RefreshCcw className="w-4 h-4" /> Retry
+      <div className="w-full max-w-md rounded-3xl border border-red-500/20 bg-sats-black-950 p-8 text-center">
+        <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-400" />
+        <p className="font-semibold text-red-300">{error}</p>
+        <button onClick={onRetry} className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#111] px-4 py-3 hover:bg-[#191919]">
+          <RefreshCcw className="h-4 w-4" /> Retry
         </button>
       </div>
     </div>
