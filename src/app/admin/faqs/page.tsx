@@ -7,6 +7,14 @@ import type { FaqItem } from '../content/content.types';
 import { FaqList } from './FaqList';
 import { createAdminFaq, deleteAdminFaq, fetchAdminFaqs } from '@/features/admin/adminFaqsSlice';
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 export default function AdminFaqsPage() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -71,7 +79,7 @@ export default function AdminFaqsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
-              <input type="number" min={0} value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value) || 0)} placeholder="Sort order" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+              <input type="text" inputMode="numeric" pattern="[0-9]*" value={sortOrder} onChange={(e) => setSortOrder(parseWholeNumber(e.target.value))} placeholder="Sort order" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
               <label className="inline-flex items-center gap-3 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-sm text-gray-300">
                 <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                 Active

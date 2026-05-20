@@ -15,9 +15,11 @@ import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
+import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
 
 export default function UserDashboardPage() {
   const dispatch = useAppDispatch();
+  const { isOpen: isTourOpen, openTour, closeTour } = useOnboarding();
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
   const { notifications } = useAppSelector((state) => state.userNotifications);
@@ -250,7 +252,9 @@ export default function UserDashboardPage() {
   const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+    <>
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} />
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
       {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -264,23 +268,26 @@ export default function UserDashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex  items-center gap-3">
+          <div className=" inline">
+            <TourButton onClick={openTour} variant="pill" />
+          </div>
           <div className="relative hidden md:flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             {unreadStreakReward && <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
             <Flame className="w-4 h-4 text-sats-orange-500" />
-            <span className="text-xs font-bold text-white">{currentStreak} Day Streak</span>
+            <span className="text-xs text-nowrap  font-bold text-white">{currentStreak} Day Streak</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Zap className="w-4 h-4 text-purple-500" />
-            <span className="text-xs font-bold text-white"> XP  {userXp}</span>
+            <span className="text-xs  text-nowrap font-bold text-white"> XP  {userXp}</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Medal className={`w-4 h-4 ${getTierColor(activeTier)}`} />
-            <span className="text-xs font-bold text-white capitalize">{activeTier} Tier</span>
+            <span className="text-xs  text-nowrap font-bold text-white capitalize">{activeTier} <span className='hidden sm:inline'>Tier</span> </span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Star className="w-4 h-4 text-yellow-500" />
-            <span className="text-xs font-bold text-white">Lvl {currentLevel}</span>
+            <span className="text-xs  text-nowrap  font-bold text-white">Lvl {currentLevel}</span>
           </div>
         </div>
       </div>
@@ -657,8 +664,9 @@ export default function UserDashboardPage() {
           </div>
 
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

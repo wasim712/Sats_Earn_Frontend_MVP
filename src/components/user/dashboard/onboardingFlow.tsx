@@ -1,338 +1,169 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Zap, X, ChevronRight, ChevronLeft, CheckCircle2,
-  Wallet, LayoutGrid, Lightbulb, Flame, Users,
-  Trophy, ArrowUpRight, Gift, Star, Shield,
   ArrowRight,
+  ChevronLeft,
+  Coins,
+  Flame,
+  HelpCircle,
+  LayoutGrid,
+  Lightbulb,
+  PlayCircle,
+  ShieldCheck,
+  Trophy,
+  Users,
+  Wallet,
+  X,
+  Zap,
 } from 'lucide-react';
 
-// ─── Storage key ──────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'satsearn_onboarding_done';
 
-// ─── Step definitions ─────────────────────────────────────────────────────────
+type StepTone = 'orange' | 'blue' | 'emerald' | 'violet' | 'rose' | 'amber' | 'cyan';
 
-interface Step {
+type Step = {
   id: string;
-  icon: React.ReactNode;
-  label: string;
+  eyebrow: string;
   title: string;
-  subtitle: string;
   description: string;
-  highlight?: string;       // Optional orange highlight line
-  visual: React.ReactNode;  // Illustrative mini-UI inside the card
-}
+  accent: string;
+  tone: StepTone;
+  icon: React.ComponentType<{ className?: string }>;
+  points: string[];
+};
 
 const STEPS: Step[] = [
   {
     id: 'welcome',
-    icon: <Zap className="w-5 h-5" />,
-    label: 'Welcome',
-    title: 'Welcome to SatsEarn ⚡',
-    subtitle: 'Bitcoin rewards for real tasks',
-    description:
-      'SatsEarn is a gamified platform where you complete micro-tasks, take daily quizzes, and engage socially — all to earn real Bitcoin (Sats) directly to your Lightning wallet.',
-    visual: (
-      <div className="flex flex-col items-center justify-center gap-4 py-4">
-        <div className="relative">
-          <div className="absolute inset-0 bg-sats-orange-500/20 rounded-full blur-2xl scale-150" />
-          <div className="relative w-20 h-20 rounded-2xl bg-sats-orange-500/10 border border-sats-orange-500/30 flex items-center justify-center">
-            <Zap className="w-10 h-10 text-sats-orange-500" />
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          {['Tasks', 'Quizzes', 'Referrals', 'Streaks'].map((t) => (
-            <span key={t} className="px-3 py-1 rounded-full bg-white/5 border border-white/8 text-xs font-bold text-white/50">
-              {t}
-            </span>
-          ))}
-        </div>
-        <p className="text-xs text-white/25 text-center">Complete activities → Earn Sats → Withdraw to wallet</p>
-      </div>
-    ),
+    eyebrow: 'Welcome',
+    title: 'Earn Bitcoin with simple daily actions',
+    description: 'SatsEarn lets you complete tasks, keep streaks, invite friends, and withdraw real sats from one place.',
+    accent: 'A quick 7-step guide so you know exactly where to start.',
+    tone: 'orange',
+    icon: Zap,
+    points: ['Complete tasks', 'Earn sats + XP', 'Withdraw when ready'],
   },
   {
-    id: 'balance',
-    icon: <Wallet className="w-5 h-5" />,
-    label: 'Balance',
-    title: 'Your Bitcoin Balance',
-    subtitle: 'Three types of funds',
-    description:
-      'Your dashboard shows three balance types. Available Sats are ready to withdraw. Pending Sats are under admin review. Locked Sats are held for 15 days as a security measure before becoming available.',
-    highlight: 'Check your Available balance daily — it updates in real time.',
-    visual: (
-      <div className="grid grid-cols-3 gap-2 w-full">
-        {[
-          { label: 'Available', value: '12,500', color: 'text-sats-orange-500', border: 'border-sats-orange-500/20', bg: 'bg-sats-orange-500/5' },
-          { label: 'Pending', value: '240', color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/5' },
-          { label: 'Locked', value: '50', color: 'text-blue-400', border: 'border-blue-500/20', bg: 'bg-blue-500/5' },
-        ].map((card) => (
-          <div key={card.label} className={`${card.bg} border ${card.border} rounded-xl p-3 flex flex-col gap-1`}>
-            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">{card.label}</span>
-            <span className={`text-base font-black ${card.color} tabular-nums`}>{card.value}</span>
-            <span className="text-[9px] text-white/20">SATS</span>
-          </div>
-        ))}
-      </div>
-    ),
+    id: 'dashboard',
+    eyebrow: 'Dashboard',
+    title: 'Your dashboard is your main control center',
+    description: 'Track your balances, activity, streak progress, and key stats without jumping across pages.',
+    accent: 'Start here every day to know what to do next.',
+    tone: 'blue',
+    icon: LayoutGrid,
+    points: ['Daily overview', 'Live balances', 'Quick access actions'],
   },
   {
     id: 'tasks',
-    icon: <LayoutGrid className="w-5 h-5" />,
-    label: 'Tasks',
-    title: 'Browse & Complete Tasks',
-    subtitle: 'The main way to earn Sats',
-    description:
-      'Browse available campaigns and complete their tasks. Each task requires proof of completion — a screenshot, a URL, or a text response. Your submission goes to admin review and once approved, Sats are credited instantly.',
-    highlight: 'Higher tiers earn more Sats per task. Level up to unlock bigger rewards.',
-    visual: (
-      <div className="w-full space-y-2">
-        {[
-          { title: 'Follow our Twitter', platform: 'TWITTER', reward: '150', proof: 'Screenshot', color: 'text-sky-400' },
-          { title: 'Subscribe to YouTube', platform: 'YOUTUBE', reward: '200', proof: 'URL', color: 'text-red-400' },
-        ].map((task) => (
-          <div key={task.title} className="flex items-center justify-between bg-[#111] border border-[#1e1e1e] rounded-xl px-3 py-2.5">
-            <div>
-              <p className="text-xs font-bold text-white/70">{task.title}</p>
-              <p className={`text-[10px] font-bold uppercase ${task.color}`}>{task.platform} · {task.proof}</p>
-            </div>
-            <div className="text-right shrink-0">
-              <p className="text-sm font-black text-sats-orange-500">+{task.reward}</p>
-              <p className="text-[9px] text-white/25">Sats</p>
-            </div>
-          </div>
-        ))}
-        <div className="flex items-center justify-center gap-1.5 pt-1">
-          <span className="text-[10px] text-white/20 font-medium">Submit proof → Admin review → Sats credited</span>
-        </div>
-      </div>
-    ),
+    eyebrow: 'Tasks',
+    title: 'Tasks are the main way to earn more sats',
+    description: 'Open live campaigns, complete the required steps, and submit valid proof for review.',
+    accent: 'In-progress tasks help you continue where you left off.',
+    tone: 'emerald',
+    icon: Trophy,
+    points: ['Choose a live campaign', 'Submit proof properly', 'Get rewards after approval'],
   },
   {
-    id: 'quiz',
-    icon: <Lightbulb className="w-5 h-5" />,
-    label: 'Daily Quiz',
-    title: 'Daily Quiz Challenge',
-    subtitle: 'One quiz, one chance, every day',
-    description:
-      'A new Bitcoin or crypto quiz drops every day. Answer all questions correctly to earn the full Sats reward. You only get one attempt per day — so read carefully before submitting!',
-    highlight: 'Answer every question before submitting — you cannot go back.',
-    visual: (
-      <div className="w-full space-y-2">
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-xl p-3">
-          <p className="text-xs font-bold text-white/60 mb-2">What is the max supply of Bitcoin?</p>
-          <div className="grid grid-cols-2 gap-1.5">
-            {['21 Million', '100 Million', 'Unlimited', '42 Million'].map((opt, i) => (
-              <div key={opt} className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold border ${i === 0 ? 'bg-sats-orange-500/10 border-sats-orange-500/30 text-sats-orange-500' : 'bg-[#0a0a0a] border-[#1a1a1a] text-white/30'}`}>
-                {['A', 'B', 'C', 'D'][i]}. {opt}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center justify-between px-1">
-          <span className="text-[10px] text-white/25">1 attempt / day</span>
-          <span className="text-[10px] text-sats-orange-500 font-bold">+50 Sats reward</span>
-        </div>
-      </div>
-    ),
+    id: 'wallet',
+    eyebrow: 'Wallet',
+    title: 'Your wallet shows what is available, pending, and locked',
+    description: 'Use the wallet page to monitor your real withdrawable sats and understand reward status clearly.',
+    accent: 'Available balance is the amount ready for withdrawal.',
+    tone: 'amber',
+    icon: Wallet,
+    points: ['Available sats', 'Pending review rewards', 'Locked reward tracking'],
   },
   {
-    id: 'streak',
-    icon: <Flame className="w-5 h-5" />,
-    label: 'Streaks',
-    title: 'Daily Streak Bonuses',
-    subtitle: 'Stay consistent, earn more',
-    description:
-      'Complete at least one valid task or quiz every day to maintain your streak. Hitting streak milestones (7, 21, 60, 90, 180, 365 days) rewards you with bonus Sats. Miss a day and your streak resets.',
-    highlight: 'Even completing the daily quiz counts toward your streak.',
-    visual: (
-      <div className="w-full">
-        <div className="flex items-center justify-between mb-3">
-          {[
-            { days: '7', sats: '+70', done: true },
-            { days: '21', sats: '+210', done: false, next: true },
-            { days: '60', sats: '+600', done: false },
-            { days: '90', sats: '+900', done: false },
-          ].map((m, i) => (
-            <div key={m.days} className="flex flex-col items-center gap-1.5">
-              <div className={`w-9 h-9 rounded-full border-2 flex items-center justify-center text-xs font-black transition-all ${
-                m.done
-                  ? 'border-sats-orange-500 bg-sats-orange-500 text-black'
-                  : m.next
-                  ? 'border-sats-orange-500 text-sats-orange-500'
-                  : 'border-white/10 text-white/20'
-              }`}>
-                {m.done ? <CheckCircle2 className="w-4 h-4" /> : m.days}
-              </div>
-              <span className={`text-[9px] font-bold ${m.done ? 'text-sats-orange-500' : m.next ? 'text-white/60' : 'text-white/20'}`}>
-                {m.sats}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="text-center">
-          <span className="text-[10px] text-white/25 leading-relaxed">Current: 7 Days 🔥 — Next milestone: 21 Days</span>
-        </div>
-      </div>
-    ),
+    id: 'streaks',
+    eyebrow: 'Streaks',
+    title: 'Keep your streak active to unlock milestone rewards',
+    description: 'Come back daily, maintain your streak, and collect progression rewards as you stay consistent.',
+    accent: 'Consistency matters more than doing everything at once.',
+    tone: 'rose',
+    icon: Flame,
+    points: ['Daily progress', 'Milestone rewards', 'Consistency boost'],
   },
   {
     id: 'referrals',
-    icon: <Gift className="w-5 h-5" />,
-    label: 'Referrals',
-    title: 'Invite Friends & Earn',
-    subtitle: 'Share your code, earn together',
-    description:
-      'Share your unique referral link or code with friends. When they sign up and complete tasks, you earn bonus Sats automatically. The more friends you bring, the more you earn passively.',
-    highlight: 'Your referral earnings stack on top of your regular task earnings.',
-    visual: (
-      <div className="w-full space-y-2.5">
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-xl px-3 py-2.5 flex items-center justify-between">
-          <span className="text-[10px] text-white/40 font-mono">satsearn.com/ref/SAKSHAM</span>
-          <span className="text-[10px] font-black text-sats-orange-500 bg-sats-orange-500/10 px-2 py-0.5 rounded-lg border border-sats-orange-500/20">Copy</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-2 text-center">
-              <div className="w-6 h-6 rounded-full bg-sats-orange-500/10 border border-sats-orange-500/20 mx-auto mb-1 flex items-center justify-center">
-                <Users className="w-3 h-3 text-sats-orange-500" />
-              </div>
-              <p className="text-[9px] text-white/30">Friend {i}</p>
-              <p className="text-[10px] font-black text-sats-orange-500">+50</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
+    eyebrow: 'Referrals',
+    title: 'Invite friends and grow your earnings',
+    description: 'Share your referral code and earn commission based on your current tier and referral activity.',
+    accent: 'Your referral page explains current limits and commission by tier.',
+    tone: 'violet',
+    icon: Users,
+    points: ['Share your code', 'Track your network', 'Earn tier-based commission'],
   },
   {
-    id: 'leaderboard',
-    icon: <Trophy className="w-5 h-5" />,
-    label: 'Leaderboard',
-    title: 'Compete on the Leaderboard',
-    subtitle: 'See where you stand globally',
-    description:
-      'The leaderboard ranks users by total Sats earned. Compete with other users, climb the ranks, and earn recognition. Top performers may receive special bonuses and tier upgrades.',
-    visual: (
-      <div className="w-full space-y-1.5">
-        {[
-          { rank: 1, name: 'CryptoKing', sats: '2,450,000', badge: '👑' },
-          { rank: 2, name: 'SatoshiFan', sats: '1,890,000', badge: '🥈' },
-          { rank: 3, name: 'BitcoinMax', sats: '1,240,000', badge: '🥉' },
-          { rank: 42, name: 'You', sats: '998,062', badge: '⚡', isYou: true },
-        ].map((row) => (
-          <div key={row.rank} className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border ${row.isYou ? 'bg-sats-orange-500/8 border-sats-orange-500/20' : 'bg-[#0a0a0a] border-[#1a1a1a]'}`}>
-            <span className="text-sm w-5 text-center">{row.badge}</span>
-            <span className={`text-xs font-bold flex-1 ${row.isYou ? 'text-sats-orange-400' : 'text-white/60'}`}>{row.name}</span>
-            <span className={`text-xs font-black ${row.isYou ? 'text-sats-orange-500' : 'text-white/40'} tabular-nums`}>{row.sats}</span>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: 'tiers',
-    icon: <Star className="w-5 h-5" />,
-    label: 'Tiers & XP',
-    title: 'Tier System & XP',
-    subtitle: 'Level up to unlock bigger rewards',
-    description:
-      'Every task and quiz earns you XP. XP fills your level bar and eventually upgrades your Tier — from Basic all the way to Founder. Higher tiers unlock exclusive campaigns with larger Sats rewards.',
-    highlight: 'Your tier affects how much you earn per task — Platinum earns far more than Basic.',
-    visual: (
-      <div className="w-full space-y-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          {[
-            { tier: 'Basic', color: 'text-white/40', border: 'border-white/10' },
-            { tier: 'Silver', color: 'text-slate-300', border: 'border-slate-500/30' },
-            { tier: 'Gold', color: 'text-yellow-400', border: 'border-yellow-500/30' },
-            { tier: 'Platinum', color: 'text-cyan-300', border: 'border-cyan-500/30' },
-            { tier: 'Diamond', color: 'text-blue-300', border: 'border-blue-500/30' },
-            { tier: 'Founder', color: 'text-sats-orange-500', border: 'border-sats-orange-500/40' },
-          ].map((t) => (
-            <span key={t.tier} className={`px-2 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-wide ${t.color} ${t.border}`}>
-              {t.tier}
-            </span>
-          ))}
-        </div>
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-xl p-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[10px] text-white/40 font-bold">XP Progress — Basic</span>
-            <span className="text-[10px] font-black text-sats-orange-500">340 / 500</span>
-          </div>
-          <div className="h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-sats-orange-500 to-yellow-400 rounded-full" style={{ width: '68%' }} />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'withdraw',
-    icon: <ArrowUpRight className="w-5 h-5" />,
-    label: 'Withdraw',
-    title: 'Withdraw Your Sats',
-    subtitle: 'Cash out to your Lightning wallet',
-    description:
-      'Once your Available balance reaches the minimum threshold, you can withdraw to any Lightning Network wallet. Generate a Lightning invoice in your wallet app, paste it here, and request payout.',
-    highlight: 'Withdrawals are processed manually by admins and typically complete within 24 hours.',
-    visual: (
-      <div className="w-full space-y-2">
-        <div className="bg-sats-orange-500/5 border border-sats-orange-500/20 rounded-xl p-3 flex items-center justify-between">
-          <div>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-sats-orange-500/50 mb-0.5">Available</p>
-            <p className="text-xl font-black text-sats-orange-500">12,500</p>
-            <p className="text-[9px] text-sats-orange-500/40">SATS</p>
-          </div>
-          <div className="flex flex-col items-end gap-1">
-            <ArrowUpRight className="w-5 h-5 text-sats-orange-500/40" />
-            <span className="text-[9px] text-white/20">Lightning Network</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 px-1">
-          {['Request', '→', 'Review', '→', 'Paid'].map((s, i) => (
-            <span key={i} className={`text-[10px] font-bold ${i % 2 === 0 ? 'text-sats-orange-500' : 'text-white/15'}`}>{s}</span>
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'ready',
-    icon: <CheckCircle2 className="w-5 h-5" />,
-    label: "You're Set!",
-    title: "You're Ready to Stack Sats! 🚀",
-    subtitle: 'Start earning Bitcoin today',
-    description:
-      'You now know everything you need to start earning. Head to Browse Tasks to complete your first campaign, or try the Daily Quiz for a quick boost. Your Bitcoin journey starts now.',
-    highlight: 'Tip: Complete the daily quiz every day — it takes 2 minutes and keeps your streak alive.',
-    visual: (
-      <div className="flex flex-col items-center gap-4 py-2">
-        <div className="grid grid-cols-3 gap-3 w-full">
-          {[
-            { icon: <LayoutGrid className="w-4 h-4" />, label: 'Browse Tasks', color: 'text-sats-orange-500', bg: 'bg-sats-orange-500/10 border-sats-orange-500/25' },
-            { icon: <Lightbulb className="w-4 h-4" />, label: 'Daily Quiz', color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/25' },
-            { icon: <Gift className="w-4 h-4" />, label: 'Referrals', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/25' },
-          ].map((a) => (
-            <div key={a.label} className={`${a.bg} border rounded-xl p-3 flex flex-col items-center gap-1.5`}>
-              <span className={a.color}>{a.icon}</span>
-              <span className="text-[9px] font-bold text-white/50 text-center">{a.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-sats-orange-500" />
-          <span className="text-sm font-black text-white">Go earn your first Sats!</span>
-        </div>
-      </div>
-    ),
+    id: 'security',
+    eyebrow: 'Ready to start',
+    title: 'Submit correctly, stay active, and earn smarter',
+    description: 'Follow task instructions carefully, keep your account secure, and use the replay button anytime if you need this guide again.',
+    accent: 'You can reopen this guide later from the dashboard.',
+    tone: 'cyan',
+    icon: ShieldCheck,
+    points: ['Follow instructions', 'Avoid invalid submissions', 'Replay this guide anytime'],
   },
 ];
 
-// ══════════════════════════════════════════════════════════════════════════════
-// ONBOARDING TOUR COMPONENT
-// ══════════════════════════════════════════════════════════════════════════════
+const TONE_STYLES: Record<StepTone, { glow: string; soft: string; chip: string; icon: string; border: string; button: string }> = {
+  orange: {
+    glow: 'from-orange-500/18 via-amber-500/10 to-transparent',
+    soft: 'bg-orange-500/10',
+    chip: 'border-orange-400/25 bg-orange-500/10 text-orange-200',
+    icon: 'text-orange-300',
+    border: 'border-orange-400/18',
+    button: 'from-orange-400 to-amber-300 text-black',
+  },
+  blue: {
+    glow: 'from-sky-500/18 via-blue-500/10 to-transparent',
+    soft: 'bg-sky-500/10',
+    chip: 'border-sky-400/25 bg-sky-500/10 text-sky-200',
+    icon: 'text-sky-300',
+    border: 'border-sky-400/18',
+    button: 'from-sky-400 to-blue-300 text-black',
+  },
+  emerald: {
+    glow: 'from-emerald-500/18 via-green-500/10 to-transparent',
+    soft: 'bg-emerald-500/10',
+    chip: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-200',
+    icon: 'text-emerald-300',
+    border: 'border-emerald-400/18',
+    button: 'from-emerald-400 to-lime-300 text-black',
+  },
+  violet: {
+    glow: 'from-violet-500/18 via-fuchsia-500/10 to-transparent',
+    soft: 'bg-violet-500/10',
+    chip: 'border-violet-400/25 bg-violet-500/10 text-violet-200',
+    icon: 'text-violet-300',
+    border: 'border-violet-400/18',
+    button: 'from-violet-400 to-fuchsia-300 text-black',
+  },
+  rose: {
+    glow: 'from-rose-500/18 via-pink-500/10 to-transparent',
+    soft: 'bg-rose-500/10',
+    chip: 'border-rose-400/25 bg-rose-500/10 text-rose-200',
+    icon: 'text-rose-300',
+    border: 'border-rose-400/18',
+    button: 'from-rose-400 to-pink-300 text-black',
+  },
+  amber: {
+    glow: 'from-amber-500/18 via-yellow-500/10 to-transparent',
+    soft: 'bg-amber-500/10',
+    chip: 'border-amber-400/25 bg-amber-500/10 text-amber-200',
+    icon: 'text-amber-300',
+    border: 'border-amber-400/18',
+    button: 'from-amber-300 to-yellow-200 text-black',
+  },
+  cyan: {
+    glow: 'from-cyan-500/18 via-teal-500/10 to-transparent',
+    soft: 'bg-cyan-500/10',
+    chip: 'border-cyan-400/25 bg-cyan-500/10 text-cyan-200',
+    icon: 'text-cyan-300',
+    border: 'border-cyan-400/18',
+    button: 'from-cyan-300 to-teal-200 text-black',
+  },
+};
 
 interface OnboardingTourProps {
   isOpen: boolean;
@@ -341,237 +172,375 @@ interface OnboardingTourProps {
 
 export function OnboardingTour({ isOpen, onClose }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCurrentStep(0);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowRight') {
+        setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
+      }
+
+      if (event.key === 'ArrowLeft') {
+        setCurrentStep((prev) => Math.max(prev - 1, 0));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   const step = STEPS[currentStep];
+  const style = TONE_STYLES[step.tone];
+  const StepIcon = step.icon;
   const isFirst = currentStep === 0;
   const isLast = currentStep === STEPS.length - 1;
-  const progress = ((currentStep + 1) / STEPS.length) * 100;
 
-  const close = useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsExiting(false);
-      setCurrentStep(0);
-      onClose();
-    }, 200);
-  }, [onClose]);
-
-  const handleFinish = () => {
-    localStorage.setItem(STORAGE_KEY, 'true');
-    close();
-  };
+  const progress = useMemo(() => ((currentStep + 1) / STEPS.length) * 100, [currentStep]);
 
   const handleSkip = () => {
     localStorage.setItem(STORAGE_KEY, 'true');
-    close();
+    onClose();
   };
 
-  const next = () => {
-    if (!isLast) setCurrentStep((s) => s + 1);
+  const handleNext = () => {
+    if (isLast) {
+      localStorage.setItem(STORAGE_KEY, 'true');
+      onClose();
+      return;
+    }
+
+    setCurrentStep((prev) => prev + 1);
   };
 
-  const prev = () => {
-    if (!isFirst) setCurrentStep((s) => s - 1);
+  const handleBack = () => {
+    if (!isFirst) {
+      setCurrentStep((prev) => prev - 1);
+    }
   };
-
-  // Keyboard navigation
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === 'Enter') next();
-      if (e.key === 'ArrowLeft') prev();
-      if (e.key === 'Escape') handleSkip();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [isOpen, currentStep]);
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-200 ${
-        isExiting ? 'opacity-0 scale-95' : 'opacity-100'
-      }`}
-    >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/85 backdrop-blur-md"
-        onClick={handleSkip}
-      />
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 px-4 py-5 backdrop-blur-sm">
+      <div className="relative flex h-[92vh] w-full max-w-[920px] flex-col overflow-hidden rounded-[26px] border border-[#222] bg-[#070707] shadow-[0_32px_120px_rgba(0,0,0,0.58)] sm:h-[620px] lg:h-[652px] xl:h-[664px]">
+        <div className={`pointer-events-none absolute inset-x-0 top-0 h-52 bg-gradient-to-br ${style.glow}`} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/50 to-transparent" />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-lg bg-[#080808] border border-[#1e1e1e] rounded-2xl shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[90vh]">
-
-        {/* Top highlight */}
-        <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-sats-orange-500/30 to-transparent pointer-events-none" />
-
-        {/* Ambient glow */}
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-32 bg-sats-orange-500/8 rounded-full blur-3xl pointer-events-none" />
-
-        {/* ── Header ── */}
-        <div className="relative flex items-center justify-between px-6 pt-5 pb-4 shrink-0 border-b border-[#1a1a1a]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/25 flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-sats-orange-500" />
+        <div className="relative z-10 flex items-center justify-between border-b border-[#171717] px-4 py-3 sm:px-5 sm:py-3.5 lg:px-6 lg:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${style.border} ${style.soft} sm:h-11 sm:w-11`}>
+              <PlayCircle className={`h-4 w-4 ${style.icon} sm:h-5 sm:w-5`} />
             </div>
-            <div>
-              <p className="text-xs font-black text-white leading-none">SatsEarn Tour</p>
-              <p className="text-[10px] text-white/25 mt-0.5">
-                Step {currentStep + 1} of {STEPS.length}
-              </p>
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white/35">SatsEarn Guide</p>
+              <h2 className="text-sm font-black text-white sm:text-lg">Understand the platform in 7 quick steps</h2>
             </div>
           </div>
 
           <button
             onClick={handleSkip}
-            className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/5 transition-all"
-            aria-label="Skip tour"
+            aria-label="Skip guide"
+            className="inline-flex h-9 min-w-[64px] shrink-0 items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#101010] px-3 text-xs font-bold text-gray-300 transition-colors hover:border-white/15 hover:text-white sm:h-10 sm:min-w-[78px] sm:px-4 sm:text-sm"
           >
-            <X className="w-4 h-4" />
+            <span>Skip</span>
+            <X className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4" />
           </button>
         </div>
 
-        {/* ── Progress bar ── */}
-        <div className="h-0.5 bg-[#1a1a1a] shrink-0">
-          <div
-            className="h-full bg-sats-orange-500 transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="relative z-10 flex items-center gap-3 px-4 pt-3 sm:px-5 sm:pt-3.5 lg:px-6 lg:pt-4">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#121212]">
+            <div className={`h-full rounded-full bg-gradient-to-r ${style.button} transition-all duration-300`} style={{ width: `${progress}%` }} />
+          </div>
+          <div className="min-w-[56px] text-right text-[11px] font-bold text-white/45 sm:min-w-[72px] sm:text-xs">
+            {currentStep + 1} / {STEPS.length}
+          </div>
         </div>
 
-        {/* ── Step dots (scrollable, desktop pill nav) ── */}
-        <div className="hidden sm:flex items-center gap-1.5 px-6 py-3 border-b border-[#111] overflow-x-auto shrink-0">
-          {STEPS.map((s, i) => (
-            <button
-              key={s.id}
-              onClick={() => setCurrentStep(i)}
-              title={s.label}
-              className={`shrink-0 transition-all duration-200 ${
-                i === currentStep
-                  ? 'px-3 py-1 rounded-full bg-sats-orange-500/10 border border-sats-orange-500/30 text-[10px] font-black text-sats-orange-500'
-                  : i < currentStep
-                  ? 'w-5 h-5 rounded-full bg-sats-orange-500/20 border border-sats-orange-500/15 flex items-center justify-center'
-                  : 'w-5 h-5 rounded-full bg-white/5 border border-white/8 flex items-center justify-center'
-              }`}
-            >
-              {i === currentStep ? (
-                s.label
-              ) : i < currentStep ? (
-                <CheckCircle2 className="w-2.5 h-2.5 text-sats-orange-500" />
-              ) : (
-                <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Body ── */}
-        <div className="relative px-6 py-5 overflow-y-auto flex-1">
-          {/* Step icon + title */}
-          <div className="flex items-start gap-3 mb-4">
-            <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center border ${
-              step.id === 'ready'
-                ? 'bg-green-500/10 border-green-500/25 text-green-400'
-                : 'bg-sats-orange-500/8 border-sats-orange-500/20 text-sats-orange-500'
-            }`}>
-              {step.icon}
+        <div className="relative z-10 grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-4 py-4 sm:px-5 sm:py-4 md:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-4 lg:py-4.5">
+          <div className="flex min-h-0 flex-col overflow-hidden rounded-[24px] border border-[#1b1b1b] bg-[#0c0c0c] p-4 sm:rounded-[28px] sm:p-5 lg:p-5.5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] sm:px-3 sm:text-[11px] sm:tracking-[0.2em] ${style.chip}`}>
+                  <StepIcon className="h-3.5 w-3.5" />
+                  <span>{step.eyebrow}</span>
+                </div>
+                <h3 className="mt-3 max-w-[18ch] text-xl font-black leading-[1.08] text-white sm:mt-3.5 sm:max-w-[22ch] sm:text-[1.7rem] lg:mt-4 lg:text-[1.82rem]">
+                  {step.title}
+                </h3>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-sats-orange-500/50 mb-0.5">
-                {step.subtitle}
-              </p>
-              <h2 className="text-lg font-black text-white leading-snug">
-                {step.title}
-              </h2>
+
+            <p className="mt-4 text-[13px] leading-6 text-gray-300 sm:mt-4 sm:text-[14px] sm:leading-6 lg:mt-4 lg:text-[13.5px] lg:leading-[1.55rem] xl:text-[14px] xl:leading-[1.65rem]">{step.description}</p>
+
+            <div className={`mt-4 rounded-2xl border ${style.border} ${style.soft} px-3.5 py-3 sm:mt-4 sm:px-4 lg:mt-4`}>
+              <p className={`text-[13px] font-semibold leading-5 ${style.icon} sm:text-sm lg:text-[13px] lg:leading-5`}>{step.accent}</p>
+            </div>
+
+            <div className="mt-4 grid gap-2.5 sm:mt-4 sm:gap-2.5 lg:mt-4 lg:gap-2.5">
+              {step.points.slice(0, 2).map((point, index) => (
+                <div key={point} className="flex items-start gap-3 rounded-2xl border border-[#171717] bg-[#090909] px-3.5 py-3 sm:px-4 lg:px-3.5 lg:py-2.5">
+                  <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-black ${style.border} ${style.soft} ${style.icon} sm:h-7 sm:w-7 sm:text-xs`}>
+                    {index + 1}
+                  </div>
+                  <p className="text-[13px] font-medium leading-5 text-gray-200 sm:text-sm sm:leading-6 lg:text-[13px] lg:leading-5">{point}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Description */}
-          <p className="text-sm text-white/45 leading-relaxed mb-5">
-            {step.description}
-          </p>
+          <div className="hidden min-h-0 flex-col overflow-hidden rounded-[28px] border border-[#1b1b1b] bg-[#0a0a0a] p-5 sm:p-5 lg:flex lg:p-5">
+            <div className="grid h-full min-h-0 grid-rows-[auto_auto_1fr] gap-3 lg:gap-3.5">
+              <div className="flex items-center justify-between rounded-2xl border border-[#181818] bg-[#101010] px-4 py-3 lg:px-3.5 lg:py-2.5">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/30">Focus Area</p>
+                  <p className="mt-1 text-sm font-bold text-white lg:text-[13px]">{step.eyebrow}</p>
+                </div>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl border ${style.border} ${style.soft} lg:h-10 lg:w-10`}>
+                  <StepIcon className={`h-5 w-5 ${style.icon} lg:h-4.5 lg:w-4.5`} />
+                </div>
+              </div>
 
-          {/* Visual */}
-          <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 mb-4">
-            {step.visual}
-          </div>
+              <div className="grid grid-cols-2 gap-2.5 lg:gap-2">
+                <MiniCard icon={Coins} label="Rewards" value={step.id === 'wallet' ? 'Withdrawable' : 'Live earnings'} tone={style} />
+                <MiniCard icon={HelpCircle} label="Why it matters" value="Easy to follow" tone={style} />
+              </div>
 
-          {/* Highlight tip */}
-          {step.highlight && (
-            <div className="flex items-start gap-2.5 px-3.5 py-3 bg-sats-orange-500/5 border border-sats-orange-500/15 rounded-xl">
-              <Zap className="w-3.5 h-3.5 text-sats-orange-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-sats-orange-500/70 leading-relaxed font-medium">
-                {step.highlight}
-              </p>
+              <div className="grid min-h-0 gap-2.5 rounded-[24px] border border-[#171717] bg-[linear-gradient(180deg,#0f0f0f_0%,#090909_100%)] p-4 sm:p-4 lg:p-3.5">
+                <VisualStrip tone={style} stepId={step.id} />
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* ── Footer nav ── */}
-        <div className="shrink-0 px-6 py-4 border-t border-[#1a1a1a] flex items-center gap-3">
-          {/* Back */}
+        <div className="relative z-10 flex items-center justify-between gap-3 border-t border-[#171717] bg-[#090909] px-4 py-3 sm:px-6 sm:py-4">
           <button
-            onClick={prev}
+            onClick={handleBack}
             disabled={isFirst}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#1e1e1e] text-white/35 text-sm font-medium hover:text-white/70 hover:border-white/15 transition-all disabled:opacity-0 disabled:pointer-events-none"
+            className="inline-flex h-11 min-w-[96px] items-center justify-center gap-2 rounded-xl border border-[#3a3a3a] bg-[#121212] px-4 text-sm font-bold text-white transition-colors hover:border-white/20 hover:bg-[#171717] disabled:cursor-not-allowed disabled:opacity-35 sm:w-[108px]"
           >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Back</span>
+            <ChevronLeft className="h-4 w-4" />
+            Back
           </button>
 
-          {/* Spacer */}
-          <div className="flex-1" />
+          <div className="hidden text-center text-xs font-bold uppercase tracking-[0.18em] text-white/25 lg:block">
+            Learn once, replay anytime from dashboard
+          </div>
 
-          {/* Skip (not on last) */}
-          {!isLast && (
-            <button
-              onClick={handleSkip}
-              className="text-xs text-white/20 hover:text-white/40 transition-colors font-medium"
-            >
-              Skip tour
-            </button>
-          )}
-
-          {/* Next / Finish */}
-          {isLast ? (
-            <button
-              onClick={handleFinish}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-sats-orange-500 text-black text-sm font-black hover:bg-sats-orange-400 active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(238,139,18,0.3)]"
-            >
-              <span>Start Earning</span>
-              <Zap className="w-4 h-4" />
-            </button>
-          ) : (
-            <button
-              onClick={next}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sats-orange-500 text-black text-sm font-bold hover:bg-sats-orange-400 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(238,139,18,0.2)]"
-            >
-              <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
+          <button
+            onClick={handleNext}
+            className={`inline-flex h-11 min-w-[112px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${isLast ? 'from-sats-orange-500 via-orange-400 to-amber-300 text-black shadow-[0_16px_36px_rgba(249,115,22,0.32)]' : style.button} px-4 text-sm font-black transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-[132px]`}
+          >
+            {isLast ? 'Start Earning' : 'Next'}
+            <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// HOOK — auto-show on first login, exposes replay trigger
-// ══════════════════════════════════════════════════════════════════════════════
+function MiniCard({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  tone: ReturnType<typeof getToneStyles>;
+}) {
+  return (
+    <div className="rounded-2xl border border-[#181818] bg-[#0d0d0d] px-4 py-3">
+      <div className="flex items-center gap-2 text-white/35">
+        <Icon className={`h-4 w-4 ${tone.icon}`} />
+        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{label}</span>
+      </div>
+      <p className="mt-3 text-sm font-bold text-white">{value}</p>
+    </div>
+  );
+}
+
+function VisualStrip({
+  tone,
+  stepId,
+}: {
+  tone: ReturnType<typeof getToneStyles>;
+  stepId: string;
+}) {
+  const commonPill = 'rounded-full border px-3 py-1 text-[11px] font-bold';
+
+  if (stepId === 'dashboard') {
+    return (
+      <>
+        <div className="grid grid-cols-3 gap-3">
+          {['Available', 'Pending', 'Locked'].map((item, index) => (
+            <div key={item} className="rounded-2xl border border-[#1d1d1d] bg-[#111] px-3 py-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">{item}</p>
+              <p className={`mt-2 text-lg font-black ${index === 0 ? tone.icon : 'text-white'}`}>{index === 0 ? '12,540' : index === 1 ? '320' : '85'}</p>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-2xl border border-[#1d1d1d] bg-[#0c0c0c] px-4 py-4">
+          <div className="flex items-center justify-between text-[11px] font-bold text-white/35">
+            <span>Quick View</span>
+            <span>Today</span>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-[#151515]">
+            <div className={`h-2 rounded-full bg-gradient-to-r ${tone.button}`} style={{ width: '68%' }} />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (stepId === 'tasks') {
+    return (
+      <>
+        <div className="grid gap-3">
+          {['Open campaign', 'Submit proof', 'Wait for approval'].map((item, index) => (
+            <div key={item} className="flex items-center justify-between rounded-2xl border border-[#1d1d1d] bg-[#101010] px-4 py-3">
+              <span className="text-sm font-semibold text-white">{item}</span>
+              <span className={`${commonPill} ${index === 0 ? tone.chip : 'border-[#222] bg-[#131313] text-white/45'}`}>{index === 0 ? 'Now' : index === 1 ? 'Proof' : 'Review'}</span>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  if (stepId === 'wallet') {
+    return (
+      <>
+        <div className="rounded-[24px] border border-[#1c1c1c] bg-[#111] p-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Wallet status</p>
+          <p className={`mt-3 text-3xl font-black ${tone.icon}`}>24,500 sats</p>
+          <p className="mt-1 text-sm text-gray-400">Ready to withdraw</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl border border-[#1c1c1c] bg-[#0e0e0e] px-4 py-3 text-sm font-semibold text-white">Pending rewards</div>
+          <div className="rounded-2xl border border-[#1c1c1c] bg-[#0e0e0e] px-4 py-3 text-sm font-semibold text-white">Withdrawal rules</div>
+        </div>
+      </>
+    );
+  }
+
+  if (stepId === 'streaks') {
+    return (
+      <>
+        <div className="flex items-center justify-between rounded-2xl border border-[#1d1d1d] bg-[#101010] px-4 py-3">
+          {['D1', 'D2', 'D3', 'D4', 'D5'].map((day, index) => (
+            <div key={day} className="flex flex-col items-center gap-2">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs font-black ${index < 3 ? `${tone.border} ${tone.soft} ${tone.icon}` : 'border-[#252525] text-white/35'}`}>
+                {index < 3 ? '✓' : day}
+              </div>
+              <span className="text-[10px] font-bold text-white/35">{day}</span>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-2xl border border-[#1d1d1d] bg-[#0c0c0c] px-4 py-4 text-sm text-gray-300">
+          Return daily to protect your streak and unlock milestone rewards.
+        </div>
+      </>
+    );
+  }
+
+  if (stepId === 'referrals') {
+    return (
+      <>
+        <div className="rounded-2xl border border-[#1d1d1d] bg-[#101010] px-4 py-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Your code</p>
+          <p className={`mt-3 text-xl font-black tracking-[0.25em] ${tone.icon}`}>ABCD123</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl border border-[#1c1c1c] bg-[#0d0d0d] px-4 py-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Invites</p>
+            <p className="mt-2 text-lg font-black text-white">14</p>
+          </div>
+          <div className="rounded-2xl border border-[#1c1c1c] bg-[#0d0d0d] px-4 py-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Commission</p>
+            <p className={`mt-2 text-lg font-black ${tone.icon}`}>20%</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (stepId === 'security') {
+    return (
+      <>
+        <div className="grid gap-3">
+          {['Submit real proof', 'Read task details carefully', 'Use dashboard replay anytime'].map((item) => (
+            <div key={item} className="flex items-center gap-3 rounded-2xl border border-[#1d1d1d] bg-[#101010] px-4 py-3">
+              <div className={`flex h-8 w-8 items-center justify-center rounded-full border ${tone.border} ${tone.soft}`}>
+                <ShieldCheck className={`h-4 w-4 ${tone.icon}`} />
+              </div>
+              <span className="text-sm font-semibold text-white">{item}</span>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="rounded-[24px] border border-[#1c1c1c] bg-[#101010] p-4">
+        <div className="flex items-center gap-3">
+          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${tone.border} ${tone.soft}`}>
+            <Zap className={`h-5 w-5 ${tone.icon}`} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Getting started</p>
+            <p className="mt-1 text-base font-bold text-white">Understand the earning flow</p>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        {['Tasks', 'Streak', 'Wallet'].map((item) => (
+          <div key={item} className="rounded-2xl border border-[#1d1d1d] bg-[#0d0d0d] px-3 py-4 text-center text-sm font-bold text-white">
+            {item}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function getToneStyles(tone: StepTone) {
+  return TONE_STYLES[tone];
+}
 
 export function useOnboarding() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Delay slightly so dashboard renders first
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       const done = localStorage.getItem(STORAGE_KEY);
-      if (!done) setIsOpen(true);
-    }, 800);
-    return () => clearTimeout(timer);
+      if (!done) {
+        setIsOpen(true);
+      }
+    }, 700);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const openTour = () => setIsOpen(true);
@@ -579,10 +548,6 @@ export function useOnboarding() {
 
   return { isOpen, openTour, closeTour };
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// REPLAY BUTTON — drop this wherever you want the "Take Tour" button
-// ══════════════════════════════════════════════════════════════════════════════
 
 interface TourButtonProps {
   onClick: () => void;
@@ -594,10 +559,10 @@ export function TourButton({ onClick, variant = 'pill' }: TourButtonProps) {
     return (
       <button
         onClick={onClick}
-        title="Take the tour"
-        className="flex items-center justify-center w-8 h-8 rounded-xl border border-[#1a1a1a] text-white/30 hover:text-sats-orange-500 hover:border-sats-orange-500/25 hover:bg-sats-orange-500/5 transition-all"
+        title="Open guide"
+        className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1f1f1f] bg-[#0d0d0d] text-gray-400 transition-all hover:border-sats-orange-500/30 hover:bg-sats-orange-500/10 hover:text-sats-orange-400"
       >
-        <Lightbulb className="w-4 h-4" />
+        <PlayCircle className="h-4 w-4" />
       </button>
     );
   }
@@ -605,10 +570,10 @@ export function TourButton({ onClick, variant = 'pill' }: TourButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-sats-orange-500/20 bg-sats-orange-500/8 text-sats-orange-500 text-xs font-bold hover:bg-sats-orange-500/15 transition-all"
+      className="inline-flex items-center gap-2 rounded-xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-xs font-bold text-sats-orange-300 transition-colors hover:bg-sats-orange-500/15"
     >
-      <Lightbulb className="w-3.5 h-3.5" />
-      <span>How it works</span>
+      <Lightbulb className="h-3.5 w-3.5" />
+      <span className='hidden md:inline'>How it works</span>
     </button>
   );
 }

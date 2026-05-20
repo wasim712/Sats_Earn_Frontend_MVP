@@ -16,6 +16,18 @@ const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
 const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
 const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 
+function getDigitsOnlyValue(value: string) {
+  return value.replace(/\D/g, '');
+}
+
+function parseWholeNumber(value: string) {
+  const digitsOnly = getDigitsOnlyValue(value);
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 function toLocalDateValue(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -103,13 +115,13 @@ export default function AddCampaignPage() {
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value === '' ? 0 : parseInt(value, 10) }));
+    setFormData(prev => ({ ...prev, [name]: parseWholeNumber(value) }));
   };
 
   const handleMatrixChange = (tier: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: value === '' ? 0 : parseInt(value, 10) }
+      tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(value) }
     }));
   };
 
@@ -409,14 +421,14 @@ export default function AddCampaignPage() {
 
                 <div className="grid grid-cols-1 gap-6 mb-8 border-b border-[#1a1a1a] pb-8">
                   <InputWrapper label="Max Completions (Budget Cap)" required>
-                    <input type="number" name="maxCompletions" min="1" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" name="maxCompletions" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
                       Worst-Case Liability: <span className="text-yellow-500">{projectedMaxLiability.toLocaleString()} Sats</span>
                     </p>
                   </InputWrapper>
 
                   <InputWrapper label="Campaign XP Reward" required>
-                    <input type="number" name="xpReward" min="1" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" name="xpReward" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
                       Base XP users get for this campaign. During active 2x period, XP also doubles.
                     </p>
@@ -462,8 +474,9 @@ export default function AddCampaignPage() {
                       <div key={tier} className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-2.5 flex items-center justify-between">
                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
                         <input 
-                          type="number" 
-                          min="0"
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           value={formData.tierRewardMatrix[tier] || ''} 
                           onChange={(e) => handleMatrixChange(tier, e.target.value)}
                           placeholder="0"

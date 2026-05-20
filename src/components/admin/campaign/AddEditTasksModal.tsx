@@ -8,6 +8,14 @@ import type { Task } from '@/features/admin/adminCampaignsSlice';
 
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 interface AddEditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -190,7 +198,7 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
               <div className="bg-[#0a0a0a] border border-[#1a1a1a] p-5 rounded-2xl space-y-6 animate-in fade-in slide-in-from-top-2">
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Base Reward Override (Sats) <span className="text-sats-orange-500">*</span></label>
-                  <input type="number" min={1} value={baseReward || ''} onChange={(e) => setBaseReward(Number(e.target.value))} className={inputCls} placeholder="0" />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" value={baseReward || ''} onChange={(e) => setBaseReward(parseWholeNumber(e.target.value))} className={inputCls} placeholder="0" />
                 </div>
                 
                 <div>
@@ -199,7 +207,7 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
                     {FREE_TIERS.map(tier => (
                       <div key={tier} className="bg-[#111] border border-[#2a2a2a] rounded-lg p-2 flex flex-col gap-1">
                         <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
-                        <input type="number" min={0} value={tierMatrix[tier] || ''} onChange={(e) => setTierMatrix(prev => ({ ...prev, [tier]: Number(e.target.value) }))} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
+                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={tierMatrix[tier] || ''} onChange={(e) => setTierMatrix(prev => ({ ...prev, [tier]: parseWholeNumber(e.target.value) }))} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
                       </div>
                     ))}
                   </div>
