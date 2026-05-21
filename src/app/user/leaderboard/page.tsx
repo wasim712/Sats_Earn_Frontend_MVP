@@ -25,8 +25,8 @@ const earnersFilterOptions: Array<{ key: EarnersFilter; label: string }> = [
 ];
 
 const tabOptions: Array<{ key: LeaderboardTab; label: string; icon: React.ReactNode }> = [
-  { key: 'streaks', label: 'Streaks', icon: <Flame className="h-4 w-4" /> },
   { key: 'earners', label: 'Earners', icon: <Coins className="h-4 w-4" /> },
+  { key: 'streaks', label: 'Streaks', icon: <Flame className="h-4 w-4" /> },
 ];
 
 const topRankStyles = {
@@ -198,43 +198,67 @@ function LeaderboardRows({ entries, mode }: { entries: LeaderboardEntry[]; mode:
   }
 
   return (
-    <div className="overflow-hidden rounded-[24px] border border-[#171717] bg-[linear-gradient(180deg,rgba(10,10,10,0.96),rgba(6,6,6,0.98))]">
-      <div className="hidden grid-cols-[56px,minmax(0,1fr),auto] gap-4 border-b border-[#171717] px-5 py-4 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 md:grid">
-        <span>Rank</span>
-        <span>User</span>
-        <span className="text-right">{mode === 'streaks' ? 'Days' : 'Sats'}</span>
-      </div>
+   <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[#020202] shadow-[0_20px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+  
+  {/* Table Header - Distinct and crisp */}
+  <div className="relative z-10 grid grid-cols-[44px_1fr_auto] sm:grid-cols-[64px_1fr_auto] gap-4 border-b border-white/[0.06] bg-black/80 px-4 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
+    <span className="text-center">Rank</span>
+    <span>User</span>
+    <span className="text-right">{mode === 'streaks' ? 'Streak' : 'Earnings'}</span>
+  </div>
 
-      <div className="divide-y divide-[#141414]">
-        {restEntries.map((entry, index) => {
-          const stripe = index % 2 === 0 ? 'bg-white/[0.01]' : 'bg-transparent';
+  {/* Leaderboard Entries List */}
+  <div className="divide-y divide-white/[0.02]">
+    {restEntries.map((entry, index) => {
+      // Slightly higher contrast striping
+      const stripe = index % 2 === 0 ? 'bg-white/[0.015]' : 'bg-transparent';
 
-          return (
-            <div
-              key={`${mode}-row-${entry.userId}`}
-              className={`grid grid-cols-[36px,minmax(0,1fr),auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.03] md:grid-cols-[56px,minmax(0,1fr),auto] md:px-5 ${stripe}`}
-            >
-              <div className="flex items-center gap-3 md:gap-0">
-                <div className="text-sm font-black text-gray-400 md:text-base">{entry.rank}</div>
-              </div>
+      return (
+        <div
+          key={`${mode}-row-${entry.userId}`}
+          className={`relative grid grid-cols-[44px_1fr_auto] sm:grid-cols-[64px_1fr_auto] items-center gap-4 px-4 py-3.5 transition-all duration-200 ease-out hover:bg-sats-orange-500/[0.03] group cursor-default ${stripe}`}
+        >
+          
+          {/* MAGIC HOVER ACCENT: Glowing left line that scales in */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-sats-orange-500 scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-300 ease-out origin-center shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
 
-              <div className="flex items-center gap-3 min-w-0">
-                <Avatar entry={entry} />
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-black text-white sm:text-base">{entry.fullName}</p>
-                  <p className="mt-1 truncate text-xs text-gray-500">@{entry.username}</p>
-                </div>
-              </div>
+          {/* COLUMN 1: Rank Indicator (Faded -> Neon Orange on Hover) */}
+          <div className="flex items-center justify-center relative z-10">
+            <span className="text-xs sm:text-sm font-black text-white/30 group-hover:text-sats-orange-500 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all duration-300">
+              {entry.rank}
+            </span>
+          </div>
 
-              <div className="text-right">
-                <p className="text-base font-black text-sats-orange-400">{formatCompactValue(entry.value)}</p>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">{mode === 'streaks' ? 'Days' : 'Sats'}</p>
-              </div>
+          {/* COLUMN 2: User Profile Info */}
+          <div className="flex items-center gap-3 min-w-0 relative z-10">
+            <div className="shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-full">
+              <Avatar entry={entry} />
             </div>
-          );
-        })}
-      </div>
-    </div>
+            <div className="min-w-0 flex flex-col justify-center">
+              <p className="truncate text-sm font-bold text-white/80 tracking-wide group-hover:text-white transition-colors duration-200">
+                {entry.fullName}
+              </p>
+              <p className="truncate text-[11px] text-white/30 font-medium mt-0.5 group-hover:text-white/50 transition-colors duration-200">
+                @{entry.username}
+              </p>
+            </div>
+          </div>
+
+          {/* COLUMN 3: Score Metrics */}
+          <div className="flex items-center gap-2 text-right shrink-0 relative z-10">
+            <p className="text-sm font-black text-sats-orange-500 font-mono tracking-tight group-hover:text-sats-orange-400 group-hover:drop-shadow-[0_0_10px_rgba(249,115,22,0.4)] transition-all duration-200">
+              {formatCompactValue(entry.value)}
+            </p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white/40 transition-colors duration-200">
+              {mode === 'streaks' ? 'Days' : 'Sats'}
+            </p>
+          </div>
+
+        </div>
+      );
+    })}
+  </div>
+</div>
   );
 }
 

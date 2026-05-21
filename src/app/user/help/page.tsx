@@ -14,7 +14,7 @@ import type {
   UserContentLoadState,
 } from '@/components/user/content/userContent.types';
 
-const CONTACT_X_URL = '';
+const CONTACT_X_URL = 'https://x.com/satsearn';
 
 export default function UserHelpPage() {
   const [blogs, setBlogs] = useState<UserBlogPost[]>([]);
