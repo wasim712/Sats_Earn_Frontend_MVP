@@ -237,6 +237,7 @@ export interface UserLeaderboard {
   daily: LeaderboardEntry[];
   weekly: LeaderboardEntry[];
   monthly: LeaderboardEntry[];
+  allTime: LeaderboardEntry[];
   streaks: LeaderboardEntry[];
   generatedAt: string;
 }

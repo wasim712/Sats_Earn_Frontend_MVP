@@ -15,13 +15,14 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import type { LeaderboardEntry } from '@/types/user';
 
-type LeaderboardTab = 'streaks' | 'earners';
-type EarnersFilter = 'daily' | 'weekly' | 'monthly';
+type LeaderboardTab = 'earners' | 'streaks';
+type EarnersFilter = 'daily' | 'weekly' | 'monthly' | 'allTime';
 
 const earnersFilterOptions: Array<{ key: EarnersFilter; label: string }> = [
   { key: 'daily', label: '24 Hours' },
   { key: 'weekly', label: 'Weekly' },
   { key: 'monthly', label: 'Monthly' },
+  { key: 'allTime', label: 'All Time' },
 ];
 
 const tabOptions: Array<{ key: LeaderboardTab; label: string; icon: React.ReactNode }> = [
@@ -314,8 +315,8 @@ function LeaderboardLoadingState() {
 export default function UserLeaderboardPage() {
   const dispatch = useAppDispatch();
   const { data, isLoading, error } = useAppSelector((state) => state.userLeaderboard);
-  const [activeTab, setActiveTab] = useState<LeaderboardTab>('streaks');
-  const [activeEarnersFilter, setActiveEarnersFilter] = useState<EarnersFilter>('monthly');
+  const [activeTab, setActiveTab] = useState<LeaderboardTab>('earners');
+  const [activeEarnersFilter, setActiveEarnersFilter] = useState<EarnersFilter>('allTime');
 
   useEffect(() => {
     dispatch(fetchUserLeaderboard());
@@ -332,7 +333,14 @@ export default function UserLeaderboardPage() {
 
   const earnersEntries = useMemo(() => {
     if (!data) return [] as LeaderboardEntry[];
-    const source = activeEarnersFilter === 'daily' ? data.daily : activeEarnersFilter === 'weekly' ? data.weekly : data.monthly;
+    const source =
+      activeEarnersFilter === 'daily'
+        ? data.daily
+        : activeEarnersFilter === 'weekly'
+          ? data.weekly
+          : activeEarnersFilter === 'monthly'
+            ? data.monthly
+            : data.allTime;
     return sanitizeEntries(source);
   }, [data, activeEarnersFilter]);
 
