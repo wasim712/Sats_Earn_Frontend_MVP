@@ -9,7 +9,8 @@ import {
   Lightbulb, Bug,
   Medal,
   BookOpen,
-  CircleHelp
+  CircleHelp,
+  Gamepad2
 } from 'lucide-react';
 import Image from 'next/image';
 import { useGetUserNotificationsQuery } from '@/store/services/userApi';
@@ -111,6 +112,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
 
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
+    { name: 'Mini Games', href: '/user/minigames', icon: Gamepad2 },
     { name: 'Alerts', href: '/user/notifications', icon: Bell, count: unreadCount }, // <-- NEW
     { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
     { name: 'Bug Bounty', href: '/user/bug-bounty', icon: Bug },

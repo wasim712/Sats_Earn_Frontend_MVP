@@ -17,7 +17,7 @@ const DOCK_LINKS = [
   { label: 'Dashboard', path: '/user/dashboard', icon: Home },
   { label: 'Tasks', path: '/user/tasks', icon: Target }, 
   { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
-  { label: 'Wallet', path: '/user/withdraw', icon: Wallet },
+  { label: 'Wallet', path: '/user/wallet', icon: Wallet },
 ];
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {

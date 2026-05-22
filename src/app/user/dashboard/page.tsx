@@ -15,9 +15,11 @@ import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
+import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
 
 export default function UserDashboardPage() {
   const dispatch = useAppDispatch();
+  const { isOpen: isTourOpen, openTour, closeTour } = useOnboarding();
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
   const { notifications } = useAppSelector((state) => state.userNotifications);
@@ -250,7 +252,9 @@ export default function UserDashboardPage() {
   const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+    <>
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} />
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
       {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -264,23 +268,26 @@ export default function UserDashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex  items-center gap-3">
+          <div className=" inline">
+            <TourButton onClick={openTour} variant="pill" />
+          </div>
           <div className="relative hidden md:flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             {unreadStreakReward && <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse" />}
             <Flame className="w-4 h-4 text-sats-orange-500" />
-            <span className="text-xs font-bold text-white">{currentStreak} Day Streak</span>
+            <span className="text-xs text-nowrap  font-bold text-white">{currentStreak} Day Streak</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Zap className="w-4 h-4 text-purple-500" />
-            <span className="text-xs font-bold text-white"> XP  {userXp}</span>
+            <span className="text-xs  text-nowrap font-bold text-white"> XP  {userXp}</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Medal className={`w-4 h-4 ${getTierColor(activeTier)}`} />
-            <span className="text-xs font-bold text-white capitalize">{activeTier} Tier</span>
+            <span className="text-xs  text-nowrap font-bold text-white capitalize">{activeTier} <span className='hidden sm:inline'>Tier</span> </span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Star className="w-4 h-4 text-yellow-500" />
-            <span className="text-xs font-bold text-white">Lvl {currentLevel}</span>
+            <span className="text-xs  text-nowrap  font-bold text-white">Lvl {currentLevel}</span>
           </div>
         </div>
       </div>
@@ -290,54 +297,58 @@ export default function UserDashboardPage() {
         
         {/* Card 1: Main Balance (The Blue/Orange one from the design) */}
         <div className="lg:col-span-1 bg-gradient-to-br from-[#1c2e4a] via-[#101b30] to-[#050505] border border-blue-500/20 rounded-[24px] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
-          
-          <div className="flex justify-between items-start mb-6 relative z-10">
-            <div className="flex items-center gap-3 flex-col ">
-              <div className="self-start w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                <Wallet className="w-5 h-5 text-blue-400" />
-              </div>
-              <p className=" font-black text-blue-200 uppercase tracking-normal text-nowrap">Available Balance</p>
-            </div>
+  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
+  
+  {/* ROW 1: Icon and Toggle Only */}
+  <div className="flex justify-between items-center mb-6 relative z-10 w-full">
+    
+    {/* Wallet Icon */}
+    <div className="w-12 h-12 rounded-[14px] bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+      <Wallet className="w-6 h-6 text-blue-400" />
+    </div>
 
-            {/* Premium BTC Toggle */}
-            <div className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm">
-              <button 
-                onClick={() => setShowBtc(false)} 
-                className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${!showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-              >
-                <Zap className="w-3.5 h-3.5" />
-              </button>
-              <button 
-                onClick={() => setShowBtc(true)} 
-                className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-              >
-                ₿
-              </button>
-            </div>
-          </div>
-          
-          <div className="relative z-10">
-            <div className="text-white mb-2 drop-shadow-md ">
-              {formatAvailableBalance(data.balances?.available || 0)}
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium text-blue-200/60">
-                {getFiatValue(data.balances?.available || 0)}
-              </p>
+    {/* Premium BTC Toggle */}
+    <div className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm shrink-0">
+      <button 
+        onClick={() => setShowBtc(false)} 
+        className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${!showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+      >
+        <Zap className="w-3.5 h-3.5" />
+      </button>
+      <button 
+        onClick={() => setShowBtc(true)} 
+        className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+      >
+        ₿
+      </button>
+    </div>
+  </div>
+  
+  {/* ROW 2: Balance Data */}
+  <div className="relative z-10 mt-auto">
+    <p className="font-bold text-blue-200/80 uppercase tracking-widest text-[11px] mb-2">Available Balance</p>
+    
+    <div className="text-white mb-2 drop-shadow-md">
+      {formatAvailableBalance(data.balances?.available || 0)}
+    </div>
+    
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-sm font-medium text-blue-200/60 truncate pr-2">
+        {getFiatValue(data.balances?.available || 0)}
+      </p>
 
-              {isIndiaUser ? (
-                <button
-                  onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
-                  className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
-                  title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
-                >
-                  {fiatCurrency === 'INR' ? '$' : '₹'}
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </div>
+      {isIndiaUser ? (
+        <button
+          onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
+          className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
+          title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
+        >
+          {fiatCurrency === 'INR' ? '$' : '₹'}
+        </button>
+      ) : null}
+    </div>
+  </div>
+</div>
 
         
         {/* Card 2: pending */}
@@ -349,7 +360,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending Sats</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>Sats</span></h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
           </div>
         </div>
@@ -363,7 +374,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Locked Balance</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> Sats</span></h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
@@ -377,7 +388,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}
-              <span className="text-2xl font-bold text-white ml-1 mb-1">Sats</span></h3>
+              <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span></h3>
               
             <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
           </div>
@@ -548,34 +559,40 @@ export default function UserDashboardPage() {
                   const statusUi = getSubmissionStatusUi(submission.status);
                   
                   return (
-                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row  sm:items-center justify-between gap-4 transition-all duration-300 group grow">
-                      <div className="flex items-center gap-4">
-                        {/* Minimal Status Icon */}
-                        <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center  border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
-                          {statusUi.icon}
-                        </div>
-                        
-                        <div>
-                          <div className='flex  w-full items-center gap-2 '>
-                          <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">{submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}</h3>
-                          <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">{submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}</h3>
+                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row sm:items-center justify-between gap-4 transition-all duration-300 group grow">
+                        <div className="flex items-center gap-4">
+                          {/* Minimal Status Icon */}
+                          <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
+                            {statusUi.icon}
+                          </div>
                           
-                          </div>
-                          <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
+                          <div>
+                            <div className='flex w-full items-center gap-2'>
+                              <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">
+                                {submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}
+                              </h3>
+                              <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">
+                                {submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}
+                              </h3>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="sm:text-right  flex-col shrink-0  flex">
-                        <span className={`p-0.5 rounded border text-[9px] font-black uppercase tracking-widest ${statusUi.badge}`}>
-                              {statusUi.label}
-                            </span>
-                        <span className="text-[14px] font-black text-green-500">
-                          +{submission.rewardSats.toLocaleString()} Sats
-                        </span>
+                        {/* FIXED SECTION: Added items-center and gap-1 */}
+                        <div className="flex flex-col items-center justify-center gap-1">
+                          {/* Added w-fit and adjusted padding to px-2 py-0.5 for a perfect pill shape */}
+                          <span className={`w-fit px-2 py-0.5 rounded border text-[9px] font-black uppercase {statusUi.lable=='Rejected'?'':tracking-widest'} ${statusUi.badge}`}>
+                            {statusUi.label}
+                          </span>
+                          {/* Added whitespace-nowrap to prevent text wrapping on small screens */}
+                          <span className="text-[14px] font-black text-green-500 whitespace-nowrap">
+                            +{submission.rewardSats.toLocaleString()} Sats
+                          </span>
+                        </div>
                       </div>
-                    </div>
                   );
                 })}
               </div>
@@ -651,8 +668,9 @@ export default function UserDashboardPage() {
           </div>
 
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Award, BadgeCheck, Crown, Gem, Rocket, Shield, Sparkles, Star, Trophy } from 'lucide-react';
+import { Award, BadgeCheck, Crown, Gem, Rocket, Shield, Sparkles, Star, Trophy ,CircleStar} from 'lucide-react';
 
 interface ReferralTierCommissionProps {
   activeTier: string;
@@ -17,12 +17,12 @@ type TierCard = {
 };
 
 const tierCards: TierCard[] = [
-  { name: 'BASIC', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Shield, tone: 'from-zinc-500/10 to-zinc-400/5 border-zinc-500/20' },
-  { name: 'COPPER', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Award, tone: 'from-amber-700/10 to-orange-500/5 border-amber-600/20' },
-  { name: 'BRONZE', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Trophy, tone: 'from-orange-700/10 to-orange-500/5 border-orange-600/20' },
-  { name: 'SILVER', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: Star, tone: 'from-slate-400/10 to-slate-200/5 border-slate-400/20' },
-  { name: 'GOLD', commission: '5%', subtitle: 'Up to 20 referrals', isFree: true, icon: BadgeCheck, tone: 'from-yellow-500/10 to-amber-300/5 border-yellow-500/20' },
-  { name: 'PLATINUM', commission: '10%', subtitle: 'Unlimited referrals', isFree: false, icon: Gem, tone: 'from-emerald-500/12 to-teal-400/5 border-emerald-500/22' },
+  { name: 'BASIC', commission: '5%', subtitle: '1-20 *', isFree: true, icon: Shield, tone: 'from-zinc-500/10 to-zinc-400/5 border-zinc-500/20' },
+  { name: 'COPPER', commission: '5%', subtitle: '21-40 *', isFree: true, icon: Award, tone: 'from-amber-700/10 to-orange-500/5 border-amber-600/20' },
+  { name: 'BRONZE', commission: '5%', subtitle: '41-60 *', isFree: true, icon: Trophy, tone: 'from-orange-700/10 to-orange-500/5 border-orange-600/20' },
+  { name: 'SILVER', commission: '5%', subtitle: '61-80 *', isFree: true, icon: Star, tone: 'from-slate-400/10 to-slate-200/5 border-slate-400/20' },
+  { name: 'GOLD', commission: '5%', subtitle: '81-100(Max) *', isFree: true, icon: BadgeCheck, tone: 'from-yellow-500/10 to-amber-300/5 border-yellow-500/20' },
+  { name: 'PLATINUM', commission: '10%', subtitle: 'Unlimited referrals', isFree: false, icon: CircleStar, tone: 'from-emerald-500/12 to-teal-400/5 border-emerald-500/22' },
   { name: 'DIAMOND', commission: '15%', subtitle: 'Unlimited referrals', isFree: false, icon: Gem, tone: 'from-sky-500/12 to-blue-400/5 border-sky-500/22' },
   { name: 'CROWN', commission: '20%', subtitle: 'Unlimited referrals', isFree: false, icon: Crown, tone: 'from-violet-500/12 to-purple-400/5 border-violet-500/22' },
   { name: 'ELITE', commission: '25%', subtitle: 'Unlimited referrals', isFree: false, icon: Sparkles, tone: 'from-fuchsia-500/12 to-pink-400/5 border-fuchsia-500/22' },
@@ -61,13 +61,16 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
                     <Icon className="w-4 h-4" />
                     <span className="text-xs font-bold tracking-wide">{item.name.charAt(0) + item.name.slice(1).toLowerCase()}</span>
                   </div>
-                  <p className="text-3xl font-black text-sats-orange-400 tracking-tight">{item.commission}</p>
-                  <p className="text-xs text-gray-400 font-medium mt-1">Base referral reward</p>
-                  <p className="text-xs text-gray-500 font-bold mt-4">{item.subtitle}</p>
+                  <p className="text-3xl font-black text-sats-orange-400 tracking-tight ">{item.commission}</p>
+                  <p className="text-xs text-gray-400 font-medium mt-1 ">Base referral reward</p>
+                  <p className="text-xs text-gray-500 font-bold mt-4 ">{item.subtitle}</p>
                 </div>
               );
             })}
           </div>
+          <p className='text-[12px] text-gray-400 p-0.5 pt-2'> <span className='text-sats-orange-500'>* &nbsp;</span>
+            These are the max referrals for each Free Tier. Your referral commissions is earned on the base task reward only - not on any premium bonus your referral receives.
+            </p>
         </div>
 
         <div>
@@ -93,6 +96,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
               );
             })}
           </div>
+            <p className='text-[12px] text-gray-400 p-0.5 pt-2 flex '> <span className='text-sats-orange-500'>* &nbsp;</span>No referral cap for Paid Tiers. Your referral commission is earned on the base task reward only - not on any poremium bonus your referral receives.</p>
         </div>
       </div>
     </div>

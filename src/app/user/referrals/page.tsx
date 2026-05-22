@@ -57,6 +57,7 @@ export default function ReferralsPage() {
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+              <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
             </div>
           </div>
           {/* Bottom Row: Link Box & Code Box */}

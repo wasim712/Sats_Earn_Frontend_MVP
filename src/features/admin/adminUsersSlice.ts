@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
+import { decryptPayload } from '@/lib/crypto';
 
 // ─── Types ───
 import type { AdminUser, AdminUserDetail } from '@/types/admin';
@@ -26,7 +27,48 @@ const initialState: AdminUsersState = {
   detailError: null,
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+async function decryptIpField(value: string | null | undefined) {
+  if (!value) return value ?? null;
+
+  try {
+    const decrypted = await decryptPayload(value);
+    return decrypted || 'Unavailable';
+  } catch {
+    return value.startsWith('enc:') ? 'Unavailable' : value;
+  }
+}
+
+async function normalizeUserDetail(data: unknown): Promise<AdminUserDetail> {
+  let detail: AdminUserDetail;
+
+  if (data && typeof data === 'object') {
+    const payload = data as { user?: unknown; data?: unknown; detail?: unknown };
+    if (payload.user && typeof payload.user === 'object') {
+      detail = payload.user as AdminUserDetail;
+    } else if (payload.data && typeof payload.data === 'object') {
+      detail = payload.data as AdminUserDetail;
+    } else if (payload.detail && typeof payload.detail === 'object') {
+      detail = payload.detail as AdminUserDetail;
+    } else {
+      detail = data as AdminUserDetail;
+    }
+  } else {
+    detail = data as AdminUserDetail;
+  }
+
+  const [registrationIp, lastIpAddress] = await Promise.all([
+    decryptIpField(detail.registrationIp),
+    decryptIpField(detail.lastIpAddress),
+  ]);
+
+  return {
+    ...detail,
+    registrationIp,
+    lastIpAddress,
+  };
+}
 
 function normalizeUsers(data: unknown): AdminUser[] {
   if (Array.isArray(data)) return data as AdminUser[];
@@ -53,7 +95,7 @@ export const fetchUserDetail = createAsyncThunk(
 
       const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to fetch user details');
-      return data as AdminUserDetail;
+      return normalizeUserDetail(data);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to fetch user details';
       return rejectWithValue(message);
@@ -118,9 +160,37 @@ export const updateUserPremium = createAsyncThunk(
 
       const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update user premium tier');
-      return data.user as AdminUserDetail;
+      return normalizeUserDetail(data);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to update user premium tier';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const adjustUserSubmissionReward = createAsyncThunk(
+  'adminUsers/adjustSubmissionReward',
+  async (
+    { userId, submissionId, amountSats, note }: { userId: string; submissionId: string; amountSats: number; note?: string },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+      const response = await obfuscatedFetch(`${API_URL}/admin/users/${userId}/submission-adjustment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ submissionId, amountSats, note }),
+      });
+
+      const data = await parseObfuscatedJson<any>(response);
+      if (!response.ok) throw new Error(data.error || 'Failed to adjust submission reward');
+      return normalizeUserDetail(data);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to adjust submission reward';
       return rejectWithValue(message);
     }
   }
@@ -225,6 +295,34 @@ const adminUsersSlice = createSlice({
         );
       })
       .addCase(updateUserPremium.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.detailError = action.payload as string;
+      })
+      .addCase(adjustUserSubmissionReward.pending, (state) => {
+        state.actionLoading = true;
+        state.detailError = null;
+      })
+      .addCase(adjustUserSubmissionReward.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        state.selectedUserDetail = action.payload;
+        state.users = state.users.map((user) =>
+          user.id === action.payload.id
+            ? {
+                ...user,
+                balanceAvailable: action.payload.balanceAvailable,
+                balancePending: action.payload.balancePending,
+                balanceLocked: action.payload.balanceLocked,
+                totalXp: action.payload.totalXp,
+                premiumTier: action.payload.premiumTier,
+                premiumExpiresAt: action.payload.premiumExpiresAt,
+                activeTier: action.payload.activeTier,
+                isPremium: action.payload.isPremium,
+                underlyingFreeTier: action.payload.underlyingFreeTier,
+              }
+            : user,
+        );
+      })
+      .addCase(adjustUserSubmissionReward.rejected, (state, action) => {
         state.actionLoading = false;
         state.detailError = action.payload as string;
       });

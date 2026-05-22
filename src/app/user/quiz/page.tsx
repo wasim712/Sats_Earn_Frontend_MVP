@@ -117,7 +117,7 @@ export default function UserDailyQuizPage() {
   return (
     <div className="min-h-screen bg-[#020202] pb-10 md:pb-12 relative">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8 py-5 md:py-8">
-        <div className="rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 mb-6 md:mb-8 flex items-center gap-3 md:gap-4 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
+        {/* <div className="rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 mb-6 md:mb-8 flex items-center gap-3 md:gap-4 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
           <button
             onClick={() => router.back()}
             className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#262626] bg-[#111] text-gray-300 transition-colors hover:text-white hover:border-[#333]"
@@ -129,12 +129,12 @@ export default function UserDailyQuizPage() {
             <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500/80 mb-1">Quiz</p>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">Daily Quiz</h1>
           </div>
-        </div>
+        </div> */}
 
-        <div className={`grid grid-cols-1 ${isReviewMode ? '' : 'xl:grid-cols-[minmax(0,1fr)_320px]'} gap-6 xl:gap-8 items-start mb-8`}>
+        <div className={`grid grid-cols-1 gap-6  items-start mb-8 ${isReviewMode?'hidden':''}`}>
           <div className="min-w-0">
             <div className="rounded-[30px] border border-[#1a1a1a] bg-[#080808] p-5 sm:p-6 md:p-8">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-gray-500 mb-3">{isReviewMode ? 'Submitted Quiz' : 'Today\'s Quiz'}</p>
+              <p className={`text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3 `}>{isReviewMode ? 'Submitted Quiz' : 'Today\'s Quiz'}</p>
               <h2 className="text-2xl md:text-3xl xl:text-[2rem] leading-tight font-black text-white tracking-tight mb-3">
                 {normalizedQuiz.title}
               </h2>
@@ -145,7 +145,7 @@ export default function UserDailyQuizPage() {
           </div>
 
           {!isReviewMode && (
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3">
+            <div className="w-full  grid-cols-3 sm:grid-cols-3 xl:grid-cols-3 gap-3  grid">
               <InfoCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Reward" value={`~ ${normalizedQuiz.rewardSats}`} accent="orange" />
               <InfoCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Reward" value={`${normalizedQuiz.xpReward || 0} XP`} accent="blue" />
               <InfoCard icon={<Brain className="w-5 h-5 text-emerald-400" />} label="Questions" value={`${totalQuestions}`} accent="green" />
@@ -289,7 +289,6 @@ export default function UserDailyQuizPage() {
               )}
             </div>
           ))}
-
           {!isReviewMode && (
             <div className="pt-2 md:pt-4 flex justify-center">
               <div className="w-full max-w-3xl rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
@@ -458,10 +457,10 @@ function InfoCard({
   return (
     <div className={`rounded-[24px] border ${accentBorder} bg-[#080808] p-5`}>
       <div className="flex items-center justify-between gap-3 mb-3">
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">{label}</p>
+        <p className=" text-[10px] font-black uppercase sm:tracking-widest text-gray-500">{label}</p>
         {icon}
       </div>
-      <p className="text-2xl font-black text-white">{value}</p>
+      <p className="text-xl sm:text-xl md:text-2xl font-black text-white">{value}</p>
     </div>
   );
 }

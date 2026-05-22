@@ -14,6 +14,14 @@ import { fetchAdminSettings, updateAdminSettings } from '@/features/admin/adminS
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
 const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 export default function AdminSettingsPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -64,7 +72,7 @@ export default function AdminSettingsPage() {
     const { name, value } = e.target;
     setFormData(prev => ({ 
       ...prev, 
-      [name]: value === '' ? 0 : parseInt(value, 10) 
+      [name]: parseWholeNumber(value) 
     }));
   };
 
@@ -73,7 +81,7 @@ export default function AdminSettingsPage() {
       ...prev,
       tierReferralMatrix: { 
         ...prev.tierReferralMatrix, 
-        [tier]: value === '' ? 0 : parseInt(value, 10) 
+        [tier]: parseWholeNumber(value) 
       }
     }));
   };
@@ -83,7 +91,7 @@ export default function AdminSettingsPage() {
       ...prev,
       tierMinWithdrawalMatrix: {
         ...prev.tierMinWithdrawalMatrix,
-        [tier]: value === '' ? 0 : parseInt(value, 10)
+        [tier]: parseWholeNumber(value)
       }
     }));
   };
@@ -178,11 +186,11 @@ export default function AdminSettingsPage() {
 
               <div className="space-y-6">
                 <InputWrapper label="Welcome Bonus (Sats)" icon={<Zap className="w-4 h-4 text-yellow-500" />}>
-                  <input type="number" name="welcomeBonusSats" min="0" value={formData.welcomeBonusSats ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="welcomeBonusSats" value={formData.welcomeBonusSats ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Security Lock Period (Days)" icon={<Shield className="w-4 h-4 text-blue-500" />}>
-                  <input type="number" name="securityLockDays" min="0" value={formData.securityLockDays||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="securityLockDays" value={formData.securityLockDays||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
               </div>
             </div>
@@ -202,15 +210,15 @@ export default function AdminSettingsPage() {
               <div className="space-y-6">
                 {/* We keep the Default Percent as a fallback for users with NO tier */}
                 <InputWrapper label="Default System Fallback (%)" icon={<Users className="w-4 h-4 text-purple-500" />}>
-                  <input type="number" name="referralBonusPercent" min="0" max="100" value={formData.referralBonusPercent||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="referralBonusPercent" value={formData.referralBonusPercent||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Base XP Per Task" icon={<Target className="w-4 h-4 text-sats-orange-500" />}>
-                  <input type="number" name="baseXpPerTask" min="1" value={formData.baseXpPerTask ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="baseXpPerTask" value={formData.baseXpPerTask ||''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
 
                 <InputWrapper label="Daily Streak Bonus XP" icon={<Clock className="w-4 h-4 text-red-500" />}>
-                  <input type="number" name="dailyStreakBonusXp" min="0" value={formData.dailyStreakBonusXp || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="dailyStreakBonusXp" value={formData.dailyStreakBonusXp || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </InputWrapper>
               </div>
             </div>
@@ -237,7 +245,7 @@ export default function AdminSettingsPage() {
                         <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
                         <div className="relative">
                           <input
-                            type="number" min="0"
+                            type="text" inputMode="numeric" pattern="[0-9]*"
                             value={formData.tierMinWithdrawalMatrix[tier] || ''}
                             onChange={(e) => handleWithdrawalMatrixChange(tier, e.target.value)}
                             className="w-full bg-[#111] text-white font-bold text-sm border border-green-500/20 rounded-lg px-3 py-1.5 outline-none focus:border-green-500"
@@ -259,7 +267,7 @@ export default function AdminSettingsPage() {
                         <span className="text-[9px] font-black text-yellow-500/70 uppercase tracking-widest">{tier}</span>
                         <div className="relative">
                           <input
-                            type="number" min="0"
+                            type="text" inputMode="numeric" pattern="[0-9]*"
                             value={formData.tierMinWithdrawalMatrix[tier] || ''}
                             onChange={(e) => handleWithdrawalMatrixChange(tier, e.target.value)}
                             className="w-full bg-[#050505] text-yellow-400 font-bold text-sm border border-yellow-500/30 rounded-lg px-3 py-1.5 outline-none focus:border-yellow-500"
@@ -297,7 +305,7 @@ export default function AdminSettingsPage() {
                         <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
                         <div className="relative">
                           <input 
-                            type="number" min="0" max="100"
+                            type="text" inputMode="numeric" pattern="[0-9]*"
                             value={formData.tierReferralMatrix[tier] || ''} 
                             onChange={(e) => handleMatrixChange(tier, e.target.value)}
                             className="w-full bg-[#111] text-white font-bold text-sm border border-[#2a2a2a] rounded-lg px-3 py-1.5 outline-none focus:border-sats-orange-500"
@@ -320,7 +328,7 @@ export default function AdminSettingsPage() {
                         <span className="text-[9px] font-black text-yellow-500/70 uppercase tracking-widest">{tier}</span>
                         <div className="relative">
                           <input 
-                            type="number" min="0" max="100"
+                            type="text" inputMode="numeric" pattern="[0-9]*"
                             value={formData.tierReferralMatrix[tier] || ''} 
                             onChange={(e) => handleMatrixChange(tier, e.target.value)}
                             className="w-full bg-[#050505] text-yellow-400 font-bold text-sm border border-yellow-500/30 rounded-lg px-3 py-1.5 outline-none focus:border-yellow-500"

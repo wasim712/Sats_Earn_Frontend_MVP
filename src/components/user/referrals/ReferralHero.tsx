@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Copy, Check, Send, ShieldCheck } from 'lucide-react';
+import { Copy, Check, ShieldCheck, Share2 } from 'lucide-react';
 
 export default function ReferralHero({ code, url, activeTier }: { code: string; url: string; activeTier?: string }) {
   const [linkCopied, setLinkCopied] = useState(false);
@@ -104,7 +104,7 @@ export default function ReferralHero({ code, url, activeTier }: { code: string; 
               title="Share Anywhere"
               className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1a1a1a] text-gray-300 hover:border-sats-orange-500/30 hover:text-white transition-all"
             >
-              <Send className="w-4 h-4" />
+              <Share2 className="w-4 h-4" />
             </button>
           </div>
         </div>

@@ -33,6 +33,14 @@ function parseDateInput(value: string) {
   return new Date(year, month - 1, day);
 }
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 // ─── Types & Props ────────────────────────────────────────────────────────────
 
 interface QuestionInput {
@@ -315,10 +323,11 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
               <Field label="Reward Pool (Sats per user)" required>
                 <div className="relative max-w-xs">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={form.rewardSats||''}
-                    onChange={(e) => setFormField('rewardSats', Number(e.target.value))}
-                    min={1}
+                    onChange={(e) => setFormField('rewardSats', parseWholeNumber(e.target.value))}
                     className={`${inputCls} pr-16 font-mono text-lg`}
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-sats-orange-500 select-none">
@@ -332,10 +341,11 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
               <Field label="XP Reward" required>
                 <div className="relative max-w-xs">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={form.xpReward ||''}
-                    onChange={(e) => setFormField('xpReward', Number(e.target.value))}
-                    min={0}
+                    onChange={(e) => setFormField('xpReward', parseWholeNumber(e.target.value))}
                     className={`${inputCls} pr-12 font-mono text-lg`}
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-green-400 select-none">

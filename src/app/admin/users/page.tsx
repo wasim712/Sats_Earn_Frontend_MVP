@@ -25,6 +25,8 @@ type ActionState = {
   error: string | null;
 };
 
+const HIDDEN_ADMIN_EMAIL = 'admin@satsearn.com';
+
 export default function AdminUsersPage() {
   const dispatch = useAppDispatch();
   const { users, isLoading, error, selectedUserDetail, detailLoading, detailError, actionLoading } = useAppSelector((state) => state.adminUsers);
@@ -40,13 +42,18 @@ export default function AdminUsersPage() {
     };
   }, [dispatch]);
 
+  const visibleUsers = useMemo(
+    () => users.filter((user) => user.email.trim().toLowerCase() !== HIDDEN_ADMIN_EMAIL),
+    [users],
+  );
+
   const filteredUsers = useMemo(() => {
-    return users.filter((user) =>
+    return visibleUsers.filter((user) =>
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.referralCode || '').toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [searchTerm, users]);
+  }, [searchTerm, visibleUsers]);
 
   const fetchUserDetail = async (userId: string) => {
     setSelectedUserId(userId);
@@ -116,7 +123,7 @@ export default function AdminUsersPage() {
     URL.revokeObjectURL(url);
   };
 
-  if (isLoading && users.length === 0) {
+  if (isLoading && visibleUsers.length === 0) {
     return <LoadingState />;
   }
 

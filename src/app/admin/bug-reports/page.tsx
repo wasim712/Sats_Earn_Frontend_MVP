@@ -5,6 +5,14 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Bug, CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import { fetchAdminBugReports, reviewAdminBugReport } from '@/features/admin/adminBugReportsSlice';
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 export default function AdminBugReportsPage() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [rewards, setRewards] = useState<Record<string, number>>({});
@@ -51,7 +59,7 @@ export default function AdminBugReportsPage() {
               {item.screenshotUrl && <a href={item.screenshotUrl} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-sats-orange-500">Open screenshot</a>}
               {item.status === 'OPEN' && (
                 <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input type="number" placeholder="Reward sats" value={rewards[item.id] || ''} onChange={(e) => setRewards((prev) => ({ ...prev, [item.id]: Number(e.target.value) }))} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" placeholder="Reward sats" value={rewards[item.id] || ''} onChange={(e) => setRewards((prev) => ({ ...prev, [item.id]: parseWholeNumber(e.target.value) }))} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
                   <input type="text" placeholder="Admin notes" value={notes[item.id] || ''} onChange={(e) => setNotes((prev) => ({ ...prev, [item.id]: e.target.value }))} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
                   <button onClick={() => review(item.id, 'REWARDED')} disabled={loadingId !== null} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-4 py-3 font-black text-black disabled:opacity-50">{loadingId === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}Approve & Reward</button>
                   <button onClick={() => review(item.id, 'REJECTED')} disabled={loadingId !== null} className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 font-black text-white disabled:opacity-50">{loadingId === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}Reject</button>

@@ -9,6 +9,12 @@ import { BlogEditorToolbar } from './BlogEditorToolbar';
 import { BlogPostList } from './BlogPostList';
 import { deleteAdminBlog, fetchAdminBlogs, saveAdminBlog } from '@/features/admin/adminBlogsSlice';
 
+const BLOG_TITLE_MIN = 5;
+const BLOG_TITLE_MAX = 120;
+const BLOG_SLUG_MIN = 3;
+const BLOG_SLUG_MAX = 150;
+const BLOG_EXCERPT_MAX = 280;
+
 export default function AdminBlogsPage() {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -24,6 +30,56 @@ export default function AdminBlogsPage() {
 
   const dispatch = useAppDispatch();
   const { posts, isLoading, isSaving, error } = useAppSelector((state) => state.adminBlogs);
+
+  const plainContent = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
+  const validateBlogForm = () => {
+    const trimmedTitle = title.trim();
+    const trimmedSlug = slug.trim();
+    const trimmedExcerpt = excerpt.trim();
+    const trimmedCoverImageUrl = coverImageUrl.trim();
+
+    if (trimmedTitle.length < BLOG_TITLE_MIN) {
+      return `Title must be at least ${BLOG_TITLE_MIN} characters.`;
+    }
+
+    if (trimmedTitle.length > BLOG_TITLE_MAX) {
+      return `Title must be ${BLOG_TITLE_MAX} characters or less.`;
+    }
+
+    if (trimmedSlug.length < BLOG_SLUG_MIN) {
+      return `Slug must be at least ${BLOG_SLUG_MIN} characters.`;
+    }
+
+    if (trimmedSlug.length > BLOG_SLUG_MAX) {
+      return `Slug must be ${BLOG_SLUG_MAX} characters or less.`;
+    }
+
+    if (slugify(trimmedSlug) !== trimmedSlug) {
+      return 'Slug should contain only lowercase letters, numbers, and hyphens.';
+    }
+
+    if (trimmedExcerpt.length > BLOG_EXCERPT_MAX) {
+      return `Excerpt must be ${BLOG_EXCERPT_MAX} characters or less.`;
+    }
+
+    if (plainContent.length < 20) {
+      return 'Blog content must be at least 20 characters.';
+    }
+
+    if (trimmedCoverImageUrl) {
+      try {
+        const parsedUrl = new URL(trimmedCoverImageUrl);
+        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+          return 'Cover image URL must start with http or https.';
+        }
+      } catch {
+        return 'Please enter a valid cover image URL.';
+      }
+    }
+
+    return null;
+  };
 
   const syncEditor = (html?: string) => {
     const value = html ?? content;
@@ -92,10 +148,23 @@ export default function AdminBlogsPage() {
     setLocalError(null);
     setSuccess(null);
 
+    const validationError = validateBlogForm();
+    if (validationError) {
+      setLocalError(validationError);
+      return;
+    }
+
     try {
       await dispatch(saveAdminBlog({
         id: editingId,
-        data: { title, slug, excerpt, content, coverImageUrl, isPublished },
+        data: {
+          title: title.trim(),
+          slug: slug.trim(),
+          excerpt: excerpt.trim(),
+          content,
+          coverImageUrl: coverImageUrl.trim(),
+          isPublished,
+        },
       })).unwrap();
 
       setSuccess(editingId ? 'Blog post updated successfully.' : isPublished ? 'Blog published successfully.' : 'Draft saved successfully.');
@@ -142,18 +211,27 @@ export default function AdminBlogsPage() {
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-xl font-black text-white">{editingId ? 'Edit Blog Post' : 'Create Blog Post'}</h2>
               {editingId && (
-                <button onClick={resetForm} className="rounded-xl border border-[#2a2a2a] px-4 py-2 text-xs font-bold text-white hover:border-sats-orange-500 hover:text-sats-orange-400">
+                <button type="button" onClick={resetForm} className="rounded-xl border border-[#2a2a2a] px-4 py-2 text-xs font-bold text-white hover:border-sats-orange-500 hover:text-sats-orange-400">
                   New Post
                 </button>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Blog title" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
-              <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+              <div className="space-y-2">
+                <input value={title} maxLength={BLOG_TITLE_MAX} onChange={(e) => setTitle(e.target.value)} placeholder="Blog title" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
+                <p className="text-[11px] text-gray-500">{title.trim().length}/{BLOG_TITLE_MAX} characters</p>
+              </div>
+              <div className="space-y-2">
+                <input value={slug} maxLength={BLOG_SLUG_MAX} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full lowercase" />
+                <p className="text-[11px] text-gray-500">Use lowercase letters, numbers, and hyphens only.</p>
+              </div>
             </div>
 
-            <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short excerpt" className="w-full min-h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+            <div className="space-y-2">
+              <textarea value={excerpt} maxLength={BLOG_EXCERPT_MAX} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short excerpt" className="w-full min-h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+              <p className="text-[11px] text-gray-500">Optional excerpt · {excerpt.trim().length}/{BLOG_EXCERPT_MAX} characters</p>
+            </div>
             <input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="Cover image URL" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
 
             <BlogEditorToolbar buttons={toolbar} isPreview={isPreview} onTogglePreview={() => setIsPreview((prev) => !prev)} />
@@ -175,7 +253,7 @@ export default function AdminBlogsPage() {
                 <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} className="h-4 w-4 rounded border-[#2a2a2a] bg-[#0a0a0a]" />
                 Publish immediately
               </label>
-              <button onClick={handleSave} disabled={isSaving} className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-5 py-3 font-black text-black disabled:opacity-50">
+              <button type="button" onClick={handleSave} disabled={isSaving} className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-5 py-3 font-black text-black disabled:opacity-50">
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : isPublished ? <Send className="w-4 h-4" /> : <Save className="w-4 h-4" />}
                 {editingId ? 'Update Post' : isPublished ? 'Publish Blog' : 'Save Draft'}
               </button>

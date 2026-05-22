@@ -22,6 +22,14 @@ const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 const PLATFORMS = ["TWITTER", "YOUTUBE", "INSTAGRAM", "TELEGRAM", "FACEBOOK", "LINKEDIN", "APP_STORE", "PLAY_STORE", "WEBSITE"];
 const PROOF_TYPES = ["SCREENSHOT", "URL", "TEXT_RESPONSE", "API_VERIFIED"];
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 type CampaignAnalytics = {
   totalSubmissions?: number;
   statusCounts?: { verified?: number; pending?: number; rejected?: number };
@@ -93,6 +101,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [isRewardsDoubled, setIsRewardsDoubled] = useState(false);
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -141,6 +150,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
           doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
         });
+        setIsRewardsDoubled(false);
       }
 
       if (analyticsRes.ok) {
@@ -160,9 +170,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     ...prev,
     tierRewardMatrix: {
       ...prev.tierRewardMatrix,
-      [tier]: Number(value)
+      [tier]: parseWholeNumber(value)
     }
   }));
+  setIsRewardsDoubled(false);
 };
 
   const handleCountryToggle = (country: string) => {
@@ -389,6 +400,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const visibleRewardTiers = editForm.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(editForm.tierRewardMatrix?.[tier]) > 0);
   const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
 
   return (
@@ -668,11 +680,12 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             Max Completions (Users)
                           </label>
                           <input 
-                            type="number" 
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             required 
-                            min={0} 
                             value={editForm.maxCompletions || ''} 
-                            onChange={e => setEditForm({...editForm, maxCompletions: Number(e.target.value)})} 
+                            onChange={e => setEditForm({...editForm, maxCompletions: parseWholeNumber(e.target.value)})} 
                             placeholder="Max Users" 
                             className={inputCls} 
                           />
@@ -684,10 +697,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             Campaign XP Reward
                           </label>
                           <input 
-                            type="number" 
-                            min={1} 
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             value={editForm.xpReward || ''} 
-                            onChange={e => setEditForm({...editForm, xpReward: Number(e.target.value)})} 
+                            onChange={e => setEditForm({...editForm, xpReward: parseWholeNumber(e.target.value)})} 
                             placeholder="Campaign XP Reward" 
                             className={inputCls} 
                             formTarget='Xp' 
@@ -701,8 +715,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </label>
                           <button 
                             type="button" 
-                            onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} 
-                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all"
+                            onClick={() => {
+                              if (isRewardsDoubled || !hasAnyTierReward) return;
+                              setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) });
+                              setIsRewardsDoubled(true);
+                            }} 
+                            disabled={isRewardsDoubled || !hasAnyTierReward}
+                            title={isRewardsDoubled ? 'Already doubled' : !hasAnyTierReward ? 'Add at least one tier reward first' : 'Double all tier rewards once'}
+                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-yellow-500/10"
                           >
                             2x All Tier Rewards
                           </button>
@@ -754,7 +774,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       {visibleRewardTiers.map(tier => (
                         <div key={tier} className="bg-sats-black-900 border border-[#1a1a1a] rounded-lg p-2 flex flex-col gap-1">
                           <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
-                          <input type="number" min={0} value={editForm.tierRewardMatrix?.[tier] || ''} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
+                          <input type="text" inputMode="numeric" pattern="[0-9]*" value={editForm.tierRewardMatrix?.[tier] || ''} onChange={(e) => handleMatrixChange(tier, e.target.value)} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
                         </div>
                       ))}
                     </div>

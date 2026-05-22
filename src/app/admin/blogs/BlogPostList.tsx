@@ -42,11 +42,11 @@ export function BlogPostList({
               <div className="mt-3 flex items-center justify-between gap-2">
                 <span className="text-[11px] text-gray-500">{new Date(post.createdAt).toLocaleString()}</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => onEdit(post)} className="inline-flex items-center gap-2 rounded-lg border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs font-bold text-sats-orange-300 hover:bg-sats-orange-500/20">
+                  <button type="button" onClick={() => onEdit(post)} className="inline-flex items-center gap-2 rounded-lg border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs font-bold text-sats-orange-300 hover:bg-sats-orange-500/20">
                     <Pencil className="w-4 h-4" />
                     Edit
                   </button>
-                  <button onClick={() => onDelete(post.id)} className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20">
+                  <button type="button" onClick={() => onDelete(post.id)} className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20">
                     <Trash2 className="w-4 h-4" />
                     Delete
                   </button>

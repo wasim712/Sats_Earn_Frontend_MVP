@@ -8,6 +8,14 @@ import type { CheatUserForm } from './cheat.types';
 
 const PREMIUM_TIERS = ['NONE', 'PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'] as const;
 
+function parseWholeNumber(value: string) {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly === '') return 0;
+
+  const parsed = Number.parseInt(digitsOnly, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 const emptyForm: CheatUserForm = {
   totalXp: 0,
   balanceAvailable: 0,
@@ -50,7 +58,7 @@ export default function AdminCheatPage() {
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value === '' ? 0 : parseInt(value, 10) }));
+    setForm((prev) => ({ ...prev, [name]: parseWholeNumber(value) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,7 +196,7 @@ function NumberField({ label, name, value, onChange, icon }: { label: string; na
   return (
     <div className="space-y-2">
       <FieldLabel label={label} icon={icon} />
-      <input type="number" name={name} min="0" value={value} onChange={onChange} className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-sats-orange-500/50" />
+      <input type="text" inputMode="numeric" pattern="[0-9]*" name={name} value={value} onChange={onChange} className="w-full bg-[#111] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-sats-orange-500/50" />
     </div>
   );
 }
