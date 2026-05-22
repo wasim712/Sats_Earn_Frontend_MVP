@@ -297,54 +297,58 @@ export default function UserDashboardPage() {
         
         {/* Card 1: Main Balance (The Blue/Orange one from the design) */}
         <div className="lg:col-span-1 bg-gradient-to-br from-[#1c2e4a] via-[#101b30] to-[#050505] border border-blue-500/20 rounded-[24px] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] transition-all duration-300">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
-          
-          <div className="flex justify-between items-start mb-6 relative z-10">
-            <div className="flex items-center gap-3 flex-col ">
-              <div className="self-start w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                <Wallet className="w-5 h-5 text-blue-400" />
-              </div>
-              <p className=" font-black text-blue-200 uppercase tracking-normal text-nowrap">Available Balance</p>
-            </div>
+  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
+  
+  {/* ROW 1: Icon and Toggle Only */}
+  <div className="flex justify-between items-center mb-6 relative z-10 w-full">
+    
+    {/* Wallet Icon */}
+    <div className="w-12 h-12 rounded-[14px] bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shrink-0">
+      <Wallet className="w-6 h-6 text-blue-400" />
+    </div>
 
-            {/* Premium BTC Toggle */}
-            <div className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm">
-              <button 
-                onClick={() => setShowBtc(false)} 
-                className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${!showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-              >
-                <Zap className="w-3.5 h-3.5" />
-              </button>
-              <button 
-                onClick={() => setShowBtc(true)} 
-                className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-              >
-                ₿
-              </button>
-            </div>
-          </div>
-          
-          <div className="relative z-10">
-            <div className="text-white mb-2 drop-shadow-md ">
-              {formatAvailableBalance(data.balances?.available || 0)}
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium text-blue-200/60">
-                {getFiatValue(data.balances?.available || 0)}
-              </p>
+    {/* Premium BTC Toggle */}
+    <div className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm shrink-0">
+      <button 
+        onClick={() => setShowBtc(false)} 
+        className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${!showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+      >
+        <Zap className="w-3.5 h-3.5" />
+      </button>
+      <button 
+        onClick={() => setShowBtc(true)} 
+        className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+      >
+        ₿
+      </button>
+    </div>
+  </div>
+  
+  {/* ROW 2: Balance Data */}
+  <div className="relative z-10 mt-auto">
+    <p className="font-bold text-blue-200/80 uppercase tracking-widest text-[11px] mb-2">Available Balance</p>
+    
+    <div className="text-white mb-2 drop-shadow-md">
+      {formatAvailableBalance(data.balances?.available || 0)}
+    </div>
+    
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-sm font-medium text-blue-200/60 truncate pr-2">
+        {getFiatValue(data.balances?.available || 0)}
+      </p>
 
-              {isIndiaUser ? (
-                <button
-                  onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
-                  className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
-                  title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
-                >
-                  {fiatCurrency === 'INR' ? '$' : '₹'}
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </div>
+      {isIndiaUser ? (
+        <button
+          onClick={() => setFiatCurrency(fiatCurrency === 'INR' ? 'USD' : 'INR')}
+          className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-[#050505]/50 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-500/30 hover:border-blue-400 transition-all text-xs font-black shadow-sm backdrop-blur-sm"
+          title={`Switch to ${fiatCurrency === 'INR' ? 'USD' : 'INR'}`}
+        >
+          {fiatCurrency === 'INR' ? '$' : '₹'}
+        </button>
+      ) : null}
+    </div>
+  </div>
+</div>
 
         
         {/* Card 2: pending */}
@@ -356,7 +360,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending Sats</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>Sats</span></h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
           </div>
         </div>
@@ -370,7 +374,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Locked Balance</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> Sats</span></h3>
+            <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
@@ -384,7 +388,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}
-              <span className="text-2xl font-bold text-white ml-1 mb-1">Sats</span></h3>
+              <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span></h3>
               
             <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
           </div>

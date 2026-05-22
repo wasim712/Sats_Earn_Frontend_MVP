@@ -347,14 +347,29 @@ export function HelpContentSection({
                     className="group block overflow-hidden rounded-3xl border border-white/8 bg-white/[0.02] transition hover:border-sats-orange-500/25 hover:bg-white/[0.04]"
                   >
                     <div className="grid gap-0 md:grid-cols-[140px_1fr]">
-                      <div className="relative h-44 bg-sats-black-900 md:h-full">
+                      <div className="relative h-44 overflow-hidden bg-sats-black-900 md:h-full">
                         {blog.coverImageUrl ? (
-                          <Image
-                            src={blog.coverImageUrl}
-                            alt={blog.title}
-                            fill
-                            className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                          />
+                          <>
+                            <Image
+                              src={blog.coverImageUrl}
+                              alt={blog.title}
+                              fill
+                              className="object-cover scale-110 blur-2xl opacity-40"
+                              unoptimized
+                            />
+                            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.4))]" />
+                            <div className="absolute inset-0 flex items-center justify-center p-3">
+                              <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/10 bg-black/10 shadow-[0_12px_30px_rgba(0,0,0,0.25)]">
+                                <Image
+                                  src={blog.coverImageUrl}
+                                  alt={blog.title}
+                                  fill
+                                  className="object-contain p-2 transition duration-500 group-hover:scale-[1.03]"
+                                  unoptimized
+                                />
+                              </div>
+                            </div>
+                          </>
                         ) : (
                           <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.16),transparent_58%)] text-sky-400">
                             <BookOpen className="h-7 w-7" />

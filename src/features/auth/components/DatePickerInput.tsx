@@ -224,7 +224,7 @@ export default function DatePickerInput({
             error
               ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/30'
               : 'border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-sats-orange-500/20'
-          } focus:ring-2 rounded-xl py-3 pl-10 pr-12 outline-none transition-all text-white placeholder-gray-600 text-sm`}
+          } focus:ring-2 rounded-xl py-3.5 pl-10 pr-12 outline-none transition-all text-white placeholder-gray-600 text-sm`}
         />
         {/* Calendar toggle icon */}
         <button

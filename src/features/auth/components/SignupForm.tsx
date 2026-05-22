@@ -64,6 +64,7 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
   const countryRef = useRef<HTMLDivElement>(null);
 
   const rules = {
@@ -266,13 +267,13 @@ export default function SignupForm() {
             </div>
             
             <form onSubmit={handleStep1Submit} className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 lg:items-start">
                 
                 {/* COLUMN 1: Identity */}
-                <div className="space-y-5">
+                <div className="space-y-5 flex flex-col h-full">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80 mb-2">1. Identity</h3>
                   
-                  <div>
+                  <div className="lg:min-h-[92px] ">
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Full Name <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -311,26 +312,26 @@ export default function SignupForm() {
                     </div>
                   </div>
                 </div>
-
-                {/* COLUMN 2: Demographics */}
-                <div className="space-y-5">
+                {/* ddddddddddd */}
+                {/* COLUMN 2: Demographics */} 
+                <div className="space-y-5 flex flex-col h-full">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80 mb-2">2. Demographics</h3>
                   
-                  <div>
-  <label className="block text-sm font-bold mb-1.5 text-gray-200">
-    Date of Birth <span className="text-red-500">*</span>
-    <span className="text-[10px] text-gray-500 font-normal ml-1">(DD/MM/YYYY)</span>
-  </label>
-  <DatePickerInput
-    value={formData.dateOfBirth}
-    onChange={(val) => {
-      setFormData({ ...formData, dateOfBirth: val });
-      setFormError(null);
-    }}
-    minAge={13}
-    required
-  />
-</div>
+                  <div className="lg:min-h-[92px]">
+                      <label className="block text-sm font-bold mb-1.5 text-gray-200">
+                        Date of Birth <span className="text-red-500">*</span>
+                        <span className="text-[10px] text-gray-500 font-normal ml-1">(DD/MM/YYYY)</span>
+                      </label>
+                      <DatePickerInput
+                        value={formData.dateOfBirth}
+                        onChange={(val) => {
+                          setFormData({ ...formData, dateOfBirth: val });
+                          setFormError(null);
+                        }}
+                        minAge={13}
+                        required
+                      />
+                    </div>
 
                   <div ref={countryRef} className="relative z-50">
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Country <span className="text-red-500">*</span></label>
@@ -375,7 +376,7 @@ export default function SignupForm() {
                 <div className="space-y-5 flex flex-col h-full relative z-0">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80 mb-2">3. Security</h3>
                   
-                  <div>
+                  <div className="lg:min-h-[92px]">
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Password <span className="text-red-500">*</span></label>
                     <div className="relative mb-3">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -399,7 +400,20 @@ export default function SignupForm() {
                   </div>
                   
                   <div className="mt-auto pt-4">
-                    <button type="submit" disabled={isLoading || !isPasswordValid || usernameStatus === 'taken'} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-base rounded-xl py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
+                    <button
+                      type="button"
+                      onClick={() => setHasAcceptedTerms((prev) => !prev)}
+                      className="mb-3 flex w-full items-start gap-3 text-left"
+                    >
+                      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${hasAcceptedTerms ? 'border-sats-orange-400 bg-sats-orange-500 text-black shadow-[0_0_16px_rgba(238,139,18,0.35)]' : 'border-[#3a3a3a] bg-[#0d0d0d] text-transparent'}`}>
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="text-[11px] leading-relaxed text-gray-400">
+                        By creating an account, you accept our <span className="font-bold text-sats-orange-400 drop-shadow-[0_0_10px_rgba(238,139,18,0.2)]">Terms &amp; Conditions</span>.
+                      </span>
+                    </button>
+
+                    <button type="submit" disabled={isLoading || !isPasswordValid || usernameStatus === 'taken' || !hasAcceptedTerms} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-base rounded-xl py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
                       {isLoading ? 'Processing...' : 'Create Account'}
                       {!isLoading && <ArrowRight className="ml-2 w-5 h-5" />}
                     </button>
