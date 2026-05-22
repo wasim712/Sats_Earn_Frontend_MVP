@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
 import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
+import { decryptPayload } from '@/lib/crypto';
 
 // ─── Types ───
 import type { AdminUser, AdminUserDetail } from '@/types/admin';
@@ -28,15 +29,45 @@ const initialState: AdminUsersState = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-function normalizeUserDetail(data: unknown): AdminUserDetail {
+async function decryptIpField(value: string | null | undefined) {
+  if (!value) return value ?? null;
+
+  try {
+    const decrypted = await decryptPayload(value);
+    return decrypted || 'Unavailable';
+  } catch {
+    return value.startsWith('enc:') ? 'Unavailable' : value;
+  }
+}
+
+async function normalizeUserDetail(data: unknown): Promise<AdminUserDetail> {
+  let detail: AdminUserDetail;
+
   if (data && typeof data === 'object') {
     const payload = data as { user?: unknown; data?: unknown; detail?: unknown };
-    if (payload.user && typeof payload.user === 'object') return payload.user as AdminUserDetail;
-    if (payload.data && typeof payload.data === 'object') return payload.data as AdminUserDetail;
-    if (payload.detail && typeof payload.detail === 'object') return payload.detail as AdminUserDetail;
+    if (payload.user && typeof payload.user === 'object') {
+      detail = payload.user as AdminUserDetail;
+    } else if (payload.data && typeof payload.data === 'object') {
+      detail = payload.data as AdminUserDetail;
+    } else if (payload.detail && typeof payload.detail === 'object') {
+      detail = payload.detail as AdminUserDetail;
+    } else {
+      detail = data as AdminUserDetail;
+    }
+  } else {
+    detail = data as AdminUserDetail;
   }
 
-  return data as AdminUserDetail;
+  const [registrationIp, lastIpAddress] = await Promise.all([
+    decryptIpField(detail.registrationIp),
+    decryptIpField(detail.lastIpAddress),
+  ]);
+
+  return {
+    ...detail,
+    registrationIp,
+    lastIpAddress,
+  };
 }
 
 function normalizeUsers(data: unknown): AdminUser[] {

@@ -101,6 +101,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [isRewardsDoubled, setIsRewardsDoubled] = useState(false);
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -149,6 +150,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
           doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
         });
+        setIsRewardsDoubled(false);
       }
 
       if (analyticsRes.ok) {
@@ -171,6 +173,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       [tier]: parseWholeNumber(value)
     }
   }));
+  setIsRewardsDoubled(false);
 };
 
   const handleCountryToggle = (country: string) => {
@@ -397,6 +400,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const visibleRewardTiers = editForm.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(editForm.tierRewardMatrix?.[tier]) > 0);
   const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
 
   return (
@@ -711,8 +715,14 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </label>
                           <button 
                             type="button" 
-                            onClick={() => setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) })} 
-                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all"
+                            onClick={() => {
+                              if (isRewardsDoubled || !hasAnyTierReward) return;
+                              setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) });
+                              setIsRewardsDoubled(true);
+                            }} 
+                            disabled={isRewardsDoubled || !hasAnyTierReward}
+                            title={isRewardsDoubled ? 'Already doubled' : !hasAnyTierReward ? 'Add at least one tier reward first' : 'Double all tier rewards once'}
+                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-yellow-500/10"
                           >
                             2x All Tier Rewards
                           </button>

@@ -85,6 +85,7 @@ export default function AddCampaignPage() {
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [isRewardsDoubled, setIsRewardsDoubled] = useState(false);
   
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
@@ -123,15 +124,19 @@ export default function AddCampaignPage() {
       ...prev,
       tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(value) }
     }));
+    setIsRewardsDoubled(false);
   };
 
   const handleDoubleAllRewards = () => {
+    if (isRewardsDoubled || !hasAnyTierReward) return;
+
     setFormData((prev) => ({
       ...prev,
       tierRewardMatrix: Object.fromEntries(
         Object.entries(prev.tierRewardMatrix).map(([tier, reward]) => [tier, Number(reward || 0) * 2])
       ),
     }));
+    setIsRewardsDoubled(true);
   };
 
   const handleCountryToggle = (country: string) => {
@@ -170,6 +175,7 @@ export default function AddCampaignPage() {
   const visibleRewardTiers = formData.isPremiumOnly
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
+  const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(formData.tierRewardMatrix[tier]) > 0);
   const derivedBaseReward = visibleRewardTiers.reduce((max, tier) => {
     const reward = Number(formData.tierRewardMatrix[tier]) || 0;
     return Math.max(max, reward);
@@ -464,26 +470,53 @@ export default function AddCampaignPage() {
                     <button
                       type="button"
                       onClick={handleDoubleAllRewards}
-                      className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-wider hover:bg-yellow-500/20 transition-all"
+                      disabled={isRewardsDoubled || !hasAnyTierReward}
+                      title={isRewardsDoubled ? 'Already doubled' : !hasAnyTierReward ? 'Add at least one tier reward first' : 'Double all tier rewards once'}
+                      className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-wider hover:bg-yellow-500/20 transition-all disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-yellow-500/10"
                     >
                       2x All Rewards
                     </button>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {visibleRewardTiers.map(tier => (
-                      <div key={tier} className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-2.5 flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
-                        <input 
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          value={formData.tierRewardMatrix[tier] || ''} 
-                          onChange={(e) => handleMatrixChange(tier, e.target.value)}
-                          placeholder="0"
-                          className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
-                        />
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-3">
+                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {FREE_TIERS.map((tier) => (
+                          <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#050505] p-2.5 flex items-center justify-between">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={formData.tierRewardMatrix[tier] || ''}
+                              onChange={(e) => handleMatrixChange(tier, e.target.value)}
+                              placeholder="0"
+                              className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {PREMIUM_TIERS.map((tier) => (
+                          <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#050505] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
+                            <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={formData.tierRewardMatrix[tier] || ''}
+                              onChange={(e) => handleMatrixChange(tier, e.target.value)}
+                              placeholder="0"
+                              className="w-16 bg-[#111] border border-yellow-500/20 rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
