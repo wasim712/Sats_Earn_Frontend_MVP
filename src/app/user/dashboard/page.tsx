@@ -3,19 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { syncUserTier } from '@/features/auth/authSlice';
-import { 
-  AlertTriangle, CheckCircle2, Clock3, LockKeyhole, XCircle, 
-  Flame, Medal, Star, Wallet, Activity, ArrowRight, Zap, Trophy,
-  Clock4,
-  TrendingUp
-} from 'lucide-react';
+import { AlertTriangle, Flame, Medal, Star, Wallet, Activity, Zap, Clock4, TrendingUp, LockKeyhole } from 'lucide-react';
 import Link from 'next/link';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
-import RecentActivityPanel from '@/components/user/dashboard/RecentActivityPanel';
 import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
+import { DashboardLowerGrid, StreakSection } from '@/components/user/dashboard/DashboardSections';
 
 export default function UserDashboardPage() {
   const dispatch = useAppDispatch();
@@ -398,324 +393,25 @@ export default function UserDashboardPage() {
       </div>
 
       {/* 3. STREAK MILESTONES */}
-      {unreadStreakReward && (
-        <div className="mb-6 rounded-[20px] border border-green-500/20 bg-green-500/10 px-5 py-4 flex items-start gap-3 shadow-[0_0_20px_rgba(34,197,94,0.08)] backdrop-blur-sm transition-all">
-          <div className="mt-1 w-3 h-3 rounded-full bg-green-500 animate-pulse shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
-          <div>
-            <p className="text-sm font-black text-white tracking-tight">Milestone Unlocked!</p>
-            <p className="text-sm text-green-100/80 mt-0.5 font-medium">{unreadStreakReward.message}</p>
-            <Link href="/user/notifications" className="inline-flex mt-2 text-xs font-bold text-green-400 hover:text-green-300 transition-colors">
-              View notification &rarr;
-            </Link>
-          </div>
-        </div>
-      )}
+      <StreakSection
+        unreadStreakReward={unreadStreakReward}
+        currentStreak={currentStreak}
+        nextStreakMilestone={nextStreakMilestone}
+        nextStreakRewardSats={nextStreakRewardSats}
+        daysRemainingToNextMilestone={daysRemainingToNextMilestone}
+        totalClaimedMilestones={totalClaimedMilestones}
+        totalStreakMilestones={totalStreakMilestones}
+        streakProgressPercent={streakProgressPercent}
+        lastClaimedStreakMilestone={lastClaimedStreakMilestone}
+        streakMilestones={streakMilestones}
+      />
 
-      <div className="mb-6 rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-8 shadow-xl relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-sats-orange-500/5 blur-[80px] pointer-events-none" />
-
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8 relative z-10">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-sats-orange-500/10 border border-sats-orange-500/20 flex items-center justify-center shrink-0">
-              <Flame className="w-5 h-5 text-sats-orange-500" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Current Streak</p>
-              <h3 className="text-2xl font-black text-white tracking-tight mt-0.5">{currentStreak} <span className="text-gray-400 text-lg">Days</span></h3>
-              <p className="text-xs text-gray-500 font-medium mt-1">
-                {nextStreakMilestone
-                  ? `${daysRemainingToNextMilestone} day${daysRemainingToNextMilestone === 1 ? '' : 's'} to next streak reward`
-                  : 'All streak rewards already unlocked'}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto lg:min-w-105">
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Next Milestone</p>
-              <p className="text-sm font-black text-sats-orange-500 mt-1">
-                {nextStreakMilestone
-                  ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats`
-                  : 'All Rewards Unlocked'}   
-              </p>
-            </div>
-            <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Claimed Rewards</p>
-              <p className="text-sm font-black text-emerald-400 mt-1">{totalClaimedMilestones}/{totalStreakMilestones}</p>
-            </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl px-4 py-3 text-left">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Current Run</p>
-              <p className="text-sm font-black text-blue-400 mt-1">{currentRunDays} Day{currentRunDays === 1 ? '' : 's'}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10 mb-6">
-          <div className="mb-3 flex items-center justify-between gap-4 text-[11px] font-semibold text-gray-500">
-            <span>Progress to next unclaimed reward</span>
-            <span className="text-sats-orange-400">{Math.round(streakProgressPercent)}%</span>
-          </div>
-          <div className="h-2.5 w-full overflow-hidden rounded-full border border-[#1f1f1f] bg-[#121212]">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-amber-400 to-yellow-300 transition-all duration-700"
-              style={{ width: `${streakProgressPercent}%` }}
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
-            <span>{lastClaimedStreakMilestone > 0 ? `${lastClaimedStreakMilestone} days last claimed` : 'Start'}</span>
-            <span>{nextStreakMilestone ? `${nextStreakMilestone} days target` : 'Completed'}</span>
-          </div>
-        </div>
-
-        <div className="relative pt-2 pb-2 overflow-x-auto custom-scrollbar">
-          <div className="min-w-[640px] sm:min-w-full relative px-2">
-            <div className="absolute left-5 right-4 top-[23px] h-1.5 bg-[#141414] rounded-full border border-[#1a1a1a]" />
-
-            <div className="flex items-start justify-between relative z-10 gap-3">
-              {streakMilestones.map((milestone) => {
-                const achieved = milestone.claimed;
-                const reachedInCurrentRun = milestone.reachedInCurrentRun;
-                const isNext = milestone.isNext;
-                const cardTone = achieved
-                  ? 'border-emerald-500/30 bg-emerald-500/10'
-                  : reachedInCurrentRun
-                    ? 'border-blue-500/30 bg-blue-500/10'
-                    : isNext
-                      ? 'border-yellow-400/30 bg-yellow-400/10'
-                      : 'border-[#1a1a1a] bg-[#070707]';
-
-                return (
-                  <div key={milestone.days} className={`flex flex-col items-center gap-3 relative cursor-default w-[120px] rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border-[3px] transition-all duration-500 ${
-                        achieved
-                          ? 'bg-[#111] border-emerald-400 text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]'
-                          : reachedInCurrentRun
-                            ? 'bg-[#111] border-blue-400 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]'
-                            : isNext
-                              ? 'bg-[#111] border-yellow-400 text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] scale-110'
-                              : 'bg-[#0a0a0a] border-[#2a2a2a] text-gray-600'
-                      }`}
-                    >
-                      {achieved ? (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                      ) : reachedInCurrentRun ? (
-                        <Trophy className="w-4 h-4" />
-                      ) : (
-                        <span className="text-[10px] font-black">{milestone.days}</span>
-                      )}
-                    </div>
-
-                    <div className="text-center">
-                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-white' : 'text-gray-500'}`}>
-                        {milestone.days} Days
-                      </p>
-                      <p className={`text-[10px] font-bold mt-0.5 ${achieved || reachedInCurrentRun || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
-                        +{milestone.rewardSats} sats
-                      </p>
-                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-yellow-300/90' : 'text-gray-600'}`}>
-                        {achieved ? 'Claimed' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 pt-4 border-t border-[#1a1a1a] grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="flex items-start gap-2">
-            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sats-orange-500/50 shrink-0" />
-            <p className="text-xs text-gray-500 font-medium">
-              Complete at least <strong className="text-gray-300">1 valid task or quiz</strong> each day to keep your streak moving.
-            </p>
-          </div>
-          <div className="flex items-start gap-2">
-            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400/50 shrink-0" />
-            <p className="text-xs text-gray-500 font-medium">
-              Streak milestone rewards are <strong className="text-gray-300">awarded automatically once</strong>, so already claimed rewards never become claimable again.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* â”€â”€â”€ 4. BOTTOM GRID (Submissions & Extras) â”€â”€â”€ */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-        
-        {/* LEFT COLUMN: Recent Submissions */}
-        <div className="xl:col-span-2 space-y-6">
-          <div className="bg-[#080808] border border-[#1a1a1a] rounded-[24px] p-6 sm:p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white tracking-tight">Recent Submissions</h2>
-              <Link href="/user/submissions" className="text-sm font-bold text-sats-orange-500 hover:text-sats-orange-400 flex items-center gap-1 transition-colors">
-                View All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {data.recentSubmissions && data.recentSubmissions.length > 0 ? (
-              <div className="space-y-3">
-                {data.recentSubmissions.slice(0, 4).map((submission) => {
-                  const statusUi = getSubmissionStatusUi(submission.status);
-                  
-                  return (
-                    <div key={submission.id} className="bg-[#050505] border border-transparent hover:border-[#2a2a2a] hover:bg-[#0a0a0a] rounded-[16px] p-4 flex flex-row sm:items-center justify-between gap-4 transition-all duration-300 group grow">
-                        <div className="flex items-center gap-4">
-                          {/* Minimal Status Icon */}
-                          <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center border ${statusUi.badge.replace('text-', 'border-').replace('/10', '/20')} bg-[#111] group-hover:scale-105 transition-transform`}>
-                            {statusUi.icon}
-                          </div>
-                          
-                          <div>
-                            <div className='flex w-full items-center gap-2'>
-                              <h3 className="text-white font-bold text-[15px] leading-snug hidden md:block">
-                                {submission.taskTitle.substring(0,20)}{submission.taskTitle.length>20?`...`:''}
-                              </h3>
-                              <h3 className="text-white font-bold text-[15px] leading-snug md:hidden">
-                                {submission.taskTitle.substring(0,10)}{submission.taskTitle.length>10?`...`:''}
-                              </h3>
-                            </div>
-                            <div className="flex items-center gap-2 mt-1.5">
-                              <span className="text-[11px] text-gray-500 font-medium">by {submission.campaignTitle.substring(0, 15)}...</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* FIXED SECTION: Added items-center and gap-1 */}
-                        <div className="flex flex-col items-center justify-center gap-1">
-                          {/* Added w-fit and adjusted padding to px-2 py-0.5 for a perfect pill shape */}
-                          <span className={`w-fit px-2 py-0.5 rounded border text-[9px] font-black uppercase {statusUi.lable=='Rejected'?'':tracking-widest'} ${statusUi.badge}`}>
-                            {statusUi.label}
-                          </span>
-                          {/* Added whitespace-nowrap to prevent text wrapping on small screens */}
-                          <span className="text-[14px] font-black text-green-500 whitespace-nowrap">
-                            +{submission.rewardSats.toLocaleString()} Sats
-                          </span>
-                        </div>
-                      </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-[#050505] rounded-[16px] border border-[#111]">
-                <p className="text-gray-500 text-sm font-medium">No submissions yet. Complete tasks to see them here.</p>
-              </div>
-            )}
-          </div>
-          
-          {/* Using your existing Recent Activity panel here so it's not lost */}
-          <RecentActivityPanel activities={data.recentActivity || []} />
-        </div>
-
-        {/* RIGHT COLUMN: Account Stats & Leaderboard */}
-        <div className="xl:col-span-1 space-y-6">
-          
-          {/* Monthly Leaderboard */}
-          <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-sats-orange-500/20 rounded-[24px] p-6 sm:p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-sats-orange-500/10 blur-[40px] pointer-events-none" />
-            
-            <div className="flex items-center justify-between mb-6 relative z-10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center border border-yellow-500/30">
-                  <Trophy className="w-4 h-4 text-yellow-500" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white tracking-tight">Leaderboard</h2>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">Monthly Top Earners</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2 relative z-10">
-              {monthlyTopEarners.length > 0 ? monthlyTopEarners.map((entry) => {
-                let rankColor = "text-gray-500 bg-[#111] border-[#2a2a2a]";
-                if (entry.rank === 1) rankColor = "text-black bg-yellow-500 border-yellow-400";
-                if (entry.rank === 2) rankColor = "text-black bg-gray-300 border-gray-200";
-                if (entry.rank === 3) rankColor = "text-black bg-[#cd7f32] border-[#b87333]";
-
-                const displayName = entry.fullName?.trim() || entry.username || 'Anonymous';
-                const initials = displayName.substring(0, 2).toUpperCase();
-
-                return (
-                  <div key={entry.userId} className="flex items-center justify-between p-3 bg-[#080808] border border-transparent rounded-[16px] hover:border-[#2a2a2a] hover:bg-[#111] transition-all cursor-default">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 border ${rankColor}`}>
-                        {entry.rank}
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-sats-orange-500 to-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                        {initials}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-white leading-tight truncate max-w-[132px]">{displayName}</p>
-                        <p className="text-[10px] text-gray-500 font-mono truncate max-w-[132px]">@{entry.username}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-sm font-black text-green-500">{entry.value.toLocaleString()} Sats</span>
-                    </div>
-                  </div>
-                );
-              }) : (
-                <div className="rounded-[16px] border border-dashed border-[#2a2a2a] px-4 py-8 text-center text-sm text-gray-500 bg-[#080808]">
-                  No monthly leaderboard data yet.
-                </div>
-              )}
-            </div>
-            
-            <Link href="/user/leaderboard" className="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#111] text-sm font-bold text-gray-300 hover:text-white hover:bg-[#1a1a1a] transition-colors relative z-10 border border-[#2a2a2a]">
-              View Full Leaderboard
-            </Link>
-          </div>
-
-        </div>
-        </div>
+      {/* 4. BOTTOM GRID (Submissions & Extras) */}
+      <DashboardLowerGrid
+        dashboard={data}
+        monthlyTopEarners={monthlyTopEarners}
+      />
       </div>
     </>
   );
-}
-
-// â”€â”€â”€ HELPER FUNCTIONS â”€â”€â”€
-
-function getSubmissionStatusUi(status: string) {
-  switch (status) {
-    case 'WITHDRAWABLE':
-      return {
-        label: 'Credited',
-        icon: <CheckCircle2 className="w-5 h-5 text-green-400" />,
-        badge: 'bg-green-500/10 text-green-400 border-green-500/20',
-      };
-    case 'LOCKED_15D':
-      return {
-        label: 'Locked',
-        icon: <LockKeyhole className="w-5 h-5 text-yellow-400" />,
-        badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-      };
-    case 'PENDING_24H':
-    case 'MANUAL_REVIEW':
-      return {
-        label: status === 'MANUAL_REVIEW' ? 'Manual Review' : 'Pending',
-        icon: <Clock3 className="w-5 h-5 text-blue-400" />,
-        badge: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-      };
-    case 'REJECTED':
-      return {
-        label: 'Rejected',
-        icon: <XCircle className="w-5 h-5 text-red-400" />,
-        badge: 'bg-red-500/10 text-red-400 border-red-500/20',
-      };
-    default:
-      return {
-        label: status,
-        icon: <Clock3 className="w-5 h-5 text-gray-400" />,
-        badge: 'bg-[#111] text-gray-400 border-[#2a2a2a]',
-      };
-  }
-}
-
-function formatRemainingTime(remainingMs: number) {
-  const totalSeconds = Math.floor(remainingMs / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  return `${minutes}m`;
 }
