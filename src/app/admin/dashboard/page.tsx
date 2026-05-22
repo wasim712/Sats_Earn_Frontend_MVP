@@ -48,6 +48,24 @@ export default function AdminDashboardPage() {
           bg="bg-blue-500/10" 
           borderColor="border-blue-500/20"
         />
+
+        <MetricCard 
+          title="Active Accounts" 
+          value={metrics?.users?.accountActive || 0}
+          subtitle="Accounts currently enabled"
+          icon={<Users className="w-6 h-6 text-green-400" />} 
+          bg="bg-green-500/10" 
+          borderColor="border-green-500/20"
+        />
+
+        <MetricCard 
+          title="Inactive Accounts" 
+          value={metrics?.users?.accountInactive || 0}
+          subtitle="Suspended or deactivated accounts"
+          icon={<Users className="w-6 h-6 text-red-400" />} 
+          bg="bg-red-500/10" 
+          borderColor="border-red-500/20"
+        />
         
         <MetricCard 
           title="Active Campaigns" 
@@ -126,6 +144,15 @@ export default function AdminDashboardPage() {
           icon={<XCircle className="w-6 h-6 text-red-400" />} 
           bg="bg-red-500/10" 
           borderColor="border-red-500/20"
+        />
+
+        <MetricCard 
+          title="Recently Active Users (24h)" 
+          value={metrics?.users?.activeLast24h || 0}
+          subtitle="Users with activity in the last 24 hours"
+          icon={<Activity className="w-6 h-6 text-cyan-400" />} 
+          bg="bg-cyan-500/10" 
+          borderColor="border-cyan-500/20"
         />
 
         <MetricCard 

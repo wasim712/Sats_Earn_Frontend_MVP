@@ -12,8 +12,6 @@ type ActionState = {
   error: string | null;
 };
 
-const HIDDEN_ADMIN_EMAIL = 'admin@satsearn.com';
-
 export default function AdminUsersPage() {
   const dispatch = useAppDispatch();
   const { users, isLoading, error, selectedUserDetail, detailLoading, detailError, actionLoading } = useAppSelector((state) => state.adminUsers);
@@ -29,10 +27,7 @@ export default function AdminUsersPage() {
     };
   }, [dispatch]);
 
-  const visibleUsers = useMemo(
-    () => users.filter((user) => user.email.trim().toLowerCase() !== HIDDEN_ADMIN_EMAIL),
-    [users],
-  );
+  const visibleUsers = users;
 
   const filteredUsers = useMemo(() => {
     return visibleUsers.filter((user) =>
@@ -83,7 +78,7 @@ export default function AdminUsersPage() {
   const handleExportCSV = () => {
     if (filteredUsers.length === 0) return;
 
-    const headers = ['ID', 'Email', 'Full Name', 'Role', 'Active Tier', 'Available Sats', 'Pending Sats', 'Locked Sats', 'Total XP', 'Active', 'Joined'];
+    const headers = ['ID', 'Email', 'Full Name', 'Role', 'Active Tier', 'Available Sats', 'Pending Sats', 'Locked Sats', 'Total XP', 'Account Active', 'Recently Active (24h)', 'Joined'];
     const rows = filteredUsers.map((user) => [
       user.id,
       user.email,
@@ -95,6 +90,7 @@ export default function AdminUsersPage() {
       user.balanceLocked,
       user.totalXp,
       user.isActive ? 'Yes' : 'No',
+      user.isRecentlyActive ? 'Yes' : 'No',
       new Date(user.createdAt).toISOString(),
     ].join(','));
 
@@ -195,6 +191,9 @@ export default function AdminUsersPage() {
                         <p>{user.totalXp.toLocaleString()} XP</p>
                         <p>{user._count?.submissions || 0} submissions</p>
                         <p>{user._count?.referrals || 0} referrals</p>
+                        <p className={user.isRecentlyActive ? 'text-green-400' : 'text-gray-500'}>
+                          {user.isRecentlyActive ? 'Active in last 24h' : 'No activity in last 24h'}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-5 text-gray-400 text-sm">

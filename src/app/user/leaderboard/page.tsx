@@ -14,6 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import type { LeaderboardEntry } from '@/types/user';
+import { AdSlot } from '@/components/ui/AdSlot';
 
 type LeaderboardTab = 'earners' | 'streaks';
 type EarnersFilter = 'daily' | 'weekly' | 'monthly' | 'allTime';
@@ -323,13 +324,7 @@ export default function UserLeaderboardPage() {
   }, [dispatch]);
 
   const sanitizeEntries = (entries: LeaderboardEntry[]) =>
-    entries
-      .filter((entry) => {
-        const username = (entry.username || '').trim().toLowerCase();
-        const fullName = (entry.fullName || '').trim().toLowerCase();
-        return username !== 'admin@satsearn.com' && fullName !== 'admin@satsearn.com' && !username.includes('admin@satsearn.com') && !fullName.includes('admin@satsearn.com');
-      })
-      .map((entry, index) => ({ ...entry, rank: index + 1 }));
+    entries.map((entry, index) => ({ ...entry, rank: index + 1 }));
 
   const earnersEntries = useMemo(() => {
     if (!data) return [] as LeaderboardEntry[];
@@ -389,6 +384,8 @@ export default function UserLeaderboardPage() {
             )}
           </div>
         </div>
+
+        <AdSlot slot="1234567890" className="mx-auto max-w-4xl" />
 
         {isLoading ? (
           <LeaderboardLoadingState />

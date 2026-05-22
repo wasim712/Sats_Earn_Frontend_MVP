@@ -83,7 +83,8 @@ export interface AdminUser {
   referralCode: string;
   createdAt: string;
   updatedAt?: string;
-  lastActivityAt: string;
+  lastActivityAt: string | null;
+  isRecentlyActive?: boolean;
   activeTier: string;
   isPremium: boolean;
   underlyingFreeTier: string;

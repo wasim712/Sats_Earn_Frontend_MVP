@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Gamepad2, Loader2, RefreshCw, Sparkles, Trophy, X, Zap } from 'lucide-react';
 import { useAppDispatch } from '@/store/hooks';
 import { userApi } from '@/store/services/userApi';
+import { requestRewardedContinue } from '@/lib/rewardedContinue';
 
 type SatWormResult = {
   score?: number;
@@ -25,6 +26,12 @@ type ClaimResponse = {
   };
 };
 
+type ContinueRequestPayload = {
+  type: 'SAT_WORM_CONTINUE_REQUEST';
+  score?: number;
+  reason?: string;
+};
+
 interface SatWormMiniGameProps {
   onRewardClaimed?: () => void;
   onExit?: () => void;
@@ -38,7 +45,10 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
   const [isClaiming, setIsClaiming] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [hasEnded, setHasEnded] = useState(false);
+  const [continuePrompt, setContinuePrompt] = useState<ContinueRequestPayload | null>(null);
+  const [isGrantingContinue, setIsGrantingContinue] = useState(false);
   const claimedRunRef = useRef<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
     const processResult = async (detail: SatWormResult) => {
@@ -56,19 +66,19 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
 
       if (claimedRunRef.current === runKey) return;
 
-      if ((detail.satsEarned || 0) <= 0 && (detail.xpEarned || 0) <= 0) {
-        setClaimMessage('Play again to unlock sats and XP rewards.');
+      if ((detail.xpEarned || 0) <= 0) {
+        setClaimMessage('Play again to unlock XP rewards.');
         return;
       }
 
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
       if (!token) {
-        setClaimMessage('Sign in again to claim your SAT-WORM rewards.');
+        setClaimMessage('Sign in again to claim your SAT-WORM XP.');
         return;
       }
 
       setIsClaiming(true);
-      setClaimMessage('Claiming your SAT-WORM rewards...');
+      setClaimMessage('Claiming your SAT-WORM XP...');
 
       try {
         const response = await dispatch(
@@ -86,12 +96,11 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
         ).unwrap() as ClaimResponse;
 
         claimedRunRef.current = runKey;
-        const sats = response.reward?.satsEarned ?? detail.satsEarned ?? 0;
         const xp = response.reward?.xpEarned ?? detail.xpEarned ?? 0;
-        setClaimMessage(`Reward added: +${sats} sats - +${xp} XP`);
+        setClaimMessage(`Reward added: +${xp} XP`);
         onRewardClaimed?.();
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to claim SAT-WORM reward.';
+        const message = error instanceof Error ? error.message : 'Failed to claim SAT-WORM XP.';
         setClaimMessage(message);
       } finally {
         setIsClaiming(false);
@@ -106,6 +115,12 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
     const handleMessage = async (event: MessageEvent) => {
       const data = event.data as Record<string, unknown> | null;
       if (!data || typeof data !== 'object') return;
+      if (data.type === 'SAT_WORM_CONTINUE_REQUEST') {
+        setContinuePrompt(data as ContinueRequestPayload);
+        setClaimMessage('Continue available. Use rewarded continue to revive this run.');
+        return;
+      }
+
       if (data.type !== 'SAT_WORM_RESULT') return;
 
       await processResult(data as SatWormResult);
@@ -118,6 +133,24 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
       window.removeEventListener('message', handleMessage);
     };
   }, [dispatch, onRewardClaimed]);
+
+  const grantContinue = async () => {
+    setIsGrantingContinue(true);
+    setClaimMessage('Preparing rewarded continue...');
+
+    const result = await requestRewardedContinue();
+
+    if (!result.granted) {
+      setIsGrantingContinue(false);
+      setClaimMessage('Rewarded continue was not completed.');
+      return;
+    }
+
+    iframeRef.current?.contentWindow?.postMessage({ type: 'SAT_WORM_CONTINUE_GRANTED' }, '*');
+    setContinuePrompt(null);
+    setIsGrantingContinue(false);
+    setClaimMessage(`Continue granted via ${result.provider}. Finish the revived run to claim XP.`);
+  };
 
   return (
     <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-sats-orange-500/20 rounded-[24px] p-5 sm:p-6 relative overflow-hidden">
@@ -135,7 +168,7 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
             </div>
           </div>
           <p className="text-sm text-gray-400 max-w-2xl">
-            Play SAT-WORM and claim earned sats and XP automatically when a run ends.
+            Play SAT-WORM and claim earned XP automatically when a run ends. XP is capped at 5 per run.
           </p>
         </div>
 
@@ -170,6 +203,7 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
 
       <div className="relative z-10 rounded-[20px] overflow-hidden border border-[#1d1d1d] bg-black">
         <iframe
+          ref={iframeRef}
           key={reloadKey}
           src="/sat-worm.html"
           title="SAT-WORM Mini Game"
@@ -177,9 +211,40 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
         />
       </div>
 
+      {continuePrompt && (
+        <div className="relative z-10 mt-4 rounded-[20px] border border-sats-orange-500/25 bg-[#090909] p-4 sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-sats-orange-400">Rewarded Continue</p>
+              <h3 className="mt-1 text-lg font-black text-white">Revive this SAT-WORM run</h3>
+              <p className="mt-1 text-sm text-gray-400">
+                Use separate rewarded continue logic for the game. This stays independent from AdSense platform ads.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setContinuePrompt(null)}
+                className="rounded-xl border border-[#2a2a2a] bg-[#111] px-4 py-2 text-sm font-bold text-gray-300 hover:bg-[#171717] hover:text-white transition-colors"
+              >
+                Skip
+              </button>
+              <button
+                type="button"
+                onClick={grantContinue}
+                disabled={isGrantingContinue}
+                className="rounded-xl border border-sats-orange-500/30 bg-sats-orange-500/10 px-4 py-2 text-sm font-bold text-sats-orange-300 hover:bg-sats-orange-500/15 transition-colors disabled:opacity-60"
+              >
+                {isGrantingContinue ? 'Loading Ad...' : 'Watch Ad to Continue'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative z-10 mt-4 rounded-[18px] border border-[#1d1d1d] bg-[#090909] px-4 py-3 text-sm text-gray-300 flex items-center gap-3 min-h-[56px]">
         {isClaiming ? <Loader2 className="w-4 h-4 animate-spin text-sats-orange-500 shrink-0" /> : <Zap className="w-4 h-4 text-sats-orange-500 shrink-0" />}
-        <span>{claimMessage || 'Finish a run to sync rewards and push a notification into your account.'}</span>
+        <span>{claimMessage || 'Finish a run to sync XP and push a notification into your account.'}</span>
       </div>
 
       {fullscreen && hasEnded && onExit && (
