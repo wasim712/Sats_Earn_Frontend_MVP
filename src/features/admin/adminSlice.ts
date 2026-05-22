@@ -7,7 +7,14 @@ import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 export interface AdminMetrics {
-  users: { total: number; newLast24h: number; activeLast24h: number; premium: number };
+  users: {
+    total: number;
+    accountActive: number;
+    accountInactive: number;
+    newLast24h: number;
+    activeLast24h: number;
+    premium: number;
+  };
   campaigns: { active: number; total: number; doubleRewardsConfigured: number };
   submissions: { pendingManualReview: number; completedLast24h: number; rejectedLast24h: number };
   withdrawals: { pending: number; paid: number };

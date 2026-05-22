@@ -72,9 +72,9 @@ export default function UserMiniGamesPage() {
               <Gamepad2 className="h-3.5 w-3.5" />
               Mini Games Hub
             </div>
-            <h1 className="mt-4 text-3xl sm:text-4xl font-black tracking-tight text-white">More games are on the way</h1>
+            <h1 className="mt-4 text-3xl sm:text-4xl font-black tracking-tight text-white">One live game, more on the way</h1>
             <p className="mt-3 max-w-2xl text-sm sm:text-base text-gray-400 leading-relaxed">
-              This new section is now attached to your user sidebar. For now it shows the upcoming mini-game roadmap, feature cards, and what is coming soon.
+              SAT-WORM is live now. This section also shows the upcoming mini-game roadmap, feature cards, and what is coming next.
             </p>
           </div>
 
@@ -83,8 +83,8 @@ export default function UserMiniGamesPage() {
               <Clock3 className="h-4 w-4 text-sats-orange-500" />
               Status
             </div>
-            <p className="text-xl font-black text-white">Coming Soon</p>
-            <p className="mt-1 text-sm text-gray-500">More cards and playable game modules will land here next.</p>
+            <p className="text-xl font-black text-white">Live Now</p>
+            <p className="mt-1 text-sm text-gray-500">SAT-WORM is playable today. More game cards are coming next.</p>
           </div>
         </div>
       </section>
@@ -103,13 +103,14 @@ export default function UserMiniGamesPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-black text-white tracking-tight">SAT-WORM</h2>
-                <p className="mt-1 text-sm text-gray-400">Tap to {activeGame === 'sat-worm' ? 'close' : 'open'} the playable game.</p>
+                <p className="mt-1 text-sm text-gray-400">Tap to {activeGame === 'sat-worm' ? 'close' : 'open'} the live playable game.</p>
               </div>
               <ChevronRight className={`h-5 w-5 text-sats-orange-500 transition-transform ${activeGame === 'sat-worm' ? 'rotate-90' : ''}`} />
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300">Live</span>
               <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">Playable</span>
-              <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">Auto Reward Claim</span>
+              <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">XP Only</span>
             </div>
           </div>
         </button>
@@ -146,7 +147,7 @@ export default function UserMiniGamesPage() {
             <div className="flex items-center justify-between gap-4 rounded-[20px] border border-[#1d1d1d] bg-[#090909] px-5 py-4">
               <div>
                 <h2 className="text-xl font-black text-white tracking-tight">SAT-WORM Full Screen</h2>
-                <p className="text-sm text-gray-400">Finish a run and the earned sats and XP are claimed automatically, then reflected in dashboard activity after refresh.</p>
+                <p className="text-sm text-gray-400">Finish a run and the earned XP is claimed automatically. SAT-WORM no longer gives sats rewards.</p>
               </div>
               <button
                 type="button"

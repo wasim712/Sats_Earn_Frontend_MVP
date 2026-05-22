@@ -20,7 +20,7 @@ export default function AdminAnnouncementsPage() {
   }, [dispatch]);
 
   const handleToggleStatus = (id: string, currentStatus: boolean) => {
-    dispatch(toggleAnnouncementStatus({ id, isActive: !currentStatus }));
+    return dispatch(toggleAnnouncementStatus({ id, isActive: !currentStatus }));
   };
 
   const handleDelete = (id: string) => {

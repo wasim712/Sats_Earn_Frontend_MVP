@@ -10,7 +10,7 @@ import type { Campaign } from '@/features/admin/adminCampaignsSlice';
 import { 
   Plus, ShieldAlert, 
   Zap, Calendar, Crown, Target, Trash2, Shield,
-  ArrowUpRight
+  ArrowUpRight, Loader2
 } from 'lucide-react';
 
 export default function AdminCampaignsPage() {
@@ -22,7 +22,7 @@ export default function AdminCampaignsPage() {
   }, [dispatch]);
 
   const handleToggleStatus = (id: string, currentStatus: boolean) => {
-    dispatch(toggleCampaignStatus({ id, isActive: !currentStatus }));
+    return dispatch(toggleCampaignStatus({ id, isActive: !currentStatus }));
   };
 
   const handleDelete = (id: string) => {
@@ -257,11 +257,16 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
               className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 focus:outline-none ${
                 campaign.isActive ? 'bg-green-500' : 'bg-sats-black-700'
               } ${isToggling ? 'opacity-50 pointer-events-none' : 'hover:ring-2 ring-sats-black-700 ring-offset-2 ring-offset-sats-black-900'}`}
-              title={campaign.isActive ? "Pause Campaign" : "Activate Campaign"}
+              title={isToggling ? (campaign.isActive ? 'Pausing campaign...' : 'Activating campaign...') : campaign.isActive ? "Pause Campaign" : "Activate Campaign"}
             >
+              {isToggling ? (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                </span>
+              ) : null}
               <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
                   campaign.isActive ? 'translate-x-[18px]' : 'translate-x-0.5'
-                }`}
+                } ${isToggling ? 'opacity-0' : 'opacity-100'}`}
               />
             </button>
 

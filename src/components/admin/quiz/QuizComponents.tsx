@@ -306,6 +306,7 @@ import {
   Trash2,
   CheckCircle2,
   LayoutGrid,
+  Loader2,
 } from 'lucide-react';
 import type { Quiz, Question } from '@/features/admin/adminQuizSlice';
 
@@ -416,7 +417,7 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
             {/* Left: Active/Pause Slider */}
             <div className="flex items-center gap-3" onClick={(e) => e.preventDefault()}>
               <span className={`text-xs font-bold transition-colors ${quiz.isActive ? 'text-green-400' : 'text-gray-500'}`}>
-                {quiz.isActive ? 'Live' : 'Paused'}
+                {isToggling ? (quiz.isActive ? 'Pausing...' : 'Going live...') : quiz.isActive ? 'Live' : 'Paused'}
               </span>
               <button
                 type="button"
@@ -425,11 +426,17 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 focus:outline-none ${
                   quiz.isActive ? 'bg-green-500' : 'bg-[#1a1a1a] border border-[#2a2a2a]'
                 } ${isToggling ? 'opacity-50 pointer-events-none' : ''}`}
+                title={isToggling ? (quiz.isActive ? 'Pausing quiz...' : 'Activating quiz...') : quiz.isActive ? 'Pause quiz' : 'Activate quiz'}
               >
+                {isToggling ? (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="w-4.5 h-4.5 text-white animate-spin" />
+                  </span>
+                ) : null}
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
                     quiz.isActive ? 'translate-x-[22px]' : 'translate-x-1'
-                  }`}
+                  } ${isToggling ? 'opacity-0' : 'opacity-100'}`}
                 />
               </button>
             </div>
