@@ -14,6 +14,7 @@ interface AnnouncementCardProps {
 
 export const AnnouncementCard = ({ announcement, onDelete, onToggleActive ,onEdit}: AnnouncementCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   // Dynamic styling based on Announcement Type
   const getTypeStyles = (type: string) => {
@@ -35,6 +36,12 @@ export const AnnouncementCard = ({ announcement, onDelete, onToggleActive ,onEdi
     }
   };
 
+  const handleToggleClick = async () => {
+    setIsToggling(true);
+    await onToggleActive(announcement.id, announcement.isActive);
+    setIsToggling(false);
+  };
+
   const formatDate = (isoString: string) => {
     return new Date(isoString).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
   };
@@ -53,18 +60,24 @@ export const AnnouncementCard = ({ announcement, onDelete, onToggleActive ,onEdi
         {/* Toggle Switch Container */}
         <div className="flex items-center gap-3">
           <span className={`text-[10px] font-bold tracking-widest uppercase ${announcement.isActive ? 'text-green-400' : 'text-gray-500'}`}>
-            {announcement.isActive ? 'Active' : 'Paused'}
+            {isToggling ? (announcement.isActive ? 'Pausing...' : 'Going live...') : announcement.isActive ? 'Active' : 'Paused'}
           </span>
           <button 
-            onClick={() => onToggleActive(announcement.id, announcement.isActive)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus:outline-none ${
+            onClick={handleToggleClick}
+            disabled={isToggling}
+            className={`cursor-pointer relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus:outline-none ${
               announcement.isActive ? 'bg-green-500/80 hover:bg-green-500' : 'bg-sats-black-700 hover:bg-gray-600'
-            }`}
+            } ${isToggling ? 'opacity-60 pointer-events-none' : ''}`}
             title={announcement.isActive ? "Deactivate" : "Activate"}
           >
+            {isToggling ? (
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="w-4.5 h-4.5 text-white animate-spin" />
+              </span>
+            ) : null}
             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 shadow-sm ${
               announcement.isActive ? 'translate-x-6' : 'translate-x-1'
-            }`} />
+            } ${isToggling ? 'opacity-0' : 'opacity-100'}`} />
           </button>
         </div>
       </div>
@@ -91,7 +104,7 @@ export const AnnouncementCard = ({ announcement, onDelete, onToggleActive ,onEdi
           {/* Enhanced Edit Button */}
           <button 
             onClick={() => onEdit(announcement)} // <-- ADD THIS
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-sats-black-950 border border-sats-black-800 text-gray-400 hover:text-sats-orange-400 hover:border-sats-orange-500/30 hover:bg-sats-orange-500/10 rounded-lg transition-all text-xs font-bold"
+            className=" cursor-pointer flex items-center gap-1.5 px-3 py-1.5 bg-sats-black-950 border border-sats-black-800 text-gray-400 hover:text-sats-orange-400 hover:border-sats-orange-500/30 hover:bg-sats-orange-500/10 rounded-lg transition-all text-xs font-bold"
           >
             <Edit3 className="w-3.5 h-3.5" /> Edit
           </button>
@@ -101,7 +114,7 @@ export const AnnouncementCard = ({ announcement, onDelete, onToggleActive ,onEdi
             onClick={handleDeleteClick}
             disabled={isDeleting}
             title="Delete Announcement"
-            className="flex items-center justify-center p-2 bg-sats-black-950 border border-sats-black-800 text-gray-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 rounded-lg transition-all disabled:opacity-50"
+            className="flex cursor-pointer items-center justify-center p-2 bg-sats-black-950 border border-sats-black-800 text-gray-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 rounded-lg transition-all disabled:opacity-50"
           >
             {isDeleting ? <Loader2 className="w-4 h-4 animate-spin text-red-400" /> : <Trash2 className="w-4 h-4" />}
           </button>
