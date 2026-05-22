@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, Home, Target, Lightbulb, FileCheck2, Wallet } from 'lucide-react';
+import { Menu, Home, Target, Lightbulb, Wallet, Bell } from 'lucide-react';
 
 import { UserSidebar } from '@/components/user/UserSidebar';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'; 
 import { logout } from '@/features/auth/authSlice'; 
 import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
+import { useGetUserNotificationsQuery } from '@/store/services/userApi';
 
 // ─── Floating Dock Links ────────────────────────────────────────────────────
 // You can easily add more links here. The dock will flex and adapt automatically.
@@ -33,6 +34,17 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   const [mounted, setMounted] = useState(false);
   
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { data: notificationsData } = useGetUserNotificationsQuery();
+
+  const unreadCount = useMemo(() => {
+    if (!Array.isArray(notificationsData)) return 0;
+    return notificationsData.filter((notification) => !notification.isRead).length;
+  }, [notificationsData]);
+
+  const derivedLevel = useMemo(() => {
+    const totalXp = Number(user?.totalXp || 0);
+    return Math.max(1, Math.floor(totalXp / 1000) + 1);
+  }, [user?.totalXp]);
 
   // ─── 1. Unified Mount & Resize Handler ───────────────────────────────────
   useEffect(() => {
@@ -122,7 +134,8 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         user={user ? { 
           name: user.fullName || user.email || 'User', 
           tier: user.activeTier || 'BASIC', 
-          streak: 0 
+          streak: 0,
+          level: derivedLevel,
         } : null} 
       />
 
@@ -131,7 +144,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         
         {/* ─── Mobile Header ─── */}
         <header className="lg:hidden h-16 border-b border-[#1a1a1a] bg-sats-black-900/80 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-4">
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex items-center gap-3 w-full min-w-0">
             <button 
               onClick={() => setIsSidebarOpen(true)}
               className="p-2 text-gray-400 hover:text-white bg-[#111] rounded-xl border border-[#1a1a1a] transition-colors active:scale-95"
@@ -140,11 +153,25 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             </button>
             
             {/* Dynamic Page Title */}
-            <div className="flex items-center justify-items-center grow w-full text-center justify-center pr-15">
+            <div className="flex items-center justify-items-center grow w-full text-center justify-center min-w-0 px-2">
               <h1 className="font-black tracking-tight text-xl text-white text-center">
                 {getPageTitle()}
               </h1>
             </div>
+
+            <Link
+              href="/user/notifications"
+              onClick={(e) => handleLinkClick(e, '/user/notifications')}
+              aria-label="Open notifications"
+              className={`relative shrink-0 rounded-xl border p-2 transition-all duration-300 ${pathname?.startsWith('/user/notifications') ? 'border-sats-orange-500/30 bg-sats-orange-500/10 text-sats-orange-500' : 'border-[#1a1a1a] bg-[#111] text-gray-400 hover:text-white hover:bg-white/5'}`}
+            >
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full border border-sats-black-950 bg-sats-orange-500 px-1 text-[9px] font-black leading-none text-black shadow-[0_0_12px_rgba(249,115,22,0.45)]">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </Link>
           </div>
         </header>
 

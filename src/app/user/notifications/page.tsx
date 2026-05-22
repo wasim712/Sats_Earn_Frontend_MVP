@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { 
@@ -18,6 +18,16 @@ export default function UserNotificationsPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { notifications, isLoading, error } = useAppSelector((state) => state.userNotifications);
+  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState<number>(0);
+  const [refreshNow, setRefreshNow] = useState<number>(Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setRefreshNow(Date.now());
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchUserNotifications());
@@ -33,16 +43,36 @@ export default function UserNotificationsPage() {
     window.dispatchEvent(new Event('user-notifications-updated'));
   };
 
+  const refreshSecondsLeft = useMemo(() => {
+    const remainingMs = refreshCooldownUntil - refreshNow;
+    return remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
+  }, [refreshCooldownUntil, refreshNow]);
+
+  const handleManualRefresh = async () => {
+    if (refreshSecondsLeft > 0) {
+      return;
+    }
+
+    setRefreshCooldownUntil(Date.now() + 30_000);
+    await dispatch(fetchUserNotifications());
+  };
+
   const handleNotificationClick = (notification: UserNotification) => {
     if (!notification.isRead) {
       handleMarkAsRead(notification.id);
     }
 
-    // Dynamic routing based on the notification type
+    const title = notification.title.toLowerCase();
+    const message = notification.message.toLowerCase();
+
     if (notification.type.includes('SUBMISSION')) {
-      router.push('/user/dashboard'); // Or '/user/submissions' if you have a user-facing history page
+      router.push('/user/submissions');
     } else if (notification.type.includes('WITHDRAWAL')) {
-      router.push('/user/wallet'); // Route to their wallet page
+      router.push('/user/wallet');
+    } else if (title.includes('bug report') || title.includes('bug bounty') || message.includes('bug report') || message.includes('bug bounty')) {
+      router.push('/user/bug-bounty');
+    } else if (title.includes('quiz') || message.includes('quiz')) {
+      router.push('/user/quiz');
     } else {
       router.push('/user/dashboard');
     }
@@ -147,9 +177,10 @@ export default function UserNotificationsPage() {
 
         <div className="flex items-center gap-3">
             <button
-              onClick={() => dispatch(fetchUserNotifications())}
-              className="flex items-center justify-center p-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all"
-              title="Refresh"
+              onClick={handleManualRefresh}
+              disabled={refreshSecondsLeft > 0}
+              className="flex items-center justify-center p-3 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl text-gray-400 hover:text-white hover:bg-[#111] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              title={refreshSecondsLeft > 0 ? `Next refresh after ${refreshSecondsLeft} seconds` : 'Refresh'}
             >
             <RefreshCw className="w-5 h-5" />
           </button>
@@ -171,6 +202,13 @@ export default function UserNotificationsPage() {
           <span className="text-xs font-black text-sats-orange-400 uppercase tracking-widest">{unreadCount} Unread Alerts</span>
         </div>
       )}
+
+      {refreshSecondsLeft > 0 ? (
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full w-fit text-xs font-black text-blue-300 uppercase tracking-widest">
+          <RefreshCw className="w-3.5 h-3.5" />
+          Next refresh after {refreshSecondsLeft} seconds
+        </div>
+      ) : null}
 
       {error && (
         <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300 flex items-center gap-3">

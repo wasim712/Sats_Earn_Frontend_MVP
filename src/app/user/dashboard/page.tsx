@@ -70,7 +70,7 @@ export default function UserDashboardPage() {
       );
     }
     return (
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-baseline ">
         <span className={`text-2xl sm:text-3xl font-black tracking-tight`}>{sats.toLocaleString()}</span>
         <span className={`"text-2xl font-bold text-gray-400 mb-1 ${sats>1000000?'hidden':''}`}>.00</span>
         <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span>

@@ -47,11 +47,19 @@ const handleMarkAsRead = async (id: string) => {
       handleMarkAsRead(notification.id);
     }
 
-    // Route to the specific queue based on the notification type
+    const title = notification.title.toLowerCase();
+    const message = notification.message.toLowerCase();
+
     if (notification.type === 'NEW_SUBMISSION') {
       router.push('/admin/submissions');
     } else if (notification.type === 'NEW_WITHDRAWAL') {
       router.push('/admin/payments');
+    } else if (title.includes('bug report') || message.includes('bug report')) {
+      router.push('/admin/bug-reports');
+    } else if (title.includes('premium') || message.includes('premium request') || message.includes('upgrade request') || message.includes('notify-me')) {
+      router.push('/admin/premium-requests');
+    } else {
+      router.push('/admin/dashboard');
     }
   };
 
