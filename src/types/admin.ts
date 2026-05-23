@@ -19,10 +19,12 @@ export interface Campaign {
   totalCompletions: number;
   maxCompletions: number;
   isActive: boolean;
+  isStandalone?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
   completedTasksCount?: number;
   totalTasksCount?: number;
+  displayRewardSats?: number;
   userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED';
   createdAt: string;
   updatedAt: string;
@@ -34,9 +36,12 @@ export interface AdminTask {
   title: string;
   description?: string | null;
   targetUrl?: string | null;
+  proofType?: string | null;
+  requiredPlatform?: string | null;
   requirements?: unknown;
   baseRewardSatsOverride?: number | null;
   xpRewardOverride?: number | null;
+  taskRewardSats?: number;
   tierRewardMatrixOverride?: Record<string, number> | null;
   createdAt?: string;
   updatedAt?: string;
@@ -77,6 +82,7 @@ export interface AdminUser {
   premiumTier: string | null;
   premiumExpiresAt: string | null;
   isActive: boolean;
+  isStandalone?: boolean;
   balanceAvailable: number;
   balancePending: number;
   balanceLocked: number;
@@ -199,6 +205,7 @@ export interface AdminQuiz {
   xpReward?: number;
   date: string;
   isActive: boolean;
+  isStandalone?: boolean;
   questions?: AdminQuizQuestion[];
   _count?: {
     questions: number;

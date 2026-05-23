@@ -245,7 +245,7 @@ export default function CampaignDetailsPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sats-orange-500/8 border border-sats-orange-500/20 mb-5">
               <Zap className="w-3.5 h-3.5 text-sats-orange-500" />
               <span className="text-sm font-black text-sats-orange-500">
-                {campaign.displayRewardSats ?? Math.max(...Object.values(campaign.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0)} Sats
+                {Number(campaign.displayRewardSats || 0)} Sats
               </span>
               <span className="text-xs text-sats-orange-500/50 font-medium">total reward</span>
             </div>

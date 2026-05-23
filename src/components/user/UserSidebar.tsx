@@ -6,6 +6,7 @@ import { redirect, usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   ListChecks,
+  CheckSquare,
   Users,
   Trophy,
   Wallet,
@@ -188,6 +189,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
   const navLinks = [
     { name: 'Dashboard', href: '/user/dashboard', icon: LayoutDashboard },
     { name: 'Browse Tasks', href: '/user/tasks', icon: ListChecks },
+    { name: 'Standalone Tasks', href: '/user/standalone-tasks', icon: CheckSquare },
     { name: 'Mini Games', href: '/user/minigames', icon: Gamepad2 },
     { name: 'Bug Bounty', href: '/user/bug-bounty', icon: Bug },
     { name: 'Daily Quiz', href: '/user/quiz', icon: Lightbulb },
@@ -230,7 +232,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
       />
 
       <aside
-        className={`group/sidebar fixed top-0 left-0 z-50 flex h-[100dvh] max-h-[100dvh] flex-col overflow-hidden border-r border-sats-black-800 bg-sats-black-950 shadow-[5px_0_30px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 ${isCollapsed ? 'w-20' : 'w-[280px]'}`}
+        className={`group/sidebar fixed top-0 left-0 z-50 flex h-[100dvh] max-h-[100dvh] flex-col overflow-y-auto overflow-x-hidden border-r border-sats-black-800 bg-sats-black-950 shadow-[5px_0_30px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 ${isCollapsed ? 'w-20' : 'w-[280px]'}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`flex h-24 items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
@@ -286,7 +288,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
           </button>
         </div>
 
-        <nav className="custom-scrollbar flex-1 min-h-0 space-y-1 overflow-x-hidden overflow-y-auto px-4 py-2 pb-6">
+        <nav className="custom-scrollbar flex-1 min-h-0 space-y-1 overflow-x-hidden px-4 py-2 pb-6">
           {navLinks.map((link) => {
             const isActive = pathname.startsWith(link.href);
             const Icon = link.icon;

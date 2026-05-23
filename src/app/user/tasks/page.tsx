@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import {
   AlertTriangle,
@@ -25,6 +26,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 type FilterMode = 'ALL' | 'AVAILABLE' | 'COMPLETED';
 type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
+type BrowseMode = 'CAMPAIGNS' | 'STANDALONE';
 
 type DeviceOption = {
   key: DeviceFilter;
@@ -48,10 +50,7 @@ const deviceOptions: DeviceOption[] = [
 
 const formatCompact = (value: number) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 
-const getTopReward = (campaign: Campaign) => {
-  const tiers = Object.values(campaign.tierRewardMatrix || {}).map((value) => Number(value) || 0);
-  return Math.max(campaign.baseRewardSats || 0, ...tiers, 0);
-};
+const getTopReward = (campaign: Campaign) => Number(campaign.displayRewardSats || 0);
 
 const getRequiredPlatform = (campaign: Campaign) => {
   const platform = String(campaign.requiredPlatform || 'NONE').toUpperCase();
@@ -113,12 +112,14 @@ const getPreviewDescription = (text: string) => {
 };
 
 export default function TasksPage() {
+  const searchParams = useSearchParams();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<FilterMode>('ALL');
   const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>('ALL');
+  const [browseMode, setBrowseMode] = useState<BrowseMode>(searchParams.get('view') === 'standalone' ? 'STANDALONE' : 'CAMPAIGNS');
 
   useEffect(() => {
     const fetchCampaigns = async () => {

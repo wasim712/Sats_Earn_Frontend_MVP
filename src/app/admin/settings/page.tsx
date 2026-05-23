@@ -8,6 +8,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAdminSettings, updateAdminSettings } from '@/features/admin/adminSettingsSlice';
 import { ReferralMatrixSection } from '@/components/admin/settings/ReferralMatrixSection';
 import { WithdrawalTierMatrixSection } from '@/components/admin/settings/WithdrawalTierMatrixSection';
+import { PremiumMonthlySatsMatrixSection } from '@/components/admin/settings/PremiumMonthlySatsMatrixSection';
+import { PremiumYearlySatsMatrixSection } from '@/components/admin/settings/PremiumYearlySatsMatrixSection';
 import { SettingsErrorBanner, SettingsSuccessToast } from '@/components/admin/settings/SettingsFeedback';
 import { SettingsHeader } from '@/components/admin/settings/SettingsHeader';
 import { SettingsInputWrapper } from '@/components/admin/settings/SettingsInputWrapper';
@@ -44,6 +46,12 @@ export default function AdminSettingsPage() {
       BASIC: 25000, COPPER: 25000, BRONZE: 25000, SILVER: 25000, GOLD: 25000,
       PLATINUM: 25000, DIAMOND: 25000, CROWN: 25000, ELITE: 25000, FOUNDER: 25000,
     } as Record<string, number>,
+    premiumMonthlySatsMatrix: {
+      PLATINUM: 6499, DIAMOND: 8999, CROWN: 12999, ELITE: 19999, FOUNDER: 0,
+    } as Record<string, number>,
+    premiumYearlySatsMatrix: {
+      PLATINUM: 72999, DIAMOND: 102999, CROWN: 146999, ELITE: 221999, FOUNDER: 299999,
+    } as Record<string, number>,
   });
 
   useEffect(() => {
@@ -62,6 +70,8 @@ export default function AdminSettingsPage() {
       dailyStreakBonusXp: settings.dailyStreakBonusXp ?? prev.dailyStreakBonusXp,
       tierReferralMatrix: { ...prev.tierReferralMatrix, ...(settings.tierReferralMatrix || {}) },
       tierMinWithdrawalMatrix: { ...prev.tierMinWithdrawalMatrix, ...(settings.tierMinWithdrawalMatrix || {}) },
+      premiumMonthlySatsMatrix: { ...prev.premiumMonthlySatsMatrix, ...(settings.premiumMonthlySatsMatrix || {}) },
+      premiumYearlySatsMatrix: { ...prev.premiumYearlySatsMatrix, ...(settings.premiumYearlySatsMatrix || {}) },
     }));
   }, [settings]);
 
@@ -88,6 +98,26 @@ export default function AdminSettingsPage() {
       ...prev,
       tierMinWithdrawalMatrix: {
         ...prev.tierMinWithdrawalMatrix,
+        [tier]: parseWholeNumber(value),
+      },
+    }));
+  };
+
+  const handlePremiumMonthlyMatrixChange = (tier: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      premiumMonthlySatsMatrix: {
+        ...prev.premiumMonthlySatsMatrix,
+        [tier]: parseWholeNumber(value),
+      },
+    }));
+  };
+
+  const handlePremiumYearlyMatrixChange = (tier: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      premiumYearlySatsMatrix: {
+        ...prev.premiumYearlySatsMatrix,
         [tier]: parseWholeNumber(value),
       },
     }));
@@ -156,6 +186,10 @@ export default function AdminSettingsPage() {
             <WithdrawalTierMatrixSection values={formData.tierMinWithdrawalMatrix} onChange={handleWithdrawalMatrixChange} />
 
             <ReferralMatrixSection values={formData.tierReferralMatrix} onChange={handleMatrixChange} />
+
+            <PremiumMonthlySatsMatrixSection values={formData.premiumMonthlySatsMatrix} onChange={handlePremiumMonthlyMatrixChange} />
+
+            <PremiumYearlySatsMatrixSection values={formData.premiumYearlySatsMatrix} onChange={handlePremiumYearlyMatrixChange} />
           </div>
         </form>
       </div>

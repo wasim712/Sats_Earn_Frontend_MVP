@@ -18,6 +18,7 @@ import adminBlogsReducer from '../features/admin/adminBlogsSlice'
 import adminFaqsReducer from '../features/admin/adminFaqsSlice'
 import adminBugReportsReducer from '../features/admin/adminBugReportsSlice'
 import adminPremiumRequestsReducer from '../features/admin/adminPremiumRequestsSlice'
+import adminTasksReducer from '../features/admin/adminTasksSlice'
 import userDashboardReducer from '../features/user/userDashboardSlice'
 import userLeaderboardReducer from '../features/user/userLeaderboardSlice'
 import userNotificationsReducer from '../features/user/userNotificationsSlice'
@@ -42,6 +43,7 @@ export const store = configureStore({
     adminFaqs: adminFaqsReducer,
     adminBugReports: adminBugReportsReducer,
     adminPremiumRequests: adminPremiumRequestsReducer,
+    adminTasks: adminTasksReducer,
     userQuiz:userQuizReducer,
     userProfile:userProfileReducer,
     userDashboard:userDashboardReducer,

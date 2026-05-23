@@ -30,6 +30,23 @@ export interface SignUpPayload {
   referralCode?: string;
 }
 
+export interface BillingHistoryItem {
+  id: string;
+  premiumTier: string;
+  billingCycle: 'MONTHLY' | 'YEARLY';
+  billingSource: 'MANUAL_PAYMENT' | 'SATS_BALANCE' | 'ADMIN_OVERRIDE';
+  amountUsd?: number | null;
+  amountSats?: number | null;
+  adminNotes?: string | null;
+  premiumExpiresAt?: string | null;
+  createdAt: string;
+}
+
+export interface PremiumPricing {
+  monthlySatsMatrix: Record<string, number>;
+  yearlySatsMatrix: Record<string, number>;
+}
+
 export interface UserProfile {
   fullName: string | null;
   email: string;
@@ -45,6 +62,10 @@ export interface UserProfile {
   isPremium?: boolean;
   premiumTier?: string | null;
   premiumExpiresAt?: string | null;
+  id?: string;
+  balanceAvailable?: number;
+  premiumPricing?: PremiumPricing;
+  billingHistory?: BillingHistoryItem[];
 }
 
 export interface UserBalances {

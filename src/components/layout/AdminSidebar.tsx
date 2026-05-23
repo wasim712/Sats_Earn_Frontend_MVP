@@ -119,6 +119,8 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Security', href: '/admin/fraud', icon: ShieldAlert },
     { name: 'All Campaigns', href: '/admin/campaigns', icon: List },
     { name: 'Add Campaign', href: '/admin/addcampaign', icon: CopyPlus },
+    { name: 'Standalone Tasks', href: '/admin/tasks', icon: CheckSquare },
+    { name: 'Add Standalone', href: '/admin/addtask', icon: CopyPlus },
     { type: 'divider', name: 'Quiz' }, 
     { name: 'Quiz', href: '/admin/quiz', icon: Lightbulb },
     { type: 'divider', name: 'System' },

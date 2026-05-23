@@ -271,6 +271,71 @@ export default function UserProfilePage() {
           </div>
 
         </div>
+
+        <div className="mt-8 rounded-[28px] border border-[#1a1a1a] bg-[#050505] p-6 md:p-8">
+          <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+            <div>
+              <h3 className="text-xl md:text-2xl font-black text-white tracking-tight">Billing History</h3>
+              <p className="text-sm text-gray-400 mt-1">Shows whether your premium tier came from sats, manual payment, or admin override.</p>
+            </div>
+            <div className="inline-flex rounded-xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs font-semibold text-sats-orange-300">
+              {profile.billingHistory?.length ?? 0} record(s)
+            </div>
+          </div>
+          {profile.billingHistory && profile.billingHistory.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
+              {profile.billingHistory.map((item) => {
+                const sourceLabel = item.billingSource.replace(/_/g, ' ');
+                const amountLabel = item.amountSats ? `${item.amountSats.toLocaleString()} sats` : item.amountUsd ? `$${item.amountUsd}` : 'Manual update';
+                return (
+                  <div key={item.id} className="rounded-3xl border border-[#1d1d1d] bg-gradient-to-br from-[#0a0a0a] to-[#050505] p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="text-lg font-black text-white tracking-tight">{item.premiumTier}</div>
+                        <div className="mt-1 text-sm text-gray-400">{new Date(item.createdAt).toLocaleString()}</div>
+                      </div>
+                      <div className="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-green-300">
+                        {item.billingCycle}
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Source</div>
+                        <div className="mt-2 text-sm font-semibold text-white">{sourceLabel}</div>
+                      </div>
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Amount</div>
+                        <div className="mt-2 text-sm font-semibold text-sats-orange-300">{amountLabel}</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-sats-orange-300">
+                        {sourceLabel}
+                      </span>
+                      {item.premiumExpiresAt ? (
+                        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-300">
+                          Expires {new Date(item.premiumExpiresAt).toLocaleDateString()}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    {item.adminNotes ? (
+                      <div className="mt-4 rounded-2xl border border-[#1a1a1a] bg-[#080808] p-3 text-sm text-gray-300">
+                        {item.adminNotes}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-[#2a2a2a] bg-[#050505] p-6 text-sm text-gray-500">
+              No billing records yet. Your upgrades and manual billing changes will appear here.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -353,4 +418,3 @@ function ProfileStatCard({
     </div>
   );
 }
-

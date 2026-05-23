@@ -16,6 +16,7 @@ import {
 export default function AdminCampaignsPage() {
   const dispatch = useAppDispatch();
   const { campaigns, isLoading, error } = useAppSelector((state) => state.adminCampaigns);
+  const visibleCampaigns = campaigns.filter((campaign) => !campaign.isStandalone);
 
   useEffect(() => {
     dispatch(fetchAllCampaigns());
@@ -91,8 +92,8 @@ export default function AdminCampaignsPage() {
 
         {/* ─── Campaigns Grid ─── */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-          {campaigns.length > 0 ? (
-            campaigns.map((campaign) => (
+          {visibleCampaigns.length > 0 ? (
+            visibleCampaigns.map((campaign) => (
               <CampaignCard 
                 key={campaign.id}
                 campaign={campaign} 
