@@ -149,7 +149,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
       />
 
       <aside 
-        className={`group/sidebar fixed top-0 left-0 h-screen bg-sats-black-950 border-r border-sats-black-800 z-50 flex flex-col transition-all duration-300 ease-in-out shadow-[5px_0_30px_rgba(0,0,0,0.5)] 
+        className={`group/sidebar fixed top-0 left-0 h-[100dvh] max-h-[100dvh] bg-sats-black-950 border-r border-sats-black-800 z-50 flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-[5px_0_30px_rgba(0,0,0,0.5)] 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 
         ${isCollapsed ? 'w-20' : 'w-72'}`}
       >
@@ -190,7 +190,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
         </div>
 
         {/* NAVIGATION SECTION */}
-        <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto custom-scrollbar overflow-x-hidden">
+        <nav className="flex-1 min-h-0 py-4 px-3 space-y-1.5 overflow-y-auto custom-scrollbar overflow-x-hidden pb-6">
           {navLinks.map((link, index) => {
             if (link.type === 'divider') {
               return (
@@ -247,7 +247,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
         </nav>
 
         {/* LOGOUT SECTION */}
-        <div className="p-3 border-t border-sats-black-800 bg-sats-black-950 flex flex-col gap-2">
+        <div className="shrink-0 border-t border-sats-black-800 bg-sats-black-950 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex flex-col gap-2">
           <button 
             onClick={onLogout} 
             title={isCollapsed ? "Secure Logout" : ""}

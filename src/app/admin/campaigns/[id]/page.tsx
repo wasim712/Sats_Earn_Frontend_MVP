@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
@@ -34,6 +34,12 @@ type CampaignAnalytics = {
   totalSubmissions?: number;
   statusCounts?: { verified?: number; pending?: number; rejected?: number };
   tierDistribution?: Record<string, number>;
+  satsByTierDistribution?: Record<string, number>;
+  totalTaskRewardSatsSpent?: number;
+  totalRewardedSubmissions?: number;
+  totalRewardedUsers?: number;
+  averageRewardPerApprovedSubmission?: number;
+  campaignTaskCount?: number;
 };
 
 type CampaignEditForm = Partial<Campaign> & {
@@ -52,16 +58,52 @@ type TaskFormState = {
   requiredPlatform: string;
   proofType: string;
   targetUrl: string;
+  hasRewardOverrides: boolean;
+  baseRewardSatsOverride: number;
+  tierRewardMatrixOverride: Record<string, number>;
 };
 
 type EditableTask = AdminTask & {
   proofType?: string;
   requiredPlatform?: string;
+  hasRewardOverrides?: boolean;
 };
 
 type ValidationIssue = { path?: string; message: string };
 
-// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Platform Logo Helper Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+const createEmptyTaskTierMatrix = () =>
+  [...FREE_TIERS, ...PREMIUM_TIERS].reduce<Record<string, number>>((acc, tier) => {
+    acc[tier] = 0;
+    return acc;
+  }, {});
+
+const mergeTaskTierMatrix = (matrix?: Record<string, number> | null) => {
+  const base = createEmptyTaskTierMatrix();
+  if (!matrix) return base;
+
+  for (const tier of [...FREE_TIERS, ...PREMIUM_TIERS]) {
+    base[tier] = Number(matrix[tier] || 0);
+  }
+
+  return base;
+};
+
+const hasTaskMatrixOverrides = (matrix?: Record<string, number> | null) => {
+  if (!matrix) return false;
+
+  return [...FREE_TIERS, ...PREMIUM_TIERS].some((tier) => Number(matrix[tier] || 0) > 0);
+};
+
+const hasTaskRewardOverrides = (task?: {
+  baseRewardSatsOverride?: number | null;
+  xpRewardOverride?: number | null;
+  tierRewardMatrixOverride?: Record<string, number> | null;
+}) =>
+  Number(task?.baseRewardSatsOverride || 0) > 0 ||
+  Number(task?.xpRewardOverride || 0) > 0 ||
+  hasTaskMatrixOverrides(task?.tierRewardMatrixOverride);
+
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Platform Logo Helper ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 export const PlatformLogo = ({ url, className = "w-6 h-6" }: { url: string | null, className?: string }) => {
   if (!url) return <LinkIcon className={className} />;
   const lowerUrl = url.toLowerCase();
@@ -112,11 +154,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     coverImageUrl: '',
   });
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CREATION & EDITING STATE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ TASK CREATION & EDITING STATE ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const [taskForm, setTaskForm] = useState<TaskFormState>({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'',
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', hasRewardOverrides: false, baseRewardSatsOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix(),
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -218,7 +260,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CAMPAIGN CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ CAMPAIGN CRUD ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
   const handleSave = async () => {
     if (!campaign) return;
 
@@ -292,12 +334,17 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK CRUD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ TASK CRUD ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingTask(true);
 
     try {
+      const hasAnyTierOverride = [...FREE_TIERS, ...PREMIUM_TIERS].some((tier) => Number(taskForm.tierRewardMatrixOverride[tier] || 0) > 0);
+      if (taskForm.hasRewardOverrides && taskForm.baseRewardSatsOverride <= 0 && !hasAnyTierOverride) {
+        throw new Error('Add a base reward override or at least one tier reward override.');
+      }
+
       const token = sessionStorage.getItem('sats_token');
       const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
         method: 'POST',
@@ -308,6 +355,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           proofType: taskForm.proofType,
           requiredPlatform: taskForm.requiredPlatform,
           targetUrl: taskForm.targetUrl || undefined,
+          ...(taskForm.hasRewardOverrides ? {
+            baseRewardSatsOverride: Number(taskForm.baseRewardSatsOverride),
+            tierRewardMatrixOverride: taskForm.tierRewardMatrixOverride,
+          } : {}),
         })
       });
 
@@ -321,7 +372,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'' });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', hasRewardOverrides: false, baseRewardSatsOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix() });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
     } catch (err) {
@@ -337,20 +388,40 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     setIsUpdatingTask(true);
 
     try {
+      const normalizedTaskTierMatrix = mergeTaskTierMatrix(editingTaskForm.tierRewardMatrixOverride);
+      const hasAnyTierOverride = [...FREE_TIERS, ...PREMIUM_TIERS].some(
+        (tier) => Number(normalizedTaskTierMatrix[tier] || 0) > 0
+      );
+
+      if (editingTaskForm.hasRewardOverrides && Number(editingTaskForm.baseRewardSatsOverride || 0) <= 0 && !hasAnyTierOverride) {
+        alert('Please enter a base reward or at least one tier reward override.');
+        setIsUpdatingTask(false);
+        return;
+      }
+
       const token = sessionStorage.getItem('sats_token');
       const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks/${editingTaskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        // AFTER
         body: JSON.stringify({
-      title: editingTaskForm.title,
-      description: editingTaskForm.description,
-      proofType: editingTaskForm.proofType,
-      // Send at top level — backend reads it here and stores it in requirements JSON
-      requiredPlatform: (editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || '',
-      // Only include targetUrl if it has actual content — omit entirely when blank
-      ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
-    })
+          title: editingTaskForm.title,
+          description: editingTaskForm.description,
+          proofType: editingTaskForm.proofType,
+          requiredPlatform:
+            (editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform ||
+            editingTaskForm.requiredPlatform ||
+            '',
+          ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
+          ...(editingTaskForm.hasRewardOverrides
+            ? {
+                baseRewardSatsOverride: Number(editingTaskForm.baseRewardSatsOverride || 0),
+                tierRewardMatrixOverride: normalizedTaskTierMatrix,
+              }
+            : {
+                baseRewardSatsOverride: undefined,
+                tierRewardMatrixOverride: undefined,
+              }),
+        })
       });
 
       if (!res.ok) {
@@ -402,11 +473,19 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     : [...FREE_TIERS, ...PREMIUM_TIERS];
   const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(editForm.tierRewardMatrix?.[tier]) > 0);
   const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
+  const totalSpent = Number(analytics?.totalTaskRewardSatsSpent || 0);
+  const totalRewardedSubmissions = Number(analytics?.totalRewardedSubmissions || analytics?.statusCounts?.verified || 0);
+  const totalRewardedUsers = Number(analytics?.totalRewardedUsers || totalRewardedSubmissions || 0);
+  const averageReward = Number(
+    analytics?.averageRewardPerApprovedSubmission ||
+    (totalRewardedSubmissions > 0 ? Math.floor(totalSpent / totalRewardedSubmissions) : 0)
+  );
+  const campaignTaskCount = Number(analytics?.campaignTaskCount || campaign.tasks?.length || 0);
 
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
       
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ SUCCESS TOAST Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ SUCCESS TOAST ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-sats-black-900 border border-green-500/30 text-green-400 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(34,197,94,0.15)] transition-all duration-500 ${showSuccess ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0'}`}>
         <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
           <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -432,7 +511,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           </div>
         )}
         
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ STICKY HEADER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ STICKY HEADER ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
         <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl mt-4">
           <button onClick={() => router.push('/admin/campaigns')} className="flex items-center text-gray-400 hover:text-white bg-sats-black-900 border border-[#1a1a1a] hover:bg-[#111] px-5 py-2.5 rounded-xl transition-all font-bold w-full sm:w-auto justify-center shadow-sm">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
@@ -463,7 +542,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
           
-          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ LEFT COLUMN (Spans 2): Campaign Details Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LEFT COLUMN (Spans 2): Campaign Details ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
           <div className="xl:col-span-2 flex flex-col gap-6 md:gap-8">
             <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
               
@@ -783,7 +862,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               </div>
             </div>
             
-            {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ TASK MANAGEMENT ZONE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+            {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ TASK MANAGEMENT ZONE ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden">
               <div className="flex items-center justify-between mb-6 border-b border-[#1a1a1a] pb-4">
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
@@ -846,8 +925,82 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </div>
                       {taskForm.targetUrl && !/^https?:\/\/.+/.test(taskForm.targetUrl) && (
                         <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                          <span>Ã¢Å¡Â </span> Must start with http:// or https://
+                          <span>ÃƒÂ¢Ã…Â¡Ã‚Â </span> Must start with http:// or https://
                         </p>
+                      )}
+                    </div>
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 space-y-5">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-bold text-white flex items-center gap-1.5"><Medal className="w-4 h-4 text-yellow-500" /> Task Reward Overrides</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Override the campaign reward matrix for this task only.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setTaskForm((prev) => ({ ...prev, hasRewardOverrides: !prev.hasRewardOverrides }))}
+                          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${taskForm.hasRewardOverrides ? 'bg-yellow-500' : 'bg-[#111] border border-[#2a2a2a]'}`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${taskForm.hasRewardOverrides ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                        </button>
+                      </div>
+
+                      {taskForm.hasRewardOverrides && (
+                        <div className="space-y-5 animate-in fade-in slide-in-from-top-2">
+                          <div>
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1 block">Base Reward Override (Sats)</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={taskForm.baseRewardSatsOverride || ''}
+                              onChange={(e) => setTaskForm((prev) => ({ ...prev, baseRewardSatsOverride: parseWholeNumber(e.target.value) }))}
+                              placeholder="0"
+                              className={inputCls}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="space-y-3">
+                              <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                              <div className="grid grid-cols-1 gap-3">
+                                {FREE_TIERS.map((tier) => (
+                                  <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
+                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      pattern="[0-9]*"
+                                      value={taskForm.tierRewardMatrixOverride[tier] || ''}
+                                      onChange={(e) => setTaskForm((prev) => ({ ...prev, tierRewardMatrixOverride: { ...prev.tierRewardMatrixOverride, [tier]: parseWholeNumber(e.target.value) } }))}
+                                      placeholder="0"
+                                      className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
+                              <div className="grid grid-cols-1 gap-3">
+                                {PREMIUM_TIERS.map((tier) => (
+                                  <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#0a0a0a] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
+                                    <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      pattern="[0-9]*"
+                                      value={taskForm.tierRewardMatrixOverride[tier] || ''}
+                                      onChange={(e) => setTaskForm((prev) => ({ ...prev, tierRewardMatrixOverride: { ...prev.tierRewardMatrixOverride, [tier]: parseWholeNumber(e.target.value) } }))}
+                                      placeholder="0"
+                                      className="w-16 bg-[#111] border border-yellow-500/20 rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </div>
                     <div className="pt-2">
@@ -913,10 +1066,84 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           {editingTaskForm.targetUrl && !/^https?:\/\/.+/.test(editingTaskForm.targetUrl) && (
                             <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
-                              <span>Ã¢Å¡Â </span> Must start with http:// or https://
+                              <span>ÃƒÂ¢Ã…Â¡Ã‚Â </span> Must start with http:// or https://
                             </p>
                           )}
                         </div>
+                          <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 space-y-5">
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-sm font-bold text-white flex items-center gap-1.5"><Medal className="w-4 h-4 text-yellow-500" /> Task Reward Overrides</p>
+                                <p className="text-xs text-gray-500 mt-0.5">Override the campaign reward matrix for this task only.</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setEditingTaskForm((prev) => ({ ...prev, hasRewardOverrides: !prev.hasRewardOverrides, tierRewardMatrixOverride: mergeTaskTierMatrix(prev.tierRewardMatrixOverride) }))}
+                                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${editingTaskForm.hasRewardOverrides ? 'bg-yellow-500' : 'bg-[#111] border border-[#2a2a2a]'}`}
+                              >
+                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${editingTaskForm.hasRewardOverrides ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                              </button>
+                            </div>
+
+                            {editingTaskForm.hasRewardOverrides && (
+                              <div className="space-y-5 animate-in fade-in slide-in-from-top-2">
+                                <div>
+                                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1 block">Base Reward Override (Sats)</label>
+                                  <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    value={editingTaskForm.baseRewardSatsOverride || ''}
+                                    onChange={(e) => setEditingTaskForm((prev) => ({ ...prev, baseRewardSatsOverride: parseWholeNumber(e.target.value) }))}
+                                    placeholder="0"
+                                    className={inputCls}
+                                  />
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                  <div className="space-y-3">
+                                    <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                                    <div className="grid grid-cols-1 gap-3">
+                                      {FREE_TIERS.map((tier) => (
+                                        <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
+                                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                          <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={mergeTaskTierMatrix(editingTaskForm.tierRewardMatrixOverride)[tier] || ''}
+                                            onChange={(e) => setEditingTaskForm((prev) => ({ ...prev, tierRewardMatrixOverride: { ...mergeTaskTierMatrix(prev.tierRewardMatrixOverride), [tier]: parseWholeNumber(e.target.value) } }))}
+                                            placeholder="0"
+                                            className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-3">
+                                    <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
+                                    <div className="grid grid-cols-1 gap-3">
+                                      {PREMIUM_TIERS.map((tier) => (
+                                        <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#0a0a0a] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
+                                          <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                          <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={mergeTaskTierMatrix(editingTaskForm.tierRewardMatrixOverride)[tier] || ''}
+                                            onChange={(e) => setEditingTaskForm((prev) => ({ ...prev, tierRewardMatrixOverride: { ...mergeTaskTierMatrix(prev.tierRewardMatrixOverride), [tier]: parseWholeNumber(e.target.value) } }))}
+                                            placeholder="0"
+                                            className="w-16 bg-[#111] border border-yellow-500/20 rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                           <div className="flex gap-3 justify-end pt-2">
                             <button type="button" onClick={() => setEditingTaskId(null)} className="px-4 py-2 text-gray-400 hover:text-white font-bold text-sm">Cancel</button>
                             <button type="submit" disabled={isUpdatingTask} className="px-6 py-2 bg-green-500 hover:bg-green-400 text-black rounded-lg font-bold text-sm flex items-center disabled:opacity-50">
@@ -931,6 +1158,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <div className="flex items-center gap-3 mb-2">
                               <span className="w-6 h-6 rounded-full bg-[#111] text-gray-400 text-xs font-bold flex items-center justify-center border border-[#2a2a2a]">{index + 1}</span>
                               <h3 className="text-white font-bold">{task.title}</h3>
+                              {hasTaskRewardOverrides(task) && (
+                                <span className="px-2 py-1 rounded-md bg-yellow-500/10 border border-yellow-500/20 text-[10px] font-black text-yellow-400 uppercase tracking-widest">
+                                  Updated
+                                </span>
+                              )}
                             </div>
                             <p className="text-sm text-gray-400 leading-relaxed ml-9">{task.description}</p>
                             
@@ -941,8 +1173,20 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               <span className="px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
                               </span>
+                              <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${hasTaskRewardOverrides(task) ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-400' : 'bg-[#111] border border-[#2a2a2a] text-gray-300'}`}>
+                                Reward: {(
+                                  Number(task.baseRewardSatsOverride || 0) > 0
+                                    ? Number(task.baseRewardSatsOverride || 0)
+                                    : hasTaskMatrixOverrides(task.tierRewardMatrixOverride)
+                                      ? [...FREE_TIERS, ...PREMIUM_TIERS].reduce(
+                                          (max, tier) => Math.max(max, Number(task.tierRewardMatrixOverride?.[tier] || 0)),
+                                          0
+                                        )
+                                      : Number(campaign.baseRewardSats || 0)
+                                ).toLocaleString()} sats
+                              </span>
                               <span className="px-2.5 py-1 bg-purple-500/10 border border-purple-500/20 rounded-md text-[10px] font-bold text-purple-400 uppercase tracking-wider">
-                                XP: {campaign.xpReward || 0}
+                                XP: {task.xpRewardOverride || campaign.xpReward || 0}
                               </span>
                             </div>
                           </div>
@@ -950,7 +1194,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           {/* Edit / Delete Buttons */}
                           <div className="flex sm:flex-col gap-2 justify-end shrink-0 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button 
-                              onClick={() => { setEditingTaskId(task.id); setEditingTaskForm({ ...task }); }}
+                              onClick={() => {
+                                setEditingTaskId(task.id);
+                                setEditingTaskForm({
+                                  ...task,
+                                  hasRewardOverrides: hasTaskRewardOverrides(task),
+                                  baseRewardSatsOverride: task.baseRewardSatsOverride || 0,
+                                  tierRewardMatrixOverride: mergeTaskTierMatrix(task.tierRewardMatrixOverride),
+                                });
+                              }}
                               className="p-2 bg-[#111] border border-[#2a2a2a] hover:text-white text-gray-400 rounded-lg transition-colors"
                             >
                               <Edit3 className="w-4 h-4" />
@@ -980,7 +1232,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Real-Time Analytics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ RIGHT COLUMN: Real-Time Analytics ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
           {analytics && (
             <div className="xl:col-span-1 flex flex-col gap-6 md:gap-8">
               <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
@@ -998,6 +1250,41 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                     <AnalyticStatCard title="Verified" value={analytics.statusCounts?.verified || 0} icon={<CheckCircle2 className="w-4 h-4 text-green-500" />} color="bg-green-500/5 border-green-500/20 text-green-400" />
                     <AnalyticStatCard title="Pending Review" value={analytics.statusCounts?.pending || 0} icon={<Clock className="w-4 h-4 text-yellow-500" />} color="bg-yellow-500/5 border-yellow-500/20 text-yellow-400" />
                     <AnalyticStatCard title="Rejected" value={analytics.statusCounts?.rejected || 0} icon={<XCircle className="w-4 h-4 text-red-500" />} color="bg-red-500/5 border-red-500/20 text-red-400" />
+                  </div>
+
+                  <div className="pt-1">
+                    <div className="flex items-center gap-2 mb-4 text-gray-400">
+                      <Zap className="w-4 h-4 text-sats-orange-500" />
+                      <h3 className="font-bold text-sm">Sats Distribution</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      <AnalyticStatCard title="Total Spent" value={totalSpent} icon={<Zap className="w-4 h-4 text-sats-orange-500" />} color="bg-sats-orange-500/5 border-sats-orange-500/20 text-sats-orange-400" suffix="sats" />
+                      <AnalyticStatCard title="Avg Reward" value={averageReward} icon={<Target className="w-4 h-4 text-blue-400" />} color="bg-blue-500/5 border-blue-500/20 text-blue-400" suffix="sats" />
+                      <AnalyticStatCard title="Paid Users" value={totalRewardedUsers} icon={<Users className="w-4 h-4 text-emerald-400" />} color="bg-emerald-500/5 border-emerald-500/20 text-emerald-400" />
+                      <AnalyticStatCard title="Campaign Tasks" value={campaignTaskCount} icon={<Check className="w-4 h-4 text-purple-400" />} color="bg-purple-500/5 border-purple-500/20 text-purple-400" />
+                    </div>
+
+                    <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Sats By Tier</span>
+                        <span className="text-[10px] font-bold text-sats-orange-400 uppercase tracking-widest">Historical Paid Value</span>
+                      </div>
+
+                      {Object.keys(analytics.satsByTierDistribution || {}).length > 0 ? (
+                        <ul className="space-y-3">
+                          {Object.entries(analytics.satsByTierDistribution || {})
+                            .sort(([, firstValue], [, secondValue]) => Number(secondValue) - Number(firstValue))
+                            .map(([tier, sats]) => (
+                              <li key={tier} className="flex justify-between items-center gap-3 text-sm">
+                                <span className="text-gray-400 uppercase tracking-widest text-[10px] font-black">{tier}</span>
+                                <span className="font-bold text-white px-2 py-0.5 bg-[#111] border border-[#2a2a2a] rounded-md">{Number(sats || 0).toLocaleString()} sats</span>
+                              </li>
+                            ))}
+                        </ul>
+                      ) : (
+                        <p className="text-xs text-gray-600 font-medium italic text-center py-2">No rewarded sats have been distributed for this campaign yet.</p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Tier Distribution */}
@@ -1032,7 +1319,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Micro-Components ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 
 function Field({ title, children }: { title: string, children: React.ReactNode }) {
   return (
@@ -1043,18 +1330,21 @@ function Field({ title, children }: { title: string, children: React.ReactNode }
   );
 }
 
-function AnalyticStatCard({ title, value, icon, color }: { title: string, value: number, icon: React.ReactNode, color: string }) {
+function AnalyticStatCard({ title, value, icon, color, suffix }: { title: string, value: number, icon: React.ReactNode, color: string, suffix?: string }) {
   return (
     <div className={`p-4 rounded-2xl border ${color} flex flex-col gap-3 shadow-inner transition-transform hover:-translate-y-0.5`}>
       <div className="flex justify-between items-center opacity-80">
         <span className="text-[10px] font-black uppercase tracking-widest">{title}</span>
         {icon}
       </div>
-      <span className="text-2xl md:text-3xl font-black">{value.toLocaleString()}</span>
+      <span className="text-2xl md:text-3xl font-black">
+        {value.toLocaleString()}
+        {suffix ? <span className="ml-1 text-xs font-bold uppercase tracking-widest opacity-70">{suffix}</span> : null}
+      </span>
     </div>
   );
 }
-// ─── DateTime helpers ────────────────────────────────────────────────────────
+// â”€â”€â”€ DateTime helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function toLocalDateValue(date: Date) {
   const year = date.getFullYear();
@@ -1117,7 +1407,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
   return (
     <div className="rounded-xl border border-[#2a2a2a] bg-[#111] p-3.5 shadow-inner">
       <div className="flex flex-col gap-2.5">
-        {/* Date — full width native picker */}
+        {/* Date â€” full width native picker */}
         <div className="relative">
           <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sats-orange-400 z-10" />
           <input
@@ -1129,7 +1419,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           />
         </div>
 
-        {/* Time — three selects */}
+        {/* Time â€” three selects */}
         <div className="grid grid-cols-3 gap-2">
           <div className="relative">
             <Clock3 className="pointer-events-none absolut  text-sky-400 z-10 md:hidden" />
@@ -1179,3 +1469,4 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
   );
 }
 const inputCls = "w-full bg-[#111] border border-[#2a2a2a] text-white text-sm font-medium px-4 py-2.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#151515] transition-all";
+

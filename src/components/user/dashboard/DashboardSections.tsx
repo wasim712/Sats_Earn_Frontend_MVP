@@ -8,6 +8,7 @@ import {
   Clock3,
   Flame,
   LockKeyhole,
+  Medal,
   Trophy,
   XCircle,
 } from 'lucide-react';
@@ -93,7 +94,7 @@ export function StreakSection({
             <div className="rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-left">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Next Milestone</p>
               <p className="mt-1 text-sm font-black text-sats-orange-500">
-                {nextStreakMilestone ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} Sats` : 'All Rewards Unlocked'}
+                {nextStreakMilestone ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} sats` : 'All Rewards Unlocked'}
               </p>
             </div>
             <div className="rounded-xl border border-[#1a1a1a] bg-sats-black-950 px-4 py-3 text-left">
@@ -188,6 +189,8 @@ export function StreakSection({
 }
 
 export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLowerGridProps) {
+  const topEarners = monthlyTopEarners.slice(0, 10);
+
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
       <div className="space-y-6 xl:col-span-2">
@@ -223,7 +226,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                         <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>
                           {statusUi.label}
                         </span>
-                        <p className="mt-2 text-sm font-black text-green-400">+{submission.rewardSats.toLocaleString()} Sats</p>
+                        <p className="mt-2 text-sm font-black text-green-400">+{submission.rewardSats.toLocaleString()} sats</p>
                         {submission.status === 'LOCKED_15D' && submission.remainingMs > 0 && (
                           <p className="mt-1 text-[11px] text-yellow-400">Unlocks in {formatRemainingTime(submission.remainingMs)}</p>
                         )}
@@ -244,13 +247,12 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
       </div>
 
       <div className="space-y-6 xl:col-span-1">
-        <div className="relative overflow-hidden rounded-[24px] border border-sats-orange-500/20 bg-gradient-to-b from-[#0a0a0a] to-[#050505] p-6 sm:p-8">
-          <div className="pointer-events-none absolute top-0 right-0 h-32 w-32 bg-sats-orange-500/10 blur-[40px]" />
+        <div className="rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7">
 
           <div className="relative z-10 mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-yellow-500/30 bg-yellow-500/20">
-                <Trophy className="h-4 w-4 text-yellow-500" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sats-orange-500/20 bg-sats-orange-500/10">
+                <Trophy className="h-4 w-4 text-sats-orange-400" />
               </div>
               <div>
                 <h2 className="text-lg font-bold tracking-tight text-white">Leaderboard</h2>
@@ -259,32 +261,36 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
             </div>
           </div>
 
-          <div className="relative z-10 space-y-2">
-            {monthlyTopEarners.length > 0 ? monthlyTopEarners.map((entry) => {
-              let rankColor = 'border-[#2a2a2a] bg-[#111] text-gray-500';
-              if (entry.rank === 1) rankColor = 'border-yellow-400 bg-yellow-500 text-black';
-              if (entry.rank === 2) rankColor = 'border-gray-200 bg-gray-300 text-black';
-              if (entry.rank === 3) rankColor = 'border-[#b87333] bg-[#cd7f32] text-black';
+          <div className="relative z-10 space-y-2.5">
+            {topEarners.length > 0 ? topEarners.map((entry) => {
+              const isTopThree = entry.rank <= 3;
+              const medalTone = entry.rank === 1
+                ? 'text-yellow-400'
+                : entry.rank === 2
+                  ? 'text-slate-300'
+                  : entry.rank === 3
+                    ? 'text-amber-600'
+                    : 'text-gray-500';
 
               const displayName = entry.fullName?.trim() || entry.username || 'Anonymous';
               const initials = displayName.substring(0, 2).toUpperCase();
 
               return (
-                <div key={entry.userId} className="flex cursor-default items-center justify-between rounded-[16px] border border-transparent bg-[#080808] p-3 transition-all hover:border-[#2a2a2a] hover:bg-[#111]">
+                <div key={entry.userId} className="flex cursor-default items-center justify-between rounded-[16px] border border-[#151515] bg-[#080808] px-3 py-3 transition-colors hover:border-[#222] hover:bg-[#0d0d0d]">
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-black ${rankColor}`}>
-                      {entry.rank}
+                    <div className="flex w-6 shrink-0 items-center justify-center text-[12px] font-black">
+                      {isTopThree ? <Medal className={`h-4 w-4 ${medalTone}`} /> : <span className="text-gray-500">{entry.rank}</span>}
                     </div>
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-sats-orange-500 to-blue-600 text-[10px] font-bold text-white">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1d1d1d] bg-[#111] text-[10px] font-bold text-white">
                       {initials}
                     </div>
-                    <div>
-                      <p className="max-w-[132px] truncate text-sm font-bold leading-tight text-white">{displayName}</p>
-                      <p className="max-w-[132px] truncate font-mono text-[10px] text-gray-500">@{entry.username}</p>
+                    <div className="min-w-0">
+                      <p className="max-w-[140px] truncate text-sm font-semibold leading-tight text-white">{displayName}</p>
+                      <p className="max-w-[140px] truncate font-mono text-[10px] text-gray-500">@{entry.username}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-black text-green-500">{entry.value.toLocaleString()} Sats</span>
+                    <span className="text-sm font-bold text-sats-orange-400">{entry.value.toLocaleString()} sats</span>
                   </div>
                 </div>
               );
@@ -347,4 +353,3 @@ function formatRemainingTime(remainingMs: number) {
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m`;
 }
-

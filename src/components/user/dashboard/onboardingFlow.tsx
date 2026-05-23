@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 const STORAGE_KEY = 'satsearn_onboarding_done';
+const AUTO_OPEN_TRIGGER_KEY = 'satsearn_onboarding_auto_open_once';
 
 type StepTone = 'orange' | 'blue' | 'emerald' | 'violet' | 'rose' | 'amber' | 'cyan';
 
@@ -535,7 +536,10 @@ export function useOnboarding() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const done = localStorage.getItem(STORAGE_KEY);
-      if (!done) {
+      const shouldAutoOpen = sessionStorage.getItem(AUTO_OPEN_TRIGGER_KEY) === 'true';
+
+      if (!done && shouldAutoOpen) {
+        sessionStorage.removeItem(AUTO_OPEN_TRIGGER_KEY);
         setIsOpen(true);
       }
     }, 700);
@@ -547,6 +551,11 @@ export function useOnboarding() {
   const closeTour = () => setIsOpen(false);
 
   return { isOpen, openTour, closeTour };
+}
+
+export function markOnboardingForFirstAutoOpen() {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem(AUTO_OPEN_TRIGGER_KEY, 'true');
 }
 
 interface TourButtonProps {

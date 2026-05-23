@@ -6,7 +6,9 @@ import { useAppDispatch } from '@/store/hooks';
 import { createTask, updateTask } from '@/features/admin/adminCampaignsSlice';
 import type { Task } from '@/features/admin/adminCampaignsSlice';
 
-const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
+const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
+const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
+const ALL_TIERS = [...FREE_TIERS, ...PREMIUM_TIERS];
 
 function parseWholeNumber(value: string) {
   const digitsOnly = value.replace(/\D/g, '');
@@ -14,6 +16,25 @@ function parseWholeNumber(value: string) {
 
   const parsed = Number.parseInt(digitsOnly, 10);
   return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function createEmptyTierMatrix() {
+  return ALL_TIERS.reduce<Record<string, number>>((acc, tier) => {
+    acc[tier] = 0;
+    return acc;
+  }, {});
+}
+
+function mergeTierMatrix(matrix?: Record<string, number> | null) {
+  const merged = createEmptyTierMatrix();
+
+  if (!matrix) return merged;
+
+  for (const tier of ALL_TIERS) {
+    merged[tier] = Number(matrix[tier] || 0);
+  }
+
+  return merged;
 }
 
 interface AddEditTaskModalProps {
@@ -51,14 +72,14 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
         setTargetUrl(task.targetUrl || '');
         setRequirementsStr(task.requirements ? JSON.stringify(task.requirements, null, 2) : '');
         
-        if (task.baseRewardSatsOverride) {
+        if (task.baseRewardSatsOverride || task.tierRewardMatrixOverride) {
           setHasOverrides(true);
-          setBaseReward(task.baseRewardSatsOverride);
-          setTierMatrix(task.tierRewardMatrixOverride || {});
+          setBaseReward(task.baseRewardSatsOverride || 0);
+          setTierMatrix(mergeTierMatrix(task.tierRewardMatrixOverride));
         } else {
           setHasOverrides(false);
           setBaseReward(0);
-          setTierMatrix(FREE_TIERS.reduce((acc, tier) => ({ ...acc, [tier]: 0 }), {}));
+          setTierMatrix(createEmptyTierMatrix());
         }
       } else {
         // Reset for Create
@@ -68,7 +89,7 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
         setRequirementsStr('');
         setHasOverrides(false);
         setBaseReward(0);
-        setTierMatrix(FREE_TIERS.reduce((acc, tier) => ({ ...acc, [tier]: 0 }), {}));
+        setTierMatrix(createEmptyTierMatrix());
       }
     }
   }, [isOpen, task]);
@@ -91,8 +112,11 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
       }
     }
 
-    if (hasOverrides && baseReward <= 0) {
-      return setErrorMsg("Base Reward Override must be greater than 0 if overrides are enabled.");
+    if (hasOverrides) {
+      const hasAnyTierOverride = ALL_TIERS.some((tier) => Number(tierMatrix[tier] || 0) > 0);
+      if (baseReward <= 0 && !hasAnyTierOverride) {
+        return setErrorMsg("Add a base reward override or at least one tier reward override.");
+      }
     }
 
     setIsSaving(true);
@@ -203,13 +227,46 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
                 
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Tier Matrix Override</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    {FREE_TIERS.map(tier => (
-                      <div key={tier} className="bg-[#111] border border-[#2a2a2a] rounded-lg p-2 flex flex-col gap-1">
-                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{tier}</span>
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={tierMatrix[tier] || ''} onChange={(e) => setTierMatrix(prev => ({ ...prev, [tier]: parseWholeNumber(e.target.value) }))} className="w-full bg-transparent text-white font-bold outline-none text-sm focus:border-b focus:border-sats-orange-500 pb-0.5" />
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-3">
+                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {FREE_TIERS.map((tier) => (
+                          <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#050505] p-2.5 flex items-center justify-between">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={tierMatrix[tier] || ''}
+                              onChange={(e) => setTierMatrix((prev) => ({ ...prev, [tier]: parseWholeNumber(e.target.value) }))}
+                              placeholder="0"
+                              className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {PREMIUM_TIERS.map((tier) => (
+                          <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#050505] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
+                            <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={tierMatrix[tier] || ''}
+                              onChange={(e) => setTierMatrix((prev) => ({ ...prev, [tier]: parseWholeNumber(e.target.value) }))}
+                              placeholder="0"
+                              className="w-16 bg-[#111] border border-yellow-500/20 rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
