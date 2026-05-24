@@ -8,10 +8,16 @@ import { updateCampaign, deleteCampaign, uploadCampaignCover } from '@/features/
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
 import type { Campaign, AdminTask } from '@/types/admin';
 import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
+import {
+  CampaignCoverHero,
+  CampaignStickyHeader,
+  CampaignSuccessToast,
+} from '@/components/admin/campaign/CampaignDetailHeader';
+import { CampaignAnalyticsPanel } from '@/components/admin/campaign/CampaignAnalyticsPanel';
+import { DateTimePickerInput, Field, inputCls } from '@/components/admin/campaign/CampaignDetailShared';
 import { 
-  ArrowLeft, Edit3, Save, X, Link as LinkIcon, Loader2, Trash2, 
-  BarChart3, Activity, CheckCircle2, Clock, XCircle, Medal, 
-  Zap, Target, Crown, Users, Plus, Check, CalendarDays, Clock3
+  Link as LinkIcon, Loader2, X,
+  Zap, Target, Crown, Users, Plus, Check, Medal, Edit3, Save, Trash2
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -468,61 +474,33 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32 relative overflow-x-hidden">
-      
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ SUCCESS TOAST Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
-      <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-sats-black-900 border border-green-500/30 text-green-400 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(34,197,94,0.15)] transition-all duration-500 ${showSuccess ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0'}`}>
-        <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-          <CheckCircle2 className="w-5 h-5 text-green-500" />
-        </div>
-        <div>
-          <p className="font-bold text-sm text-white">Success</p>
-          <p className="text-xs opacity-80">{successMessage}</p>
-        </div>
-      </div>
+      <CampaignSuccessToast show={showSuccess} message={successMessage} />
 
       <div className="max-w-350 mx-auto w-full flex flex-col gap-6 md:gap-8">
-        {campaign.coverImageUrl && (
-          <div className="relative h-56 md:h-72 overflow-hidden rounded-3xl border border-[#1a1a1a]">
-            <Image
-              src={campaign.coverImageUrl}
-              alt={campaign.title}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-black/35 to-transparent" />
-          </div>
-        )}
-        
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ STICKY HEADER Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
-        <div className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-xl border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-2xl mt-4">
-          <button onClick={() => router.push('/admin/campaigns')} className="flex items-center text-gray-400 hover:text-white bg-sats-black-900 border border-[#1a1a1a] hover:bg-[#111] px-5 py-2.5 rounded-xl transition-all font-bold w-full sm:w-auto justify-center shadow-sm">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </button>
-          
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
-            {!isEditing ? (
-              <>
-                <button onClick={handleDelete} disabled={isDeleting} className="flex items-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50">
-                  {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />} Delete
-                </button>
-                <button onClick={() => setIsEditing(true)} className="flex items-center bg-[#111] border border-[#2a2a2a] hover:bg-white/5 text-white px-6 py-2.5 rounded-xl transition-all shadow-sm font-bold">
-                  <Edit3 className="w-4 h-4 mr-2" /> Edit Campaign
-                </button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => { setEditForm({ ...campaign, targetCountries: campaign.targetCountries || [], tierRewardMatrix: campaign.tierRewardMatrix || {}, xpReward: campaign.xpReward || 0, coverImageUrl: campaign.coverImageUrl || '', doubleRewardsStartAt: campaign.doubleRewardsStartAt || '', doubleRewardsEndAt: campaign.doubleRewardsEndAt || '' }); setIsEditing(false); }} className="flex items-center text-gray-400 hover:text-white px-4 py-2.5 transition-colors font-bold">
-                  <X className="w-5 h-5 mr-1.5" /> Cancel
-                </button>
-                <button onClick={handleSave} disabled={isSaving} className="flex items-center bg-green-500 hover:bg-green-400 text-black font-black px-6 py-2.5 rounded-xl transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(34,197,94,0.3)] active:scale-95">
-                  {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />} {isUploadingCover ? 'Uploading Cover...' : 'Save Changes'}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        <CampaignCoverHero coverImageUrl={campaign.coverImageUrl} title={campaign.title} />
+
+        <CampaignStickyHeader
+          isEditing={isEditing}
+          isDeleting={isDeleting}
+          isSaving={isSaving}
+          isUploadingCover={isUploadingCover}
+          onBack={() => router.push('/admin/campaigns')}
+          onDelete={handleDelete}
+          onEdit={() => setIsEditing(true)}
+          onCancel={() => {
+            setEditForm({
+              ...campaign,
+              targetCountries: campaign.targetCountries || [],
+              tierRewardMatrix: campaign.tierRewardMatrix || {},
+              xpReward: campaign.xpReward || 0,
+              coverImageUrl: campaign.coverImageUrl || '',
+              doubleRewardsStartAt: campaign.doubleRewardsStartAt || '',
+              doubleRewardsEndAt: campaign.doubleRewardsEndAt || '',
+            });
+            setIsEditing(false);
+          }}
+          onSave={handleSave}
+        />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
           
@@ -1151,83 +1129,13 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
           {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ RIGHT COLUMN: Real-Time Analytics Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {analytics && (
-            <div className="xl:col-span-1 flex flex-col gap-6 md:gap-8">
-              <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full">
-                <div className="flex items-center gap-3 mb-8 border-b border-[#1a1a1a] pb-6">
-                  <div className="p-2.5 bg-[#111] rounded-xl border border-[#2a2a2a] shadow-inner">
-                    <BarChart3 className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Real-Time Traffic</h2>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Status Breakdown */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <AnalyticStatCard title="Total Traffic" value={analytics.totalSubmissions || 0} icon={<Activity className="w-4 h-4 text-gray-400" />} color="bg-[#0a0a0a] border-[#1a1a1a] text-white" />
-                    <AnalyticStatCard title="Verified" value={analytics.statusCounts?.verified || 0} icon={<CheckCircle2 className="w-4 h-4 text-green-500" />} color="bg-green-500/5 border-green-500/20 text-green-400" />
-                    <AnalyticStatCard title="Pending Review" value={analytics.statusCounts?.pending || 0} icon={<Clock className="w-4 h-4 text-yellow-500" />} color="bg-yellow-500/5 border-yellow-500/20 text-yellow-400" />
-                    <AnalyticStatCard title="Rejected" value={analytics.statusCounts?.rejected || 0} icon={<XCircle className="w-4 h-4 text-red-500" />} color="bg-red-500/5 border-red-500/20 text-red-400" />
-                  </div>
-
-                  <div className="pt-1">
-                    <div className="flex items-center gap-2 mb-4 text-gray-400">
-                      <Zap className="w-4 h-4 text-sats-orange-500" />
-                      <h3 className="font-bold text-sm">Sats Distribution</h3>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                      <AnalyticStatCard title="Total Spent" value={totalSpent} icon={<Zap className="w-4 h-4 text-sats-orange-500" />} color="bg-sats-orange-500/5 border-sats-orange-500/20 text-sats-orange-400" suffix="sats" />
-                      <AnalyticStatCard title="Avg Reward" value={averageReward} icon={<Target className="w-4 h-4 text-blue-400" />} color="bg-blue-500/5 border-blue-500/20 text-blue-400" suffix="sats" />
-                      <AnalyticStatCard title="Paid Users" value={totalRewardedUsers} icon={<Users className="w-4 h-4 text-emerald-400" />} color="bg-emerald-500/5 border-emerald-500/20 text-emerald-400" />
-                      <AnalyticStatCard title="Campaign Tasks" value={campaignTaskCount} icon={<Check className="w-4 h-4 text-purple-400" />} color="bg-purple-500/5 border-purple-500/20 text-purple-400" />
-                    </div>
-
-                    <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
-                      <div className="flex items-center justify-between gap-3 mb-3">
-                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Sats By Tier</span>
-                        <span className="text-[10px] font-bold text-sats-orange-400 uppercase tracking-widest">Historical Paid Value</span>
-                      </div>
-
-                      {Object.keys(analytics.satsByTierDistribution || {}).length > 0 ? (
-                        <ul className="space-y-3">
-                          {Object.entries(analytics.satsByTierDistribution || {})
-                            .sort(([, firstValue], [, secondValue]) => Number(secondValue) - Number(firstValue))
-                            .map(([tier, sats]) => (
-                              <li key={tier} className="flex justify-between items-center gap-3 text-sm">
-                                <span className="text-gray-400 uppercase tracking-widest text-[10px] font-black">{tier}</span>
-                                <span className="font-bold text-white px-2 py-0.5 bg-[#111] border border-[#2a2a2a] rounded-md">{Number(sats || 0).toLocaleString()} sats</span>
-                              </li>
-                            ))}
-                        </ul>
-                      ) : (
-                        <p className="text-xs text-gray-600 font-medium italic text-center py-2">No rewarded sats have been distributed for this campaign yet.</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Tier Distribution */}
-                  <div className="pt-4">
-                    <div className="flex items-center gap-2 mb-4 text-gray-400">
-                      <Medal className="w-4 h-4 text-yellow-500" />
-                      <h3 className="font-bold text-sm">Tier Distribution</h3>
-                    </div>
-                    <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
-                      {Object.keys(analytics.tierDistribution || {}).length > 0 ? (
-                        <ul className="space-y-3">
-                          {Object.entries(analytics.tierDistribution || {}).map(([tier, count]) => (
-                            <li key={tier} className="flex justify-between items-center text-sm">
-                              <span className="text-gray-400 uppercase tracking-widest text-[10px] font-black">{tier}</span>
-                              <span className="font-bold text-white px-2 py-0.5 bg-[#111] border border-[#2a2a2a] rounded-md">{String(count)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-xs text-gray-600 font-medium italic text-center py-2">No tier data collected yet.</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CampaignAnalyticsPanel
+              analytics={analytics}
+              totalSpent={totalSpent}
+              averageReward={averageReward}
+              totalRewardedUsers={totalRewardedUsers}
+              campaignTaskCount={campaignTaskCount}
+            />
           )}
 
         </div>
@@ -1237,157 +1145,4 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 }
 
 // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-
-function Field({ title, children }: { title: string, children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{title}</span>
-      <div>{children}</div>
-    </div>
-  );
-}
-
-function AnalyticStatCard({ title, value, icon, color, suffix }: { title: string, value: number, icon: React.ReactNode, color: string, suffix?: string }) {
-  return (
-    <div className={`p-4 rounded-2xl border ${color} flex flex-col gap-3 shadow-inner transition-transform hover:-translate-y-0.5`}>
-      <div className="flex justify-between items-center opacity-80">
-        <span className="text-[10px] font-black uppercase tracking-widest">{title}</span>
-        {icon}
-      </div>
-      <span className="text-2xl md:text-3xl font-black">
-        {value.toLocaleString()}
-        {suffix ? <span className="ml-1 text-xs font-bold uppercase tracking-widest opacity-70">{suffix}</span> : null}
-      </span>
-    </div>
-  );
-}
-// ─── DateTime helpers ────────────────────────────────────────────────────────
-
-function toLocalDateValue(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function getTodayDateValue() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return toLocalDateValue(today);
-}
-
-function parseDateTimeValue(value: string) {
-  if (!value) {
-    return { date: '', hour: '12', minute: '00', period: 'AM' as 'AM' | 'PM' };
-  }
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return { date: '', hour: '12', minute: '00', period: 'AM' as 'AM' | 'PM' };
-  }
-  const hours24 = parsed.getHours();
-  const period = hours24 >= 12 ? 'PM' : 'AM';
-  const hour12 = hours24 % 12 || 12;
-  return {
-    date: toLocalDateValue(parsed),
-    hour: String(hour12).padStart(2, '0'),
-    minute: String(parsed.getMinutes()).padStart(2, '0'),
-    period,
-  };
-}
-
-function buildDateTimeIso(date: string, hour: string, minute: string, period: 'AM' | 'PM') {
-  if (!date) return '';
-  const [year, month, day] = date.split('-').map(Number);
-  if (!year || !month || !day) return '';
-  let hours24 = Number(hour) % 12;
-  if (period === 'PM') hours24 += 12;
-  if (period === 'AM' && Number(hour) === 12) hours24 = 0;
-  return new Date(year, month - 1, day, hours24, Number(minute), 0, 0).toISOString();
-}
-
-function getDatePart(value?: string | null) {
-  if (!value) return '';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return '';
-  return toLocalDateValue(parsed);
-}
-
-function DateTimePickerInput({ value, onChange, disabled = false }: { value: string; onChange: (value: string) => void; disabled?: boolean }) {
-  const today = getTodayDateValue();
-  const parts = parseDateTimeValue(value);
-
-  const updateValue = (next: Partial<typeof parts>) => {
-    const merged = { ...parts, ...next };
-    onChange(buildDateTimeIso(merged.date, merged.hour, merged.minute, merged.period as 'AM' | 'PM'));
-  };
-
-  return (
-    <div className={`rounded-xl border border-[#2a2a2a] bg-[#111] p-3.5 shadow-inner ${disabled ? 'opacity-60' : ''}`}>
-      <div className="flex flex-col gap-2.5">
-        {/* Date — full width native picker */}
-        <div className="relative">
-          <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sats-orange-400 z-10" />
-          <input
-            type="date"
-            min={value ? getDatePart(value) || today : today}
-            value={parts.date}
-            disabled={disabled}
-            onChange={(e) => updateValue({ date: e.target.value })}
-            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-10 pr-3 text-sm font-medium text-white outline-none transition-all hover:border-[#3a3a3a] focus:border-sats-orange-500/50 [color-scheme:dark]"
-          />
-        </div>
-
-        {/* Time — three selects */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="relative">
-            <Clock3 className="pointer-events-none absolut  text-sky-400 z-10 md:hidden" />
-            <select
-              value={parts.hour}
-              disabled={disabled}
-              onChange={(e) => updateValue({ hour: e.target.value })}
-              className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-8 pr-2 text-sm font-bold text-white outline-none focus:border-sats-orange-500/50 cursor-pointer"
-            >
-              {Array.from({ length: 12 }, (_, i) => {
-                const h = String(i + 1).padStart(2, '0');
-                return <option key={h} value={h}>{h}</option>;
-              })}
-            </select>
-          </div>
-          <select
-            value={parts.minute}
-            disabled={disabled}
-            onChange={(e) => updateValue({ minute: e.target.value })}
-            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-bold text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
-          >
-            {['00','05','10','15','20','25','30','35','40','45','50','55'].map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-          <select
-            value={parts.period}
-            disabled={disabled}
-            onChange={(e) => updateValue({ period: e.target.value as 'AM' | 'PM' })}
-            className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-black text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
-          >
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
-        </div>
-
-        <p className="text-[10px] text-gray-500 font-medium px-1">
-          Choose the date first, then set the exact time for the 2x rewards window.
-        </p>
-
-        {/* Preview */}
-        {parts.date && (
-          <p className="text-[10px] text-white/25 font-medium px-1">
-            {new Date(buildDateTimeIso(parts.date, parts.hour, parts.minute, parts.period as 'AM' | 'PM'))
-              .toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-const inputCls = "w-full bg-[#111] border border-[#2a2a2a] text-white text-sm font-medium px-4 py-2.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#151515] transition-all";
 
