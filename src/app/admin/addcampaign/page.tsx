@@ -153,7 +153,6 @@ export default function AddCampaignPage() {
     if (formData.title.length < 5) return setErrorMsg("Title must be at least 5 characters.");
     if (formData.description.length < 10) return setErrorMsg("Description must be at least 10 characters.");
     if (formData.maxCompletions <= 0) return setErrorMsg("Max Completions must be greater than 0.");
-
     setIsSaving(true);
 
     let coverImageUrl = formData.coverImageUrl || '';
@@ -180,8 +179,6 @@ export default function AddCampaignPage() {
       requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
       requiredFreeTier: formData.requiredFreeTier,
-      doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
-      doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
       maxCompletions: Number(formData.maxCompletions),
     };
 
@@ -389,20 +386,8 @@ export default function AddCampaignPage() {
                   </InputWrapper>
 
                   {/* Changed md:grid-cols-2 to simply stack them vertically in the narrow sidebar with gap-6 */}
-                    <div className="grid grid-cols-1 gap-6">
-                      <InputWrapper label="2x Start Date">
-                        <DateTimePickerInput
-                          value={formData.doubleRewardsStartAt}
-                          onChange={(value) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: value }))}
-                        />
-                      </InputWrapper>
-
-                      <InputWrapper label="2x End Date">
-                        <DateTimePickerInput
-                          value={formData.doubleRewardsEndAt}
-                          onChange={(value) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: value }))}
-                        />
-                      </InputWrapper>
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 text-sm text-gray-400">
+                      Double rewards are configured later from the campaign edit page and apply to each task reward matrix at runtime.
                     </div>
                 </div>
 
@@ -435,7 +420,7 @@ function InputWrapper({ label, required, children }: { label: string; required?:
 }
 
 // AFTER — paste this entire replacement:
-function DateTimePickerInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function DateTimePickerInput({ value, onChange, disabled = false }: { value: string; onChange: (value: string) => void; disabled?: boolean }) {
   const today = getTodayDateValue();
   const parts = parseDateTimeValue(value);
 
@@ -445,7 +430,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
   };
   
   return (
-    <div className="rounded-xl border border-[#2a2a2a] bg-[#111] p-3">
+    <div className={`rounded-xl border border-[#2a2a2a] bg-[#111] p-3 ${disabled ? 'opacity-60' : ''}`}>
       <div className="flex flex-col gap-2.5">
 
         {/* ── Date row — full width, native picker ── */}
@@ -455,6 +440,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             type="date"
             min={today}
             value={parts.date}
+            disabled={disabled}
             onChange={(e) => updateValue({ date: e.target.value })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -475,6 +461,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             <Clock3 className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-sky-400 z-10" />
             <select
               value={parts.hour}
+              disabled={disabled}
               onChange={(e) => updateValue({ hour: e.target.value })}
               className="
                 w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -495,6 +482,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           {/* Minute */}
           <select
             value={parts.minute}
+            disabled={disabled}
             onChange={(e) => updateValue({ minute: e.target.value })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -513,6 +501,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           {/* AM/PM */}
           <select
             value={parts.period}
+            disabled={disabled}
             onChange={(e) => updateValue({ period: e.target.value as 'AM' | 'PM' })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]

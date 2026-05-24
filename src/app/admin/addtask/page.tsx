@@ -34,6 +34,7 @@ export default function AddStandaloneTaskPage() {
     proofType: 'SCREENSHOT',
     targetUrl: '',
     requiredPlatform: 'NONE',
+    xpRewardOverride: 0,
     tierRewardMatrixOverride: createMatrix(),
   });
 
@@ -67,6 +68,7 @@ export default function AddStandaloneTaskPage() {
           proofType: formData.proofType,
           targetUrl: formData.targetUrl || undefined,
           requiredPlatform: formData.requiredPlatform,
+          xpRewardOverride: formData.xpRewardOverride,
           tierRewardMatrixOverride: formData.tierRewardMatrixOverride,
         }),
       });
@@ -83,6 +85,7 @@ export default function AddStandaloneTaskPage() {
         proofType: 'SCREENSHOT',
         targetUrl: '',
         requiredPlatform: 'NONE',
+        xpRewardOverride: 0,
         tierRewardMatrixOverride: createMatrix(),
       });
     } catch (error: any) {
@@ -134,6 +137,10 @@ export default function AddStandaloneTaskPage() {
                 <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500">
                   {PLATFORMS.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Task XP Reward</label>
+                <input required type="text" inputMode="numeric" pattern="[0-9]*" value={formData.xpRewardOverride || ''} onChange={(e) => setFormData((prev) => ({ ...prev, xpRewardOverride: parseWholeNumber(e.target.value) }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="0" />
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Target URL</label>

@@ -20,6 +20,33 @@ import { ArrowLeft, AlertTriangle, CheckCircle2, ExternalLink, Zap } from 'lucid
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+function getDoubleRewardsStatus(startAt?: string | null, endAt?: string | null) {
+  if (!startAt || !endAt) return 'none' as const;
+
+  const now = Date.now();
+  const start = new Date(startAt).getTime();
+  const end = new Date(endAt).getTime();
+
+  if (Number.isNaN(start) || Number.isNaN(end)) return 'none' as const;
+  if (now < start) return 'upcoming' as const;
+  if (now >= start && now <= end) return 'live' as const;
+  return 'ended' as const;
+}
+
+function formatLiveUntil(value?: string | null) {
+  if (!value) return '';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+
+  return parsed.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 interface Campaign {
   id: string;
   title: string;
@@ -54,6 +81,7 @@ export default function CampaignDetailsPage() {
 
   // Ã¢â€â‚¬Ã¢â€â‚¬ Pre-loaded task statuses (fetched on mount) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [taskStatuses, setTaskStatuses] = useState<{ [taskId: string]: TaskStatus }>({});
+  const doubleRewardsStatus = getDoubleRewardsStatus(campaign?.doubleRewardsStartAt, campaign?.doubleRewardsEndAt);
 
   // Ã¢â€â‚¬Ã¢â€â‚¬ 1. FETCH CAMPAIGN + PRE-CHECK SUBMISSION STATUS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   useEffect(() => {
@@ -269,10 +297,10 @@ export default function CampaignDetailsPage() {
                 Open Campaign Link
               </a>
             )}
-            {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
+            {doubleRewardsStatus === 'live' && (
               <div className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-sm font-bold text-yellow-300">
                 <Zap className="w-4 h-4" />
-                You will get 2x reward from {new Date(campaign.doubleRewardsStartAt).toLocaleDateString()} to {new Date(campaign.doubleRewardsEndAt).toLocaleDateString()}
+                2x rewards live till {formatLiveUntil(campaign.doubleRewardsEndAt)}
               </div>
             )}
           </div>

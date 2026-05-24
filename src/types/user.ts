@@ -133,10 +133,14 @@ export interface UserDashboard {
 
 export interface UserReferral {
   id: string;
+  username?: string | null;
   fullName: string | null;
   email: string;
+  country?: string | null;
   joinedAt: string;
   totalXp: number;
+  tasksCompleted?: number;
+  tier?: string | null;
   isActive: boolean;
   daysActiveLast30: number;
 }

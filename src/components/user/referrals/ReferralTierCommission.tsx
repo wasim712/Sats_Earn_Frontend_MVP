@@ -29,7 +29,7 @@ const tierCards: TierCard[] = [
   { name: 'FOUNDER', commission: '30%', subtitle: 'Unlimited referrals', isFree: false, icon: Rocket, tone: 'from-rose-500/12 to-red-400/5 border-rose-500/22' },
 ];
 
-export default function ReferralTierCommission({ activeTier }: ReferralTierCommissionProps) {
+export default function ReferralTierCommission({ activeTier  }: ReferralTierCommissionProps) {
   return (
     <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 transition-all duration-500 hover:border-sats-orange-500/20 shadow-lg">
       <div className="flex items-start gap-3 mb-6">

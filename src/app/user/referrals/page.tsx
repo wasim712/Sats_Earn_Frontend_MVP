@@ -23,6 +23,11 @@ export default function ReferralsPage() {
   // (Basic, Copper, Bronze, Silver, Gold are the free tiers based on your previous config)
   const freeTiers = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
   const activeTier = (data?.activeTier || user?.activeTier || 'BASIC').toUpperCase();
+  const TIER_COMMISSION: Record<string, number> = {
+  BASIC: 5, COPPER: 5, BRONZE: 5, SILVER: 5, GOLD: 5,
+  PLATINUM: 10, DIAMOND: 15, CROWN: 20, ELITE: 25, FOUNDER: 30,
+  };
+  const activeCommission = TIER_COMMISSION[activeTier] ?? 5;
   const isFreeTier = freeTiers.includes(activeTier);
 
   if (error) {
@@ -119,7 +124,7 @@ export default function ReferralsPage() {
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards.</p>
       </div>
 
-      <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} />
+      <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} tierCommission={activeCommission}/>
       <ReferralStats stats={data.stats} />
 
       <ReferralLimits

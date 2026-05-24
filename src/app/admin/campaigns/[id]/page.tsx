@@ -56,12 +56,14 @@ type TaskFormState = {
   requiredPlatform: string;
   proofType: string;
   targetUrl: string;
+  xpRewardOverride: number;
   tierRewardMatrixOverride: Record<string, number>;
 };
 
 type EditableTask = AdminTask & {
   proofType?: string;
   requiredPlatform?: string;
+  xpRewardOverride?: number;
 };
 
 type ValidationIssue = { path?: string; message: string };
@@ -129,7 +131,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
-  const [isRewardsDoubled, setIsRewardsDoubled] = useState(false);
+  const [isDoubleRewardsEnabled, setIsDoubleRewardsEnabled] = useState(false);
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -143,7 +145,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const [taskForm, setTaskForm] = useState<TaskFormState>({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', tierRewardMatrixOverride: createEmptyTaskTierMatrix(),
+    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix(),
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -171,12 +173,13 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         setEditForm({
           ...campData,
           targetCountries: campData.targetCountries || [],
+          tierRewardMatrix: campData.tierRewardMatrix || {},
           xpReward: campData.xpReward || 0,
           coverImageUrl: campData.coverImageUrl || '',
           doubleRewardsStartAt: campData.doubleRewardsStartAt || '',
           doubleRewardsEndAt: campData.doubleRewardsEndAt || '',
         });
-        setIsRewardsDoubled(false);
+        setIsDoubleRewardsEnabled(Boolean(campData.doubleRewardsStartAt && campData.doubleRewardsEndAt));
       }
 
       if (analyticsRes.ok) {
@@ -246,6 +249,16 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       return;
     }
 
+    if (isDoubleRewardsEnabled && (!editForm.doubleRewardsStartAt || !editForm.doubleRewardsEndAt)) {
+      alert('Please choose both 2x reward start and end time before saving the campaign.');
+      return;
+    }
+
+    if (!isDoubleRewardsEnabled && (editForm.doubleRewardsStartAt || editForm.doubleRewardsEndAt)) {
+      alert('Turn on the 2x rewards toggle to use the scheduled double rewards window.');
+      return;
+    }
+
     setIsSaving(true);
 
     let coverImageUrl = editForm.coverImageUrl || '';
@@ -276,8 +289,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       isActive: editForm.isActive,
       targetUrl: editForm.targetUrl?.trim() || undefined,
       socialHandleTarget: editForm.socialHandleTarget?.trim() || undefined,
-      doubleRewardsStartAt: editForm.doubleRewardsStartAt || null,
-      doubleRewardsEndAt: editForm.doubleRewardsEndAt || null,
+      doubleRewardsStartAt: isDoubleRewardsEnabled ? (editForm.doubleRewardsStartAt || null) : null,
+      doubleRewardsEndAt: isDoubleRewardsEnabled ? (editForm.doubleRewardsEndAt || null) : null,
     };
 
     const result = await dispatch(updateCampaign({ id: campaign.id, data: payload }));
@@ -316,6 +329,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       if (!hasAnyTierOverride) {
         throw new Error('Add at least one tier reward value.');
       }
+      if (Number(taskForm.xpRewardOverride) < 0) {
+        throw new Error('Task XP cannot be negative.');
+      }
 
       const token = sessionStorage.getItem('sats_token');
       const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
@@ -327,6 +343,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           proofType: taskForm.proofType,
           requiredPlatform: taskForm.requiredPlatform,
           targetUrl: taskForm.targetUrl || undefined,
+          xpRewardOverride: Number(taskForm.xpRewardOverride || 0),
           tierRewardMatrixOverride: taskForm.tierRewardMatrixOverride,
         })
       });
@@ -341,7 +358,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', tierRewardMatrixOverride: createEmptyTaskTierMatrix() });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix() });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
     } catch (err) {
@@ -367,6 +384,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         setIsUpdatingTask(false);
         return;
       }
+      if (Number(editingTaskForm.xpRewardOverride || 0) < 0) {
+        alert('Task XP cannot be negative.');
+        setIsUpdatingTask(false);
+        return;
+      }
 
       const token = sessionStorage.getItem('sats_token');
       const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks/${editingTaskId}`, {
@@ -381,6 +403,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
             editingTaskForm.requiredPlatform ||
             '',
           ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
+          xpRewardOverride: Number(editingTaskForm.xpRewardOverride || 0),
           tierRewardMatrixOverride: normalizedTaskTierMatrix,
         })
       });
@@ -730,24 +753,36 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           />
                         </div>
 
-                        {/* Tier Reward Action */}
                         <div>
                           <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                            Bulk Action
+                            2x Rewards Toggle
                           </label>
-                          <button 
-                            type="button" 
-                            onClick={() => {
-                              if (isRewardsDoubled || !hasAnyTierReward) return;
-                              setEditForm({ ...editForm, tierRewardMatrix: Object.fromEntries(Object.entries(editForm.tierRewardMatrix || {}).map(([tier, reward]) => [tier, Number(reward) * 2])) });
-                              setIsRewardsDoubled(true);
-                            }} 
-                            disabled={isRewardsDoubled || !hasAnyTierReward}
-                            title={isRewardsDoubled ? 'Already doubled' : !hasAnyTierReward ? 'Add at least one tier reward first' : 'Double all tier rewards once'}
-                            className="w-full h-[46px] px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-bold hover:bg-yellow-500/20 transition-all disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-yellow-500/10"
-                          >
-                            2x All Tier Rewards
-                          </button>
+                          <div className="flex items-center justify-between p-4 bg-linear-to-r from-yellow-500/10 via-[#0a0a0a] to-[#0a0a0a] border border-yellow-500/20 rounded-2xl shadow-[0_0_0_1px_rgba(234,179,8,0.05)]">
+                            <div>
+                              <p className="text-sm font-bold text-white flex items-center gap-1.5"><Zap className="w-4 h-4 text-yellow-500" /> Schedule 2x Task Rewards</p>
+                              <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Applies at runtime to every task reward matrix</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsDoubleRewardsEnabled((prev) => {
+                                  const next = !prev;
+                                  if (!next) {
+                                    setEditForm((current) => ({
+                                      ...current,
+                                      doubleRewardsStartAt: '',
+                                      doubleRewardsEndAt: '',
+                                    }));
+                                  }
+                                  return next;
+                                });
+                              }}
+                              title={isDoubleRewardsEnabled ? 'Turn off to disable the scheduled 2x rewards window' : 'Turn on to schedule 2x task rewards'}
+                              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 focus:outline-none ${isDoubleRewardsEnabled ? 'bg-yellow-500' : 'bg-[#1a1a1a] border border-[#2a2a2a]'} disabled:cursor-not-allowed disabled:opacity-55`}
+                            >
+                              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${isDoubleRewardsEnabled ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -759,6 +794,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               <DateTimePickerInput
                                 value={editForm.doubleRewardsStartAt || ''}
                                 onChange={(val) => setEditForm({ ...editForm, doubleRewardsStartAt: val })}
+                                disabled={!isDoubleRewardsEnabled}
                               />
                             </div>
 
@@ -770,6 +806,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               <DateTimePickerInput
                                 value={editForm.doubleRewardsEndAt || ''}
                                 onChange={(val) => setEditForm({ ...editForm, doubleRewardsEndAt: val })}
+                                disabled={!isDoubleRewardsEnabled}
                               />
                             </div>
                       </div>
@@ -821,6 +858,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           {PROOF_TYPES.map(p => <option key={p} value={p}>{p.replace('_', ' ')}</option>)}
                         </select>
                       </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
+                      <input required type="text" inputMode="numeric" pattern="[0-9]*" value={taskForm.xpRewardOverride || ''} onChange={e => setTaskForm({ ...taskForm, xpRewardOverride: parseWholeNumber(e.target.value) })} placeholder="0" className={inputCls} />
                     </div>
                     <div>
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
@@ -925,6 +966,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           <div>
                             <textarea required value={editingTaskForm.description || ''} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
+                            <input required type="text" inputMode="numeric" pattern="[0-9]*" value={editingTaskForm.xpRewardOverride || ''} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: parseWholeNumber(e.target.value) })} placeholder="0" className={inputCls} />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select
@@ -1058,6 +1103,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                                     : 0
                                 ).toLocaleString()} sats
                               </span>
+                              <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                                XP: {task.xpRewardOverride||0} 
+                              </span>
                             </div>
                           </div>
                           
@@ -1068,6 +1116,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                                 setEditingTaskId(task.id);
                                 setEditingTaskForm({
                                   ...task,
+                                  xpRewardOverride: task.xpRewardOverride || 0,
                                   tierRewardMatrixOverride: mergeTaskTierMatrix(task.tierRewardMatrixOverride),
                                 });
                               }}
@@ -1263,7 +1312,7 @@ function getDatePart(value?: string | null) {
   return toLocalDateValue(parsed);
 }
 
-function DateTimePickerInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function DateTimePickerInput({ value, onChange, disabled = false }: { value: string; onChange: (value: string) => void; disabled?: boolean }) {
   const today = getTodayDateValue();
   const parts = parseDateTimeValue(value);
 
@@ -1273,7 +1322,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
   };
 
   return (
-    <div className="rounded-xl border border-[#2a2a2a] bg-[#111] p-3.5 shadow-inner">
+    <div className={`rounded-xl border border-[#2a2a2a] bg-[#111] p-3.5 shadow-inner ${disabled ? 'opacity-60' : ''}`}>
       <div className="flex flex-col gap-2.5">
         {/* Date — full width native picker */}
         <div className="relative">
@@ -1282,6 +1331,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             type="date"
             min={value ? getDatePart(value) || today : today}
             value={parts.date}
+            disabled={disabled}
             onChange={(e) => updateValue({ date: e.target.value })}
             className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-10 pr-3 text-sm font-medium text-white outline-none transition-all hover:border-[#3a3a3a] focus:border-sats-orange-500/50 [color-scheme:dark]"
           />
@@ -1293,6 +1343,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             <Clock3 className="pointer-events-none absolut  text-sky-400 z-10 md:hidden" />
             <select
               value={parts.hour}
+              disabled={disabled}
               onChange={(e) => updateValue({ hour: e.target.value })}
               className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] py-3 pl-8 pr-2 text-sm font-bold text-white outline-none focus:border-sats-orange-500/50 cursor-pointer"
             >
@@ -1304,6 +1355,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           </div>
           <select
             value={parts.minute}
+            disabled={disabled}
             onChange={(e) => updateValue({ minute: e.target.value })}
             className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-bold text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
           >
@@ -1313,6 +1365,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           </select>
           <select
             value={parts.period}
+            disabled={disabled}
             onChange={(e) => updateValue({ period: e.target.value as 'AM' | 'PM' })}
             className="w-full appearance-none rounded-xl border border-[#2a2a2a] bg-[#050505] px-3 py-3 text-sm font-black text-white text-center outline-none focus:border-sats-orange-500/50 cursor-pointer"
           >

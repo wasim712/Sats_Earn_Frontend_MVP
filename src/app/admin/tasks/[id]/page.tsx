@@ -122,6 +122,10 @@ export default function AdminTaskDetailPage() {
               <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Target URL</label>
               <input value={formData.targetUrl} onChange={(e) => setFormData((prev) => ({ ...prev, targetUrl: e.target.value }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-white outline-none focus:border-sats-orange-500" />
             </div>
+            <div>
+              <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Task XP Reward</label>
+              <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.xpRewardOverride || ''} onChange={(e) => setFormData((prev) => ({ ...prev, xpRewardOverride: parseWholeNumber(e.target.value) }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="0" />
+            </div>
           </div>
 
           <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 space-y-5">

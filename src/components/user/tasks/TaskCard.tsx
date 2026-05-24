@@ -266,7 +266,7 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, CheckCircle2, ChevronRight, ExternalLink, Link as LinkIcon, RotateCcw, Upload, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, ChevronRight, ExternalLink, Link as LinkIcon, RotateCcw, Upload, X, Zap } from 'lucide-react';
 import { PROOF_META } from './taskPage.helpers';
 import type { ProofMeta, UserTaskPageTask, UserTaskResult, UserTaskStatus } from './taskPage.types';
 
@@ -547,6 +547,12 @@ export function TaskCard({
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.08] text-[11px] font-bold uppercase tracking-wider text-white/60 shadow-sm">
             {taskPlatform}
           </span>
+          {typeof task.taskRewardSats === 'number' && task.taskRewardSats > 0 && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-[11px] font-bold uppercase tracking-wider text-yellow-300 shadow-sm">
+              <Zap className="w-3.5 h-3.5" />
+              {task.taskRewardSats.toLocaleString()} Sats
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sats-orange-500/10 border border-sats-orange-500/20 text-[11px] font-bold uppercase tracking-wider text-sats-orange-400 shadow-sm">
             <span className="opacity-80">{meta.icon}</span> {proofLabel}
           </span>
