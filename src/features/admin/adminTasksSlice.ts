@@ -10,6 +10,7 @@ interface AdminTasksState {
   selectedTask: AdminTask | null;
   isLoading: boolean;
   isSaving: boolean;
+  isDeleting: boolean;
   error: string | null;
 }
 
@@ -18,6 +19,7 @@ const initialState: AdminTasksState = {
   selectedTask: null,
   isLoading: false,
   isSaving: false,
+  isDeleting: false,
   error: null,
 };
 
@@ -63,6 +65,21 @@ export const updateStandaloneTask = createAsyncThunk('adminTasks/update', async 
   }
 });
 
+export const deleteStandaloneTask = createAsyncThunk('adminTasks/delete', async (taskId: string, { getState, rejectWithValue }) => {
+  try {
+    const token = getToken(getState() as RootState);
+    const response = await obfuscatedFetch(`${API_URL}/admin/tasks/${taskId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await parseObfuscatedJson<any>(response);
+    if (!response.ok) throw new Error(data.error || 'Failed to delete task');
+    return taskId;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
 const adminTasksSlice = createSlice({
   name: 'adminTasks',
   initialState,
@@ -82,7 +99,16 @@ const adminTasksSlice = createSlice({
         const index = state.tasks.findIndex((task) => task.id === action.payload.id);
         if (index !== -1) state.tasks[index] = action.payload;
       })
-      .addCase(updateStandaloneTask.rejected, (state, action) => { state.isSaving = false; state.error = action.payload as string; });
+      .addCase(updateStandaloneTask.rejected, (state, action) => { state.isSaving = false; state.error = action.payload as string; })
+      .addCase(deleteStandaloneTask.pending, (state) => { state.isDeleting = true; state.error = null; })
+      .addCase(deleteStandaloneTask.fulfilled, (state, action) => {
+        state.isDeleting = false;
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        if (state.selectedTask?.id === action.payload) {
+          state.selectedTask = null;
+        }
+      })
+      .addCase(deleteStandaloneTask.rejected, (state, action) => { state.isDeleting = false; state.error = action.payload as string; });
   },
 });
 

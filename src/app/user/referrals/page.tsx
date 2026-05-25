@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Info } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import ReferralHero from '@/components/user/referrals/ReferralHero';
 import ReferralStats from '@/components/user/referrals/ReferralStats';
@@ -125,6 +125,23 @@ export default function ReferralsPage() {
       </div>
 
       <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} tierCommission={activeCommission}/>
+
+      <div className="rounded-[24px] border border-sky-500/20 bg-sky-500/10 px-5 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-sky-400/20 bg-[#0b1220] text-sky-300">
+            <Info className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-200/90">Active Referral Rule</p>
+            <h2 className="mt-1 text-lg font-black text-white">Referral income unlocks after 10 active days</h2>
+            <p className="mt-2 text-sm leading-7 text-sky-100/80">
+              A referred user must be active on at least <strong className="text-white">10 different days in the last 30 days</strong>
+              {' '}to count as active. Only active referrals generate referral income based on your current tier.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <ReferralStats stats={data.stats} />
 
       <ReferralLimits

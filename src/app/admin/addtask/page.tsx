@@ -34,13 +34,13 @@ export default function AddStandaloneTaskPage() {
     proofType: 'SCREENSHOT',
     targetUrl: '',
     requiredPlatform: 'NONE',
-    xpRewardOverride: 0,
-    tierRewardMatrixOverride: createMatrix(),
+    xpReward: 0,
+    tierRewardMatrix: createMatrix(),
   });
 
   const hasReward = useMemo(
-    () => [...FREE_TIERS, ...PREMIUM_TIERS].some((tier) => Number(formData.tierRewardMatrixOverride[tier] || 0) > 0),
-    [formData.tierRewardMatrixOverride]
+    () => [...FREE_TIERS, ...PREMIUM_TIERS].some((tier) => Number(formData.tierRewardMatrix[tier] || 0) > 0),
+    [formData.tierRewardMatrix]
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,8 +68,8 @@ export default function AddStandaloneTaskPage() {
           proofType: formData.proofType,
           targetUrl: formData.targetUrl || undefined,
           requiredPlatform: formData.requiredPlatform,
-          xpRewardOverride: formData.xpRewardOverride,
-          tierRewardMatrixOverride: formData.tierRewardMatrixOverride,
+          xpReward: formData.xpReward,
+          tierRewardMatrix: formData.tierRewardMatrix,
         }),
       });
 
@@ -85,8 +85,8 @@ export default function AddStandaloneTaskPage() {
         proofType: 'SCREENSHOT',
         targetUrl: '',
         requiredPlatform: 'NONE',
-        xpRewardOverride: 0,
-        tierRewardMatrixOverride: createMatrix(),
+        xpReward: 0,
+        tierRewardMatrix: createMatrix(),
       });
     } catch (error: any) {
       setErrorMsg(error.message || 'Failed to create standalone task');
@@ -140,7 +140,7 @@ export default function AddStandaloneTaskPage() {
               </div>
               <div>
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Task XP Reward</label>
-                <input required type="text" inputMode="numeric" pattern="[0-9]*" value={formData.xpRewardOverride || ''} onChange={(e) => setFormData((prev) => ({ ...prev, xpRewardOverride: parseWholeNumber(e.target.value) }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="0" />
+                <input required type="text" inputMode="numeric" pattern="[0-9]*" value={formData.xpReward || ''} onChange={(e) => setFormData((prev) => ({ ...prev, xpReward: parseWholeNumber(e.target.value) }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="0" />
               </div>
               <div className="md:col-span-2">
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Target URL</label>
@@ -160,7 +160,7 @@ export default function AddStandaloneTaskPage() {
                     {FREE_TIERS.map((tier) => (
                       <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrixOverride[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrixOverride: { ...prev.tierRewardMatrixOverride, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-[#2a2a2a] bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
+                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrix[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-[#2a2a2a] bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
                       </div>
                     ))}
                   </div>
@@ -171,7 +171,7 @@ export default function AddStandaloneTaskPage() {
                     {PREMIUM_TIERS.map((tier) => (
                       <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#0a0a0a] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
                         <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrixOverride[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrixOverride: { ...prev.tierRewardMatrixOverride, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-yellow-500/20 bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
+                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrix[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-yellow-500/20 bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
                       </div>
                     ))}
                   </div>

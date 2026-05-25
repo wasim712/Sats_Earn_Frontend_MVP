@@ -19,18 +19,12 @@ import { AlertTriangle, ArrowLeft, Flame, Zap } from 'lucide-react';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 type StandaloneTaskDetails = Task & {
-  campaignId: string;
   doubleRewardsActive?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
   userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED' | 'PAUSED';
   userSubmission?: { status: string } | null;
   submissions?: Array<{ status: string; submittedAt?: string }>;
-  campaign?: {
-    id: string;
-    title: string;
-    description?: string | null;
-  };
 };
 
 export default function StandaloneTaskDetailsPage() {
@@ -88,7 +82,7 @@ export default function StandaloneTaskDetailsPage() {
   const refreshTaskStatus = async (id: string) => {
     try {
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
-      const response = await obfuscatedFetch(`${API_URL}/users/tasks/${id}/status`, {
+      const response = await obfuscatedFetch(`${API_URL}/users/standalone-tasks/${id}/status`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await parseObfuscatedJson<{ status?: string }>(response);
@@ -132,7 +126,7 @@ export default function StandaloneTaskDetailsPage() {
         formData.append('triggerVerification', 'true');
       }
 
-      const response = await obfuscatedFetch(`${API_URL}/users/tasks/${id}/submit`, {
+      const response = await obfuscatedFetch(`${API_URL}/users/standalone-tasks/${id}/submit`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -234,7 +228,6 @@ export default function StandaloneTaskDetailsPage() {
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">{proofMeta.label}</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">All Platforms</span>
               {task.doubleRewardsActive ? <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1.5 text-yellow-300"><Flame className="h-4 w-4" /> 2x Live</span> : null}
-              {task.campaign?.title ? <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">From {task.campaign.title}</span> : null}
             </div>
 
             <div className="space-y-2">

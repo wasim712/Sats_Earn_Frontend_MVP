@@ -3,16 +3,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { AlertTriangle, ArrowRight, CheckCircle2, CheckSquare, Flame, LayoutGrid, Monitor, Search, Sparkles, Target } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Flame, LayoutGrid, Monitor, Search } from 'lucide-react';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
-
 type StandaloneTask = {
   id: string;
-  campaignId: string;
   title: string;
   description?: string | null;
   targetUrl?: string | null;
@@ -24,19 +21,7 @@ type StandaloneTask = {
   isCompleted?: boolean;
   hasStarted?: boolean;
   userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED' | 'PAUSED';
-  campaign?: {
-    id: string;
-    title: string;
-    description?: string;
-  };
 };
-
-const deviceOptions = [
-  { key: 'ALL', label: 'All Devices', iconType: 'lucide', icon: LayoutGrid },
-  { key: 'DESKTOP', label: 'Desktop', iconType: 'lucide', icon: Monitor },
-  { key: 'ANDROID', label: 'Android', iconType: 'image', icon: '/svgs/android.svg' },
-  { key: 'IOS', label: 'iOS', iconType: 'image', icon: '/svgs/ios.svg' },
-] as const;
 
 const formatCompact = (value: number) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 
@@ -53,7 +38,6 @@ export default function StandaloneTasksPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>('ALL');
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -76,68 +60,76 @@ export default function StandaloneTasksPage() {
 
     fetchTasks();
   }, []);
-console.log(tasks);
 
   const filteredTasks = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
     return tasks
       .filter((task) => {
-        const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || (task.description || '').toLowerCase().includes(searchQuery.toLowerCase());
-        const taskDevice = typeof task.requiredPlatform === 'string' ? task.requiredPlatform.toUpperCase() : 'NONE';
-        const matchesDevice = deviceFilter === 'ALL' ? true : taskDevice === deviceFilter;
-        return matchesSearch && matchesDevice;
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        return task.title.toLowerCase().includes(normalizedSearch)
+          || (task.description || '').toLowerCase().includes(normalizedSearch);
       })
       .sort((left, right) => left.title.localeCompare(right.title));
-  }, [tasks, searchQuery, deviceFilter]);
+  }, [tasks, searchQuery]);
 
-  const summary = useMemo(() => {
-    const completed = filteredTasks.filter((task) => task.isCompleted).length;
-    const active = filteredTasks.filter((task) => !task.isCompleted).length;
-    const doubleRewards = filteredTasks.filter((task) => Boolean(task.doubleRewardsActive)).length;
-    return { total: filteredTasks.length, active, completed, doubleRewards };
-  }, [filteredTasks]);
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-pulse pb-20 p-4 md:p-4 lg:p-6">
+        <section className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 shadow-[0_18px_48px_rgba(0,0,0,0.32)]">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+            <div className="h-12 rounded-2xl border border-[#1a1a1a] bg-[#050505] pl-12" />
+          </div>
+        </section>
 
-  if (isLoading) return <div className="min-h-screen bg-[#020202] p-6 text-white">Loading standalone tasks...</div>;
-  if (error) return <div className="min-h-screen bg-[#020202] p-6 text-red-400">{error}</div>;
+        <section className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-3">
+                  <div className="h-6 w-24 rounded-full bg-[#111]" />
+                  <div className="h-7 w-3/4 rounded-xl bg-[#111]" />
+                  <div className="space-y-2">
+                    <div className="h-4 w-full rounded-lg bg-[#0d0d0d]" />
+                    <div className="h-4 w-5/6 rounded-lg bg-[#0d0d0d]" />
+                  </div>
+                </div>
+                <div className="h-16 w-24 rounded-2xl bg-[#0d0d0d]" />
+              </div>
+              <div className="mt-5 flex gap-3">
+                <div className="h-8 w-28 rounded-full bg-[#0d0d0d]" />
+                <div className="h-8 w-20 rounded-full bg-[#0d0d0d]" />
+              </div>
+              <div className="mt-6 flex items-center justify-between">
+                <div className="h-4 w-24 rounded-lg bg-[#0d0d0d]" />
+                <div className="h-10 w-32 rounded-2xl bg-[#111]" />
+              </div>
+            </div>
+          ))}
+        </section>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-[#020202] p-6 text-red-400">{error}</div>;
+  }
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-4 lg:p-6">
-      <section className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 sm:p-6 lg:p-6 shadow-[0_18px_48px_rgba(0,0,0,0.32)]">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sats-orange-400">
-              <Sparkles className="h-3.5 w-3.5" /> Standalone Rewards
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">Standalone Tasks</h1>
-              <p className="text-sm sm:text-[15px] font-medium leading-7 text-gray-400">Quick one-off tasks to earn sats without entering a multi-step campaign.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:min-w-[520px]">
-            <SummaryCard label="Total" value={summary.total} icon={CheckSquare} tone="blue" />
-            <SummaryCard label="Active" value={summary.active} icon={Target} tone="green" />
-            <SummaryCard label="Completed" value={summary.completed} icon={CheckCircle2} tone="purple" />
-            <SummaryCard label="2x Live" value={summary.doubleRewards} icon={Flame} tone="yellow" />
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-[30px] border border-[#1a1a1a] bg-black p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div className="relative w-full xl:max-w-md group">
-            <div className="pointer-events-none absolute inset-y-0 left-0 pl-4 flex items-center">
-              <Search className="h-5 w-5 text-gray-500" />
-            </div>
-            <input type="text" placeholder="Search standalone tasks" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full rounded-2xl border border-[#1a1a1a] bg-[#050505] py-3.5 pl-12 pr-4 text-white outline-none placeholder:text-gray-600 focus:border-sats-orange-500/40" />
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {deviceOptions.map(({ key, label, iconType, icon }) => (
-              <button key={key} type="button" onClick={() => setDeviceFilter(key)} className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all ${deviceFilter === key ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400' : 'border-[#1a1a1a] bg-[#050505] text-gray-400 hover:border-[#2a2a2a] hover:text-white'}`}>
-                {iconType === 'lucide' ? React.createElement(icon as React.ComponentType<{ className?: string }>, { className: 'h-4 w-4' }) : <Image src={icon as string} alt={label} width={16} height={16} />}
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-4 lg:p-6">
+      <section className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 shadow-[0_18px_48px_rgba(0,0,0,0.32)]">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <input
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search standalone tasks"
+            className="w-full rounded-2xl border border-[#1a1a1a] bg-[#050505] py-3 pl-12 pr-4 text-sm font-medium text-white outline-none transition focus:border-sats-orange-500"
+          />
         </div>
       </section>
 
@@ -145,6 +137,7 @@ console.log(tasks);
         {filteredTasks.length > 0 ? filteredTasks.map((task) => {
           const platformMeta = getRequiredPlatform(task);
           const reward = Number(task.taskRewardSats || 0);
+
           return (
             <div key={task.id} className="rounded-[28px] border border-[#1a1a1a] bg-black p-5 shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
               <div className="flex items-start justify-between gap-4">
@@ -179,33 +172,10 @@ console.log(tasks);
           <div className="col-span-full rounded-[28px] border border-dashed border-[#2a2a2a] bg-black p-10 text-center">
             <AlertTriangle className="mx-auto h-10 w-10 text-gray-600" />
             <h3 className="mt-4 text-xl font-black text-white">No standalone tasks found</h3>
-            <p className="mt-2 text-sm text-gray-500">Try a different search or device filter.</p>
+            <p className="mt-2 text-sm text-gray-500">Try a different search term.</p>
           </div>
         )}
       </section>
-    </div>
-  );
-}
-
-function SummaryCard({ label, value, icon: Icon, tone }: { label: string; value: number; icon: React.ComponentType<{ className?: string }>; tone: 'blue' | 'green' | 'purple' | 'yellow' }) {
-  const toneMap = {
-    blue: 'text-blue-300 border-blue-500/20 bg-blue-500/10',
-    green: 'text-emerald-300 border-emerald-500/20 bg-emerald-500/10',
-    purple: 'text-purple-300 border-purple-500/20 bg-purple-500/10',
-    yellow: 'text-yellow-300 border-yellow-500/20 bg-yellow-500/10',
-  } as const;
-
-  return (
-    <div className={`rounded-2xl border px-4 py-4 ${toneMap[tone]}`}>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/60">{label}</div>
-          <div className="mt-2 text-2xl font-black text-white">{value}</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-          <Icon className="h-5 w-5 text-white" />
-        </div>
-      </div>
     </div>
   );
 }

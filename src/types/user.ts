@@ -186,6 +186,7 @@ export interface TodayQuizQuestion {
   explanation?: string | null;
   options: string[];
   order: number;
+  correctAnswer?: string | null;
 }
 
 export interface TodayQuiz {

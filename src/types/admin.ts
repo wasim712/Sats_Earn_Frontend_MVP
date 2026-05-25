@@ -32,7 +32,7 @@ export interface Campaign {
 
 export interface AdminTask {
   id: string;
-  campaignId: string;
+  campaignId?: string;
   title: string;
   description?: string | null;
   targetUrl?: string | null;
@@ -40,9 +40,12 @@ export interface AdminTask {
   requiredPlatform?: string | null;
   requirements?: unknown;
   baseRewardSatsOverride?: number | null;
+  xpReward?: number | null;
   xpRewardOverride?: number | null;
   taskRewardSats?: number;
+  tierRewardMatrix?: Record<string, number> | null;
   tierRewardMatrixOverride?: Record<string, number> | null;
+  isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
