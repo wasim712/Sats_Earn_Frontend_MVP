@@ -248,7 +248,7 @@ export default function UserDashboardPage() {
 
   return (
     <>
-      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} />
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} />
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
       {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}

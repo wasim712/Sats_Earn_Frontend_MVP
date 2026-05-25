@@ -60,7 +60,7 @@ const upcomingCards = [
 
 export default function UserMiniGamesPage() {
   const dispatch = useAppDispatch();
-  const [activeGame, setActiveGame] = useState<'sat-worm' | null>('sat-worm');
+  const [activeGame, setActiveGame] = useState<'sat-worm' | null>(null);
 
   return (
     <div className="px-4 py-5 md:px-6 md:py-6 xl:px-8 space-y-6">
@@ -92,7 +92,7 @@ export default function UserMiniGamesPage() {
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <button
           type="button"
-          onClick={() => setActiveGame((current) => (current === 'sat-worm' ? null : 'sat-worm'))}
+          onClick={() => setActiveGame('sat-worm')}
           className="text-left rounded-[28px] border border-sats-orange-500/25 bg-[#090909] p-6 relative overflow-hidden transition-all hover:border-sats-orange-500/45 hover:-translate-y-1 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
         >
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.52)_48%,rgba(0,0,0,0.94)_100%)]" />
@@ -119,7 +119,7 @@ export default function UserMiniGamesPage() {
               </div>
               <div className="inline-flex items-center gap-3 rounded-2xl bg-sats-orange-500 px-5 py-3 text-sm font-black text-black shadow-[0_12px_30px_rgba(249,115,22,0.35)]">
                 <Zap className="h-4 w-4" /> Play Now
-                <ChevronRight className={`h-4 w-4 transition-transform ${activeGame === 'sat-worm' ? 'rotate-90' : ''}`} />
+                <ChevronRight className="h-4 w-4 transition-transform" />
               </div>
             </div>
           </div>

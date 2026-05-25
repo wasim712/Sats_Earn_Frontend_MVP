@@ -27,6 +27,10 @@ import {
   Gem,
   Zap,
   TrendingUp,
+  Coins,
+  CircleStar,
+  Sparkles,
+  Rocket,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useGetUserNotificationsQuery } from '@/store/services/userApi';
@@ -93,12 +97,12 @@ function getTierMeta(tier?: string) {
   switch (normalizedTier) {
     case 'BASIC':
       return {
-        icon: <Star className="h-3.5 w-3.5 text-gray-400" />,
+        icon: <Shield className="h-3.5 w-3.5 text-gray-400" />,
         textClass: 'text-gray-400',
       };
     case 'COPPER':
       return {
-        icon: <Shield className="h-3.5 w-3.5 text-[#b87333]" />,
+        icon: <Coins className="h-3.5 w-3.5 text-[#b87333]" />,
         textClass: 'text-[#b87333]',
       };
     case 'BRONZE':
@@ -108,17 +112,17 @@ function getTierMeta(tier?: string) {
       };
     case 'SILVER':
       return {
-        icon: <Shield className="h-3.5 w-3.5 text-[#C0C0C0]" />,
+        icon: <Star className="h-3.5 w-3.5 text-[#C0C0C0]" />,
         textClass: 'text-[#C0C0C0]',
       };
     case 'GOLD':
       return {
-        icon: <Crown className="h-3.5 w-3.5 text-[#FFD700]" />,
+        icon: <Trophy className="h-3.5 w-3.5 text-[#FFD700]" />,
         textClass: 'text-[#FFD700]',
       };
     case 'PLATINUM':
       return {
-        icon: <Gem className="h-3.5 w-3.5 text-[#e5e4e2]" />,
+        icon: <CircleStar className="h-3.5 w-3.5 text-[#e5e4e2]" />,
         textClass: 'text-[#e5e4e2]',
       };
     case 'DIAMOND':
@@ -133,12 +137,12 @@ function getTierMeta(tier?: string) {
       };
     case 'ELITE':
       return {
-        icon: <Zap className="h-3.5 w-3.5 text-[#8a2be2]" />,
+        icon: <Sparkles className="h-3.5 w-3.5 text-[#8a2be2]" />,
         textClass: 'text-[#8a2be2]',
       };
     case 'FOUNDER':
       return {
-        icon: <TrendingUp className="h-3.5 w-3.5 text-[#ff4500]" />,
+        icon: <Rocket className="h-3.5 w-3.5 text-[#ff4500]" />,
         textClass: 'text-[#ff4500]',
       };
     default:

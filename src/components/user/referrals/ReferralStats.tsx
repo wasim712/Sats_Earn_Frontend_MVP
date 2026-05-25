@@ -18,7 +18,7 @@ interface StatCardProps {
 
 export default function ReferralStats({ stats }: ReferralStatsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard title="Total Invited" value={stats.totalInvited} icon={<Users className="text-sats-orange-500" />} />
       <StatCard title="Active" value={stats.activeReferrals} icon={<UserCheck className="text-green-500" />} />
       <StatCard title="Inactive" value={stats.inactiveReferrals} icon={<UserMinus className="text-red-500" />} />
