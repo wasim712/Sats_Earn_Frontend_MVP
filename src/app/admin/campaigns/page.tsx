@@ -13,9 +13,37 @@ import {
   ArrowUpRight, Loader2
 } from 'lucide-react';
 
+function getDoubleRewardsStatus(startAt?: string | null, endAt?: string | null) {
+  if (!startAt || !endAt) return 'none' as const;
+
+  const now = Date.now();
+  const start = new Date(startAt).getTime();
+  const end = new Date(endAt).getTime();
+
+  if (Number.isNaN(start) || Number.isNaN(end)) return 'none' as const;
+  if (now < start) return 'upcoming' as const;
+  if (now >= start && now <= end) return 'live' as const;
+  return 'ended' as const;
+}
+
+function formatCompactDateTime(value?: string | null) {
+  if (!value) return '';
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+
+  return parsed.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function AdminCampaignsPage() {
   const dispatch = useAppDispatch();
   const { campaigns, isLoading, error } = useAppSelector((state) => state.adminCampaigns);
+  const visibleCampaigns = campaigns.filter((campaign) => !campaign.isStandalone);
 
   useEffect(() => {
     dispatch(fetchAllCampaigns());
@@ -91,8 +119,8 @@ export default function AdminCampaignsPage() {
 
         {/* ─── Campaigns Grid ─── */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-          {campaigns.length > 0 ? (
-            campaigns.map((campaign) => (
+          {visibleCampaigns.length > 0 ? (
+            visibleCampaigns.map((campaign) => (
               <CampaignCard 
                 key={campaign.id}
                 campaign={campaign} 
@@ -127,6 +155,7 @@ interface CampaignCardProps {
 function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const doubleRewardsStatus = getDoubleRewardsStatus(campaign.doubleRewardsStartAt, campaign.doubleRewardsEndAt);
   const visibleRewardTiers = campaign.isPremiumOnly
     ? ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER']
     : ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
@@ -160,7 +189,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
     : 0;
 
   return (
-    <div className={`group relative bg-sats-black-900 border border-sats-black-800 rounded-2xl p-6 flex flex-col h-full transition-all duration-300 hover:border-sats-orange-500/30 hover:bg-[#0c0c0c] hover:shadow-2xl hover:shadow-sats-orange-500/5 ${isDeleting ? 'opacity-50 pointer-events-none scale-[0.98]' : ''}`}>
+      <div className={`group relative bg-sats-black-900 border border-sats-black-800 rounded-2xl p-6 flex flex-col h-full transition-all duration-300 hover:border-sats-orange-500/30 hover:bg-[#0c0c0c] hover:shadow-2xl hover:shadow-sats-orange-500/5 ${isDeleting ? 'opacity-50 pointer-events-none scale-[0.98]' : ''}`}>
       
       {/* 1. BOTTOM LAYER: Subtle Hover Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-sats-orange-500/0 via-transparent to-transparent group-hover:from-sats-orange-500/5 transition-all duration-500 rounded-2xl pointer-events-none" />
@@ -240,6 +269,21 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
               style={{ width: `${progressPercent}%` }}
             />
           </div>
+
+          <div className="mt-3 min-h-[32px] flex items-start">
+            {doubleRewardsStatus === 'upcoming' && (
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-400">
+                <Calendar className="w-3 h-3" />
+                2x Rewards
+              </div>
+            )}
+            {doubleRewardsStatus === 'live' && (
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-yellow-300">
+                <span className="text-[11px] leading-none">🔥</span>
+                2x Rewards
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 4. TOP LAYER: Footer Actions (z-20) - Placed above the Link so buttons remain clickable */}
@@ -283,7 +327,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
         </div>
 
       </div>
-    </div>
+      </div>
   );
 }
 

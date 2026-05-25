@@ -79,7 +79,7 @@ export default function UserDailyQuizPage() {
   }, [result]);
 
   const handleSelectOption = (questionId: string, option: string) => {
-    if (result) return;
+    if (result || answers[questionId]) return;
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
   };
 
@@ -219,58 +219,88 @@ export default function UserDailyQuizPage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
                 {question.options.map((opt, optionIndex) => {
-                  const isSelected = answers[question.id] === opt;
+                  const selectedAnswer = answers[question.id];
+                  const isSelected = selectedAnswer === opt;
+                  const instantCorrectAnswer = getInstantCorrectAnswer(normalizedQuiz, question.id);
+                  const isInstantMode = !isReviewMode && Boolean(selectedAnswer);
+                  const isInstantCorrect = Boolean(selectedAnswer) && instantCorrectAnswer === selectedAnswer;
+                  const isCorrectOption = isReviewMode
+                    ? isCorrectReviewOption(result, question.id, opt)
+                    : instantCorrectAnswer === opt;
+                  const isWrongSelectedOption = isInstantMode && isSelected && !isInstantCorrect;
+                  const isOptionDisabled = isReviewMode || Boolean(selectedAnswer);
+
                   return (
                     <button
                       key={optionIndex}
                       onClick={() => handleSelectOption(question.id, opt)}
-                      disabled={isReviewMode}
+                      disabled={isOptionDisabled}
                       className={`relative flex items-center w-full p-4 md:p-5 rounded-2xl border text-left transition-all duration-200 group outline-none ${
                         isReviewMode
-                          ? isCorrectReviewOption(result, question.id, opt)
+                          ? isCorrectOption
                             ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
                             : isSelected
                               ? 'bg-red-500/10 border-red-500/25 text-red-300'
                               : 'bg-[#111] border-[#1a1a1a] text-gray-300'
-                          : isSelected
-                            ? 'bg-sats-orange-500/10 border-sats-orange-500/40 shadow-[0_0_20px_rgba(238,139,18,0.1)]'
-                            : 'bg-[#111] border-[#1a1a1a] hover:border-[#333] hover:bg-[#151515]'
-                      }`}
+                          : isInstantMode
+                            ? isCorrectOption
+                              ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                              : isWrongSelectedOption
+                                ? 'bg-red-500/10 border-red-500/25 text-red-300'
+                                : 'bg-[#111] border-[#1a1a1a] text-gray-300'
+                            : isSelected
+                              ? 'bg-sats-orange-500/10 border-sats-orange-500/40 shadow-[0_0_20px_rgba(238,139,18,0.1)]'
+                              : 'bg-[#111] border-[#1a1a1a] hover:border-[#333] hover:bg-[#151515]'
+                      } ${isOptionDisabled ? 'cursor-default' : ''}`}
                     >
                       <div
                         className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${
                           isReviewMode
-                            ? isCorrectReviewOption(result, question.id, opt)
+                            ? isCorrectOption
                               ? 'border-emerald-400 bg-emerald-400'
                               : isSelected
                                 ? 'border-red-400 bg-red-400'
                                 : 'border-[#444]'
-                            : isSelected
-                              ? 'border-sats-orange-500 bg-sats-orange-500'
-                              : 'border-[#444] group-hover:border-gray-500'
+                            : isInstantMode
+                              ? isCorrectOption
+                                ? 'border-emerald-400 bg-emerald-400'
+                                : isWrongSelectedOption
+                                  ? 'border-red-400 bg-red-400'
+                                  : 'border-[#444]'
+                              : isSelected
+                                ? 'border-sats-orange-500 bg-sats-orange-500'
+                                : 'border-[#444] group-hover:border-gray-500'
                         }`}
                       >
-                        {isSelected && <div className="w-2 h-2 bg-black rounded-full" />}
+                        {(isSelected || (isInstantMode && isCorrectOption) || (isReviewMode && isCorrectOption)) && (
+                          <div className="w-2 h-2 bg-black rounded-full" />
+                        )}
                       </div>
 
                       <span className={`text-sm md:text-base font-medium flex-1 break-words ${
                         isReviewMode
-                          ? isCorrectReviewOption(result, question.id, opt)
+                          ? isCorrectOption
                             ? 'text-emerald-300 font-bold'
                             : isSelected
                               ? 'text-red-300 font-bold'
                               : 'text-gray-300'
-                          : isSelected
-                            ? 'text-sats-orange-400 font-bold'
-                            : 'text-gray-300'
+                          : isInstantMode
+                            ? isCorrectOption
+                              ? 'text-emerald-300 font-bold'
+                              : isWrongSelectedOption
+                                ? 'text-red-300 font-bold'
+                                : 'text-gray-300'
+                            : isSelected
+                              ? 'text-sats-orange-400 font-bold'
+                              : 'text-gray-300'
                       }`}>
                         {opt}
                       </span>
 
-                      {isReviewMode && (
+                      {(isReviewMode || isInstantMode) && (
                         <div className="ml-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
                           {isSelected && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Your Choice</span>}
-                          {isCorrectReviewOption(result, question.id, opt) && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Correct</span>}
+                          {isCorrectOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Correct</span>}
                         </div>
                       )}
                     </button>
@@ -278,12 +308,44 @@ export default function UserDailyQuizPage() {
                 })}
               </div>
 
-              {isReviewMode && getReviewItem(result, question.id)?.explanation && (
+              {(isReviewMode || Boolean(answers[question.id])) && (getReviewItem(result, question.id)?.explanation || question.explanation) && (
                 <div className="mt-4 rounded-2xl border border-sky-500/15 bg-sky-500/10 px-5 py-4 flex items-start gap-3">
                   <Brain className="w-5 h-5 text-sky-300 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest text-sky-200/90 mb-1">Why this answer is right</p>
-                    <p className="text-sm text-sky-100/85 leading-relaxed">{getReviewItem(result, question.id)?.explanation}</p>
+                    <p className="text-sm text-sky-100/85 leading-relaxed">{getReviewItem(result, question.id)?.explanation || question.explanation}</p>
+                  </div>
+                </div>
+              )}
+
+              {!isReviewMode && Boolean(answers[question.id]) && (
+                <div className={`mt-4 rounded-2xl px-5 py-4 flex items-start gap-3 border ${
+                  getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                    ? 'border-emerald-500/20 bg-emerald-500/10'
+                    : 'border-red-500/20 bg-red-500/10'
+                }`}>
+                  {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id] ? (
+                    <CircleCheckBig className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                  ) : (
+                    <CircleX className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                  )}
+                  <div>
+                    <p className={`text-xs font-black uppercase tracking-widest mb-1 ${
+                      getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                        ? 'text-emerald-200/90'
+                        : 'text-red-200/90'
+                    }`}>
+                      {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id] ? 'Correct answer' : 'Wrong answer'}
+                    </p>
+                    <p className={`text-sm leading-relaxed ${
+                      getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                        ? 'text-emerald-100/85'
+                        : 'text-red-100/85'
+                    }`}>
+                      {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                        ? 'Nice ? this answer is correct.'
+                        : `The right answer is ${getInstantCorrectAnswer(normalizedQuiz, question.id)}.`}
+                    </p>
                   </div>
                 </div>
               )}
@@ -360,6 +422,10 @@ function getReviewItem(result: QuizResult | null, questionId: string) {
 
 function isCorrectReviewOption(result: QuizResult | null, questionId: string, option: string) {
   return getReviewItem(result, questionId)?.correctAnswer === option;
+}
+
+function getInstantCorrectAnswer(quiz: TodayQuiz | null, questionId: string) {
+  return quiz?.questions.find((item) => item.id === questionId)?.correctAnswer || null;
 }
 
 function QuizPageSkeleton() {

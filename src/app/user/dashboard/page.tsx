@@ -352,7 +352,7 @@ export default function UserDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
               <Clock4 className="w-5 h-5 text-purple-500" />
             </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending Sats</p>
+            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending sats</p>
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>sats</span></h3>
@@ -385,7 +385,7 @@ export default function UserDashboardPage() {
             <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}
               <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span></h3>
               
-            <p className="text-sm font-bold text-gray-600 mt-1">Lifetime Sats</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Lifetime sats</p>
           </div>
         </div>
 

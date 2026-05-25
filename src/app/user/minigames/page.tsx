@@ -60,7 +60,7 @@ const upcomingCards = [
 
 export default function UserMiniGamesPage() {
   const dispatch = useAppDispatch();
-  const [activeGame, setActiveGame] = useState<'sat-worm' | null>(null);
+  const [activeGame, setActiveGame] = useState<'sat-worm' | null>('sat-worm');
 
   return (
     <div className="px-4 py-5 md:px-6 md:py-6 xl:px-8 space-y-6">
@@ -93,24 +93,34 @@ export default function UserMiniGamesPage() {
         <button
           type="button"
           onClick={() => setActiveGame((current) => (current === 'sat-worm' ? null : 'sat-worm'))}
-          className="text-left rounded-[24px] border border-sats-orange-500/20 bg-[#090909] p-6 relative overflow-hidden transition-all hover:border-sats-orange-500/40 hover:bg-[#0d0d0d]"
+          className="text-left rounded-[28px] border border-sats-orange-500/25 bg-[#090909] p-6 relative overflow-hidden transition-all hover:border-sats-orange-500/45 hover:-translate-y-1 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
         >
-          <div className="absolute top-0 right-0 h-24 w-24 bg-sats-orange-500/10 blur-3xl pointer-events-none" />
-          <div className="relative z-10">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-sats-orange-500/20 bg-sats-orange-500/10">
-              <Gamepad2 className="h-5 w-5 text-sats-orange-500" />
-            </div>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.52)_48%,rgba(0,0,0,0.94)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_28%)]" />
+          <div className="relative z-10 p-6">
             <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-black text-white tracking-tight">SAT-WORM</h2>
-                <p className="mt-1 text-sm text-gray-400">Tap to {activeGame === 'sat-worm' ? 'close' : 'open'} the live playable game.</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 text-sats-orange-500 transition-transform ${activeGame === 'sat-worm' ? 'rotate-90' : ''}`} />
+              <span className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-black/45 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-sats-orange-300 backdrop-blur-sm">
+                <Zap className="h-3.5 w-3.5" /> ~10 SATS
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-black/45 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300 backdrop-blur-sm">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.95)]" /> LIVE NOW
+              </span>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300">Live</span>
-              <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">Playable</span>
-              <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">XP Only</span>
+
+            <div className="mt-20 sm:mt-24">
+              <h2 className="text-[30px] font-black text-sats-orange-400 tracking-tight">SAT-WORM</h2>
+              <p className="mt-2 text-sm text-white/78">Eat sats to grow, avoid inflation traps!</p>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
+              <div className="flex items-center gap-2 text-sm font-bold text-white/85">
+                <span className="h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.95)]" />
+                LIVE NOW
+              </div>
+              <div className="inline-flex items-center gap-3 rounded-2xl bg-sats-orange-500 px-5 py-3 text-sm font-black text-black shadow-[0_12px_30px_rgba(249,115,22,0.35)]">
+                <Zap className="h-4 w-4" /> Play Now
+                <ChevronRight className={`h-4 w-4 transition-transform ${activeGame === 'sat-worm' ? 'rotate-90' : ''}`} />
+              </div>
             </div>
           </div>
         </button>
@@ -123,6 +133,7 @@ export default function UserMiniGamesPage() {
               key={card.title}
               className={`rounded-[24px] border ${card.border} bg-[#090909] p-6 relative overflow-hidden`}
             >
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.74)_62%,rgba(0,0,0,0.95)_100%)]" />
               <div className={`absolute top-0 right-0 h-24 w-24 ${card.bg} blur-3xl pointer-events-none`} />
               <div className="relative z-10">
                 <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border ${card.border} ${card.bg}`}>

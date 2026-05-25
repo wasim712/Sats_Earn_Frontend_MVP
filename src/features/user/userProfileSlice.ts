@@ -120,6 +120,32 @@ export const submitPremiumInterest = createAsyncThunk(
   }
 );
 
+export const upgradePremiumUsingSats = createAsyncThunk(
+  'userProfile/upgradePremiumUsingSats',
+  async (
+    data: { plan: 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER'; billingCycle: 'MONTHLY' | 'YEARLY' },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+
+      const response = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/premium-upgrade/sats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      return normalizeProfileResponse(response);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const fetchPremiumInterests = createAsyncThunk(
   'userProfile/fetchPremiumInterests',
   async (_, { getState, rejectWithValue }) => {
@@ -179,6 +205,13 @@ const userProfileSlice = createSlice({
         state.premiumMessage = action.payload.message;
       })
       .addCase(submitPremiumInterest.rejected, (state, action) => {
+        state.premiumMessage = action.payload as string;
+      })
+      .addCase(upgradePremiumUsingSats.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.premiumMessage = 'Tier upgraded successfully using sats.';
+      })
+      .addCase(upgradePremiumUsingSats.rejected, (state, action) => {
         state.premiumMessage = action.payload as string;
       })
       .addCase(fetchPremiumInterests.fulfilled, (state, action) => {

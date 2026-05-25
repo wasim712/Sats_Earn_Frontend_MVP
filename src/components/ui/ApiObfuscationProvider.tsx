@@ -24,6 +24,7 @@ type WindowWithSatsFetch = Window & typeof globalThis & {
 
 const UPLOAD_PATHS = [
   '/users/tasks/',
+  '/users/standalone-tasks/',
   '/users/bug-reports',
   '/admin/campaigns/upload-cover',
 ];

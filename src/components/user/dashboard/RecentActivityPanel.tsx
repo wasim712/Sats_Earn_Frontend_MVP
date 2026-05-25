@@ -76,7 +76,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                       </div>
                     </div>
                     <div className={`text-sm font-black whitespace-nowrap ${activity.amountSats < 0 ? 'text-red-400' : 'text-green-400'}`}>
-                      {ui.sign}{Math.abs(activity.amountSats).toLocaleString()} Sats
+                      {ui.sign}{Math.abs(activity.amountSats).toLocaleString()} sats
                     </div>
                   </li>
                 );

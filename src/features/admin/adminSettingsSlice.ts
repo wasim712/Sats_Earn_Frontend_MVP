@@ -13,6 +13,8 @@ export interface AdminSettings {
   dailyStreakBonusXp: number;
   tierReferralMatrix: Record<string, number>;
   tierMinWithdrawalMatrix: Record<string, number>;
+  premiumMonthlySatsMatrix: Record<string, number>;
+  premiumYearlySatsMatrix: Record<string, number>;
 }
 
 interface AdminSettingsState {

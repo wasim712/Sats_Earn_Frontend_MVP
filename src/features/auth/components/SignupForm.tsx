@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { requestSignupOtp , verifySignupOtp, goBackToStep1, resetAuthError} from '../authSlice';
 import DatePickerInput from './DatePickerInput';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
+import { markOnboardingForFirstAutoOpen } from '@/components/user/dashboard/onboardingFlow';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -207,9 +208,13 @@ export default function SignupForm() {
     dispatch(requestSignupOtp({ ...formData, dateOfBirth: formattedDate }));
   };
 
-  const handleOtpSubmit = (otp: string) => {
+  const handleOtpSubmit = async (otp: string) => {
     if (tempData?.email) {
-      dispatch(verifySignupOtp({ email: tempData.email, otp }));
+      try {
+        await dispatch(verifySignupOtp({ email: tempData.email, otp })).unwrap();
+        markOnboardingForFirstAutoOpen();
+      } catch {
+      }
     }
   };
 

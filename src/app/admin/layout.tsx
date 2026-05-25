@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (!isAuthenticated) {
         router.push('/login');
       } else if (user && user.role !== 'SUPER_ADMIN') {
-        router.push('/dashboard'); 
+        router.push('/user/dashboard'); 
       }
     }
   }, [isClient, isAuthenticated, user, router]);

@@ -13,7 +13,6 @@ import {
 
 const CATEGORIES = ["SOCIAL", "SURVEY", "VIDEO_AD", "APP_INSTALL", "OFFERWALL", "LEARN_EARN", "DAILY_STREAK"];
 const FREE_TIERS = ["BASIC", "COPPER", "BRONZE", "SILVER", "GOLD"];
-const PREMIUM_TIERS = ["PLATINUM", "DIAMOND", "CROWN", "ELITE", "FOUNDER"];
 const DEVICE_OPTIONS = ["NONE", "DESKTOP", "ANDROID", "IOS"];
 
 function getDigitsOnlyValue(value: string) {
@@ -85,7 +84,6 @@ export default function AddCampaignPage() {
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
-  const [isRewardsDoubled, setIsRewardsDoubled] = useState(false);
   
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form State (Aligned exactly with your Zod Schema) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [formData, setFormData] = useState({
@@ -97,15 +95,9 @@ export default function AddCampaignPage() {
     requiredPlatform: 'NONE',
     isPremiumOnly: false,
     requiredFreeTier: 'BASIC',
-    baseRewardSats: 0,
-    xpReward: 0,
     doubleRewardsStartAt: '',
     doubleRewardsEndAt: '',
-    maxCompletions: 0,
-    tierRewardMatrix: {
-      BASIC: 0, COPPER: 0, BRONZE: 0, SILVER: 0, GOLD: 0,
-      PLATINUM: 0, DIAMOND: 0, CROWN: 0, ELITE: 0, FOUNDER: 0
-    } as Record<string, number>
+    maxCompletions: 0
   });
 
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Handlers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
@@ -117,26 +109,6 @@ export default function AddCampaignPage() {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: parseWholeNumber(value) }));
-  };
-
-  const handleMatrixChange = (tier: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(value) }
-    }));
-    setIsRewardsDoubled(false);
-  };
-
-  const handleDoubleAllRewards = () => {
-    if (isRewardsDoubled || !hasAnyTierReward) return;
-
-    setFormData((prev) => ({
-      ...prev,
-      tierRewardMatrix: Object.fromEntries(
-        Object.entries(prev.tierRewardMatrix).map(([tier, reward]) => [tier, Number(reward || 0) * 2])
-      ),
-    }));
-    setIsRewardsDoubled(true);
   };
 
   const handleCountryToggle = (country: string) => {
@@ -172,19 +144,6 @@ export default function AddCampaignPage() {
     }
   }, [countries.length, dispatch]);
 
-  const visibleRewardTiers = formData.isPremiumOnly
-    ? PREMIUM_TIERS
-    : [...FREE_TIERS, ...PREMIUM_TIERS];
-  const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(formData.tierRewardMatrix[tier]) > 0);
-  const derivedBaseReward = visibleRewardTiers.reduce((max, tier) => {
-    const reward = Number(formData.tierRewardMatrix[tier]) || 0;
-    return Math.max(max, reward);
-  }, 0);
-  const projectedMaxLiability = visibleRewardTiers.reduce((max, tier) => {
-    const reward = Number(formData.tierRewardMatrix[tier]) || 0;
-    return Math.max(max, reward * Number(formData.maxCompletions || 0));
-  }, 0);
-
   // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Submit Engine Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,9 +152,7 @@ export default function AddCampaignPage() {
     // Frontend Validations
     if (formData.title.length < 5) return setErrorMsg("Title must be at least 5 characters.");
     if (formData.description.length < 10) return setErrorMsg("Description must be at least 10 characters.");
-    if (derivedBaseReward <= 0) return setErrorMsg("At least one tier reward must be greater than 0.");
     if (formData.maxCompletions <= 0) return setErrorMsg("Max Completions must be greater than 0.");
-
     setIsSaving(true);
 
     let coverImageUrl = formData.coverImageUrl || '';
@@ -222,12 +179,7 @@ export default function AddCampaignPage() {
       requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
       requiredFreeTier: formData.requiredFreeTier,
-      baseRewardSats: Number(derivedBaseReward),
-      xpReward: Number(formData.xpReward),
-      doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
-      doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
       maxCompletions: Number(formData.maxCompletions),
-      tierRewardMatrix: formData.tierRewardMatrix,
     };
 
     const result = await dispatch(createCampaign(payload));
@@ -258,7 +210,7 @@ export default function AddCampaignPage() {
             
             <div className="text-center sm:text-left">
               <h1 className="text-xl font-black text-white tracking-tight">Campaign Master Setup</h1>
-              <p className="text-xs text-gray-500 mt-0.5">Define global rules, access gates, and economics.</p>
+              <p className="text-xs text-gray-500 mt-0.5">Define global rules and access gates. Task-level sats rewards are configured after campaign creation.</p>
             </div>
             
             <button 
@@ -429,95 +381,18 @@ export default function AddCampaignPage() {
                   <InputWrapper label="Max Completions (Budget Cap)" required>
                     <input type="text" inputMode="numeric" pattern="[0-9]*" name="maxCompletions" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
-                      Worst-Case Liability: <span className="text-yellow-500">{projectedMaxLiability.toLocaleString()} Sats</span>
-                    </p>
-                  </InputWrapper>
-
-                  <InputWrapper label="Campaign XP Reward" required>
-                    <input type="text" inputMode="numeric" pattern="[0-9]*" name="xpReward" value={formData.xpReward || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
-                      Base XP users get for this campaign. During active 2x period, XP also doubles.
+                      Use this as the campaign completion cap. Sats rewards are set later on each task per tier.
                     </p>
                   </InputWrapper>
 
                   {/* Changed md:grid-cols-2 to simply stack them vertically in the narrow sidebar with gap-6 */}
-                    <div className="grid grid-cols-1 gap-6">
-                      <InputWrapper label="2x Start Date">
-                        <DateTimePickerInput
-                          value={formData.doubleRewardsStartAt}
-                          onChange={(value) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: value }))}
-                        />
-                      </InputWrapper>
-
-                      <InputWrapper label="2x End Date">
-                        <DateTimePickerInput
-                          value={formData.doubleRewardsEndAt}
-                          onChange={(value) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: value }))}
-                        />
-                      </InputWrapper>
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 text-sm text-gray-400">
+                      Double rewards are configured later from the campaign edit page and apply to each task reward matrix at runtime.
                     </div>
                 </div>
 
-                {/* Dense Tier Matrix Grid */}
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div>
-                      <h3 className="text-sm font-bold text-white">Tier Reward Matrix</h3>
-                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
-                        Active 2x period doubles both sats rewards and XP rewards.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleDoubleAllRewards}
-                      disabled={isRewardsDoubled || !hasAnyTierReward}
-                      title={isRewardsDoubled ? 'Already doubled' : !hasAnyTierReward ? 'Add at least one tier reward first' : 'Double all tier rewards once'}
-                      className="px-4 py-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-wider hover:bg-yellow-500/20 transition-all disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-yellow-500/10"
-                    >
-                      2x All Rewards
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="space-y-3">
-                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
-                      <div className="grid grid-cols-1 gap-3">
-                        {FREE_TIERS.map((tier) => (
-                          <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#050505] p-2.5 flex items-center justify-between">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              value={formData.tierRewardMatrix[tier] || ''}
-                              onChange={(e) => handleMatrixChange(tier, e.target.value)}
-                              placeholder="0"
-                              className="w-16 bg-[#111] border border-[#2a2a2a] rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
-                      <div className="grid grid-cols-1 gap-3">
-                        {PREMIUM_TIERS.map((tier) => (
-                          <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#050505] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
-                            <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              value={formData.tierRewardMatrix[tier] || ''}
-                              onChange={(e) => handleMatrixChange(tier, e.target.value)}
-                              placeholder="0"
-                              className="w-16 bg-[#111] border border-yellow-500/20 rounded-lg px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-100/85">
+                  Task-level sats and tier rewards are configured after campaign creation. Open the campaign tasks and assign rewards separately for each tier there.
                 </div>
 
               </div>
@@ -545,7 +420,7 @@ function InputWrapper({ label, required, children }: { label: string; required?:
 }
 
 // AFTER — paste this entire replacement:
-function DateTimePickerInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function DateTimePickerInput({ value, onChange, disabled = false }: { value: string; onChange: (value: string) => void; disabled?: boolean }) {
   const today = getTodayDateValue();
   const parts = parseDateTimeValue(value);
 
@@ -555,7 +430,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
   };
   
   return (
-    <div className="rounded-xl border border-[#2a2a2a] bg-[#111] p-3">
+    <div className={`rounded-xl border border-[#2a2a2a] bg-[#111] p-3 ${disabled ? 'opacity-60' : ''}`}>
       <div className="flex flex-col gap-2.5">
 
         {/* ── Date row — full width, native picker ── */}
@@ -565,6 +440,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             type="date"
             min={today}
             value={parts.date}
+            disabled={disabled}
             onChange={(e) => updateValue({ date: e.target.value })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -585,6 +461,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
             <Clock3 className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-sky-400 z-10" />
             <select
               value={parts.hour}
+              disabled={disabled}
               onChange={(e) => updateValue({ hour: e.target.value })}
               className="
                 w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -605,6 +482,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           {/* Minute */}
           <select
             value={parts.minute}
+            disabled={disabled}
             onChange={(e) => updateValue({ minute: e.target.value })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]
@@ -623,6 +501,7 @@ function DateTimePickerInput({ value, onChange }: { value: string; onChange: (va
           {/* AM/PM */}
           <select
             value={parts.period}
+            disabled={disabled}
             onChange={(e) => updateValue({ period: e.target.value as 'AM' | 'PM' })}
             className="
               w-full appearance-none rounded-xl border border-[#2a2a2a]
