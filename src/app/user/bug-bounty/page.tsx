@@ -36,25 +36,25 @@ const defaultStats: BugBountyStats = {
 const rewardTiers = [
   {
     title: 'Critical',
-    range: '5,000 – 50,000 sats',
+    range: '500 – 1,000 sats',
     description: 'Security vulnerabilities, fund loss, data exposure, authentication bypass',
     tone: 'border-red-500/25 bg-red-500/10 text-red-300',
   },
   {
     title: 'High',
-    range: '1,000 – 5,000 sats',
+    range: '100 – 500 sats',
     description: 'Gameplay bugs affecting outcomes, incorrect payouts, broken core features',
     tone: 'border-orange-500/25 bg-orange-500/10 text-orange-300',
   },
   {
     title: 'Medium',
-    range: '100 – 1,000 sats',
+    range: '10 – 100 sats',
     description: 'UI glitches, broken flows, display errors, incorrect calculations',
     tone: 'border-sky-500/25 bg-sky-500/10 text-sky-300',
   },
   {
     title: 'Low',
-    range: '10 – 100 sats',
+    range: '1 – 10 sats',
     description: 'Typos, minor visual issues, cosmetic inconsistencies, small UX improvements',
     tone: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300',
   },

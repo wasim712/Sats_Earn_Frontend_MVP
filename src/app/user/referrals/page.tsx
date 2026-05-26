@@ -119,12 +119,22 @@ export default function ReferralsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
-      <div>
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Referrals</h1>
+      <div className='pl-2'>
+        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight ">Referrals</h1>
         <p className="text-gray-400 text-sm sm:text-base mt-1.5 font-medium">Invite friends and earn 5% of their lifetime rewards.</p>
       </div>
 
       <ReferralHero code={data.referralCode} url={referralUrl} activeTier={activeTier} tierCommission={activeCommission}/>
+
+
+      <ReferralStats stats={data.stats} />
+
+      <ReferralLimits
+        currentReferrals={data.stats?.totalInvited || 0}
+        isFreeTier={isFreeTier}
+        activeTier={activeTier}
+      />
+      <ReferralTierCommission activeTier={activeTier} />
 
       <div className="rounded-[24px] border border-sky-500/20 bg-sky-500/10 px-5 py-4 sm:px-6 sm:py-5">
         <div className="flex items-start gap-3">
@@ -141,16 +151,6 @@ export default function ReferralsPage() {
           </div>
         </div>
       </div>
-
-      <ReferralStats stats={data.stats} />
-
-      <ReferralLimits
-        currentReferrals={data.stats?.totalInvited || 0}
-        isFreeTier={isFreeTier}
-        activeTier={activeTier}
-      />
-      <ReferralTierCommission activeTier={activeTier} />
-
       <ReferralList list={data.referralsList} />
     </div>
   );

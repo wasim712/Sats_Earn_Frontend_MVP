@@ -242,10 +242,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
         <div className={`flex h-24 items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
             <button
-              onClick={(e)=>{{isCollapsed?onToggleCollapse():onClose();
-                               if (pathname === "/user/dashboard") {
-                                e.preventDefault();
-                              } redirect("/user/dashboard");}
+              onClick={()=>{{isCollapsed?onToggleCollapse():onClose();}
             }}
               title={isCollapsed ? 'Expand Sidebar' : 'SatsEarn'}
               className="relative flex items-center justify-center transition-transform active:scale-95"
@@ -264,10 +261,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
 
             {!isCollapsed && (
                 <Link href="/user/dashboard" onClick={(e)=>{if (window.innerWidth < 1024 && isOpen) {
-      onClose();
-    } if (pathname === "/user/dashboard") {
-      e.preventDefault();
-    }}}>
+                  onClose();
+                } if (pathname === "/user/dashboard") {
+                  e.preventDefault();
+                }}}>
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="whitespace-nowrap text-2xl font-bold tracking-tight text-white">
                   Sats<span className="text-sats-orange-500">Earn</span>
