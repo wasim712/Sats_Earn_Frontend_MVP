@@ -27,6 +27,10 @@ import {
   Gem,
   Zap,
   TrendingUp,
+  Coins,
+  CircleStar,
+  Sparkles,
+  Rocket,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useGetUserNotificationsQuery } from '@/store/services/userApi';
@@ -93,12 +97,12 @@ function getTierMeta(tier?: string) {
   switch (normalizedTier) {
     case 'BASIC':
       return {
-        icon: <Star className="h-3.5 w-3.5 text-gray-400" />,
+        icon: <Shield className="h-3.5 w-3.5 text-gray-400" />,
         textClass: 'text-gray-400',
       };
     case 'COPPER':
       return {
-        icon: <Shield className="h-3.5 w-3.5 text-[#b87333]" />,
+        icon: <Coins className="h-3.5 w-3.5 text-[#b87333]" />,
         textClass: 'text-[#b87333]',
       };
     case 'BRONZE':
@@ -108,17 +112,17 @@ function getTierMeta(tier?: string) {
       };
     case 'SILVER':
       return {
-        icon: <Shield className="h-3.5 w-3.5 text-[#C0C0C0]" />,
+        icon: <Star className="h-3.5 w-3.5 text-[#C0C0C0]" />,
         textClass: 'text-[#C0C0C0]',
       };
     case 'GOLD':
       return {
-        icon: <Crown className="h-3.5 w-3.5 text-[#FFD700]" />,
+        icon: <Trophy className="h-3.5 w-3.5 text-[#FFD700]" />,
         textClass: 'text-[#FFD700]',
       };
     case 'PLATINUM':
       return {
-        icon: <Gem className="h-3.5 w-3.5 text-[#e5e4e2]" />,
+        icon: <CircleStar className="h-3.5 w-3.5 text-[#e5e4e2]" />,
         textClass: 'text-[#e5e4e2]',
       };
     case 'DIAMOND':
@@ -133,12 +137,12 @@ function getTierMeta(tier?: string) {
       };
     case 'ELITE':
       return {
-        icon: <Zap className="h-3.5 w-3.5 text-[#8a2be2]" />,
+        icon: <Sparkles className="h-3.5 w-3.5 text-[#8a2be2]" />,
         textClass: 'text-[#8a2be2]',
       };
     case 'FOUNDER':
       return {
-        icon: <TrendingUp className="h-3.5 w-3.5 text-[#ff4500]" />,
+        icon: <Rocket className="h-3.5 w-3.5 text-[#ff4500]" />,
         textClass: 'text-[#ff4500]',
       };
     default:
@@ -238,10 +242,7 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
         <div className={`flex h-24 items-center bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
             <button
-              onClick={(e)=>{{isCollapsed?onToggleCollapse():onClose();
-                               if (pathname === "/user/dashboard") {
-                                e.preventDefault();
-                              } redirect("/user/dashboard");}
+              onClick={()=>{{isCollapsed?onToggleCollapse():onClose();}
             }}
               title={isCollapsed ? 'Expand Sidebar' : 'SatsEarn'}
               className="relative flex items-center justify-center transition-transform active:scale-95"
@@ -260,10 +261,10 @@ export const UserSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, on
 
             {!isCollapsed && (
                 <Link href="/user/dashboard" onClick={(e)=>{if (window.innerWidth < 1024 && isOpen) {
-      onClose();
-    } if (pathname === "/user/dashboard") {
-      e.preventDefault();
-    }}}>
+                  onClose();
+                } if (pathname === "/user/dashboard") {
+                  e.preventDefault();
+                }}}>
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="whitespace-nowrap text-2xl font-bold tracking-tight text-white">
                   Sats<span className="text-sats-orange-500">Earn</span>

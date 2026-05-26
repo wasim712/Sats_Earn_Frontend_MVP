@@ -33,6 +33,29 @@ function getDoubleRewardsStatus(startAt?: string | null, endAt?: string | null) 
   return 'ended' as const;
 }
 
+function getCurrentDevicePlatform(): 'DESKTOP' | 'ANDROID' | 'IOS' {
+  if (typeof window === 'undefined') return 'DESKTOP';
+
+  const userAgent = window.navigator.userAgent || '';
+  const platform = window.navigator.platform || '';
+  const touchPoints = window.navigator.maxTouchPoints || 0;
+
+  const isAndroid = /Android/i.test(userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(userAgent) || (platform === 'MacIntel' && touchPoints > 1);
+
+  if (isAndroid) return 'ANDROID';
+  if (isIOS) return 'IOS';
+  return 'DESKTOP';
+}
+
+function getTaskDevicePriority(task: Task, currentDevice: 'DESKTOP' | 'ANDROID' | 'IOS') {
+  const platform = String(task.requiredPlatform || 'NONE').toUpperCase();
+
+  if (platform === currentDevice) return 0;
+  if (platform === 'NONE') return 1;
+  return 2;
+}
+
 function formatLiveUntil(value?: string | null) {
   if (!value) return '';
   const parsed = new Date(value);
@@ -217,6 +240,17 @@ export default function CampaignDetailsPage() {
   const totalTasks = campaign?.tasks?.length ?? 0;
   const progressPct = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;
   const allDone = completedCount === totalTasks && totalTasks > 0;
+  const currentDevicePlatform = getCurrentDevicePlatform();
+  const orderedTasks = campaign
+    ? [...(campaign.tasks || [])].sort((left, right) => {
+        const priorityDiff =
+          getTaskDevicePriority(left, currentDevicePlatform) - getTaskDevicePriority(right, currentDevicePlatform);
+
+        if (priorityDiff !== 0) return priorityDiff;
+
+        return left.title.localeCompare(right.title);
+      })
+    : [];
 
   // Ã¢â€â‚¬Ã¢â€â‚¬ Render Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
@@ -345,12 +379,12 @@ export default function CampaignDetailsPage() {
             </span>
           </div>
 
-          {campaign.tasks?.length === 0 ? (
+          {orderedTasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center bg-[#080808] border border-[#1a1a1a] border-dashed rounded-2xl">
               <p className="text-sm text-white/25">No tasks found for this campaign.</p>
             </div>
           ) : (
-            campaign.tasks.map((task, index) => (
+            orderedTasks.map((task, index) => (
               <TaskCard
                 key={task.id}
                 task={task}

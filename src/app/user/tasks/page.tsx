@@ -155,7 +155,10 @@ export default function TasksPage() {
         ? campaign.requiredPlatform.toUpperCase()
         : 'NONE';
 
-      const matchesDevice = deviceFilter === 'ALL' ? true : campaignDevice === deviceFilter;
+      const matchesDevice =
+        deviceFilter === 'ALL'
+          ? true
+          : campaignDevice === deviceFilter || campaignDevice === 'NONE';
 
       const matchesFilter =
         filterMode === 'ALL'
@@ -178,6 +181,17 @@ export default function TasksPage() {
     };
 
     return [...filtered].sort((left, right) => {
+      if (deviceFilter !== 'ALL') {
+        const leftPlatform = typeof left.requiredPlatform === 'string' ? left.requiredPlatform.toUpperCase() : 'NONE';
+        const rightPlatform = typeof right.requiredPlatform === 'string' ? right.requiredPlatform.toUpperCase() : 'NONE';
+
+        const leftDevicePriority = leftPlatform === deviceFilter ? 0 : leftPlatform === 'NONE' ? 1 : 2;
+        const rightDevicePriority = rightPlatform === deviceFilter ? 0 : rightPlatform === 'NONE' ? 1 : 2;
+        const devicePriorityDiff = leftDevicePriority - rightDevicePriority;
+
+        if (devicePriorityDiff !== 0) return devicePriorityDiff;
+      }
+
       const bucketDiff = getOrderBucket(left) - getOrderBucket(right);
       if (bucketDiff !== 0) return bucketDiff;
       return left.title.localeCompare(right.title);

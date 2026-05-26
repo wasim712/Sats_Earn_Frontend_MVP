@@ -31,7 +31,7 @@ export default function ReferralList({ list }: ReferralListProps) {
         <div>
           <div className="flex items-center gap-2.5">
             <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">My Network</h2>
-            <span className="rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-sats-orange-300">
+            <span className="rounded-full border border-sats-orange-400/30 bg-gradient-to-r from-sats-orange-500/18 to-amber-400/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-sats-orange-200 shadow-[0_0_20px_rgba(249,115,22,0.12)]">
               {list.length} Users
             </span>
           </div>
@@ -60,24 +60,24 @@ export default function ReferralList({ list }: ReferralListProps) {
 
 function DesktopTable({ list }: { list: UserReferral[] }) {
   return (
-    <div className="overflow-hidden rounded-[22px] border border-[#232323] bg-[#0b0b0b] shadow-[0_18px_60px_rgba(0,0,0,0.28)]">
-      <div className="flex items-center justify-between gap-3 border-b border-[#232323] bg-[linear-gradient(180deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02))] px-4 py-3 sm:px-5">
+    <div className="overflow-hidden rounded-[22px] border border-[#2a2a2a] bg-[#0b0b0b] shadow-[0_18px_60px_rgba(0,0,0,0.28)] ring-1 ring-sats-orange-500/6">
+      <div className="flex items-center justify-between gap-3 border-b border-[#2a2a2a] bg-[linear-gradient(180deg,rgba(249,115,22,0.14),rgba(245,158,11,0.06))] px-4 py-3 sm:px-5">
         <p className="text-[11px] font-black uppercase tracking-[0.18em] text-sats-orange-300">
           Network Overview
         </p>
-        <p className="text-[11px] font-semibold text-gray-500 sm:text-xs inline lg:hidden">
+        <p className="text-[11px] font-semibold text-gray-400 sm:text-xs inline lg:hidden">
           Swipe sideways to view all columns
         </p>
       </div>
 
       <div className="overflow-x-auto overscroll-x-contain scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#2a2a2a]">
-        <table className="min-w-full border-collapse">
+        <table className="min-w-[1040px] w-full border-collapse">
           <thead>
-            <tr className="border-b border-[#232323] bg-[#111111]">
-              {['Username', 'Country', 'DOJ', 'Tasks', 'Status', 'Tier', 'Email'].map((heading) => (
+            <tr className="border-b border-[#2a2a2a] bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))]">
+              {['Username', 'Country', 'DOJ', 'Active Days', 'Tasks', 'Status', 'Tier', 'Email'].map((heading) => (
                 <th
                   key={heading}
-                  className="px-4 xl:px-5 py-3 text-left text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 whitespace-nowrap"
+                  className="px-4 xl:px-5 py-3 text-left text-[11px] font-black uppercase tracking-[0.16em] text-gray-400 whitespace-nowrap"
                 >
                   {heading}
                 </th>
@@ -89,10 +89,11 @@ function DesktopTable({ list }: { list: UserReferral[] }) {
               const data = getReferralDisplayData(referral);
 
               return (
-                <tr key={referral.id} className="group border-b border-[#1c1c1c] last:border-b-0 transition-all duration-200 hover:bg-[linear-gradient(90deg,rgba(249,115,22,0.06),rgba(255,255,255,0.02),rgba(249,115,22,0.03))]">
+                <tr key={referral.id} className="group border-b border-[#1f1f1f] last:border-b-0 transition-all duration-200 hover:bg-[linear-gradient(90deg,rgba(249,115,22,0.10),rgba(255,255,255,0.03),rgba(234,179,8,0.06))]">
                   <td className="px-4 xl:px-5 py-4 text-sm font-semibold text-white whitespace-nowrap transition-colors group-hover:text-sats-orange-100">{data.username}</td>
                   <td className="px-4 xl:px-5 py-4 text-sm text-gray-300 whitespace-nowrap transition-colors group-hover:text-white">{data.country}</td>
                   <td className="px-4 xl:px-5 py-4 text-sm text-gray-300 whitespace-nowrap transition-colors group-hover:text-white">{data.joinedAt}</td>
+                  <td className="px-4 xl:px-5 py-4 text-sm font-semibold text-sky-200 whitespace-nowrap transition-colors group-hover:text-sky-100">{data.activeDays}</td>
                   <td className="px-4 xl:px-5 py-4 text-sm font-semibold text-white whitespace-nowrap transition-colors group-hover:text-sats-orange-100">{data.tasksCompleted}</td>
                   <td className="px-4 xl:px-5 py-4 whitespace-nowrap">
                     <StatusBadge isActive={referral.isActive} />
@@ -206,8 +207,8 @@ function StatusBadge({ isActive, compact = false }: { isActive: boolean; compact
     <span
       className={`inline-flex items-center justify-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${
         isActive
-          ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300'
-          : 'border-white/10 bg-white/[0.05] text-gray-400'
+          ? 'border-emerald-400/30 bg-gradient-to-r from-emerald-500/18 to-green-400/10 text-emerald-200 shadow-[0_0_14px_rgba(52,211,153,0.12)]'
+          : 'border-rose-400/18 bg-gradient-to-r from-white/[0.08] to-rose-500/[0.06] text-rose-200/90'
       } ${compact ? 'min-w-[76px]' : ''}`}
     >
       {isActive ? 'Active' : 'Inactive'}
@@ -266,14 +267,38 @@ function getReferralDisplayData(referral: UserReferral) {
 
   return {
     username: referral.username?.trim() || referral.fullName?.trim() || fallbackName,
-    country: referral.country?.trim() || 'N/A',
+    country: formatCountryName(referral.country),
     joinedAt: referral.joinedAt
       ? new Date(referral.joinedAt).toLocaleDateString('en-GB')
       : 'N/A',
+    activeDays: `${Number(referral.daysActiveLast30 ?? 0)}/30`,
     tasksCompleted: Number(referral.tasksCompleted ?? 0),
     tier: referral.tier || 'BASIC',
     email: referral.email || 'No email available',
   };
+}
+
+function formatCountryName(country?: string | null) {
+  const value = country?.trim();
+
+  if (!value) return 'N/A';
+
+  const normalized = value.toLowerCase();
+
+  if (
+    normalized === 'united states of america' ||
+    normalized === 'united states' ||
+    normalized === 'usa' ||
+    normalized === 'us'
+  ) {
+    return 'USA';
+  }
+
+  if (normalized === 'united kingdom') return 'UK';
+  if (normalized === 'south korea') return 'S. Korea';
+  if (normalized === 'united arab emirates') return 'UAE';
+
+  return value.length > 18 ? `${value.slice(0, 15)}...` : value;
 }
 
 function formatTierLabel(tier: string) {
@@ -283,21 +308,39 @@ function formatTierLabel(tier: string) {
 function getTierTheme(tier: string) {
   const key = tier.toUpperCase();
 
-  if (['FOUNDER', 'ELITE', 'CROWN', 'DIAMOND', 'PLATINUM'].includes(key)) {
-    return 'border-violet-500/30 bg-violet-500/10 text-violet-200';
+  if (key === 'FOUNDER') {
+    return 'border-red-500/30 bg-gradient-to-r from-red-500/14 to-orange-500/10 text-red-200 shadow-[0_0_18px_rgba(239,68,68,0.12)]';
+  }
+
+  if (key === 'ELITE') {
+    return 'border-fuchsia-500/30 bg-gradient-to-r from-fuchsia-500/14 to-violet-500/10 text-fuchsia-200 shadow-[0_0_18px_rgba(217,70,239,0.12)]';
+  }
+
+  if (key === 'CROWN') {
+    return 'border-amber-500/30 bg-gradient-to-r from-amber-500/14 to-orange-500/10 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.12)]';
+  }
+
+  if (key === 'DIAMOND') {
+    return 'border-cyan-400/30 bg-gradient-to-r from-cyan-400/14 to-sky-400/10 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.12)]';
+  }
+
+  if (key === 'PLATINUM') {
+    return 'border-indigo-400/30 bg-gradient-to-r from-indigo-400/14 to-violet-400/10 text-indigo-100 shadow-[0_0_18px_rgba(129,140,248,0.12)]';
   }
 
   if (key === 'GOLD') {
-    return 'border-amber-500/30 bg-amber-500/10 text-amber-200';
+    return 'border-amber-500/30 bg-gradient-to-r from-amber-500/14 to-yellow-400/10 text-amber-100 shadow-[0_0_18px_rgba(245,158,11,0.12)]';
   }
 
   if (key === 'SILVER') {
-    return 'border-slate-400/30 bg-slate-400/10 text-slate-200';
+    return 'border-slate-400/30 bg-gradient-to-r from-slate-400/14 to-zinc-300/10 text-slate-100';
   }
 
   if (['BRONZE', 'COPPER'].includes(key)) {
-    return 'border-orange-500/30 bg-orange-500/10 text-orange-200';
+    return key === 'BRONZE'
+      ? 'border-orange-500/30 bg-gradient-to-r from-orange-500/14 to-amber-700/10 text-orange-100'
+      : 'border-orange-400/30 bg-gradient-to-r from-orange-400/14 to-yellow-700/10 text-orange-100';
   }
 
-  return 'border-white/10 bg-white/[0.06] text-gray-200';
+  return 'border-white/12 bg-gradient-to-r from-white/[0.08] to-white/[0.04] text-gray-100';
 }
