@@ -14,7 +14,6 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import type { LeaderboardEntry } from '@/types/user';
-import { AdSlot } from '@/components/ui/AdSlot';
 
 type LeaderboardTab = 'earners' | 'streaks';
 type EarnersFilter = 'daily' | 'weekly' | 'monthly' | 'allTime';
@@ -385,7 +384,6 @@ export default function UserLeaderboardPage() {
           </div>
         </div>
 
-        <AdSlot slot="1234567890" className="mx-auto max-w-4xl" />
 
         {isLoading ? (
           <LeaderboardLoadingState />

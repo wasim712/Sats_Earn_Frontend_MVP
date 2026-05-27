@@ -26,6 +26,7 @@ interface StreakMilestoneItem {
 
 interface StreakSectionProps {
   unreadStreakReward?: UserNotification;
+  isPremium: boolean;
   currentStreak: number;
   nextStreakMilestone: number | null;
   nextStreakRewardSats: number;
@@ -44,6 +45,7 @@ interface DashboardLowerGridProps {
 
 export function StreakSection({
   unreadStreakReward,
+  isPremium,
   currentStreak,
   nextStreakMilestone,
   nextStreakRewardSats,
@@ -54,6 +56,9 @@ export function StreakSection({
   lastClaimedStreakMilestone,
   streakMilestones,
 }: StreakSectionProps) {
+  const premiumLockedMilestones = new Set([90, 180, 365]);
+  const lockHint = 'To claim these rewards, you need Premium.';
+
   return (
     <>
       {unreadStreakReward && (
@@ -69,7 +74,7 @@ export function StreakSection({
         </div>
       )}
 
-      <div className="group relative mb-6 overflow-hidden rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 shadow-xl sm:p-8">
+      <div className=" relative mb-6 overflow-hidden rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 shadow-xl sm:p-8">
         <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 bg-sats-orange-500/5 blur-[80px]" />
 
         <div className="relative z-10 mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -131,8 +136,11 @@ export function StreakSection({
                 const achieved = milestone.claimed;
                 const reachedInCurrentRun = milestone.reachedInCurrentRun;
                 const isNext = milestone.isNext;
+                const isPremiumLocked = !isPremium && premiumLockedMilestones.has(milestone.days);
                 const cardTone = achieved
                   ? 'border-emerald-500/30 bg-emerald-500/10'
+                  : isPremiumLocked
+                    ? 'border-[#2b2416] bg-[#0a0906]'
                   : reachedInCurrentRun
                     ? 'border-blue-500/30 bg-blue-500/10'
                     : isNext
@@ -140,10 +148,28 @@ export function StreakSection({
                       : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
-                  <div key={milestone.days} className={`relative flex w-[120px] cursor-default flex-col items-center gap-3 rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full border-[3px] transition-all duration-500 ${achieved ? 'border-emerald-400 bg-[#111] text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]' : reachedInCurrentRun ? 'border-blue-400 bg-[#111] text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]' : isNext ? 'scale-110 border-yellow-400 bg-[#111] text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)]' : 'border-[#2a2a2a] bg-[#0a0a0a] text-gray-600'}`}>
+                  <div key={milestone.days} className={`group relative flex w-[120px] cursor-default flex-col items-center gap-3 rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
+                    {isPremiumLocked ? (
+                      <div className="absolute top-2 right-2 z-20">
+                        <Link
+                          href="/user/rewards"
+                          aria-label={lockHint}
+                          title={lockHint}
+                          className="relative flex h-6 w-6 items-center justify-center rounded-full border border-yellow-500/20 bg-yellow-500/10 text-yellow-400 transition-colors hover:bg-yellow-500/15"
+                        >
+                          <LockKeyhole className="h-3.5 w-3.5" />
+                          <span className="pointer-events-none absolute right-0 top-8 z-30 hidden w-40 rounded-lg border border-[#2a2a2a] bg-[#111] px-2.5 py-2 text-left text-[10px] font-semibold leading-relaxed text-gray-200 shadow-xl group-hover:block sm:group-hover:block">
+                            {lockHint}
+                          </span>
+                        </Link>
+                      </div>
+                    ) : null}
+
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full border-[3px] transition-all duration-500 ${achieved ? 'border-emerald-400 bg-[#111] text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]' : isPremiumLocked ? 'border-yellow-500/40 bg-[#111] text-yellow-400' : reachedInCurrentRun ? 'border-blue-400 bg-[#111] text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]' : isNext ? 'scale-110 border-yellow-400 bg-[#111] text-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)]' : 'border-[#2a2a2a] bg-[#0a0a0a] text-gray-600'}`}>
                       {achieved ? (
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      ) : isPremiumLocked ? (
+                        <LockKeyhole className="h-4 w-4" />
                       ) : reachedInCurrentRun ? (
                         <Trophy className="h-4 w-4" />
                       ) : (
@@ -152,15 +178,20 @@ export function StreakSection({
                     </div>
 
                     <div className="text-center">
-                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-white' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : isPremiumLocked ? 'text-yellow-300' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-white' : 'text-gray-500'}`}>
                         {milestone.days} Days
                       </p>
-                      <p className={`mt-0.5 text-[10px] font-bold ${achieved || reachedInCurrentRun || isNext ? 'text-gray-400' : 'text-[#333]'}`}>
+                      <p className={`mt-0.5 text-[10px] font-bold ${achieved || reachedInCurrentRun || isNext || isPremiumLocked ? 'text-gray-400' : 'text-[#333]'}`}>
                         +{milestone.rewardSats} sats
                       </p>
-                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-yellow-300/90' : 'text-gray-600'}`}>
-                        {achieved ? 'Claimed' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}
+                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : isPremiumLocked ? 'text-yellow-300/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-yellow-300/90' : 'text-gray-600'}`}>
+                        {achieved ? 'Claimed' : isPremiumLocked ? 'Premium' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}
                       </p>
+                      {isPremiumLocked && reachedInCurrentRun ? (
+                        <Link href="/user/rewards" className="mt-1 text-[9px] font-bold text-yellow-400 transition-colors hover:text-yellow-300 sm:hidden">
+                          Need Premium
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 );

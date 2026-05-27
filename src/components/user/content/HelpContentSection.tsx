@@ -35,79 +35,6 @@ type HelpContentSectionProps = {
   contactHref?: string;
 };
 
-type DefaultFaq = {
-  id: string;
-  question: string;
-  answer: string;
-  category: string;
-};
-
-const DEFAULT_FAQS: DefaultFaq[] = [
-  {
-    id: 'default-what-is-satsearn',
-    question: 'What is SatsEarn?',
-    answer:
-      'SatsEarn is a gamified earning platform where users complete tasks, quizzes, referrals, and other activities to collect Bitcoin rewards in sats.',
-    category: 'Getting Started',
-  },
-  {
-    id: 'default-how-do-i-earn',
-    question: 'How do I start earning on the platform?',
-    answer:
-      'Create your account, explore available tasks, complete the required actions carefully, and track your rewards, submissions, and unlock schedule directly from your dashboard.',
-    category: 'Earning',
-  },
-  {
-    id: 'default-is-satsearn-free',
-    question: 'Is SatsEarn really free?',
-    answer:
-      'Yes, SatsEarn is completely free to use. Users are never required to deposit money to start earning rewards on the platform.',
-    category: 'Getting Started',
-  },
-  {
-    id: 'default-how-much-can-i-earn',
-    question: 'How much can I earn?',
-    answer:
-      'Your earnings depend on task availability, activity level, and account tier. Higher tiers unlock better rewards, bonuses, and earning opportunities.',
-    category: 'Earning',
-  },
-  {
-    id: 'default-when-can-i-withdraw',
-    question: 'When can I withdraw my sats?',
-    answer:
-      'You can request a withdrawal after meeting the minimum withdrawal threshold and once your eligible rewards move from pending status into your available balance.',
-    category: 'Withdrawals',
-  },
-  {
-    id: 'default-how-do-withdrawals-work',
-    question: 'How do withdrawals work?',
-    answer:
-      'Users can withdraw earned sats to supported Bitcoin or Lightning wallets after meeting the platform requirements and verification checks.',
-    category: 'Withdrawals',
-  },
-  {
-    id: 'default-what-are-tier-levels',
-    question: 'What are the tier levels?',
-    answer:
-      'SatsEarn includes multiple user tiers that unlock higher-paying tasks, better referral rewards, exclusive bonuses, and additional platform benefits as users progress.',
-    category: 'Account',
-  },
-  {
-    id: 'default-how-referrals-work',
-    question: 'How does the referral program work?',
-    answer:
-      'Invite friends using your referral link and earn bonus sats when they complete tasks. Higher account tiers may unlock increased referral commission percentages.',
-    category: 'Referrals',
-  },
-  {
-    id: 'default-why-was-task-rejected',
-    question: 'Why can a task submission be rejected?',
-    answer:
-      'A submission may be rejected if the proof is incomplete, unclear, duplicated, mismatched with instructions, or fails the platform verification process.',
-    category: 'Submissions',
-  },
-];
-
 export function HelpContentSection({
   blogs,
   faqs,
@@ -119,26 +46,22 @@ export function HelpContentSection({
 }: HelpContentSectionProps) {
   const [faqQuery, setFaqQuery] = useState('');
   const [blogQuery, setBlogQuery] = useState('');
-  const [openFaqId, setOpenFaqId] = useState<string>(DEFAULT_FAQS[0].id);
+  const [openFaqId, setOpenFaqId] = useState<string>('');
 
   const mergedFaqs = useMemo(() => {
-    const dynamicFaqs = faqs.map((item) => ({
+    const seenQuestions = new Set<string>();
+
+    return faqs.filter((item) => {
+      const key = item.question.trim().toLowerCase();
+      if (seenQuestions.has(key)) return false;
+      seenQuestions.add(key);
+      return true;
+    }).map((item) => ({
       id: item.id,
       question: item.question,
       answer: item.answer,
       category: item.category || 'Platform',
     }));
-
-    const seenQuestions = new Set(DEFAULT_FAQS.map((item) => item.question.trim().toLowerCase()));
-
-    const dedupedDynamicFaqs = dynamicFaqs.filter((item) => {
-      const key = item.question.trim().toLowerCase();
-      if (seenQuestions.has(key)) return false;
-      seenQuestions.add(key);
-      return true;
-    });
-
-    return [...DEFAULT_FAQS, ...dedupedDynamicFaqs];
   }, [faqs]);
 
   const filteredFaqs = useMemo(() => {
@@ -150,6 +73,15 @@ export function HelpContentSection({
       return haystack.includes(normalizedQuery);
     });
   }, [mergedFaqs, faqQuery]);
+
+  React.useEffect(() => {
+    if (!filteredFaqs.length) {
+      setOpenFaqId('');
+      return;
+    }
+
+    setOpenFaqId((current) => (current && filteredFaqs.some((faq) => faq.id === current) ? current : filteredFaqs[0].id));
+  }, [filteredFaqs]);
 
   const filteredBlogs = useMemo(() => {
     const normalizedQuery = blogQuery.trim().toLowerCase();
@@ -194,7 +126,7 @@ export function HelpContentSection({
               <p className="text-xs font-black uppercase tracking-[0.22em] text-sats-orange-400">FAQ Section</p>
               <h2 className="mt-2 text-xl font-black tracking-tight text-white">Questions answered clearly</h2>
               <p className="mt-2 text-sm text-gray-400">
-                Includes a default knowledge base plus dynamically fetched admin FAQs when available.
+                Browse live FAQs managed from the admin panel.
               </p>
             </div>
 
@@ -442,3 +374,4 @@ function EmptyState({
     </div>
   );
 }
+

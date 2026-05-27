@@ -5,21 +5,21 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Loader2, Plus, Save } from 'lucide-react';
 import type { FaqItem } from '../content/content.types';
 import { FaqList } from './FaqList';
-import { createAdminFaq, deleteAdminFaq, fetchAdminFaqs } from '@/features/admin/adminFaqsSlice';
+import { createAdminFaq, deleteAdminFaq, fetchAdminFaqs, updateAdminFaq } from '@/features/admin/adminFaqsSlice';
 
 function parseWholeNumber(value: string) {
   const digitsOnly = value.replace(/\D/g, '');
-  if (digitsOnly === '') return 0;
+  if (digitsOnly === '') return '';
 
   const parsed = Number.parseInt(digitsOnly, 10);
-  return Number.isNaN(parsed) ? 0 : parsed;
+  return Number.isNaN(parsed) ? '' : parsed;
 }
 
 export default function AdminFaqsPage() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [category, setCategory] = useState('');
-  const [sortOrder, setSortOrder] = useState(0);
+  const [sortOrder, setSortOrder] = useState<number | ''>('');
   const [isActive, setIsActive] = useState(true);
   const [localError, setLocalError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -35,12 +35,12 @@ export default function AdminFaqsPage() {
     setLocalError(null);
     setSuccess(null);
     try {
-      await dispatch(createAdminFaq({ question, answer, category, sortOrder, isActive })).unwrap();
+      await dispatch(createAdminFaq({ question, answer, category, sortOrder: typeof sortOrder === 'number' ? sortOrder : 0, isActive })).unwrap();
 
       setQuestion('');
       setAnswer('');
       setCategory('');
-      setSortOrder(0);
+      setSortOrder('');
       setIsActive(true);
       setSuccess('FAQ item created successfully.');
     } catch (err: any) {
@@ -56,12 +56,22 @@ export default function AdminFaqsPage() {
     }
   };
 
+  const handleToggleStatus = async (item: FaqItem) => {
+    try {
+      await dispatch(updateAdminFaq({ id: item.id, isActive: !item.isActive })).unwrap();
+      setSuccess(`FAQ ${item.isActive ? 'paused' : 'activated'} successfully.`);
+      setLocalError(null);
+    } catch (err: any) {
+      setLocalError(err.message || 'Failed to update FAQ item.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32">
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-black text-white">FAQ Manager</h1>
-          <p className="text-sm text-gray-400 mt-1">Create and manage FAQ blocks. Tell me later where you want them pasted.</p>
+          <p className="text-sm text-gray-400 mt-1">Create and manage FAQ blocks for the user help section. Lower order values appear first.</p>
         </div>
 
         {(localError || error) && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{localError || error}</div>}
@@ -79,7 +89,7 @@ export default function AdminFaqsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
-              <input type="text" inputMode="numeric" pattern="[0-9]*" value={sortOrder} onChange={(e) => setSortOrder(parseWholeNumber(e.target.value))} placeholder="Sort order" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
+              <input type="text" inputMode="numeric" pattern="[0-9]*" value={sortOrder} onChange={(e) => setSortOrder(parseWholeNumber(e.target.value))} placeholder="Order" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
               <label className="inline-flex items-center gap-3 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-sm text-gray-300">
                 <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                 Active
@@ -92,7 +102,7 @@ export default function AdminFaqsPage() {
             </button>
           </form>
 
-          <FaqList items={items} isLoading={isLoading} onDelete={handleDelete} />
+          <FaqList items={items} isLoading={isLoading} onDelete={handleDelete} onToggleStatus={handleToggleStatus} />
         </div>
       </div>
     </div>
