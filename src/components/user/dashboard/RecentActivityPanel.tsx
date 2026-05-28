@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import type { UserDashboard } from '@/types/user';
 
-type Transaction = UserDashboard['recentActivity'][number];
+type Transaction = NonNullable<UserDashboard['recentActivity']>[number];
 
 interface RecentActivityPanelProps {
   activities: Transaction[];
