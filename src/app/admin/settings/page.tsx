@@ -10,6 +10,7 @@ import { ReferralMatrixSection } from '@/components/admin/settings/ReferralMatri
 import { WithdrawalTierMatrixSection } from '@/components/admin/settings/WithdrawalTierMatrixSection';
 import { PremiumMonthlySatsMatrixSection } from '@/components/admin/settings/PremiumMonthlySatsMatrixSection';
 import { PremiumYearlySatsMatrixSection } from '@/components/admin/settings/PremiumYearlySatsMatrixSection';
+import { UserSidebarVisibilitySection } from '@/components/admin/settings/UserSidebarVisibilitySection';
 import { SettingsErrorBanner, SettingsSuccessToast } from '@/components/admin/settings/SettingsFeedback';
 import { SettingsHeader } from '@/components/admin/settings/SettingsHeader';
 import { SettingsInputWrapper } from '@/components/admin/settings/SettingsInputWrapper';
@@ -219,34 +220,10 @@ export default function AdminSettingsPage() {
 
             <PremiumYearlySatsMatrixSection values={formData.premiumYearlySatsMatrix} onChange={handlePremiumYearlyMatrixChange} />
 
-            <SettingsSectionCard
-              title="User Sidebar Visibility"
-              description="Admins can hide user dashboard sections from the backend. Hidden items disappear from the sidebar and blocked pages will not render."
-              icon={<Users className="w-5 h-5 text-emerald-400" />}
-            >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {Object.entries(formData.userSidebarConfig).map(([key, value]) => (
-                  <label
-                    key={key}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-[#1f1f1f] bg-[#0a0a0a] px-4 py-3"
-                  >
-                    <div>
-                      <p className="text-sm font-bold text-white">{key.replace(/([A-Z])/g, ' $1').replace(/^./, (char) => char.toUpperCase())}</p>
-                      <p className="text-xs text-gray-500">{value ? 'Visible to users' : 'Hidden from users'}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleSidebarToggle(key as keyof typeof formData.userSidebarConfig)}
-                      className={`relative h-7 w-12 rounded-full transition-colors ${value ? 'bg-emerald-500' : 'bg-[#222]'}`}
-                    >
-                      <span
-                        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`}
-                      />
-                    </button>
-                  </label>
-                ))}
-              </div>
-            </SettingsSectionCard>
+            <UserSidebarVisibilitySection
+              values={formData.userSidebarConfig}
+              onToggle={(key) => handleSidebarToggle(key as keyof typeof formData.userSidebarConfig)}
+            />
           </div>
         </form>
       </div>

@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Monitor,
   Search,
+  Smartphone,
   Sparkles,
   Target,
   Zap,
@@ -33,6 +34,22 @@ type StandaloneTask = {
   isCompleted?: boolean;
   hasStarted?: boolean;
 };
+
+type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
+
+type DeviceOption = {
+  key: DeviceFilter;
+  label: string;
+  iconType: 'lucide' | 'image';
+  icon: React.ComponentType<{ className?: string }> | string;
+};
+
+const deviceOptions: DeviceOption[] = [
+  { key: 'ALL', label: 'All Devices', iconType: 'lucide', icon: LayoutGrid },
+  { key: 'DESKTOP', label: 'Desktop', iconType: 'lucide', icon: Monitor },
+  { key: 'ANDROID', label: 'Android', iconType: 'image', icon: '/svgs/android.svg' },
+  { key: 'IOS', label: 'iOS', iconType: 'image', icon: '/svgs/ios.svg' },
+];
 
 const formatCompact = (value: number) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 
@@ -78,6 +95,7 @@ export default function StandaloneTasksPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>('ALL');
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -114,8 +132,17 @@ export default function StandaloneTasksPage() {
           || (task.description || '').toLowerCase().includes(normalizedSearch)
           || String(task.proofType || '').toLowerCase().includes(normalizedSearch);
       })
+      .filter((task) => {
+        const taskDevice = String(task.requiredPlatform || 'NONE').toUpperCase();
+
+        if (deviceFilter === 'ALL') {
+          return taskDevice === 'NONE';
+        }
+
+        return taskDevice === deviceFilter || taskDevice === 'NONE';
+      })
       .sort((left, right) => left.title.localeCompare(right.title));
-  }, [tasks, searchQuery]);
+  }, [tasks, searchQuery, deviceFilter]);
 
   const summary = useMemo(() => {
     const completed = filteredTasks.filter((task) => task.isCompleted).length;
@@ -181,6 +208,30 @@ export default function StandaloneTasksPage() {
               placeholder="Search standalone tasks by title, description, or proof type"
               className="w-full rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] py-3.5 pl-12 pr-4 text-sm font-medium text-white outline-none transition focus:border-sats-orange-500"
             />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {deviceOptions.map(({ key, label, iconType, icon }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setDeviceFilter(key)}
+                className={`inline-flex ${key === 'IOS' ? '' : 'items-center'} justify-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all ${
+                  deviceFilter === key
+                    ? 'border-sats-orange-500/40 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_18px_rgba(238,139,18,0.08)]'
+                    : 'border-[#1a1a1a] bg-[#050505] text-gray-400 hover:border-[#2a2a2a] hover:text-white'
+                }`}
+              >
+                {iconType === 'image' ? (
+                  <Image src={icon as string} alt={label} width={16} height={16} className="h-4 w-4" />
+                ) : (
+                  React.createElement(icon as React.ComponentType<{ className?: string }>, { className: 'h-4 w-4' })
+                )}
+                <span className={key === 'ALL' ? '' : 'hidden md:inline'}>
+                  {key === 'ALL' ? <><span className="md:hidden">All</span><span className="hidden md:inline">{label}</span></> : label}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
       </section>

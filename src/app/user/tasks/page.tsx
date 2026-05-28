@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import {
   AlertTriangle,
@@ -26,8 +25,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 type FilterMode = 'ALL' | 'AVAILABLE' | 'COMPLETED';
 type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
-type BrowseMode = 'CAMPAIGNS' | 'STANDALONE';
-
 type DeviceOption = {
   key: DeviceFilter;
   label: string;
@@ -111,29 +108,87 @@ const getPreviewDescription = (text: string) => {
   return `${text.slice(0, 120).trim()}...`;
 };
 
+type StandaloneTask = {
+  id: string;
+  campaignId?: string;
+  title: string;
+  description?: string | null;
+  coverImageUrl?: string | null;
+  targetUrl?: string | null;
+  proofType?: string | null;
+  requiredPlatform?: 'NONE' | 'DESKTOP' | 'ANDROID' | 'IOS';
+  taskRewardSats?: number;
+  xpReward?: number;
+  doubleRewardsActive?: boolean;
+  isCompleted?: boolean;
+  hasStarted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+const mapStandaloneTaskToCampaign = (task: StandaloneTask): Campaign => ({
+  id: task.id,
+  title: task.title,
+  description: task.description || 'Quick standalone earning task.',
+  category: 'Standalone Task',
+  socialHandleTarget: null,
+  targetCountries: [],
+  isPremiumOnly: false,
+  requiredFreeTier: 'BASIC',
+  targetUrl: task.targetUrl || null,
+  requiredPlatform: task.requiredPlatform || 'NONE',
+  coverImageUrl: task.coverImageUrl || null,
+  baseRewardSats: Number(task.taskRewardSats || 0),
+  xpReward: Number(task.xpReward || 0),
+  doubleRewardsStartAt: null,
+  doubleRewardsEndAt: null,
+  doubleRewardsActive: Boolean(task.doubleRewardsActive),
+  tierRewardMatrix: {},
+  totalCompletions: task.isCompleted ? 1 : 0,
+  maxCompletions: 1,
+  isActive: true,
+  isStandalone: true,
+  isCompleted: Boolean(task.isCompleted),
+  hasStarted: Boolean(task.hasStarted),
+  completedTasksCount: task.isCompleted ? 1 : 0,
+  totalTasksCount: 1,
+  displayRewardSats: Number(task.taskRewardSats || 0),
+  userCompletionStatus: task.isCompleted ? 'COMPLETED' : task.hasStarted ? 'IN_PROGRESS' : 'AVAILABLE',
+  createdAt: task.createdAt || new Date().toISOString(),
+  updatedAt: task.updatedAt || new Date().toISOString(),
+});
+
 export default function TasksPage() {
-  const searchParams = useSearchParams();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<FilterMode>('ALL');
   const [deviceFilter, setDeviceFilter] = useState<DeviceFilter>('ALL');
-  const [browseMode, setBrowseMode] = useState<BrowseMode>(searchParams.get('view') === 'standalone' ? 'STANDALONE' : 'CAMPAIGNS');
-
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
         const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        };
 
-        const data = await obfuscatedJsonRequest<Campaign[]>(`${API_URL}/users/campaigns`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCampaigns(Array.isArray(data) ? data : []);
+        const [campaignData, standaloneData] = await Promise.all([
+          obfuscatedJsonRequest<Campaign[]>(`${API_URL}/users/campaigns`, {
+            method: 'GET',
+            headers,
+          }),
+          obfuscatedJsonRequest<StandaloneTask[]>(`${API_URL}/users/standalone-tasks`, {
+            method: 'GET',
+            headers,
+          }),
+        ]);
+
+        setCampaigns([
+          ...(Array.isArray(campaignData) ? campaignData : []),
+          ...(Array.isArray(standaloneData) ? standaloneData.map(mapStandaloneTaskToCampaign) : []),
+        ]);
       } catch (err: unknown) {
         console.error('Error fetching tasks:', err);
         setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
@@ -157,7 +212,7 @@ export default function TasksPage() {
 
       const matchesDevice =
         deviceFilter === 'ALL'
-          ? true
+          ? campaignDevice === 'NONE'
           : campaignDevice === deviceFilter || campaignDevice === 'NONE';
 
       const matchesFilter =
@@ -213,12 +268,12 @@ export default function TasksPage() {
           <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sats-orange-400">
               <Sparkles className="h-3.5 w-3.5" />
-              Reward Campaigns
+              Browse Tasks
             </div>
             <div className="space-y-2">
               <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">Available Tasks</h1>
               <p className="text-sm sm:text-[15px] font-medium leading-7 text-gray-400">
-                Complete tasks and stack sats faster.
+                Complete campaigns and standalone tasks in one place and stack sats faster.
               </p>
             </div>
           </div>
@@ -240,7 +295,7 @@ export default function TasksPage() {
             </div>
             <input
               type="text"
-              placeholder="Search campaigns, rewards, or task keywords"
+                placeholder="Search tasks, rewards, or task keywords"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-2xl border border-[#1a1a1a] bg-[#050505] py-3.5 pl-12 pr-4 text-white outline-none transition-all placeholder:text-gray-600 hover:border-[#2a2a2a] focus:border-sats-orange-500/40"
@@ -385,6 +440,7 @@ function SummaryCard({
 }
 
 function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
+  const detailHref = campaign.isStandalone ? `/user/standalone-tasks/${campaign.id}` : `/user/tasks/${campaign.id}`;
   const topReward = getTopReward(campaign);
   const { icon: DeviceIcon, iconSrc: deviceIconSrc, label: deviceLabel } = getRequiredPlatform(campaign) as {
     icon?: React.ComponentType<{ className?: string }> | null;
@@ -398,7 +454,7 @@ function TaskPreviewCard({ campaign }: { campaign: Campaign }) {
   const description = getPreviewDescription(campaign.description);
 
   return (
-    <Link href={`/user/tasks/${campaign.id}`} className="group block h-full">
+    <Link href={detailHref} className="group block h-full">
       <article className="relative flex h-full min-h-[480px] flex-col overflow-hidden rounded-[32px] border border-[#1a1a1a] bg-[#080808] shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#2a2a2a] hover:shadow-[0_28px_80px_rgba(0,0,0,0.45)]">
         <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_right,rgba(238,139,18,0.10),transparent_20%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_22%)]" />
 

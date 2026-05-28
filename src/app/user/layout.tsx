@@ -43,7 +43,6 @@ const DEFAULT_USER_SIDEBAR_CONFIG: UserSidebarConfig = {
 const USER_ROUTE_CONFIG: Array<{ key: keyof UserSidebarConfig; prefix: string }> = [
   { key: 'dashboard', prefix: '/user/dashboard' },
   { key: 'tasks', prefix: '/user/tasks' },
-  { key: 'standaloneTasks', prefix: '/user/standalone-tasks' },
   { key: 'minigames', prefix: '/user/minigames' },
   { key: 'bugBounty', prefix: '/user/bug-bounty' },
   { key: 'quiz', prefix: '/user/quiz' },

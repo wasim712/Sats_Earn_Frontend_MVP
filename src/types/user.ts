@@ -1,122 +1,27 @@
-export interface AuthUser {
-  id: string;
-  email: string;
-  fullName: string | null;
-  country?: string | null;
-  role: string;
-  activeTier: string;
-  isPremium: boolean;
-  premiumExpiresAt: string | null;
-  balanceAvailable: number;
-  balancePending: number;
-  balanceLocked: number;
-  totalXp: number;
-  referralCode: string;
-  createdAt: string;
-  updatedAt: string;
-  _count?: {
-    submissions: number;
-    referrals: number;
-  };
-}
-
 export interface SignUpPayload {
   fullName: string;
-  username: string;
   email: string;
-  password?: string;
-  country: string;
-  dateOfBirth: string;
+  password: string;
+  country?: string;
   referralCode?: string;
+  [key: string]: unknown;
 }
 
-export interface BillingHistoryItem {
-  id: string;
-  premiumTier: string;
-  billingCycle: 'MONTHLY' | 'YEARLY';
-  billingSource: 'MANUAL_PAYMENT' | 'SATS_BALANCE' | 'ADMIN_OVERRIDE';
-  amountUsd?: number | null;
-  amountSats?: number | null;
-  adminNotes?: string | null;
-  premiumExpiresAt?: string | null;
-  createdAt: string;
-}
-
-export interface PremiumPricing {
-  monthlySatsMatrix: Record<string, number>;
-  yearlySatsMatrix: Record<string, number>;
-}
-
-export interface UserProfile {
-  fullName: string | null;
-  email: string;
-  phone: string | null;
-  country: string | null;
-  twitterHandle: string | null;
-  instagramHandle: string | null;
-  telegramHandle: string | null;
-  discordHandle: string | null;
-  referralCode: string;
-  createdAt: string;
+export interface AuthUser {
+  id?: string;
+  email?: string;
+  fullName?: string;
+  country?: string | null;
+  referralCode?: string | null;
+  role?: string;
   activeTier?: string;
   isPremium?: boolean;
-  premiumTier?: string | null;
   premiumExpiresAt?: string | null;
-  id?: string;
-  balanceAvailable?: number;
-  premiumPricing?: PremiumPricing;
-  billingHistory?: BillingHistoryItem[];
+  [key: string]: unknown;
 }
 
-export interface UserBalances {
-  available: number;
-  pending: number;
-  locked: number;
-  totalLifetime: number;
-}
-
-export interface UserDashboard {
-  balances: UserBalances;
-  gamification: {
-    totalXp: number;
-    level: number;
-    activeTier: string;
-    underlyingFreeTier: string;
-    isPremium: boolean;
-    premiumExpiresAt: string | null;
-    currentStreak: number;
-    lastClaimedStreakMilestone?: number | null;
-    streak?: {
-      currentStreak: number;
-      lastClaimedMilestone: number;
-      nextMilestone: number | null;
-      nextRewardSats: number;
-      daysRemaining: number;
-      progressPercent: number;
-      totalMilestones: number;
-      claimedMilestonesCount: number;
-      milestones: Array<{
-        days: number;
-        rewardSats: number;
-        claimed: boolean;
-        reachedInCurrentRun: boolean;
-        isNext: boolean;
-      }>;
-    };
-    xpDisplay: string;
-    progressPercent: number;
-    nextTier?: string | null;
-    xpToNextTier?: number;
-    tasksCompleted: number;
-    activeReferrals: number;
-  };
-  recentActivity: Array<{
-    amountSats: number;
-    type: string;
-    description: string | null;
-    createdAt: string;
-  }>;
-  recentSubmissions: Array<{
+export interface UserSubmissionHistoryResponse {
+  items: Array<{
     id: string;
     taskTitle: string;
     campaignTitle: string;
@@ -180,6 +85,114 @@ export interface UserUnlockItem {
   status: string;
 }
 
+export interface UserDashboard {
+  balances?: {
+    available?: number;
+    locked?: number;
+    pending?: number;
+    availableBalance?: number;
+    pendingBalance?: number;
+    totalEarned?: number;
+  };
+  gamification?: {
+    activeTier?: string;
+    isPremium?: boolean;
+    premiumExpiresAt?: string | null;
+    totalXp?: number;
+    currentStreak?: number;
+    lastClaimedStreakMilestone?: number;
+    level?: number;
+    streak?: {
+      milestones?: Array<{ days: number; rewardSats: number; claimed: boolean; reachedInCurrentRun: boolean; isNext: boolean }>;
+      lastClaimedMilestone?: number;
+      nextMilestone?: number | null;
+      nextRewardSats?: number;
+      progressPercent?: number;
+      daysRemaining?: number;
+      claimedMilestonesCount?: number;
+      totalMilestones?: number;
+    };
+  };
+  balanceAvailable?: number;
+  totalXp?: number;
+  activeTier?: string;
+  isPremium?: boolean;
+  premiumExpiresAt?: string | null;
+  currentStreak?: number;
+  nextStreakMilestone?: number | null;
+  nextStreakRewardSats?: number;
+  daysRemainingToNextMilestone?: number;
+  totalClaimedMilestones?: number;
+  totalStreakMilestones?: number;
+  streakProgressPercent?: number;
+  lastClaimedStreakMilestone?: number;
+  streakMilestones?: Array<{
+    days: number;
+    rewardSats: number;
+    claimed: boolean;
+    reachedInCurrentRun: boolean;
+    isNext: boolean;
+  }>;
+  monthlyTopEarners?: LeaderboardEntry[];
+  recentActivity?: Array<{
+    type: string;
+    description?: string;
+    createdAt: string;
+    amountSats: number;
+  }>;
+  recentSubmissions?: Array<{
+    id?: string;
+    taskTitle?: string;
+    campaignTitle?: string;
+    status: string;
+    submittedAt?: string;
+    rewardSats?: number;
+    xpReward?: number;
+    remainingMs?: number;
+  }>;
+  [key: string]: unknown;
+}
+
+export interface UserProfile {
+  id?: string;
+  email?: string;
+  fullName?: string;
+  phone?: string | null;
+  country?: string | null;
+  avatarUrl?: string | null;
+  referralCode?: string | null;
+  activeTier?: string;
+  isPremium?: boolean;
+  premiumExpiresAt?: string | null;
+  currentStreak?: number;
+  totalXp?: number;
+  createdAt?: string;
+  joinedAt?: string;
+  twitterHandle?: string | null;
+  instagramHandle?: string | null;
+  telegramHandle?: string | null;
+  discordHandle?: string | null;
+  premiumTier?: string | null;
+  balanceAvailable?: number;
+  premiumPricing?: {
+    monthlySatsMatrix?: Record<string, number>;
+    yearlySatsMatrix?: Record<string, number>;
+    oldSatsYearlyMatrix?: Record<string, number>;
+  };
+  billingHistory?: Array<{
+    id: string;
+    billingSource: string;
+    amountSats?: number | null;
+    amountUsd?: number | null;
+    premiumTier: string;
+    createdAt: string;
+    billingCycle: string;
+    premiumExpiresAt?: string | null;
+    adminNotes?: string | null;
+  }>;
+  [key: string]: unknown;
+}
+
 export interface TodayQuizQuestion {
   id: string;
   questionText: string;
@@ -198,10 +211,19 @@ export interface TodayQuiz {
   questions: TodayQuizQuestion[];
 }
 
-export interface TodayQuizResponse {
-  status: 'available' | 'submitted';
-  quiz: TodayQuiz;
-  result?: QuizResult;
+export interface QuizReviewItem {
+  questionId: string;
+  questionText: string;
+  explanation?: string | null;
+  selectedAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  attemptCount?: number;
+  rewardAwarded?: number;
+  xpAwarded?: number;
+  options: string[];
+  order: number;
+  wrongAnswers?: string[];
 }
 
 export interface QuizResult {
@@ -218,19 +240,28 @@ export interface QuizResult {
   xpEarned?: number;
   streakBonusSats?: number;
   submittedAt?: string;
-  review?: Array<{
-    questionId: string;
-    questionText: string;
-    explanation?: string | null;
-    selectedAnswer: string;
-    correctAnswer: string;
-    isCorrect: boolean;
-    attemptCount?: number;
-    rewardAwarded?: number;
-    xpAwarded?: number;
-    options: string[];
-    order: number;
-  }>;
+  review?: QuizReviewItem[];
+}
+
+export interface TodayQuizResponse {
+  status: 'available' | 'submitted';
+  quiz: TodayQuiz;
+  result?: QuizResult;
+}
+
+export interface SubmitQuizAnswerResponse {
+  status: 'in_progress' | 'submitted';
+  questionId: string;
+  isCorrect: boolean;
+  attemptCount?: number;
+  wrongAnswers?: string[];
+  selectedAnswer?: string;
+  message?: string;
+  progress?: {
+    solvedQuestions: number;
+    totalQuestions: number;
+  };
+  result: QuizResult;
 }
 
 export interface UserWithdrawal {
@@ -273,3 +304,13 @@ export interface UserLeaderboard {
   streaks: LeaderboardEntry[];
   generatedAt: string;
 }
+
+
+
+
+
+
+
+
+
+

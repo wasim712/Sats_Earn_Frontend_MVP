@@ -190,8 +190,8 @@ export default function StandaloneTaskDetailsPage() {
         </div>
         <h2 className="text-xl font-bold text-white mb-2">Standalone Task Unavailable</h2>
         <p className="text-sm text-white/35 mb-8 leading-relaxed">{pageError || "We couldn't load this standalone task."}</p>
-        <button onClick={() => router.push('/user/standalone-tasks')} className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Standalone Tasks
+        <button onClick={() => router.push('/user/tasks')} className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Tasks
         </button>
       </div>
     );
@@ -207,11 +207,11 @@ export default function StandaloneTaskDetailsPage() {
 
       <div className="relative max-w-3xl mx-auto px-4 py-6 md:py-10 pb-24">
         <button
-          onClick={() => router.push('/user/standalone-tasks')}
+          onClick={() => router.push('/user/tasks')}
           className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white mb-7 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Standalone Tasks
+          Back to Tasks
         </button>
 
         <div className="relative bg-[#080808] border border-[#1a1a1a] rounded-2xl p-6 md:p-8 mb-5 overflow-hidden">

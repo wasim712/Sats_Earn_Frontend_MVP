@@ -167,8 +167,9 @@ export default function UserWithdrawalsPage() {
 
         if (settingsRes.ok) {
           const settingsData = await parseObfuscatedJson<any>(settingsRes);
-          const tierMin = activeTier
-            ? settingsData?.tierMinWithdrawalMatrix?.[activeTier]
+          const normalizedActiveTier = String(activeTier || '').toUpperCase();
+          const tierMin = normalizedActiveTier
+            ? settingsData?.tierMinWithdrawalMatrix?.[normalizedActiveTier]
             : undefined;
           if (tierMin !== undefined && tierMin !== null && !Number.isNaN(Number(tierMin))) {
             setMinWithdrawal(Number(tierMin));

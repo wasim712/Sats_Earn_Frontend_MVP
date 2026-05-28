@@ -221,12 +221,6 @@ export const UserSidebar = ({
       icon: ListChecks,
     },
     {
-      key: "standaloneTasks",
-      name: "Standalone Tasks",
-      href: "/user/standalone-tasks",
-      icon: CheckSquare,
-    },
-    {
       key: "minigames",
       name: "Mini Games",
       href: "/user/minigames",
