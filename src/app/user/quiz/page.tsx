@@ -3,12 +3,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchTodayQuiz, submitTodayQuiz, clearQuizState } from '@/features/user/userQuizSlice';
+import { fetchTodayQuiz, submitQuizAnswer, clearQuizState } from '@/features/user/userQuizSlice';
 import type { QuizResult, TodayQuiz } from '@/types/user';
 import {
   Zap,
   CheckCircle2,
-  ChevronRight,
   ArrowLeft,
   Sparkles,
   AlertTriangle,
@@ -55,7 +54,9 @@ export default function UserDailyQuizPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>({});
   const [solvedQuestions, setSolvedQuestions] = useState<Record<string, string>>({});
+  const [wrongOptionsByQuestion, setWrongOptionsByQuestion] = useState<Record<string, string[]>>({});
   const [feedbackByQuestion, setFeedbackByQuestion] = useState<Record<string, { correct: boolean; message: string }>>({});
+  const [submittingQuestionId, setSubmittingQuestionId] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchTodayQuiz());
@@ -67,25 +68,53 @@ export default function UserDailyQuizPage() {
 
   const sortedQuestions = useMemo(
     () => ([...(normalizedQuiz?.questions ?? [])].sort((a, b) => a.order - b.order)),
-    [normalizedQuiz?.questions]
+    [normalizedQuiz?.questions],
   );
 
   useEffect(() => {
-    if (!result?.review?.length) return;
+    if (!result?.review?.length) {
+      setAnswers({});
+      setAttemptCounts({});
+      setSolvedQuestions({});
+      setWrongOptionsByQuestion({});
+      setFeedbackByQuestion({});
+      return;
+    }
 
     const restoredAnswers = result.review.reduce<Record<string, string>>((accumulator, item) => {
-      accumulator[item.questionId] = item.selectedAnswer;
+      if (item.isCorrect && item.selectedAnswer) {
+        accumulator[item.questionId] = item.selectedAnswer;
+      }
       return accumulator;
     }, {});
 
     const restoredAttempts = result.review.reduce<Record<string, number>>((accumulator, item) => {
-      accumulator[item.questionId] = item.attemptCount || 1;
+      accumulator[item.questionId] = item.attemptCount || Math.max((item.wrongAnswers || []).length, 1);
       return accumulator;
     }, {});
 
     const restoredSolved = result.review.reduce<Record<string, string>>((accumulator, item) => {
+      if (item.isCorrect) accumulator[item.questionId] = item.selectedAnswer;
+      return accumulator;
+    }, {});
+
+    const restoredWrongOptions = result.review.reduce<Record<string, string[]>>((accumulator, item) => {
+      accumulator[item.questionId] = item.wrongAnswers || [];
+      return accumulator;
+    }, {});
+
+    const restoredFeedback = result.review.reduce<Record<string, { correct: boolean; message: string }>>((accumulator, item) => {
+      const wrongCount = (item.wrongAnswers || []).length;
       if (item.isCorrect) {
-        accumulator[item.questionId] = item.selectedAnswer;
+        accumulator[item.questionId] = {
+          correct: true,
+          message: `Correct on try ${item.attemptCount || 1}. ${result.passed ? 'Quiz submitted automatically.' : 'Progress saved.'}`,
+        };
+      } else if (wrongCount > 0) {
+        accumulator[item.questionId] = {
+          correct: false,
+          message: `Wrong answer saved. Choose a different option. ${wrongCount} ${wrongCount === 1 ? 'attempt' : 'attempts'} used.`,
+        };
       }
       return accumulator;
     }, {});
@@ -93,59 +122,56 @@ export default function UserDailyQuizPage() {
     setAnswers(restoredAnswers);
     setAttemptCounts(restoredAttempts);
     setSolvedQuestions(restoredSolved);
+    setWrongOptionsByQuestion(restoredWrongOptions);
+    setFeedbackByQuestion(restoredFeedback);
   }, [result]);
 
-  const handleSelectOption = (questionId: string, option: string) => {
-    if (result || solvedQuestions[questionId]) return;
+  const handleSelectOption = async (questionId: string, option: string) => {
+    if (submittingQuestionId || solvedQuestions[questionId]) return;
+    if ((wrongOptionsByQuestion[questionId] || []).includes(option)) return;
 
-    const correctAnswer = getInstantCorrectAnswer(normalizedQuiz, questionId);
-    const nextAttemptCount = (attemptCounts[questionId] || 0) + 1;
-    const isCorrect = Boolean(correctAnswer) && option === correctAnswer;
+    setSubmittingQuestionId(questionId);
+    const response = await dispatch(submitQuizAnswer({ questionId, answer: option }));
 
-    setAnswers((prev) => ({ ...prev, [questionId]: option }));
-    setAttemptCounts((prev) => ({ ...prev, [questionId]: nextAttemptCount }));
+    if (submitQuizAnswer.fulfilled.match(response)) {
+      const payload = response.payload;
+      const reviewItem = payload.result.review?.find((item) => item.questionId === questionId);
+      const nextAttemptCount = reviewItem?.attemptCount || payload.attemptCount || 1;
+      const wrongAnswers = reviewItem?.wrongAnswers || payload.wrongAnswers || [];
+      const solvedAnswer = reviewItem?.isCorrect ? reviewItem.selectedAnswer : '';
 
-    if (isCorrect) {
-      setSolvedQuestions((prev) => ({ ...prev, [questionId]: option }));
-      setFeedbackByQuestion((prev) => ({
-        ...prev,
-        [questionId]: {
-          correct: true,
-          message: `Correct on try ${nextAttemptCount}. Reward for this question is now reduced based on attempts.`,
-        },
-      }));
-      return;
+      setAttemptCounts((prev) => ({ ...prev, [questionId]: nextAttemptCount }));
+      setWrongOptionsByQuestion((prev) => ({ ...prev, [questionId]: wrongAnswers }));
+
+      if (payload.isCorrect && solvedAnswer) {
+        setAnswers((prev) => ({ ...prev, [questionId]: solvedAnswer }));
+        setSolvedQuestions((prev) => ({ ...prev, [questionId]: solvedAnswer }));
+        setFeedbackByQuestion((prev) => ({
+          ...prev,
+          [questionId]: {
+            correct: true,
+            message: `Correct on try ${nextAttemptCount}. ${payload.status === 'submitted' ? 'Quiz submitted automatically.' : 'Progress saved.'}`,
+          },
+        }));
+      } else {
+        setFeedbackByQuestion((prev) => ({
+          ...prev,
+          [questionId]: {
+            correct: false,
+            message: payload.message || `Wrong answer. Try a different option. Attempt ${nextAttemptCount} saved.`,
+          },
+        }));
+      }
     }
 
-    setFeedbackByQuestion((prev) => ({
-      ...prev,
-      [questionId]: {
-        correct: false,
-        message: `Wrong answer. Try again — this question has used ${nextAttemptCount} attempt${nextAttemptCount > 1 ? 's' : ''}.`,
-      },
-    }));
-  };
-
-  const handleSubmit = async () => {
-    if (!normalizedQuiz || sortedQuestions.length === 0 || result) return;
-
-    const payload = Object.entries(solvedQuestions).map(([questionId, answer]) => ({
-      questionId,
-      answer,
-      attemptCount: attemptCounts[questionId] || 1,
-    }));
-
-    await dispatch(submitTodayQuiz(payload));
+    setSubmittingQuestionId(null);
   };
 
   const totalQuestions = sortedQuestions.length;
   const answeredCount = Object.keys(solvedQuestions ?? {}).length;
-  const isReviewMode = Boolean(result);
-  const isAllAnswered = totalQuestions > 0 && answeredCount === totalQuestions;
+  const isReviewMode = Boolean(result?.passed);
 
-  if (isLoading) {
-    return <QuizPageSkeleton />;
-  }
+  if (isLoading) return <QuizPageSkeleton />;
 
   if (!normalizedQuiz) {
     return (
@@ -161,60 +187,44 @@ export default function UserDailyQuizPage() {
   return (
     <div className="min-h-screen bg-[#020202] pb-10 md:pb-12 relative">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8 py-5 md:py-8">
-        {/* <div className="rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 mb-6 md:mb-8 flex items-center gap-3 md:gap-4 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
-          <button
-            onClick={() => router.back()}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#262626] bg-[#111] text-gray-300 transition-colors hover:text-white hover:border-[#333]"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500/80 mb-1">Quiz</p>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">Daily Quiz</h1>
-          </div>
-        </div> */}
-
-        <div className={`grid grid-cols-1 gap-6  items-start mb-8 ${isReviewMode?'hidden':''}`}>
+        <div className={`grid grid-cols-1 gap-6 items-start mb-8 ${isReviewMode ? 'hidden' : ''}`}>
           <div className="min-w-0">
             <div className="rounded-[30px] border border-[#1a1a1a] bg-[#080808] p-5 sm:p-6 md:p-8">
-              <p className={`text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3 `}>{isReviewMode ? 'Submitted Quiz' : 'Today\'s Quiz'}</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3">Today's Quiz</p>
               <h2 className="text-2xl md:text-3xl xl:text-[2rem] leading-tight font-black text-white tracking-tight mb-3">
                 {normalizedQuiz.title}
               </h2>
-                <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl">
-                  {normalizedQuiz.description}
-                </p>
+              <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl">
+                {normalizedQuiz.description}
+              </p>
             </div>
           </div>
 
-          {!isReviewMode && (
-            <div className="w-full  grid-cols-3 sm:grid-cols-3 xl:grid-cols-3 gap-3  grid">
-              <InfoCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Reward" value={`~ ${normalizedQuiz.rewardSats}`} accent="orange" />
-              <InfoCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Reward" value={`${normalizedQuiz.xpReward || 0} XP`} accent="blue" />
-              <InfoCard icon={<Brain className="w-5 h-5 text-emerald-400" />} label="Questions" value={`${totalQuestions}`} accent="green" />
-            </div>
-          )}
+          <div className="w-full grid-cols-3 sm:grid-cols-3 xl:grid-cols-3 gap-3 grid">
+            <InfoCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Reward" value={`~ ${normalizedQuiz.rewardSats}`} accent="orange" />
+            <InfoCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Reward" value={`${normalizedQuiz.xpReward || 0} XP`} accent="blue" />
+            <InfoCard icon={<Brain className="w-5 h-5 text-[#4ade80]" />} label="Questions" value={`${totalQuestions}`} accent="green" />
+          </div>
         </div>
 
         {result && (
           <div className="mb-6 rounded-[28px] border border-[#1a1a1a] bg-[#080808] p-5 md:p-6 lg:p-7">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+            <div className="flex flex-col lg:flex-col lg:items-start lg:justify-evenly gap-5">
               <div className="min-w-0">
-                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 ${result.passed ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300' : 'bg-sky-500/10 border border-sky-500/20 text-sky-300'}`}>
-                  <Trophy className="w-3.5 h-3.5" /> Submitted Result
+                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 ${result.passed ? 'bg-[#052e1a] border border-[#22c55e]/35 text-[#86efac]' : 'bg-sky-500/10 border border-sky-500/20 text-sky-300'}`}>
+                  <Trophy className="w-3.5 h-3.5" /> {result.passed ? 'Submitted Result' : 'Saved Progress'}
                 </div>
                 <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">
                   {result.quizTitle || normalizedQuiz.title}
                 </h3>
                 <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl mb-3">
-                  {result.quizDescription || normalizedQuiz.description || 'Your quiz has been submitted successfully and is now available in read-only review mode.'}
+                  {result.quizDescription || normalizedQuiz.description || 'Your quiz progress has been saved.'}
                 </p>
                 <p className="text-sm text-gray-500 font-medium">{result.message}</p>
               </div>
 
-              <div className="grid grid-cols-2 xl:grid-cols-1 gap-3 lg:min-w-[220px]">
-                <ResultStatCard icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />} label="Score" value={`${result.score}/${result.totalQuestions || totalQuestions || result.score}`} />
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:min-w-[220px]">
+                <ResultStatCard icon={<CheckCircle2 className="w-5 h-5 text-[#4ade80]" />} label="Score" value={`${result.score}/${result.totalQuestions || totalQuestions || result.score}`} />
                 <ResultStatCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Earned" value={`${(result.rewardEarned || 0) + (result.streakBonusSats || 0)} / ${result.maxRewardSats || normalizedQuiz.rewardSats}`} />
                 <ResultStatCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Earned" value={`${result.xpEarned || 0}`} />
                 <ResultStatCard icon={<Zap className="w-5 h-5 text-yellow-400" />} label="Attempts" value={`${result.totalAttempts || 0}`} />
@@ -224,7 +234,7 @@ export default function UserDailyQuizPage() {
         )}
 
         {error && !isReviewMode && (
-          <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 flex items-start gap-3 text-red-300">
+          <div className="mb-6 rounded-2xl border border-[#f43f5e]/25 bg-[#2a0710] px-5 py-4 flex items-start gap-3 text-[#fda4af]">
             <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
             <p className="text-sm font-medium">{error}</p>
           </div>
@@ -243,163 +253,123 @@ export default function UserDailyQuizPage() {
             </div>
           )}
 
-          {sortedQuestions.map((question, index) => (
-            <div key={question.id} className="bg-[#080808] border border-[#1a1a1a] rounded-[28px] p-5 sm:p-6 md:p-8">
-              <div className="flex items-start gap-4 mb-6">
-                <div className={`shrink-0 w-11 h-11 rounded-2xl border flex items-center justify-center ${isReviewMode ? (getReviewItem(result, question.id)?.isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20') : 'bg-sats-orange-500/10 border-sats-orange-500/20'}`}>
-                  {isReviewMode ? (
-                    getReviewItem(result, question.id)?.isCorrect ? <CircleCheckBig className="w-5 h-5 text-emerald-400" /> : <CircleX className="w-5 h-5 text-red-400" />
-                  ) : (
-                    <span className="text-sm font-black text-sats-orange-500">{index + 1}</span>
-                  )}
+          {sortedQuestions.map((question, index) => {
+            const reviewItem = getReviewItem(result, question.id);
+            return (
+              <div key={question.id} className="bg-[#080808] border border-[#1a1a1a] rounded-[28px] p-5 sm:p-6 md:p-8">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className={`shrink-0 w-11 h-11 rounded-2xl border flex items-center justify-center ${isReviewMode ? (reviewItem?.isCorrect ? 'bg-[#052e1a] border-[#22c55e]/35' : 'bg-[#2a0710] border-[#f43f5e]/35') : 'bg-sats-orange-500/10 border-sats-orange-500/20'}`}>
+                    {isReviewMode ? (
+                      reviewItem?.isCorrect ? <CircleCheckBig className="w-5 h-5 text-[#4ade80]" /> : <CircleX className="w-5 h-5 text-[#fb7185]" />
+                    ) : (
+                      <span className="text-sm font-black text-sats-orange-500">{index + 1}</span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-2">Question {index + 1}</p>
+                    <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed">{question.questionText}</h3>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-2">Question {index + 1}</p>
-                  <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed">
-                    {question.questionText}
-                  </h3>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
-                {question.options.map((opt, optionIndex) => {
-                  const selectedAnswer = answers[question.id];
-                  const solvedAnswer = solvedQuestions[question.id];
-                  const isSelected = selectedAnswer === opt;
-                  const instantCorrectAnswer = getInstantCorrectAnswer(normalizedQuiz, question.id);
-                  const isInstantMode = !isReviewMode && Boolean(feedbackByQuestion[question.id]);
-                  const isInstantCorrect = Boolean(solvedAnswer) && instantCorrectAnswer === solvedAnswer;
-                  const isCorrectOption = isReviewMode
-                    ? isCorrectReviewOption(result, question.id, opt)
-                    : Boolean(solvedAnswer) && instantCorrectAnswer === opt;
-                  const isWrongSelectedOption = isInstantMode && isSelected && !Boolean(solvedAnswer);
-                  const isOptionDisabled = isReviewMode || Boolean(solvedAnswer);
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
+                  {question.options.map((opt, optionIndex) => {
+                    const solvedAnswer = solvedQuestions[question.id];
+                    const reviewWrongOptions = reviewItem?.wrongAnswers || [];
+                    const storedWrongOptions = wrongOptionsByQuestion[question.id] || [];
+                    const wrongOptions = reviewWrongOptions.length ? reviewWrongOptions : storedWrongOptions;
+                    const isPreviouslyWrong = wrongOptions.includes(opt);
+                    const isSelected = answers[question.id] === opt;
+                    const isCorrectOption = isReviewMode
+                      ? isCorrectReviewOption(result, question.id, opt)
+                      : Boolean(solvedAnswer) && getInstantCorrectAnswer(normalizedQuiz, question.id) === opt;
+                    const isWrongOption = !isCorrectOption && isPreviouslyWrong;
+                    const isQuestionSubmitting = submittingQuestionId === question.id;
+                    const isOptionDisabled = isReviewMode || Boolean(solvedAnswer) || isPreviouslyWrong || isQuestionSubmitting;
 
-                  return (
-                    <button
-                      key={optionIndex}
-                      onClick={() => handleSelectOption(question.id, opt)}
-                      disabled={isOptionDisabled}
-                      className={`relative flex items-center w-full p-4 md:p-5 rounded-2xl border text-left transition-all duration-200 group outline-none ${
-                        isReviewMode
-                          ? isCorrectOption
-                            ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
-                            : isSelected
-                              ? 'bg-red-500/10 border-red-500/25 text-red-300'
-                              : 'bg-[#111] border-[#1a1a1a] text-gray-300'
-                          : isInstantMode
-                            ? isCorrectOption
-                              ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
-                              : isWrongSelectedOption
-                                ? 'bg-red-500/10 border-red-500/25 text-red-300'
-                                : 'bg-[#111] border-[#1a1a1a] text-gray-300'
-                            : isSelected
-                              ? 'bg-sats-orange-500/10 border-sats-orange-500/40 shadow-[0_0_20px_rgba(238,139,18,0.1)]'
-                              : 'bg-[#111] border-[#1a1a1a] hover:border-[#333] hover:bg-[#151515]'
-                      } ${isOptionDisabled ? 'cursor-default' : ''}`}
-                    >
-                      <div
-                        className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${
-                          isReviewMode
-                            ? isCorrectOption
-                              ? 'border-emerald-400 bg-emerald-400'
-                              : isSelected
-                                ? 'border-red-400 bg-red-400'
-                                : 'border-[#444]'
-                            : isInstantMode
-                              ? isCorrectOption
-                                ? 'border-emerald-400 bg-emerald-400'
-                                : isWrongSelectedOption
-                                  ? 'border-red-400 bg-red-400'
-                                  : 'border-[#444]'
-                              : isSelected
-                                ? 'border-sats-orange-500 bg-sats-orange-500'
-                                : 'border-[#444] group-hover:border-gray-500'
-                        }`}
+                    const optionClass = isReviewMode
+                      ? isCorrectOption
+                        ? 'bg-[#052e1a] border-[#22c55e]/45 text-[#86efac] shadow-[0_0_24px_rgba(34,197,94,0.18)]'
+                        : isWrongOption
+                          ? 'bg-[#2a0710] border-[#f43f5e]/45 text-[#fda4af] shadow-[0_0_24px_rgba(244,63,94,0.16)]'
+                          : 'bg-[#111] border-[#1a1a1a] text-gray-300'
+                      : isCorrectOption
+                        ? 'bg-[#052e1a] border-[#22c55e]/45 text-[#86efac] shadow-[0_0_24px_rgba(34,197,94,0.18)]'
+                        : isWrongOption
+                          ? 'bg-[#2a0710] border-[#f43f5e]/45 text-[#fda4af] shadow-[0_0_24px_rgba(244,63,94,0.16)]'
+                          : 'bg-[#111] border-[#1a1a1a] text-gray-300 hover:border-[#333] hover:bg-[#151515]';
+
+                    const dotClass = isCorrectOption
+                      ? 'border-[#4ade80] bg-[#4ade80]'
+                      : isWrongOption
+                        ? 'border-[#fb7185] bg-[#fb7185]'
+                        : isSelected
+                          ? 'border-sats-orange-500 bg-sats-orange-500'
+                          : 'border-[#444] group-hover:border-gray-500';
+
+                    return (
+                      <button
+                        key={optionIndex}
+                        onClick={() => handleSelectOption(question.id, opt)}
+                        disabled={isOptionDisabled}
+                        className={`relative flex items-center w-full p-4 md:p-5 rounded-2xl border text-left transition-all duration-200 group outline-none ${optionClass} ${isOptionDisabled ? 'cursor-default' : ''}`}
                       >
-                        {(isSelected || (isInstantMode && isCorrectOption) || (isReviewMode && isCorrectOption)) && (
-                          <div className="w-2 h-2 bg-black rounded-full" />
-                        )}
-                      </div>
-
-                      <span className={`text-sm md:text-base font-medium flex-1 break-words ${
-                        isReviewMode
-                          ? isCorrectOption
-                            ? 'text-emerald-300 font-bold'
-                            : isSelected
-                              ? 'text-red-300 font-bold'
-                              : 'text-gray-300'
-                          : isInstantMode
-                            ? isCorrectOption
-                              ? 'text-emerald-300 font-bold'
-                              : isWrongSelectedOption
-                                ? 'text-red-300 font-bold'
-                                : 'text-gray-300'
-                            : isSelected
-                              ? 'text-sats-orange-400 font-bold'
-                              : 'text-gray-300'
-                      }`}>
-                        {opt}
-                      </span>
-
-                      {(isReviewMode || isInstantMode) && (
-                        <div className="ml-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
-                          {isSelected && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Your Choice</span>}
-                          {isCorrectOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Correct</span>}
+                        <div className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${dotClass}`}>
+                          {(isCorrectOption || isWrongOption || isSelected) && <div className="w-2 h-2 bg-black rounded-full" />}
                         </div>
+
+                        <span className={`text-sm md:text-base font-medium flex-1 break-words ${isCorrectOption ? 'text-[#86efac] font-bold' : isWrongOption ? 'text-[#fda4af] font-bold' : isSelected ? 'text-sats-orange-400 font-bold' : 'text-gray-300'}`}>
+                          {opt}
+                        </span>
+
+                        {(isReviewMode || isCorrectOption || isWrongOption || isQuestionSubmitting) && (
+                          <div className="ml-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
+                            {isCorrectOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Correct</span>}
+                            {isWrongOption && <span className="px-2 py-1 rounded-full bg-[#2a0710] border border-[#f43f5e]/35 text-[#fecdd3]">Locked</span>}
+                            {isQuestionSubmitting && !isCorrectOption && !isWrongOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Checking...</span>}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {(isReviewMode || Boolean(solvedQuestions[question.id])) && (reviewItem?.explanation || question.explanation) && (
+                  <div className="mt-4 rounded-2xl border border-sky-500/15 bg-sky-500/10 px-5 py-4 flex items-start gap-3">
+                    <Brain className="w-5 h-5 text-sky-300 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-widest text-sky-200/90 mb-1">Why this answer is right</p>
+                      <p className="text-sm text-sky-100/85 leading-relaxed">{reviewItem?.explanation || question.explanation}</p>
+                    </div>
+                  </div>
+                )}
+
+                {!isReviewMode && Boolean(feedbackByQuestion[question.id]) && (
+                  <div className={`mt-4 rounded-2xl px-5 py-4 flex items-start gap-3 border ${feedbackByQuestion[question.id]?.correct ? 'border-[#22c55e]/35 bg-[#052e1a]' : 'border-[#f43f5e]/35 bg-[#2a0710]'}`}>
+                    {feedbackByQuestion[question.id]?.correct ? (
+                      <CircleCheckBig className="w-5 h-5 text-[#4ade80] shrink-0 mt-0.5" />
+                    ) : (
+                      <CircleX className="w-5 h-5 text-[#fb7185] shrink-0 mt-0.5" />
+                    )}
+                    <div>
+                      <p className={`text-xs font-black uppercase tracking-widest mb-1 ${feedbackByQuestion[question.id]?.correct ? 'text-[#bbf7d0]' : 'text-[#fecdd3]'}`}>
+                        {feedbackByQuestion[question.id]?.correct ? 'Correct answer' : 'Wrong answer saved'}
+                      </p>
+                      <p className={`text-sm leading-relaxed ${feedbackByQuestion[question.id]?.correct ? 'text-[#dcfce7]' : 'text-[#ffe4e6]'}`}>
+                        {feedbackByQuestion[question.id]?.message}
+                      </p>
+                      {!feedbackByQuestion[question.id]?.correct && (
+                        <p className="text-xs text-[#fecdd3] mt-2">Current try count: {attemptCounts[question.id] || 0}</p>
                       )}
-                    </button>
-                  );
-                })}
+                      {feedbackByQuestion[question.id]?.correct && (
+                        <p className="text-xs text-[#bbf7d0] mt-2">Solved in {attemptCounts[question.id] || 1} attempt{(attemptCounts[question.id] || 1) > 1 ? 's' : ''}.</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
+            );
+          })}
 
-              {(isReviewMode || Boolean(solvedQuestions[question.id])) && (getReviewItem(result, question.id)?.explanation || question.explanation) && (
-                <div className="mt-4 rounded-2xl border border-sky-500/15 bg-sky-500/10 px-5 py-4 flex items-start gap-3">
-                  <Brain className="w-5 h-5 text-sky-300 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-widest text-sky-200/90 mb-1">Why this answer is right</p>
-                    <p className="text-sm text-sky-100/85 leading-relaxed">{getReviewItem(result, question.id)?.explanation || question.explanation}</p>
-                  </div>
-                </div>
-              )}
-
-              {!isReviewMode && Boolean(feedbackByQuestion[question.id]) && (
-                <div className={`mt-4 rounded-2xl px-5 py-4 flex items-start gap-3 border ${
-                  feedbackByQuestion[question.id]?.correct
-                    ? 'border-emerald-500/20 bg-emerald-500/10'
-                    : 'border-red-500/20 bg-red-500/10'
-                }`}>
-                  {feedbackByQuestion[question.id]?.correct ? (
-                    <CircleCheckBig className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  ) : (
-                    <CircleX className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                  )}
-                  <div>
-                    <p className={`text-xs font-black uppercase tracking-widest mb-1 ${
-                      feedbackByQuestion[question.id]?.correct
-                        ? 'text-emerald-200/90'
-                        : 'text-red-200/90'
-                    }`}>
-                      {feedbackByQuestion[question.id]?.correct ? 'Correct answer' : 'Wrong answer'}
-                    </p>
-                    <p className={`text-sm leading-relaxed ${
-                      feedbackByQuestion[question.id]?.correct
-                        ? 'text-emerald-100/85'
-                        : 'text-red-100/85'
-                    }`}>
-                      {feedbackByQuestion[question.id]?.message}
-                    </p>
-                    {!feedbackByQuestion[question.id]?.correct && (
-                      <p className="text-xs text-red-200/80 mt-2">Current try count: {attemptCounts[question.id] || 0}</p>
-                    )}
-                    {feedbackByQuestion[question.id]?.correct && (
-                      <p className="text-xs text-emerald-200/80 mt-2">Solved in {attemptCounts[question.id] || 1} attempt{(attemptCounts[question.id] || 1) > 1 ? 's' : ''}.</p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
           {!isReviewMode && (
             <div className="pt-2 md:pt-4 flex justify-center">
               <div className="w-full max-w-3xl rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
@@ -408,53 +378,26 @@ export default function UserDailyQuizPage() {
                     <div className="flex items-center justify-between gap-3 mb-3">
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-500">Progress</p>
-                        <p className="text-sm md:text-base text-white/70 font-semibold mt-1">
-                          {answeredCount} / {totalQuestions} solved
-                        </p>
+                        <p className="text-sm md:text-base text-white/70 font-semibold mt-1">{answeredCount} / {totalQuestions} solved</p>
                       </div>
                       <div className="sm:hidden flex items-center gap-1.5">
                         {Array.from({ length: totalQuestions }).map((_, progressIndex) => (
-                          <div
-                            key={progressIndex}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${
-                              progressIndex < answeredCount ? 'bg-sats-orange-500 w-4' : 'bg-white/10 w-2'
-                            }`}
-                          />
+                          <div key={progressIndex} className={`h-1.5 rounded-full transition-all duration-300 ${progressIndex < answeredCount ? 'bg-sats-orange-500 w-4' : 'bg-white/10 w-2'}`} />
                         ))}
                       </div>
                     </div>
 
                     <div className="hidden sm:block">
                       <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-sats-orange-500 rounded-full transition-all duration-500"
-                          style={{ width: `${totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0}%` }}
-                        />
+                        <div className="h-full bg-sats-orange-500 rounded-full transition-all duration-500" style={{ width: `${totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0}%` }} />
                       </div>
                     </div>
                   </div>
 
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!isAllAnswered || isSubmitting}
-                    className={`w-full sm:w-auto sm:min-w-[220px] flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl font-black text-sm tracking-wide transition-all duration-200 active:scale-[0.97] disabled:cursor-not-allowed ${
-                      isAllAnswered
-                        ? 'bg-sats-orange-500 text-black hover:bg-sats-orange-400 shadow-[0_0_28px_rgba(238,139,18,0.3)]'
-                        : 'bg-[#111] text-white/20 border border-[#1a1a1a]'
-                    }`}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
-                        <span>Submitting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Submit Quiz</span>
-                        <CheckCircle2 className={`w-4 h-4 ${isAllAnswered ? 'text-black/60' : 'text-white/15'}`} />
-                      </>
-                    )}
-                  </button>
+                  <div className="w-full sm:w-auto sm:min-w-[220px] flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl font-black text-sm tracking-wide bg-[#111] text-white/75 border border-[#1a1a1a]">
+                    {isSubmitting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <CheckCircle2 className="w-4 h-4 text-sats-orange-500" />}
+                    <span>{submittingQuestionId ? 'Saving answer...' : 'Auto-submit on correct answer'}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -534,10 +477,7 @@ function QuizEmptyState({
   tone: 'success' | 'neutral';
   onBack: () => void;
 }) {
-  const toneClasses =
-    tone === 'success'
-      ? 'border-emerald-500/20 bg-emerald-500/10'
-      : 'border-sky-500/20 bg-sky-500/10';
+  const toneClasses = tone === 'success' ? 'border-emerald-500/20 bg-emerald-500/10' : 'border-sky-500/20 bg-sky-500/10';
 
   return (
     <div className="min-h-screen bg-[#020202] px-4 md:px-6 lg:px-8 py-8">
@@ -572,7 +512,7 @@ function InfoCard({
   return (
     <div className={`rounded-[24px] border ${accentBorder} bg-[#080808] p-5`}>
       <div className="flex items-center justify-between gap-3 mb-3">
-        <p className=" text-[10px] font-black uppercase sm:tracking-widest text-gray-500">{label}</p>
+        <p className="text-[10px] font-black uppercase sm:tracking-widest text-gray-500">{label}</p>
         {icon}
       </div>
       <p className="text-xl sm:text-xl md:text-2xl font-black text-white">{value}</p>
@@ -585,7 +525,7 @@ function ResultStatCard({ icon, label, value }: { icon: React.ReactNode; label: 
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-4">
       <div className="flex items-center gap-3 mb-2">
         {icon}
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">{label}</p>
+        <p className="text-[11px] font-black uppercase tracking-widest text-gray-500">{label}</p>
       </div>
       <p className="text-xl font-black text-white">{value}</p>
     </div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -245,25 +245,25 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                         <div className="flex items-center gap-2">
                           {statusUi.icon}
                           <p className="truncate text-sm font-bold text-white sm:hidden">
-                            {submission.taskTitle.substring(0, 20)}{submission.taskTitle.length > 20 ? '...' : ''}
+                            {(submission.taskTitle || '').substring(0, 20)}{(submission.taskTitle || '').length > 20 ? '...' : ''}
                           </p>
                           <p className="hidden truncate text-sm font-bold text-white sm:block">
-                            {submission.taskTitle.substring(0, 10)}{submission.taskTitle.length > 10 ? '...' : ''}
+                            {(submission.taskTitle || '').substring(0, 10)}{(submission.taskTitle || '').length > 10 ? '...' : ''}
                           </p>
                         </div>
-                        <p className="mt-1 text-[11px] font-medium text-gray-500">by {submission.campaignTitle.substring(0, 15)}...</p>
+                        <p className="mt-1 text-[11px] font-medium text-gray-500">by {(submission.campaignTitle || '').substring(0, 15)}...</p>
                       </div>
                       <div className="text-right">
                         <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>
                           {statusUi.label}
                         </span>
-                        <p className="mt-2 text-sm font-black text-green-400">+{submission.rewardSats.toLocaleString()} sats</p>
-                        {submission.status === 'LOCKED_15D' && submission.remainingMs > 0 && (
-                          <p className="mt-1 text-[11px] text-yellow-400">Unlocks in {formatRemainingTime(submission.remainingMs)}</p>
+                        <p className="mt-2 text-sm font-black text-green-400">+{(submission.rewardSats || 0).toLocaleString()} sats</p>
+                        {submission.status === 'LOCKED_15D' && (submission.remainingMs || 0) > 0 && (
+                          <p className="mt-1 text-[11px] text-yellow-400">Unlocks in {formatRemainingTime(submission.remainingMs || 0)}</p>
                         )}
+                    </div>
                       </div>
                     </div>
-                  </div>
                 );
               })
             ) : (
@@ -384,3 +384,5 @@ function formatRemainingTime(remainingMs: number) {
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m`;
 }
+
+

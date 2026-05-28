@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '@/store/store';
-import type { TodayQuiz, TodayQuizResponse, QuizResult } from '@/types/user';
+import type { TodayQuiz, TodayQuizResponse, QuizResult, SubmitQuizAnswerResponse } from '@/types/user';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 function extractInnerQuiz(rawQuiz: unknown): Partial<TodayQuiz> {
@@ -21,7 +21,7 @@ function isQuizResultPayload(payload: unknown): payload is QuizResult {
     payload &&
     typeof payload === 'object' &&
     'score' in payload &&
-    'rewardEarned' in payload
+    'rewardEarned' in payload,
   );
 }
 
@@ -30,7 +30,7 @@ function isWrappedQuizResponse(payload: unknown): payload is TodayQuizResponse {
     payload &&
     typeof payload === 'object' &&
     'status' in payload &&
-    'quiz' in payload
+    'quiz' in payload,
   );
 }
 
@@ -40,7 +40,7 @@ function isLegacyQuizPayload(payload: unknown): payload is TodayQuiz {
     typeof payload === 'object' &&
     'id' in payload &&
     'title' in payload &&
-    'questions' in payload
+    'questions' in payload,
   );
 }
 
@@ -99,6 +99,7 @@ function normalizeQuizPayload(payload: unknown): TodayQuizResponse {
           explanation: item.explanation,
           options: item.options || [],
           order: item.order,
+          correctAnswer: item.correctAnswer,
         })),
       },
       result: payload,
@@ -149,7 +150,25 @@ export const fetchTodayQuiz = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
-  }
+  },
+);
+
+export const submitQuizAnswer = createAsyncThunk(
+  'userQuiz/submitAnswer',
+  async (payload: { questionId: string; answer: string }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const data = await obfuscatedJsonRequest<SubmitQuizAnswerResponse>(`${API_URL}/users/quiz/today/answer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      });
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
 );
 
 export const submitTodayQuiz = createAsyncThunk(
@@ -167,7 +186,7 @@ export const submitTodayQuiz = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 const userQuizSlice = createSlice({
@@ -194,6 +213,19 @@ const userQuizSlice = createSlice({
       })
       .addCase(fetchTodayQuiz.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(submitQuizAnswer.pending, (state) => {
+        state.isSubmitting = true;
+        state.error = null;
+      })
+      .addCase(submitQuizAnswer.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.result = action.payload.result;
+        state.error = null;
+      })
+      .addCase(submitQuizAnswer.rejected, (state, action) => {
+        state.isSubmitting = false;
         state.error = action.payload as string;
       })
       .addCase(submitTodayQuiz.pending, (state) => {

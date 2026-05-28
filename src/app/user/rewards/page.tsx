@@ -756,6 +756,7 @@ import {
   Star,
   Trophy,
 } from 'lucide-react';
+import { PremiumRewardCard } from './PremiumRewardCard';
 
 type PremiumTierName = 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER';
 type BillingCycle = 'MONTHLY' | 'YEARLY';
@@ -926,10 +927,6 @@ function getTierRank(tier: string | null | undefined) {
   return PREMIUM_TIER_ORDER.indexOf(tier as PremiumTierName);
 }
 
-function formatSats(value: number) {
-  return `${value.toLocaleString()} sats`;
-}
-
 export default function RewardsPage() {
   const dispatch = useAppDispatch();
   const { premiumRequests, premiumMessage, data: profile } = useAppSelector((state) => state.userProfile);
@@ -980,8 +977,9 @@ export default function RewardsPage() {
       await dispatch(submitPremiumInterest({ plan, intent, source })).unwrap();
       await dispatch(fetchPremiumInterests());
       await dispatch(fetchUserProfile());
-    } catch (error: any) {
-      setFeedback({ type: 'error', message: error?.message || 'Request failed.' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Request failed.';
+      setFeedback({ type: 'error', message });
     } finally {
       setLoadingKey(null);
     }
@@ -995,8 +993,9 @@ export default function RewardsPage() {
       setCelebrationTier(plan);
       await dispatch(fetchPremiumInterests());
       await dispatch(fetchUserProfile());
-    } catch (error: any) {
-      setFeedback({ type: 'error', message: error?.message || 'Upgrade failed.' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Upgrade failed.';
+      setFeedback({ type: 'error', message });
     } finally {
       setLoadingKey(null);
     }
@@ -1208,60 +1207,29 @@ export default function RewardsPage() {
               const monthlyUnavailable = tier.name === 'FOUNDER';
 
               return (
-                <div
+                <PremiumRewardCard
                   key={tier.name}
-                  className={`group relative flex h-full flex-col overflow-hidden rounded-[32px] border w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] ${isCurrentTier ? 'border-green-500/40' : tier.border} bg-gradient-to-br ${tier.bg} p-6 md:p-7 ${tier.glow} ${
-                    isCurrentTier ? 'ring-2 ring-green-500/20' : 'hover:-translate-y-1'
-                  } transition-all duration-300 backdrop-blur-md`}
-                >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_50%)] pointer-events-none" />
-                  
-                  <div className="relative z-10 flex h-full flex-col">
-                    <div className="mb-6 flex min-h-[72px] items-start justify-between gap-4">
-                      <div className="flex min-w-0 items-center gap-4">
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/40 shadow-inner group-hover:scale-105 transition-transform">
-                          {tier.icon}
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className={`truncate text-2xl font-black tracking-wide ${tier.color}`}>{tier.label}</h3>
-                          <div className="mt-1 text-sm font-semibold text-gray-400">
-                            {tier.name === 'FOUNDER' ? 'Yearly access only' : 'Monthly and yearly access'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <span className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border ${isCurrentTier ? 'border-green-500/30 bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : tier.chip}`}>
-                        {isCurrentTier ? 'Active' : 'Premium'}
-                      </span>
-                    </div>
-
-                    <div className="space-y-3.5 border-b border-white/[0.06] pb-6">
-                      {tier.perks.map((perk) => (
-                        <div key={perk} className="flex items-start gap-3">
-                          <CheckCircle2 className={`w-5 h-5 shrink-0 mt-0.5 ${tier.color}`} />
-                          <span className="text-sm font-medium text-gray-200 leading-snug">{perk}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 flex flex-1 flex-col">
-                      <div className="flex flex-1 flex-col gap-4">
-                      {!monthlyUnavailable ? (
-                        <PremiumPriceCard
-                          label="Monthly Plan"
-                          showSatsPricing={showSatsPricing}
-                          oldUsdYearly={tier.monthlyUsdOriginal}
-                          newUsd={tier.monthlyUsd}
-                          oldSatsMonthly={tier.oldSatsMonthly}
-                          oldSatsYearly={tier.oldSatsYearly}
-                          newSats={monthlySats > 0 ? monthlySats : null}
-                          accentClass={tier.color}
-                          eligible={monthlyEligible}
-                          active={isCurrentTier}
-                          loading={loadingKey === `${tier.name}-MONTHLY`}
-                          disabled={loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !monthlyEligible)}
-                          requestSent={!showSatsPricing && state.upgrade}
-                          actionLabel={
+                  tier={tier}
+                  isCurrentTier={isCurrentTier}
+                  monthlyUnavailable={monthlyUnavailable}
+                  monthlyPlan={
+                    monthlyUnavailable
+                      ? undefined
+                      : {
+                          label: 'Monthly Plan',
+                          showSatsPricing,
+                          oldUsdYearly: tier.monthlyUsdOriginal,
+                          newUsd: tier.monthlyUsd,
+                          oldSatsMonthly: tier.oldSatsMonthly,
+                          oldSatsYearly: tier.oldSatsYearly,
+                          newSats: monthlySats > 0 ? monthlySats : null,
+                          accentClass: tier.color,
+                          eligible: monthlyEligible,
+                          active: isCurrentTier,
+                          loading: loadingKey === `${tier.name}-MONTHLY`,
+                          disabled: loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !monthlyEligible),
+                          requestSent: !showSatsPricing && state.upgrade,
+                          actionLabel:
                             isCurrentTier
                               ? 'Currently Active'
                               : belowCurrentPremium
@@ -1272,178 +1240,81 @@ export default function RewardsPage() {
                                     : 'Insufficient Sats'
                                   : state.upgrade
                                     ? 'Request Sent'
-                                    : 'Upgrade with USD'
-                          }
-                          onAction={() =>
+                                    : 'Upgrade with USD',
+                          onAction: () =>
                             showSatsPricing
                               ? handleSatsUpgrade(tier.name, 'MONTHLY')
-                              : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-monthly')
+                              : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-monthly'),
+                        }
+                  }
+                  yearlyPlan={{
+                    label: 'Yearly Plan (Save 20%)',
+                    showSatsPricing,
+                    oldUsdYearly: tier.yearlyUsdOriginal,
+                    newUsd: tier.yearlyUsd,
+                    oldSatsMonthly: '',
+                    oldSatsYearly: tier.oldSatsYearly,
+                    newSats: yearlySats > 0 ? yearlySats : null,
+                    accentClass: tier.color,
+                    eligible: yearlyEligible,
+                    active: isCurrentTier,
+                    loading: loadingKey === `${tier.name}-YEARLY`,
+                    disabled: loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !yearlyEligible),
+                    requestSent: !showSatsPricing && state.upgrade,
+                    actionLabel:
+                      isCurrentTier
+                        ? 'Currently Active'
+                        : belowCurrentPremium
+                          ? 'Higher Tier Active'
+                          : showSatsPricing
+                            ? yearlyEligible
+                              ? 'Upgrade with Sats'
+                              : 'Insufficient Sats'
+                            : state.upgrade
+                              ? 'Request Sent'
+                              : 'Upgrade with USD',
+                    onAction: () =>
+                      showSatsPricing
+                        ? handleSatsUpgrade(tier.name, 'YEARLY')
+                        : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-yearly'),
+                  }}
+                  statusBanner={
+                    <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
+                      <button
+                        onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
+                        disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
+                        <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
+                      </button>
+
+                      {isCurrentTier ? (
+                        <StatusBanner tone="green" message="This is your current premium tier." />
+                      ) : belowCurrentPremium ? (
+                        <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
+                      ) : showSatsPricing ? (
+                        <StatusBanner
+                          tone={monthlyEligible || yearlyEligible ? 'green' : 'orange'}
+                          message={
+                            monthlyEligible || yearlyEligible
+                              ? `Enough balance for ${monthlyEligible && yearlyEligible ? 'monthly or yearly' : monthlyEligible ? 'monthly' : 'yearly'} sats purchase.`
+                              : 'Switch to USD mode or add more sats to purchase.'
                           }
                         />
+                      ) : state.upgrade ? (
+                        <StatusBanner tone="blue" message="Upgrade request sent for this tier." />
                       ) : (
-                          <div className="flex min-h-[142px] items-center justify-center rounded-2xl border border-white/5 bg-black/40 p-5 text-center text-sm font-bold text-gray-500 backdrop-blur-sm">
-                            Founder tier is available annually only.
-                          </div>
+                        <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning this tier later." />
                       )}
-
-                      <PremiumPriceCard
-                        label="Yearly Plan (Save 20%)"
-                        showSatsPricing={showSatsPricing}
-                        oldUsdYearly={tier.yearlyUsdOriginal}
-                        newUsd={tier.yearlyUsd}
-                        oldSatsMonthly={''}
-                        oldSatsYearly={tier.oldSatsYearly}
-                        newSats={yearlySats > 0 ? yearlySats : null}
-                        accentClass={tier.color}
-                        eligible={yearlyEligible}
-                        active={isCurrentTier}
-                        loading={loadingKey === `${tier.name}-YEARLY`}
-                        disabled={loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !yearlyEligible)}
-                        requestSent={!showSatsPricing && state.upgrade}
-                        actionLabel={
-                          isCurrentTier
-                            ? 'Currently Active'
-                            : belowCurrentPremium
-                              ? 'Higher Tier Active'
-                              : showSatsPricing
-                                ? yearlyEligible
-                                  ? 'Upgrade with Sats'
-                                  : 'Insufficient Sats'
-                                : state.upgrade
-                                  ? 'Request Sent'
-                                  : 'Upgrade with USD'
-                        }
-                        onAction={() =>
-                          showSatsPricing
-                            ? handleSatsUpgrade(tier.name, 'YEARLY')
-                          : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-yearly')
-                        }
-                      />
-
-                      </div>
-
-                      <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
-                        <button
-                          onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
-                          disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
-                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
-                          <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
-                        </button>
-
-                        {isCurrentTier ? (
-                          <StatusBanner tone="green" message="This is your current premium tier." />
-                        ) : belowCurrentPremium ? (
-                          <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
-                        ) : showSatsPricing ? (
-                          <StatusBanner
-                            tone={monthlyEligible || yearlyEligible ? 'green' : 'orange'}
-                            message={
-                              monthlyEligible || yearlyEligible
-                                ? `Enough balance for ${monthlyEligible && yearlyEligible ? 'monthly or yearly' : monthlyEligible ? 'monthly' : 'yearly'} sats purchase.`
-                                : 'Switch to USD mode or add more sats to purchase.'
-                            }
-                          />
-                        ) : state.upgrade ? (
-                          <StatusBanner tone="blue" message="Upgrade request sent for this tier." />
-                        ) : (
-                          <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning this tier later." />
-                        )}
-                      </div>
                     </div>
-                  </div>
-                </div>
+                  }
+                />
               );
             })}
           </div>
         </section>
       </div>
-    </div>
-  );
-}
-
-function PremiumPriceCard({
-  label,
-  showSatsPricing,
-  oldUsdYearly,
-  newUsd,
-  oldSatsMonthly,
-  oldSatsYearly,
-  newSats,
-  accentClass,
-  eligible,
-  active,
-  loading,
-  disabled,
-  requestSent,
-  actionLabel,
-  onAction,
-}: {
-  label: string;
-  showSatsPricing: boolean;
-  oldUsdYearly: string | null;
-  newUsd: string | null;
-  oldSatsMonthly: string | null;
-  oldSatsYearly: string | null;
-  newSats: number | null;
-  accentClass: string;
-  eligible: boolean;
-  active: boolean;
-  loading: boolean;
-  disabled: boolean;
-  requestSent: boolean;
-  actionLabel: string;
-  onAction: () => void;
-}) {
-  const showUnavailable = showSatsPricing ? !newSats : !newUsd;
-
-  return (
-    <div className={`flex h-full flex-col rounded-[20px] border ${active ? 'border-green-500/30 bg-green-500/5' : 'border-white/[0.06] bg-[#080808]/80'} p-4 md:p-5 backdrop-blur-sm transition-colors hover:border-white/10`}>
-      <div className="flex items-start justify-between gap-3 pb-1">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{label}</div>
-
-          {showUnavailable ? (
-            <div className="mt-2 text-xl font-black text-gray-600">Unavailable</div>
-          ) : showSatsPricing ? (
-            <div className="mt-1 flex items-baseline gap-2">
-              <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newSats ? formatSats(newSats) : 'Unavailable'}</div>
-              {(label.toLowerCase().includes('year') ? oldSatsYearly : oldSatsMonthly)
-                ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{label.toLowerCase().includes('year') ? oldSatsYearly : oldSatsMonthly}</div>
-                : null}
-            </div>
-          ) : (
-            <div className="mt-1 flex items-baseline gap-2">
-              <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newUsd}</div>
-              {oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null}
-            </div>
-          )}
-        </div>
-
-        <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] border ${eligible && showSatsPricing ? 'border-green-500/20 bg-green-500/10 text-green-400' : 'border-white/10 bg-black/40 text-gray-500'}`}>
-          {showSatsPricing ? (eligible ? 'Ready' : 'Locked') : 'Offer'}
-        </span>
-      </div>
-
-      <button
-        onClick={onAction}
-        disabled={disabled || showUnavailable}
-        className={`mt-auto w-full rounded-xl px-3.5 py-2.5 text-sm font-bold transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed ${
-          active
-            ? 'border border-green-500/30 bg-green-500/10 text-green-400'
-            : showSatsPricing
-              ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] active:scale-95'
-              : requestSent
-                ? 'border border-blue-500/30 bg-blue-500/10 text-blue-300'
-                : 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] active:scale-95'
-        }`}
-      >
-        <span className="inline-flex items-center justify-center gap-2">
-          {requestSent ? <CheckCircle2 className="w-4 h-4" /> : !active && !disabled ? <Sparkles className="w-4 h-4" /> : null}
-          <span>{loading ? 'Processing...' : actionLabel}</span>
-        </span>
-      </button>
     </div>
   );
 }

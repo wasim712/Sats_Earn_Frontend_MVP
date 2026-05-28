@@ -107,13 +107,13 @@ export default function UserProfilePage() {
   }
 
   // ─── Derived Data ───────────────────────────────────────────────────────────
-  const joinDate = new Date(profile.createdAt).toLocaleDateString('en-US', {
+  const joinDate = new Date(profile.createdAt || Date.now()).toLocaleDateString('en-US', {
     month: 'long', year: 'numeric'
   });
 
   const initials = (profile.fullName || profile.email || 'User')
     .split(' ')
-    .map(n => n[0])
+    .map((n: string) => n[0])
     .join('')
     .substring(0, 2)
     .toUpperCase();
@@ -284,7 +284,7 @@ export default function UserProfilePage() {
           </div>
           {profile.billingHistory && profile.billingHistory.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-              {profile.billingHistory.map((item) => {
+              {profile.billingHistory.map((item: { id: string; billingSource: string; amountSats?: number | null; amountUsd?: number | null; premiumTier: string; createdAt: string; billingCycle: string; premiumExpiresAt?: string | null; adminNotes?: string | null }) => {
                 const sourceLabel = item.billingSource.replace(/_/g, ' ');
                 const amountLabel = item.amountSats ? `${item.amountSats.toLocaleString()} sats` : item.amountUsd ? `$${item.amountUsd}` : 'Manual update';
                 return (
@@ -418,3 +418,6 @@ function ProfileStatCard({
     </div>
   );
 }
+
+
+
