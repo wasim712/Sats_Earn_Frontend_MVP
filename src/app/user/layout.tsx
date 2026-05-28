@@ -11,14 +11,50 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/features/auth/authSlice'; 
 import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 import { useGetUserNotificationsQuery } from '@/store/services/userApi';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
+import type { UserSidebarConfig } from '@/features/admin/adminSettingsSlice';
 
 // ─── Floating Dock Links ────────────────────────────────────────────────────
 // You can easily add more links here. The dock will flex and adapt automatically.
 const DOCK_LINKS = [
-  { label: 'Dashboard', path: '/user/dashboard', icon: Home },
-  { label: 'Tasks', path: '/user/tasks', icon: Target }, 
-  { label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
-  { label: 'Wallet', path: '/user/wallet', icon: Wallet },
+  { key: 'dashboard', label: 'Dashboard', path: '/user/dashboard', icon: Home },
+  { key: 'tasks', label: 'Tasks', path: '/user/tasks', icon: Target },
+  { key: 'quiz', label: 'Quiz', path: '/user/quiz', icon: Lightbulb },
+  { key: 'wallet', label: 'Wallet', path: '/user/wallet', icon: Wallet },
+] as const;
+
+const DEFAULT_USER_SIDEBAR_CONFIG: UserSidebarConfig = {
+  dashboard: true,
+  tasks: true,
+  standaloneTasks: true,
+  minigames: true,
+  bugBounty: true,
+  quiz: true,
+  referrals: true,
+  rewards: true,
+  leaderboard: true,
+  wallet: true,
+  settings: true,
+  help: true,
+  notifications: true,
+  profile: true,
+};
+
+const USER_ROUTE_CONFIG: Array<{ key: keyof UserSidebarConfig; prefix: string }> = [
+  { key: 'dashboard', prefix: '/user/dashboard' },
+  { key: 'tasks', prefix: '/user/tasks' },
+  { key: 'standaloneTasks', prefix: '/user/standalone-tasks' },
+  { key: 'minigames', prefix: '/user/minigames' },
+  { key: 'bugBounty', prefix: '/user/bug-bounty' },
+  { key: 'quiz', prefix: '/user/quiz' },
+  { key: 'referrals', prefix: '/user/referrals' },
+  { key: 'rewards', prefix: '/user/rewards' },
+  { key: 'leaderboard', prefix: '/user/leaderboard' },
+  { key: 'wallet', prefix: '/user/wallet' },
+  { key: 'settings', prefix: '/user/settings' },
+  { key: 'help', prefix: '/user/help' },
+  { key: 'notifications', prefix: '/user/notifications' },
+  { key: 'profile', prefix: '/user/profile' },
 ];
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
@@ -32,6 +68,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false); 
   const [mounted, setMounted] = useState(false);
+  const [sidebarConfig, setSidebarConfig] = useState<UserSidebarConfig>(DEFAULT_USER_SIDEBAR_CONFIG);
   
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { data: notificationsData } = useGetUserNotificationsQuery();
@@ -40,6 +77,11 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     if (!Array.isArray(notificationsData)) return 0;
     return notificationsData.filter((notification) => !notification.isRead).length;
   }, [notificationsData]);
+
+  const allowedDockLinks = useMemo(
+    () => DOCK_LINKS.filter((item) => sidebarConfig[item.key]),
+    [sidebarConfig]
+  );
 
   const derivedLevel = useMemo(() => {
     const totalXp = Number(user?.totalXp || 0);
@@ -56,6 +98,46 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const fetchSidebarConfig = async () => {
+      try {
+        const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+        if (!token) return;
+
+        const response = await obfuscatedJsonRequest<{ userSidebarConfig?: Partial<UserSidebarConfig> }>(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/settings`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setSidebarConfig({
+          ...DEFAULT_USER_SIDEBAR_CONFIG,
+          ...(response.userSidebarConfig || {}),
+        });
+      } catch {
+        setSidebarConfig(DEFAULT_USER_SIDEBAR_CONFIG);
+      }
+    };
+
+    fetchSidebarConfig();
+
+    const handleVisibilityRefresh = () => {
+      if (document.visibilityState === 'hidden') return;
+      fetchSidebarConfig();
+    };
+
+    window.addEventListener('focus', handleVisibilityRefresh);
+    document.addEventListener('visibilitychange', handleVisibilityRefresh);
+
+    return () => {
+      window.removeEventListener('focus', handleVisibilityRefresh);
+      document.removeEventListener('visibilitychange', handleVisibilityRefresh);
+    };
   }, []);
 
   useEffect(() => {
@@ -79,6 +161,15 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
       router.push('/login');
     }
   }, [isAuthenticated, mounted, router]);
+
+  useEffect(() => {
+    if (!mounted || !pathname) return;
+
+    const blockedRoute = USER_ROUTE_CONFIG.find((item) => pathname.startsWith(item.prefix) && !sidebarConfig[item.key]);
+    if (blockedRoute) {
+      router.replace('/user/dashboard');
+    }
+  }, [mounted, pathname, router, sidebarConfig]);
 
   // ─── 3. Logout Handler ───────────────────────────────────────────────────
   const handleLogout = () => {
@@ -126,6 +217,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     <div className="min-h-screen bg-[#020202] font-sans text-white relative">
       {/* ─── Sidebar ─── */}
       <UserSidebar 
+              sidebarConfig={sidebarConfig}
         isOpen={isSidebarOpen}
         isCollapsed={isCollapsed}
         onClose={() => setIsSidebarOpen(false)}
@@ -159,19 +251,21 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
               </h1>
             </div>
 
-            <Link
-              href="/user/notifications"
-              onClick={(e) => handleLinkClick(e, '/user/notifications')}
-              aria-label="Open notifications"
-              className={`relative shrink-0 rounded-xl border p-2 transition-all duration-300 ${pathname?.startsWith('/user/notifications') ? 'border-sats-orange-500/30 bg-sats-orange-500/10 text-sats-orange-500' : 'border-[#1a1a1a] bg-[#111] text-gray-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <Bell className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full border border-sats-black-950 bg-sats-orange-500 px-1 text-[9px] font-black leading-none text-black shadow-[0_0_12px_rgba(249,115,22,0.45)]">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </Link>
+            {sidebarConfig.notifications && (
+              <Link
+                href="/user/notifications"
+                onClick={(e) => handleLinkClick(e, '/user/notifications')}
+                aria-label="Open notifications"
+                className={`relative shrink-0 rounded-xl border p-2 transition-all duration-300 ${pathname?.startsWith('/user/notifications') ? 'border-sats-orange-500/30 bg-sats-orange-500/10 text-sats-orange-500' : 'border-[#1a1a1a] bg-[#111] text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full border border-sats-black-950 bg-sats-orange-500 px-1 text-[9px] font-black leading-none text-black shadow-[0_0_12px_rgba(249,115,22,0.45)]">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </Link>
+            )}
           </div>
         </header>
 
@@ -202,7 +296,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             <span className="text-[9px] font-bold leading-none tracking-[0.02em] sm:text-[10px]">Menu</span>
           </button>
 
-          {DOCK_LINKS.map((item) => {
+          {allowedDockLinks.map((item) => {
             // Highlight if exactly matching OR if viewing a sub-page (like /user/tasks/123)
             const isActive = pathname === item.path || pathname?.startsWith(`${item.path}/`);
             

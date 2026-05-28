@@ -1,15 +1,35 @@
-'use client';
+﻿'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckSquare, Loader2, Save } from 'lucide-react';
+import Image from 'next/image';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchCountries } from '@/features/admin/adminCountriesSlice';
+import { uploadCampaignCover } from '@/features/admin/adminCampaignsSlice';
+import {
+  ArrowLeft,
+  CalendarDays,
+  CheckSquare,
+  ChevronDown,
+  Crown,
+  Globe2,
+  ImagePlus,
+  Loader2,
+  Save,
+  Shield,
+  Sparkles,
+  Target,
+  Trophy,
+  Zap,
+} from 'lucide-react';
 import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const CATEGORIES = ['SOCIAL', 'SURVEY', 'VIDEO_AD', 'APP_INSTALL', 'OFFERWALL', 'LEARN_EARN', 'DAILY_STREAK'];
 const FREE_TIERS = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
 const PREMIUM_TIERS = ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
 const PROOF_TYPES = ['SCREENSHOT', 'URL', 'TEXT_RESPONSE', 'API_VERIFIED'];
-const PLATFORMS = ['NONE', 'TWITTER', 'YOUTUBE', 'INSTAGRAM', 'TELEGRAM', 'FACEBOOK', 'LINKEDIN', 'APP_STORE', 'PLAY_STORE', 'WEBSITE'];
+const PLATFORMS = ['NONE', 'DESKTOP', 'ANDROID', 'IOS'];
 
 const createMatrix = () => [...FREE_TIERS, ...PREMIUM_TIERS].reduce<Record<string, number>>((acc, tier) => {
   acc[tier] = 0;
@@ -23,25 +43,109 @@ const parseWholeNumber = (value: string) => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
+const inputCls = 'w-full rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3 text-sm text-white outline-none transition focus:border-sats-orange-500';
+const cardCls = 'rounded-3xl border border-[#1a1a1a] bg-[#050505] p-6 md:p-8 shadow-[0_18px_80px_rgba(0,0,0,0.28)]';
+
+function SectionTitle({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
+  return (
+    <div className="mb-6 flex items-start gap-3">
+      <div className="rounded-2xl border border-sats-orange-500/20 bg-sats-orange-500/10 p-2.5 text-sats-orange-400">
+        {icon}
+      </div>
+      <div>
+        <h2 className="text-lg font-black tracking-tight text-white">{title}</h2>
+        <p className="mt-1 text-sm text-white/45">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
+function InputWrap({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <label className="block space-y-2 relative">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{label}{required ? ' *' : ''}</span>
+        {hint ? <span className="text-[11px] text-white/25">{hint}</span> : null}
+      </div>
+      {children}
+    </label>
+  );
+}
+
 export default function AddStandaloneTaskPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { countries } = useAppSelector((state) => state.adminCountries);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [countrySearch, setCountrySearch] = useState('');
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    category: 'SOCIAL',
+    coverImageUrl: '',
+    targetCountries: [] as string[],
+    isPremiumOnly: false,
+    requiredFreeTier: 'BASIC',
     proofType: 'SCREENSHOT',
     targetUrl: '',
     requiredPlatform: 'NONE',
     xpReward: 0,
     tierRewardMatrix: createMatrix(),
+    doubleRewardsStartAt: '',
+    doubleRewardsEndAt: '',
   });
 
-  const hasReward = useMemo(
-    () => [...FREE_TIERS, ...PREMIUM_TIERS].some((tier) => Number(formData.tierRewardMatrix[tier] || 0) > 0),
+  useEffect(() => {
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [countries.length, dispatch]);
+
+  const filteredCountries = countries.filter((country) =>
+    country.toLowerCase().includes(countrySearch.trim().toLowerCase())
+  );
+
+  const totalRewardPool = useMemo(
+    () => [...FREE_TIERS, ...PREMIUM_TIERS].reduce((sum, tier) => sum + Number(formData.tierRewardMatrix[tier] || 0), 0),
     [formData.tierRewardMatrix]
   );
+
+  const hasReward = useMemo(
+    () => PREMIUM_TIERS.some((tier) => Number(formData.tierRewardMatrix[tier] || 0) > 0)
+      || (!formData.isPremiumOnly && FREE_TIERS.some((tier) => Number(formData.tierRewardMatrix[tier] || 0) > 0)),
+    [formData.isPremiumOnly, formData.tierRewardMatrix]
+  );
+
+  const handleCountryToggle = (country: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      targetCountries: prev.targetCountries.includes(country)
+        ? prev.targetCountries.filter((item) => item !== country)
+        : [...prev.targetCountries, country],
+    }));
+  };
+
+  const updatePremiumOnly = (nextValue: boolean) => {
+    setFormData((prev) => {
+      const nextMatrix = { ...prev.tierRewardMatrix };
+      if (nextValue) {
+        for (const tier of FREE_TIERS) {
+          nextMatrix[tier] = 0;
+        }
+      }
+
+      return {
+        ...prev,
+        isPremiumOnly: nextValue,
+        requiredFreeTier: nextValue ? 'BASIC' : prev.requiredFreeTier,
+        tierRewardMatrix: nextMatrix,
+      };
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,12 +153,26 @@ export default function AddStandaloneTaskPage() {
     setSuccessMsg(null);
 
     if (!hasReward) {
-      setErrorMsg('Add at least one tier reward value.');
+      setErrorMsg(formData.isPremiumOnly ? 'Add at least one premium tier reward value.' : 'Add at least one tier reward value.');
       return;
     }
 
     setIsSaving(true);
     try {
+      let coverImageUrl = formData.coverImageUrl || '';
+      if (coverImageFile) {
+        setIsUploadingCover(true);
+        const uploadResult = await dispatch(uploadCampaignCover(coverImageFile));
+        setIsUploadingCover(false);
+        if (uploadCampaignCover.fulfilled.match(uploadResult)) {
+          coverImageUrl = uploadResult.payload;
+        } else {
+          setErrorMsg((uploadResult.payload as string) || 'Failed to upload cover image.');
+          setIsSaving(false);
+          return;
+        }
+      }
+
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
       const response = await obfuscatedFetch(`${API_URL}/admin/tasks/standalone`, {
         method: 'POST',
@@ -63,13 +181,20 @@ export default function AddStandaloneTaskPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          category: formData.category,
+          coverImageUrl: coverImageUrl || undefined,
+          targetCountries: formData.targetCountries,
+          isPremiumOnly: formData.isPremiumOnly,
+          requiredFreeTier: formData.requiredFreeTier,
           proofType: formData.proofType,
           targetUrl: formData.targetUrl || undefined,
           requiredPlatform: formData.requiredPlatform,
           xpReward: formData.xpReward,
           tierRewardMatrix: formData.tierRewardMatrix,
+          doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
+          doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
         }),
       });
 
@@ -79,116 +204,343 @@ export default function AddStandaloneTaskPage() {
       }
 
       setSuccessMsg('Standalone task created successfully.');
+      setCountrySearch('');
+      setCoverImageFile(null);
       setFormData({
         title: '',
         description: '',
+        category: 'SOCIAL',
+        coverImageUrl: '',
+        targetCountries: [],
+        isPremiumOnly: false,
+        requiredFreeTier: 'BASIC',
         proofType: 'SCREENSHOT',
         targetUrl: '',
         requiredPlatform: 'NONE',
         xpReward: 0,
         tierRewardMatrix: createMatrix(),
+        doubleRewardsStartAt: '',
+        doubleRewardsEndAt: '',
       });
     } catch (error: any) {
       setErrorMsg(error.message || 'Failed to create standalone task');
     } finally {
       setIsSaving(false);
+      setIsUploadingCover(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 lg:p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between gap-4">
-          <button
-            onClick={() => router.push('/admin/campaigns')}
-            className="inline-flex items-center gap-2 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-2.5 text-sm font-bold text-gray-300 hover:text-white"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-sats-orange-400">
-            <CheckSquare className="w-4 h-4" /> Standalone Task
-          </div>
-        </div>
-
-        <div className="rounded-[28px] border border-[#1a1a1a] bg-[#080808] p-6 sm:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.35)]">
-          <div className="mb-6">
-            <h1 className="text-3xl font-black tracking-tight">Create Standalone Task</h1>
-            <p className="mt-2 text-sm text-gray-400">This creates one task without needing you to manually create a campaign first.</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Title</label>
-                <input value={formData.title} onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))} required className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Description</label>
-                <textarea value={formData.description} onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))} required className="min-h-[120px] w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" />
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Proof Type</label>
-                <select value={formData.proofType} onChange={(e) => setFormData((prev) => ({ ...prev, proofType: e.target.value }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500">
-                  {PROOF_TYPES.map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Required Platform</label>
-                <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500">
-                  {PLATFORMS.map((item) => <option key={item} value={item}>{item}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Task XP Reward</label>
-                <input required type="text" inputMode="numeric" pattern="[0-9]*" value={formData.xpReward || ''} onChange={(e) => setFormData((prev) => ({ ...prev, xpReward: parseWholeNumber(e.target.value) }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="0" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-gray-500">Target URL</label>
-                <input value={formData.targetUrl} onChange={(e) => setFormData((prev) => ({ ...prev, targetUrl: e.target.value }))} className="w-full rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-white outline-none focus:border-sats-orange-500" placeholder="https://..." />
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 space-y-5">
-              <div>
-                <p className="text-sm font-bold text-white">Task Reward Table</p>
-                <p className="text-xs text-gray-500 mt-0.5">Set the sats reward for each tier on this standalone task.</p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-3">
-                  <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
-                  <div className="grid grid-cols-1 gap-3">
-                    {FREE_TIERS.map((tier) => (
-                      <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrix[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-[#2a2a2a] bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-400">Premium Tiers</div>
-                  <div className="grid grid-cols-1 gap-3">
-                    {PREMIUM_TIERS.map((tier) => (
-                      <div key={tier} className="rounded-xl border border-yellow-500/30 bg-[#0a0a0a] p-2.5 flex items-center justify-between shadow-[0_0_0_1px_rgba(234,179,8,0.06)]">
-                        <label className="text-[10px] font-black text-yellow-300 uppercase tracking-wider truncate mr-2">{tier}</label>
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.tierRewardMatrix[tier] || ''} onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))} placeholder="0" className="w-16 rounded-lg border border-yellow-500/20 bg-[#111] px-2 py-1 text-right text-xs font-bold text-white outline-none focus:border-sats-orange-500" />
-                      </div>
-                    ))}
-                  </div>
+    <div className="min-h-screen bg-[#020202] px-4 py-6 text-white md:px-6 lg:px-8 pb-32">
+      <div className="mx-auto flex max-w-[1240px] flex-col gap-6 md:gap-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
+          <div className="sticky top-0 z-40 rounded-3xl border border-[#1a1a1a] bg-[#020202]/90 p-4 backdrop-blur-xl shadow-2xl md:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.push('/admin/tasks')}
+                  className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 text-sm font-bold text-white/75 transition hover:bg-[#111] hover:text-white"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                </button>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.25em] text-sats-orange-400/80">Standalone setup</p>
+                  <h1 className="text-xl font-black tracking-tight text-white md:text-2xl">Create a standalone task</h1>
+                  <p className="mt-1 text-sm text-white/45">Use campaign-style controls, but publish into the dedicated standalone flow only.</p>
                 </div>
               </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3 text-sm">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Reward Pool</div>
+                  <div className="mt-1 font-black text-white">{totalRewardPool} sats total</div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSaving || isUploadingCover}
+                  className="inline-flex h-12 items-center justify-center rounded-2xl bg-sats-orange-500 px-6 text-sm font-black text-black transition hover:bg-sats-orange-400 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSaving || isUploadingCover ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                  Publish Standalone Task
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {errorMsg ? (
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">{errorMsg}</div>
+          ) : null}
+          {successMsg ? (
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-300">{successMsg}</div>
+          ) : null}
+
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.45fr)_380px]">
+            <div className="space-y-6">
+              <section className={cardCls}>
+                <SectionTitle icon={<Target className="h-5 w-5" />} title="Basic Details" subtitle="Match the standalone task metadata to the campaign-style experience." />
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <InputWrap label="Task Title" required>
+                      <input
+                        value={formData.title}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                        className={inputCls}
+                        minLength={3}
+                        placeholder="e.g. Join the SatsEarn community on Telegram"
+                        required
+                      />
+                    </InputWrap>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <InputWrap label="Cover Image" hint="Upload from device or paste an image URL">
+                      <div className="space-y-3">
+                        <input type="file" accept="image/*" onChange={(e) => setCoverImageFile(e.target.files?.[0] || null)} className={inputCls} />
+                        <input
+                          value={formData.coverImageUrl}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, coverImageUrl: e.target.value }))}
+                          className={inputCls}
+                          placeholder="https://example.com/cover.jpg"
+                        />
+                      </div>
+                    </InputWrap>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <InputWrap label="Description" required hint="Shown on user task details">
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                        className={`${inputCls} min-h-32 resize-y`}
+                        placeholder="Explain exactly what the user needs to do and what proof is accepted."
+                        required
+                      />
+                    </InputWrap>
+                  </div>
+
+                  <InputWrap label="Category">
+                    <select value={formData.category} onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
+                      {CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                  </InputWrap>
+
+                  <InputWrap label="Proof Type">
+                    <select value={formData.proofType} onChange={(e) => setFormData((prev) => ({ ...prev, proofType: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
+                      {PROOF_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                  </InputWrap>
+
+                  <div className="md:col-span-2">
+                    <InputWrap label="Target URL" hint="Where the task sends the user">
+                      <input
+                        value={formData.targetUrl}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, targetUrl: e.target.value }))}
+                        className={inputCls}
+                        placeholder="https://..."
+                      />
+                    </InputWrap>
+                  </div>
+                </div>
+
+                {(coverImageFile || formData.coverImageUrl) ? (
+                  <div className="mt-6 overflow-hidden rounded-3xl border border-[#1a1a1a] bg-[#090909]">
+                    <div className="relative h-52 w-full">
+                      <Image src={coverImageFile ? URL.createObjectURL(coverImageFile) : formData.coverImageUrl} alt="Standalone cover preview" fill unoptimized className="object-cover" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-6 flex h-52 items-center justify-center rounded-3xl border border-dashed border-[#1f1f1f] bg-[#070707] text-center text-white/35">
+                    <div>
+                      <ImagePlus className="mx-auto mb-3 h-8 w-8" />
+                      <p className="text-sm font-semibold">Cover preview appears here</p>
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              <section className={cardCls}>
+                <SectionTitle icon={<Shield className="h-5 w-5" />} title="Categorization & Gates" subtitle="Use the same access controls and country source as campaign creation." />
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 mb-8">
+                  <InputWrap label="Required Free Tier">
+                    <select
+                      value={formData.requiredFreeTier}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, requiredFreeTier: e.target.value }))}
+                      disabled={formData.isPremiumOnly}
+                      className={`${inputCls} appearance-none cursor-pointer disabled:opacity-50`}
+                    >
+                      {FREE_TIERS.map((item) => <option key={item} value={item}>{item}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                  </InputWrap>
+
+                  <InputWrap label="Device Targeting">
+                    <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
+                      {PLATFORMS.map((item) => <option key={item} value={item}>{item === 'NONE' ? 'All Devices' : item === 'DESKTOP' ? 'Desktop Only' : item === 'ANDROID' ? 'Android Only' : 'iOS Only'}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                  </InputWrap>
+                </div>
+
+                <div className="mb-8">
+                  <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
+                      <div className="mb-4">
+                        <input
+                          type="text"
+                          value={countrySearch}
+                          onChange={(e) => setCountrySearch(e.target.value)}
+                          placeholder="Search countries..."
+                          className="w-full rounded-xl border border-[#1a1a1a] bg-black px-4 py-2.5 text-sm font-medium text-white outline-none transition-all focus:border-sats-orange-500/50 focus:bg-[#111]"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                        {filteredCountries.map((country) => {
+                          const selected = formData.targetCountries.includes(country);
+                          return (
+                            <button
+                              key={country}
+                              type="button"
+                              onClick={() => handleCountryToggle(country)}
+                              className={`rounded-xl border px-3 py-2 text-left text-sm transition-all ${selected ? 'border-sats-orange-500 bg-sats-orange-500 text-black' : 'border-[#1a1a1a] bg-black text-gray-300 hover:border-sats-orange-500/40'}`}
+                            >
+                              {country}
+                            </button>
+                          );
+                        })}
+                        {filteredCountries.length === 0 && (
+                          <div className="col-span-full rounded-xl border border-dashed border-[#1a1a1a] bg-black/40 px-4 py-6 text-center text-sm text-gray-500">
+                            No countries match your search.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </InputWrap>
+                </div>
+
+                <div className="border-t border-[#1a1a1a] pt-8">
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 max-w-sm">
+                    <div>
+                      <p className="flex items-center gap-1.5 text-sm font-bold text-white"><Crown className="h-4 w-4 text-yellow-500" /> Premium Exclusive</p>
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-gray-500">Restrict to paid users</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => updatePremiumOnly(!formData.isPremiumOnly)}
+                      className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${formData.isPremiumOnly ? 'bg-sats-orange-500' : 'bg-[#1a1a1a]'}`}
+                    >
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${formData.isPremiumOnly ? 'translate-x-8' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section className={cardCls}>
+                <SectionTitle icon={<CalendarDays className="h-5 w-5" />} title="Boost Window" subtitle="Optional double rewards period for this standalone task." />
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                  <InputWrap label="Double Rewards Start">
+                    <input type="datetime-local" value={formData.doubleRewardsStartAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: e.target.value }))} className={inputCls} />
+                  </InputWrap>
+                  <InputWrap label="Double Rewards End">
+                    <input type="datetime-local" value={formData.doubleRewardsEndAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: e.target.value }))} className={inputCls} />
+                  </InputWrap>
+                </div>
+              </section>
             </div>
 
-            {errorMsg && <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{errorMsg}</div>}
-            {successMsg && <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300">{successMsg}</div>}
+            <div className="space-y-6 xl:sticky xl:top-28 xl:self-start">
+              <section className={cardCls}>
+                <SectionTitle icon={<Trophy className="h-5 w-5" />} title="Task Rewards" subtitle="Premium-only mode disables all free-tier rewards automatically." />
 
-            <div className="flex justify-end">
-              <button type="submit" disabled={isSaving} className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-5 py-3 text-sm font-black text-black hover:bg-sats-orange-400 disabled:opacity-50">
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Create Standalone Task
-              </button>
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">XP Reward</p>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={formData.xpReward || ''}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, xpReward: parseWholeNumber(e.target.value) }))}
+                      className="mt-2 w-full border-0 bg-transparent p-0 text-lg font-black text-white outline-none"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Proof Mode</p>
+                    <p className="mt-2 text-lg font-black text-white">{formData.proofType.replaceAll('_', ' ')}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-5">
+                  <div>
+                    <p className="mb-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/35">Free Tiers</p>
+                    <div className="space-y-2.5">
+                      {FREE_TIERS.map((tier) => (
+                        <div key={tier} className={`flex items-center justify-between rounded-2xl border px-4 py-3 ${formData.isPremiumOnly ? 'border-[#171717] bg-[#070707] opacity-50' : 'border-[#1a1a1a] bg-[#090909]'}`}>
+                          <span className="text-xs font-black uppercase tracking-[0.16em] text-white/65">{tier}</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={formData.tierRewardMatrix[tier] || ''}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))}
+                            placeholder="0"
+                            disabled={formData.isPremiumOnly}
+                            className="w-24 rounded-xl border border-[#242424] bg-[#111] px-3 py-2 text-right text-sm font-black text-white outline-none focus:border-sats-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="mb-3 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300/80">Premium Tiers</p>
+                    <div className="space-y-2.5">
+                      {PREMIUM_TIERS.map((tier) => (
+                        <div key={tier} className="flex items-center justify-between rounded-2xl border border-yellow-500/20 bg-yellow-500/5 px-4 py-3">
+                          <span className="text-xs font-black uppercase tracking-[0.16em] text-yellow-100">{tier}</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={formData.tierRewardMatrix[tier] || ''}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, tierRewardMatrix: { ...prev.tierRewardMatrix, [tier]: parseWholeNumber(e.target.value) } }))}
+                            placeholder="0"
+                            className="w-24 rounded-xl border border-yellow-500/20 bg-[#111] px-3 py-2 text-right text-sm font-black text-white outline-none focus:border-sats-orange-500"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className={cardCls}>
+                <SectionTitle icon={<Sparkles className="h-5 w-5" />} title="Preview Summary" subtitle="Quick health check before publishing." />
+                <div className="space-y-3 text-sm text-white/65">
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <span className="flex items-center gap-2"><CheckSquare className="h-4 w-4 text-sats-orange-400" /> Category</span>
+                    <span className="font-bold text-white">{formData.category}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-sats-orange-400" /> XP Reward</span>
+                    <span className="font-bold text-white">{formData.xpReward} XP</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <span className="flex items-center gap-2"><Globe2 className="h-4 w-4 text-sats-orange-400" /> Countries</span>
+                    <span className="font-bold text-white">{formData.targetCountries.length || 'Global'}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <span className="flex items-center gap-2"><Crown className="h-4 w-4 text-sats-orange-400" /> Access</span>
+                    <span className="font-bold text-white">{formData.isPremiumOnly ? 'Premium only' : `${formData.requiredFreeTier}+`}</span>
+                  </div>
+                </div>
+              </section>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );

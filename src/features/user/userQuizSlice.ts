@@ -154,7 +154,7 @@ export const fetchTodayQuiz = createAsyncThunk(
 
 export const submitTodayQuiz = createAsyncThunk(
   'userQuiz/submitToday',
-  async (answers: { questionId: string; answer: string }[], { getState, rejectWithValue }) => {
+  async (answers: { questionId: string; answer: string; attemptCount: number }[], { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');

@@ -209,6 +209,9 @@ export interface QuizResult {
   passed: boolean;
   score: number;
   totalQuestions?: number;
+  maxRewardSats?: number;
+  maxXpReward?: number;
+  totalAttempts?: number;
   quizTitle?: string;
   quizDescription?: string;
   rewardEarned: number;
@@ -222,6 +225,9 @@ export interface QuizResult {
     selectedAnswer: string;
     correctAnswer: string;
     isCorrect: boolean;
+    attemptCount?: number;
+    rewardAwarded?: number;
+    xpAwarded?: number;
     options: string[];
     order: number;
   }>;

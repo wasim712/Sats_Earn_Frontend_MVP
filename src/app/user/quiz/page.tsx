@@ -53,6 +53,9 @@ export default function UserDailyQuizPage() {
 
   const normalizedQuiz = useMemo(() => normalizePageQuiz(quiz), [quiz]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>({});
+  const [solvedQuestions, setSolvedQuestions] = useState<Record<string, string>>({});
+  const [feedbackByQuestion, setFeedbackByQuestion] = useState<Record<string, { correct: boolean; message: string }>>({});
 
   useEffect(() => {
     dispatch(fetchTodayQuiz());
@@ -75,27 +78,68 @@ export default function UserDailyQuizPage() {
       return accumulator;
     }, {});
 
+    const restoredAttempts = result.review.reduce<Record<string, number>>((accumulator, item) => {
+      accumulator[item.questionId] = item.attemptCount || 1;
+      return accumulator;
+    }, {});
+
+    const restoredSolved = result.review.reduce<Record<string, string>>((accumulator, item) => {
+      if (item.isCorrect) {
+        accumulator[item.questionId] = item.selectedAnswer;
+      }
+      return accumulator;
+    }, {});
+
     setAnswers(restoredAnswers);
+    setAttemptCounts(restoredAttempts);
+    setSolvedQuestions(restoredSolved);
   }, [result]);
 
   const handleSelectOption = (questionId: string, option: string) => {
-    if (result || answers[questionId]) return;
+    if (result || solvedQuestions[questionId]) return;
+
+    const correctAnswer = getInstantCorrectAnswer(normalizedQuiz, questionId);
+    const nextAttemptCount = (attemptCounts[questionId] || 0) + 1;
+    const isCorrect = Boolean(correctAnswer) && option === correctAnswer;
+
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
+    setAttemptCounts((prev) => ({ ...prev, [questionId]: nextAttemptCount }));
+
+    if (isCorrect) {
+      setSolvedQuestions((prev) => ({ ...prev, [questionId]: option }));
+      setFeedbackByQuestion((prev) => ({
+        ...prev,
+        [questionId]: {
+          correct: true,
+          message: `Correct on try ${nextAttemptCount}. Reward for this question is now reduced based on attempts.`,
+        },
+      }));
+      return;
+    }
+
+    setFeedbackByQuestion((prev) => ({
+      ...prev,
+      [questionId]: {
+        correct: false,
+        message: `Wrong answer. Try again — this question has used ${nextAttemptCount} attempt${nextAttemptCount > 1 ? 's' : ''}.`,
+      },
+    }));
   };
 
   const handleSubmit = async () => {
     if (!normalizedQuiz || sortedQuestions.length === 0 || result) return;
 
-    const payload = Object.entries(answers).map(([questionId, answer]) => ({
+    const payload = Object.entries(solvedQuestions).map(([questionId, answer]) => ({
       questionId,
       answer,
+      attemptCount: attemptCounts[questionId] || 1,
     }));
 
     await dispatch(submitTodayQuiz(payload));
   };
 
   const totalQuestions = sortedQuestions.length;
-  const answeredCount = Object.keys(answers ?? {}).length;
+  const answeredCount = Object.keys(solvedQuestions ?? {}).length;
   const isReviewMode = Boolean(result);
   const isAllAnswered = totalQuestions > 0 && answeredCount === totalQuestions;
 
@@ -138,9 +182,9 @@ export default function UserDailyQuizPage() {
               <h2 className="text-2xl md:text-3xl xl:text-[2rem] leading-tight font-black text-white tracking-tight mb-3">
                 {normalizedQuiz.title}
               </h2>
-              <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl">
-                {normalizedQuiz.description}
-              </p>
+                <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl">
+                  {normalizedQuiz.description}
+                </p>
             </div>
           </div>
 
@@ -171,9 +215,9 @@ export default function UserDailyQuizPage() {
 
               <div className="grid grid-cols-2 xl:grid-cols-1 gap-3 lg:min-w-[220px]">
                 <ResultStatCard icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />} label="Score" value={`${result.score}/${result.totalQuestions || totalQuestions || result.score}`} />
-                <ResultStatCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Earned" value={`${(result.rewardEarned || 0) + (result.streakBonusSats || 0)}`} />
+                <ResultStatCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Earned" value={`${(result.rewardEarned || 0) + (result.streakBonusSats || 0)} / ${result.maxRewardSats || normalizedQuiz.rewardSats}`} />
                 <ResultStatCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Earned" value={`${result.xpEarned || 0}`} />
-                <ResultStatCard icon={<Zap className="w-5 h-5 text-yellow-400" />} label="Status" value={result.passed ? 'Passed' : 'Submitted'} />
+                <ResultStatCard icon={<Zap className="w-5 h-5 text-yellow-400" />} label="Attempts" value={`${result.totalAttempts || 0}`} />
               </div>
             </div>
           </div>
@@ -191,10 +235,10 @@ export default function UserDailyQuizPage() {
             <div className="flex items-center justify-between gap-3 px-1">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.24em] text-gray-500 mb-1">Question Section</p>
-                <h3 className="text-lg md:text-xl font-black text-white">Answer all questions carefully</h3>
+                <h3 className="text-lg md:text-xl font-black text-white">Keep guessing until each answer is right</h3>
               </div>
               <div className="hidden md:flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#080808] px-4 py-2 text-xs font-bold text-gray-400">
-                <Zap className="w-4 h-4 text-sats-orange-500" /> One submission only
+                <Zap className="w-4 h-4 text-sats-orange-500" /> Wrong tries reduce reward
               </div>
             </div>
           )}
@@ -220,15 +264,16 @@ export default function UserDailyQuizPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
                 {question.options.map((opt, optionIndex) => {
                   const selectedAnswer = answers[question.id];
+                  const solvedAnswer = solvedQuestions[question.id];
                   const isSelected = selectedAnswer === opt;
                   const instantCorrectAnswer = getInstantCorrectAnswer(normalizedQuiz, question.id);
-                  const isInstantMode = !isReviewMode && Boolean(selectedAnswer);
-                  const isInstantCorrect = Boolean(selectedAnswer) && instantCorrectAnswer === selectedAnswer;
+                  const isInstantMode = !isReviewMode && Boolean(feedbackByQuestion[question.id]);
+                  const isInstantCorrect = Boolean(solvedAnswer) && instantCorrectAnswer === solvedAnswer;
                   const isCorrectOption = isReviewMode
                     ? isCorrectReviewOption(result, question.id, opt)
-                    : instantCorrectAnswer === opt;
-                  const isWrongSelectedOption = isInstantMode && isSelected && !isInstantCorrect;
-                  const isOptionDisabled = isReviewMode || Boolean(selectedAnswer);
+                    : Boolean(solvedAnswer) && instantCorrectAnswer === opt;
+                  const isWrongSelectedOption = isInstantMode && isSelected && !Boolean(solvedAnswer);
+                  const isOptionDisabled = isReviewMode || Boolean(solvedAnswer);
 
                   return (
                     <button
@@ -308,7 +353,7 @@ export default function UserDailyQuizPage() {
                 })}
               </div>
 
-              {(isReviewMode || Boolean(answers[question.id])) && (getReviewItem(result, question.id)?.explanation || question.explanation) && (
+              {(isReviewMode || Boolean(solvedQuestions[question.id])) && (getReviewItem(result, question.id)?.explanation || question.explanation) && (
                 <div className="mt-4 rounded-2xl border border-sky-500/15 bg-sky-500/10 px-5 py-4 flex items-start gap-3">
                   <Brain className="w-5 h-5 text-sky-300 shrink-0 mt-0.5" />
                   <div>
@@ -318,34 +363,38 @@ export default function UserDailyQuizPage() {
                 </div>
               )}
 
-              {!isReviewMode && Boolean(answers[question.id]) && (
+              {!isReviewMode && Boolean(feedbackByQuestion[question.id]) && (
                 <div className={`mt-4 rounded-2xl px-5 py-4 flex items-start gap-3 border ${
-                  getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                  feedbackByQuestion[question.id]?.correct
                     ? 'border-emerald-500/20 bg-emerald-500/10'
                     : 'border-red-500/20 bg-red-500/10'
                 }`}>
-                  {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id] ? (
+                  {feedbackByQuestion[question.id]?.correct ? (
                     <CircleCheckBig className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                   ) : (
                     <CircleX className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                   )}
                   <div>
                     <p className={`text-xs font-black uppercase tracking-widest mb-1 ${
-                      getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                      feedbackByQuestion[question.id]?.correct
                         ? 'text-emerald-200/90'
                         : 'text-red-200/90'
                     }`}>
-                      {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id] ? 'Correct answer' : 'Wrong answer'}
+                      {feedbackByQuestion[question.id]?.correct ? 'Correct answer' : 'Wrong answer'}
                     </p>
                     <p className={`text-sm leading-relaxed ${
-                      getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
+                      feedbackByQuestion[question.id]?.correct
                         ? 'text-emerald-100/85'
                         : 'text-red-100/85'
                     }`}>
-                      {getInstantCorrectAnswer(normalizedQuiz, question.id) === answers[question.id]
-                        ? 'Nice ? this answer is correct.'
-                        : `The right answer is ${getInstantCorrectAnswer(normalizedQuiz, question.id)}.`}
+                      {feedbackByQuestion[question.id]?.message}
                     </p>
+                    {!feedbackByQuestion[question.id]?.correct && (
+                      <p className="text-xs text-red-200/80 mt-2">Current try count: {attemptCounts[question.id] || 0}</p>
+                    )}
+                    {feedbackByQuestion[question.id]?.correct && (
+                      <p className="text-xs text-emerald-200/80 mt-2">Solved in {attemptCounts[question.id] || 1} attempt{(attemptCounts[question.id] || 1) > 1 ? 's' : ''}.</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -360,7 +409,7 @@ export default function UserDailyQuizPage() {
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-500">Progress</p>
                         <p className="text-sm md:text-base text-white/70 font-semibold mt-1">
-                          {answeredCount} / {totalQuestions} answered
+                          {answeredCount} / {totalQuestions} solved
                         </p>
                       </div>
                       <div className="sm:hidden flex items-center gap-1.5">

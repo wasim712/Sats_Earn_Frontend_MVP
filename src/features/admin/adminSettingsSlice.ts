@@ -4,6 +4,23 @@ import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+export interface UserSidebarConfig {
+  dashboard: boolean;
+  tasks: boolean;
+  standaloneTasks: boolean;
+  minigames: boolean;
+  bugBounty: boolean;
+  quiz: boolean;
+  referrals: boolean;
+  rewards: boolean;
+  leaderboard: boolean;
+  wallet: boolean;
+  settings: boolean;
+  help: boolean;
+  notifications: boolean;
+  profile: boolean;
+}
+
 export interface AdminSettings {
   welcomeBonusSats: number;
   minWithdrawalSats: number;
@@ -15,6 +32,7 @@ export interface AdminSettings {
   tierMinWithdrawalMatrix: Record<string, number>;
   premiumMonthlySatsMatrix: Record<string, number>;
   premiumYearlySatsMatrix: Record<string, number>;
+  userSidebarConfig: UserSidebarConfig;
 }
 
 interface AdminSettingsState {
@@ -43,7 +61,7 @@ export const fetchAdminSettings = createAsyncThunk(
       });
       const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to load platform settings.');
-      return data as AdminSettings;
+      return ((data.settings || data) as AdminSettings);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -65,7 +83,7 @@ export const updateAdminSettings = createAsyncThunk(
       });
       const data = await parseObfuscatedJson<any>(response);
       if (!response.ok) throw new Error(data.error || 'Failed to update settings.');
-      return data as AdminSettings;
+      return ((data.settings || data) as AdminSettings);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

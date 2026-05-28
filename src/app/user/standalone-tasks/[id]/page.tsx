@@ -14,15 +14,21 @@ import {
   type UserTaskResult as TaskResult,
   type UserTaskStatus as TaskStatus,
 } from '@/components/user/tasks/CampaignTaskPageComponents';
-import { AlertTriangle, ArrowLeft, Flame, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Crown, Flame, Globe2, MapPinned, Shield, Target, Zap } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 type StandaloneTaskDetails = Task & {
+  category?: string;
+  coverImageUrl?: string | null;
+  targetCountries?: string[];
+  isPremiumOnly?: boolean;
+  requiredFreeTier?: string;
+  doubleRewardsStartAt?: string | null;
+  doubleRewardsEndAt?: string | null;
   doubleRewardsActive?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
-  userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED' | 'PAUSED';
   userSubmission?: { status: string } | null;
   submissions?: Array<{ status: string; submittedAt?: string }>;
 };
@@ -209,6 +215,12 @@ export default function StandaloneTaskDetailsPage() {
         </button>
 
         <div className="relative bg-[#080808] border border-[#1a1a1a] rounded-2xl p-6 md:p-8 mb-5 overflow-hidden">
+          {task.coverImageUrl ? (
+            <div className="absolute inset-0 opacity-20">
+              <img src={task.coverImageUrl} alt={task.title} className="h-full w-full object-cover" />
+            </div>
+          ) : null}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#080808]" />
           <div className="absolute -right-6 -top-6 text-white/[0.02]">
             <Zap className="w-48 h-48" strokeWidth={1} />
           </div>
@@ -222,12 +234,27 @@ export default function StandaloneTaskDetailsPage() {
             </div>
 
             <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug mb-3">{task.title}</h1>
-            <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-xl mb-4">{task.description}</p>
+            <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-3xl mb-4">{task.description}</p>
 
             <div className="flex flex-wrap items-center gap-3 mb-6 text-xs font-semibold text-gray-400">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">{proofMeta.label}</span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">All Platforms</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Target className="h-3.5 w-3.5" /> {task.requiredPlatform || 'NONE'}</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Shield className="h-3.5 w-3.5" /> {task.requiredFreeTier || 'BASIC'}+</span>
+              {task.isPremiumOnly ? <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/20 bg-fuchsia-500/10 px-3 py-1.5 text-fuchsia-300"><Crown className="h-3.5 w-3.5" /> Premium Only</span> : null}
               {task.doubleRewardsActive ? <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1.5 text-yellow-300"><Flame className="h-4 w-4" /> 2x Live</span> : null}
+              {task.category ? <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Globe2 className="h-3.5 w-3.5" /> {task.category}</span> : null}
+              {task.targetCountries && task.targetCountries.length > 0 ? <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><MapPinned className="h-3.5 w-3.5" /> {task.targetCountries.join(', ')}</span> : null}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">XP Reward</p>
+                <p className="mt-2 text-lg font-black text-white">{Number(task.xpReward || 0)} XP</p>
+              </div>
+              <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Target Link</p>
+                <p className="mt-2 truncate text-sm font-bold text-white">{task.targetUrl || 'Not required'}</p>
+              </div>
             </div>
 
             <div className="space-y-2">
