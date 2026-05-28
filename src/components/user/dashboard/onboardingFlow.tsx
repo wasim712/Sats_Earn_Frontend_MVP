@@ -391,6 +391,12 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '' }: Onboardin
                 {step.leftCards.map((item) => (
                   <LeftInfoCard key={`${step.id}-${item.index}-${item.title}`} item={item} tone={tone} />
                 ))}
+
+                {step.id === 'referrals' && (
+                  <div className="hidden lg:block">
+                    <ReferralInsightCard tone={tone} />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -580,6 +586,20 @@ function RightVisualContent({
           <ChevronRight className="h-4 w-4 text-gray-600" />
           <FlowPill label="Wallet" icon={Wallet} tone={TONE_STYLES.amber} />
         </div>
+
+        <div className={`hidden lg:block rounded-2xl border ${tone.border} ${tone.soft} p-4`}>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Why users stay</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-[#1d1d1d] bg-[#0d0d0d] px-4 py-3">
+              <p className={`text-lg font-black ${tone.icon}`}>Daily flow</p>
+              <p className="mt-1 text-sm leading-6 text-gray-400">Tasks, streaks, referrals, and wallet tracking all work together in one loop.</p>
+            </div>
+            <div className="rounded-2xl border border-[#1d1d1d] bg-[#0d0d0d] px-4 py-3">
+              <p className={`text-lg font-black ${tone.icon}`}>Real progress</p>
+              <p className="mt-1 text-sm leading-6 text-gray-400">Every valid action grows your sats, XP, tier progress, and long-term earning power.</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -606,6 +626,36 @@ function FlowPill({
         <Icon className={`h-4.5 w-4.5 ${tone.icon}`} />
       </div>
       <span className="text-xs font-bold text-white">{label}</span>
+    </div>
+  );
+}
+
+function ReferralInsightCard({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+  return (
+    <div className={`rounded-2xl border ${tone.border} ${tone.soft} p-4`}>
+      <div className="flex items-start gap-3">
+        <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${tone.border} bg-[#111]`}>
+          <Users className={`h-4.5 w-4.5 ${tone.icon}`} />
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Referral tip</p>
+          <p className="mt-1 text-sm font-bold text-white">Active friends matter more than just invites</p>
+          <p className="mt-2 text-sm leading-6 text-gray-400">
+            The best results come when your referrals stay active, complete tasks, and keep building their streaks.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-[#1d1d1d] bg-[#0d0d0d] px-4 py-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Best use</p>
+          <p className="mt-1 text-sm font-semibold text-white">Share with people who will actually use the platform</p>
+        </div>
+        <div className="rounded-2xl border border-[#1d1d1d] bg-[#0d0d0d] px-4 py-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Long-term gain</p>
+          <p className="mt-1 text-sm font-semibold text-white">A strong network can become one of your steadiest earning channels</p>
+        </div>
+      </div>
     </div>
   );
 }

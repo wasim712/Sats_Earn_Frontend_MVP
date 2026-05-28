@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { syncUserTier } from '@/features/auth/authSlice';
-import { AlertTriangle, Flame, Medal, Star, Wallet, Activity, Zap, Clock4, TrendingUp, LockKeyhole } from 'lucide-react';
+import { AlertTriangle, Flame, Star, Wallet, Activity, Zap, Clock4, TrendingUp, LockKeyhole, Shield, Coins, Medal, Trophy, CircleStar, Gem, Crown, Sparkles, Rocket } from 'lucide-react';
 import Link from 'next/link';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
@@ -55,6 +55,51 @@ export default function UserDashboardPage() {
     return 'text-zinc-400';
   };
 
+  const getTierPillIcon = (tier: string) => {
+    switch ((tier || 'BASIC').toUpperCase()) {
+      case 'BASIC':
+        return <Shield className="w-4 h-4 text-gray-400" />;
+      case 'COPPER':
+        return <Coins className="w-4 h-4 text-[#b87333]" />;
+      case 'BRONZE':
+        return <Medal className="w-4 h-4 text-[#cd7f32]" />;
+      case 'SILVER':
+        return <Star className="w-4 h-4 text-[#C0C0C0]" />;
+      case 'GOLD':
+        return <Trophy className="w-4 h-4 text-[#FFD700]" />;
+      case 'PLATINUM':
+        return <CircleStar className="w-4 h-4 text-[#e5e4e2]" />;
+      case 'DIAMOND':
+        return <Gem className="w-4 h-4 text-[#b9f2ff]" />;
+      case 'CROWN':
+        return <Crown className="w-4 h-4 text-[#ffb347]" />;
+      case 'ELITE':
+        return <Sparkles className="w-4 h-4 text-[#8a2be2]" />;
+      case 'FOUNDER':
+        return <Rocket className="w-4 h-4 text-[#ff4500]" />;
+      default:
+        return <Star className="w-4 h-4 text-gray-400" />;
+    }
+  };
+
+  const formatCompactXp = (xp: number | null | undefined) => {
+    const value = Number(xp || 0);
+
+    if (value >= 1_000_000_000) {
+      return `${(value / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}B`;
+    }
+
+    if (value >= 1_000_000) {
+      return `${(value / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+    }
+
+    if (value >= 1_000) {
+      return `${(value / 1_000).toFixed(1).replace(/\.0$/, '')}K`;
+    }
+
+    return value.toLocaleString();
+  };
+  
   const formatAvailableBalance = (sats: number) => {
     if (showBtc) {
       return (
@@ -274,10 +319,10 @@ export default function UserDashboardPage() {
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
             <Zap className="w-4 h-4 text-purple-500" />
-            <span className="text-xs  text-nowrap font-bold text-white"> XP  {userXp}</span>
+            <span className="text-xs text-nowrap font-bold text-white">XP {formatCompactXp(userXp)}</span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
-            <Medal className={`w-4 h-4 ${getTierColor(activeTier)}`} />
+            {getTierPillIcon(activeTier)}
             <span className="text-xs  text-nowrap font-bold text-white capitalize">{activeTier} <span className='hidden sm:inline'>Tier</span> </span>
           </div>
           <div className="flex items-center gap-2 bg-[#111] border border-[#2a2a2a] px-4 py-2 rounded-full shadow-sm hover:bg-[#1a1a1a] transition-colors cursor-default">
@@ -303,20 +348,23 @@ export default function UserDashboardPage() {
     </div>
 
     {/* Premium BTC Toggle */}
-    <div className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm shrink-0">
-      <button 
-        onClick={() => setShowBtc(false)} 
+    <button
+      type="button"
+      onClick={() => setShowBtc((prev) => !prev)}
+      aria-label={`Switch balance display to ${showBtc ? 'sats' : 'BTC'}`}
+      className="flex bg-[#050505]/50 border border-blue-500/20 rounded-full p-1 backdrop-blur-sm shrink-0"
+    >
+      <span
         className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${!showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
       >
         <Zap className="w-3.5 h-3.5" />
-      </button>
-      <button 
-        onClick={() => setShowBtc(true)} 
+      </span>
+      <span
         className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all ${showBtc ? 'bg-sats-orange-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
       >
         ₿
-      </button>
-    </div>
+      </span>
+    </button>
   </div>
   
   {/* ROW 2: Balance Data */}
@@ -395,6 +443,7 @@ export default function UserDashboardPage() {
       {/* 3. STREAK MILESTONES */}
       <StreakSection
         unreadStreakReward={unreadStreakReward}
+        isPremium={Boolean(data.gamification?.isPremium)}
         currentStreak={currentStreak}
         nextStreakMilestone={nextStreakMilestone}
         nextStreakRewardSats={nextStreakRewardSats}

@@ -1,6 +1,11 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 import type { UserNotification } from '@/features/user/userNotificationsSlice';
+import type { UserSidebarConfig } from '@/features/admin/adminSettingsSlice';
+
+export interface UserSidebarSettingsResponse {
+  userSidebarConfig: UserSidebarConfig;
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -15,8 +20,35 @@ function getToken() {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fakeBaseQuery(),
-  tagTypes: ['UserNotifications', 'MiniGameReward'],
+  tagTypes: ['UserNotifications', 'MiniGameReward', 'UserSidebarSettings'],
   endpoints: (builder) => ({
+    getUserSidebarSettings: builder.query<UserSidebarSettingsResponse, void>({
+      async queryFn() {
+        try {
+          const token = getToken();
+          const response = await obfuscatedFetch(`${API_URL}/users/settings`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              Pragma: 'no-cache',
+              Expires: '0',
+            },
+          });
+
+          const data = await parseObfuscatedJson<UserSidebarSettingsResponse>(response);
+
+          if (!response.ok) {
+            return { error: { status: response.status, data } };
+          }
+
+          return { data };
+        } catch (error) {
+          return { error: { status: 'FETCH_ERROR', data: error instanceof Error ? error.message : 'Failed to fetch user sidebar settings.' } };
+        }
+      },
+      providesTags: ['UserSidebarSettings'],
+      keepUnusedDataFor: 0,
+    }),
     getUserNotifications: builder.query<UserNotification[], void>({
       async queryFn() {
         try {
@@ -72,4 +104,4 @@ export const userApi = createApi({
   }),
 });
 
-export const { useGetUserNotificationsQuery, useClaimSatWormRewardMutation } = userApi;
+export const { useGetUserSidebarSettingsQuery, useGetUserNotificationsQuery, useClaimSatWormRewardMutation } = userApi;

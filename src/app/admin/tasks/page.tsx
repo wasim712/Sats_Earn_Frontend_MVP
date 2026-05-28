@@ -116,6 +116,11 @@ export default function AdminStandaloneTasksPage() {
                   <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">XP {task.xpReward ?? task.xpRewardOverride ?? 0}</span>
                 </div>
 
+                <div className="mt-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-500">Cover Image URL</div>
+                  <div className="mt-2 truncate text-sm font-semibold text-white">{task.coverImageUrl || 'Not provided'}</div>
+                </div>
+
                 <div className="mt-6 flex items-center justify-between">
                   <div className="text-xs font-semibold text-gray-500">Updated task configuration</div>
                   <Link href={`/admin/tasks/${task.id}`} className="inline-flex items-center gap-2 rounded-2xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2.5 text-sm font-black text-sats-orange-400 transition hover:bg-sats-orange-500/15">

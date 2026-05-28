@@ -57,10 +57,14 @@ export const updateStandaloneTask = createAsyncThunk('adminTasks/update', async 
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     });
+// console.log(response);
+
     const resData = await parseObfuscatedJson<any>(response);
     if (!response.ok) throw new Error(resData.error || 'Failed to update task');
     return (resData.task || resData) as AdminTask;
   } catch (error: any) {
+    // console.log(error);
+    
     return rejectWithValue(error.message);
   }
 });

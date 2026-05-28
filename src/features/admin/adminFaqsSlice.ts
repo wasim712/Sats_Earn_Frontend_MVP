@@ -13,6 +13,15 @@ type FaqPayload = {
   isActive: boolean;
 };
 
+type FaqUpdatePayload = {
+  id: string;
+  question?: string;
+  answer?: string;
+  category?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+};
+
 interface AdminFaqsState {
   items: FaqItem[];
   isLoading: boolean;
@@ -72,6 +81,22 @@ export const deleteAdminFaq = createAsyncThunk('adminFaqs/delete', async (id: st
   }
 });
 
+export const updateAdminFaq = createAsyncThunk('adminFaqs/update', async ({ id, ...data }: FaqUpdatePayload, { getState, rejectWithValue }) => {
+  try {
+    const token = getToken(getState() as RootState);
+    const response = await obfuscatedFetch(`${API_URL}/admin/faqs/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    });
+    const payload = await parseObfuscatedJson<FaqItem | { error?: string; item?: FaqItem }>(response);
+    if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to update FAQ item.');
+    return ((payload as { item?: FaqItem }).item || payload) as FaqItem;
+  } catch (error: any) {
+    return rejectWithValue(error.message || 'Failed to update FAQ item.');
+  }
+});
+
 const adminFaqsSlice = createSlice({
   name: 'adminFaqs',
   initialState,
@@ -99,6 +124,18 @@ const adminFaqsSlice = createSlice({
         state.items.unshift(action.payload);
       })
       .addCase(createAdminFaq.rejected, (state, action) => {
+        state.isSaving = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateAdminFaq.pending, (state) => {
+        state.isSaving = true;
+        state.error = null;
+      })
+      .addCase(updateAdminFaq.fulfilled, (state, action) => {
+        state.isSaving = false;
+        state.items = state.items.map((item) => (item.id === action.payload.id ? action.payload : item));
+      })
+      .addCase(updateAdminFaq.rejected, (state, action) => {
         state.isSaving = false;
         state.error = action.payload as string;
       })

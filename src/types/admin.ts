@@ -1,4 +1,4 @@
-export interface Campaign {
+﻿export interface Campaign {
   id: string;
   title: string;
   description: string;
@@ -35,6 +35,11 @@ export interface AdminTask {
   campaignId?: string;
   title: string;
   description?: string | null;
+  category?: string;
+  coverImageUrl?: string | null;
+  targetCountries?: string[];
+  isPremiumOnly?: boolean;
+  requiredFreeTier?: string;
   targetUrl?: string | null;
   proofType?: string | null;
   requiredPlatform?: string | null;
@@ -45,6 +50,8 @@ export interface AdminTask {
   taskRewardSats?: number;
   tierRewardMatrix?: Record<string, number> | null;
   tierRewardMatrixOverride?: Record<string, number> | null;
+  doubleRewardsStartAt?: string | null;
+  doubleRewardsEndAt?: string | null;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -215,3 +222,4 @@ export interface AdminQuiz {
     attempts: number;
   };
 }
+
