@@ -1,4 +1,4 @@
-﻿export interface Campaign {
+export interface Campaign {
   id: string;
   title: string;
   description: string;
@@ -20,6 +20,7 @@
   maxCompletions: number;
   isActive: boolean;
   isStandalone?: boolean;
+  itemSource?: 'campaign' | 'standalone';
   isCompleted?: boolean;
   hasStarted?: boolean;
   completedTasksCount?: number;
@@ -93,6 +94,7 @@ export interface AdminUser {
   premiumExpiresAt: string | null;
   isActive: boolean;
   isStandalone?: boolean;
+  itemSource?: 'campaign' | 'standalone';
   balanceAvailable: number;
   balancePending: number;
   balanceLocked: number;
@@ -216,10 +218,14 @@ export interface AdminQuiz {
   date: string;
   isActive: boolean;
   isStandalone?: boolean;
+  itemSource?: 'campaign' | 'standalone';
   questions?: AdminQuizQuestion[];
   _count?: {
     questions: number;
     attempts: number;
   };
 }
+
+
+
 

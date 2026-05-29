@@ -504,7 +504,7 @@ export default function RewardsPage() {
           </div>
 
           {/* Adjusted 3x2 Grid for Desktop using Flex-Wrap */}
-          <div className="flex flex-wrap justify-center gap-6 items-stretch">
+          <div id="premium-tiers" className="flex flex-wrap justify-center gap-6 items-stretch">
             {PREMIUM_TIERS.map((tier) => {
               const state = requestMap[tier.name] || { notify: false, upgrade: false };
               const monthlySats = Number(monthlyPricing[tier.name] || 0);
@@ -561,7 +561,7 @@ export default function RewardsPage() {
                         }
                   }
                   yearlyPlan={{
-                    label: 'Yearly Plan (Save 20%)',
+                    label: tier.name === 'FOUNDER' ? 'Yearly Plan' : 'Yearly Plan (Save 20%)',
                     showSatsPricing,
                     oldUsdYearly: tier.yearlyUsdOriginal,
                     newUsd: tier.yearlyUsd,

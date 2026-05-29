@@ -58,8 +58,10 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
   const RequiredPlatformIcon = requiredPlatform === 'DESKTOP' ? Monitor : requiredPlatform === 'ANDROID' || requiredPlatform === 'IOS' ? Smartphone : LayoutGrid;
   const requiredPlatformLabel = requiredPlatform === 'NONE' ? 'All Devices' : requiredPlatform === 'IOS' ? 'iOS Only' : requiredPlatform === 'ANDROID' ? 'Android Only' : 'Desktop Only';
 
+  const detailHref = campaign.itemSource === 'standalone' ? `/user/standalone-tasks/${campaign.id}` : `/user/tasks/${campaign.id}`;
+
   return (
-    <Link href={`/user/tasks/${campaign.id}`} className="group block h-full">
+    <Link href={detailHref} className="group block h-full">
       <div className={`relative h-full flex flex-col bg-[#080808] border ${isCompleted ? 'border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.06)]' : 'border-[#1a1a1a] group-hover:border-[#2a2a2a]'} rounded-[32px] overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_15px_50px_rgba(249,115,22,0.1)]`}>
         
         {/* ─── 1. Tall Header Banner Image ─── */}
@@ -181,3 +183,5 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
     </Link>
   );
 }
+
+
