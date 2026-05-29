@@ -218,7 +218,7 @@ export default function TasksPage() {
 
       const matchesDevice =
         deviceFilter === 'ALL'
-          ? campaignDevice === 'NONE'
+          ? true
           : campaignDevice === deviceFilter || campaignDevice === 'NONE';
 
       const matchesFilter =
