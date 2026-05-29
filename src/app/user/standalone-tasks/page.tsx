@@ -333,7 +333,7 @@ export default function StandaloneTasksPage() {
                     <div className={`w-full py-4 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all border group/btn ${
                       task.isCompleted
                         ? 'bg-green-500/10 border-green-500/20 text-green-400'
-                        : isLockedPremium ? 'bg-violet-500/15 border-violet-400/30 text-violet-100 group-hover:bg-violet-500/20 group-hover:border-violet-300/40' : 'bg-[#111] border-[#2a2a2a] text-white group-hover:bg-sats-orange-500 group-hover:border-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                        : isLockedPremium ? 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300 group-hover:bg-yellow-500/20 group-hover:border-yellow-400/40 group-hover:text-yellow-200' : 'bg-[#111] border-[#2a2a2a] text-white group-hover:bg-sats-orange-500 group-hover:border-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]'
                     }`}>
                       <span>{resolvedCta}</span>
                       {!task.isCompleted && <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />}

@@ -12,7 +12,6 @@ import {
   ListChecks,
   Monitor,
   Search,
-  Smartphone,
   Sparkles,
   Target,
   Users,
@@ -470,13 +469,24 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
         className={[
           'relative flex h-full min-h-[480px] flex-col overflow-hidden rounded-[32px] border transition-all duration-300 hover:-translate-y-1.5',
           isPremiumOnly
-            ? 'border-violet-500/30 bg-[linear-gradient(180deg,rgba(20,12,32,1)_0%,rgba(8,8,8,1)_100%)] shadow-[0_20px_60px_rgba(88,28,135,0.18)] hover:border-violet-400/40 hover:shadow-[0_28px_80px_rgba(88,28,135,0.28)]'
+            ? 'border-violet-400/30 bg-[linear-gradient(180deg,rgba(20,12,32,1)_0%,rgba(8,8,8,1)_52%,rgba(6,6,6,1)_100%)] shadow-[0_20px_60px_rgba(88,28,135,0.2)] hover:border-violet-300/45 hover:shadow-[0_30px_90px_rgba(88,28,135,0.32)]'
             : 'border-[#1a1a1a] bg-[#080808] shadow-[0_20px_60px_rgba(0,0,0,0.35)] hover:border-[#2a2a2a] hover:shadow-[0_28px_80px_rgba(0,0,0,0.45)]',
         ].join(' ')}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(238,139,18,0.10),transparent_20%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_22%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div
+          className={[
+            'absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100',
+            isPremiumOnly
+              ? 'bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.08),transparent_26%),linear-gradient(180deg,transparent,rgba(255,255,255,0.02))]'
+              : 'bg-[radial-gradient(circle_at_top_right,rgba(238,139,18,0.10),transparent_20%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_22%)]',
+          ].join(' ')}
+        />
 
-        <div className="relative h-[208px] shrink-0 overflow-hidden border-b border-[#141414] bg-[#111]">
+        {isPremiumOnly ? (
+          <div className="pointer-events-none absolute inset-[1px] rounded-[31px] border border-white/6" />
+        ) : null}
+
+        <div className={`relative h-[208px] shrink-0 overflow-hidden border-b ${isPremiumOnly ? 'border-violet-400/12 bg-[linear-gradient(180deg,#11111a_0%,#0e0a14_100%)]' : 'border-[#141414] bg-[#111]'}`}>
           {campaign.coverImageUrl ? (
             <>
               <Image
@@ -527,11 +537,11 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
             </>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/35 to-transparent" />
+          <div className={`absolute inset-0 ${isPremiumOnly ? 'bg-gradient-to-t from-[#080808] via-[#0f0a16]/40 to-transparent' : 'bg-gradient-to-t from-[#080808] via-[#080808]/35 to-transparent'}`} />
 
           <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-3">
             {isPremiumOnly ? (
-              <div className="absolute right-0 top-0 z-30 inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-400/40 bg-violet-500 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_18px_rgba(168,85,247,0.42)]">
+              <div className="absolute right-0 top-0 z-30 inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-300/45 bg-[linear-gradient(135deg,#a855f7,#7c3aed)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(168,85,247,0.34)]">
                 <Crown className="h-3.5 w-3.5" />
                 Premium Only
               </div>
@@ -542,7 +552,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
               {status.label}
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-xl border border-sats-orange-500/20 bg-black/65 px-3 py-2 text-[11px] font-black text-sats-orange-400 shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md">
+            <div className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-black shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md ${isPremiumOnly ? 'border border-violet-300/20 bg-[#140d1f]/80 text-violet-200 shadow-[0_0_24px_rgba(168,85,247,0.12)]' : 'border border-sats-orange-500/20 bg-black/65 text-sats-orange-400'}`}>
               <Zap className="h-3.5 w-3.5" />
               <span>{topReward.toLocaleString()} sats</span>
             </div>
@@ -562,23 +572,23 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
           <div className="space-y-4">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <MetaPill icon={DeviceIcon} iconSrc={deviceIconSrc} label={deviceLabel} />
-                <MetaPill icon={ListChecks} label={stepsLabel} />
-                <MetaPill icon={Users} label={`${formatCompact(Math.max(status.spotsLeft, 0))} slots`} />
-                {isPremiumOnly ? <MetaPill icon={Sparkles} label="Premium Access" /> : null}
+                <MetaPill icon={DeviceIcon} iconSrc={deviceIconSrc} label={deviceLabel} premium={isPremiumOnly} />
+                <MetaPill icon={ListChecks} label={stepsLabel} premium={isPremiumOnly} />
+                <MetaPill icon={Users} label={`${formatCompact(Math.max(status.spotsLeft, 0))} slots`} premium={isPremiumOnly} />
+                {isPremiumOnly ? <MetaPill icon={Sparkles} label="Premium Access" premium /> : null}
               </div>
 
               <div>
-                <h3 className="line-clamp-2 text-2xl font-black leading-tight text-white transition-colors group-hover:text-sats-orange-500">
+                <h3 className={`line-clamp-2 text-2xl font-black leading-tight text-white transition-colors ${isPremiumOnly ? 'group-hover:text-violet-200' : 'group-hover:text-sats-orange-500'}`}>
                   {campaign.title}
                 </h3>
-                <p className="mt-3 line-clamp-3 text-[15px] leading-relaxed text-gray-400">{description}</p>
+                <p className={`mt-3 line-clamp-3 text-[15px] leading-relaxed ${isPremiumOnly ? 'text-gray-300/85' : 'text-gray-400'}`}>{description}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <CompactStat label="Base Reward" value={`${topReward.toLocaleString()} sats`} />
-              <CompactStat label="XP Reward" value={`${Number(campaign.xpReward || 0).toLocaleString()} XP`} />
+              <CompactStat label="Base Reward" value={`${topReward.toLocaleString()} sats`} premium={isPremiumOnly} />
+              <CompactStat label="XP Reward" value={`${Number(campaign.xpReward || 0).toLocaleString()} XP`} premium={isPremiumOnly} />
             </div>
           </div>
 
@@ -590,11 +600,11 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
                 </span>
                 <span className="text-gray-500">{status.progressPercent.toFixed(0)}%</span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full border border-[#1a1a1a] bg-[#111]">
+              <div className={`h-2.5 overflow-hidden rounded-full border ${isPremiumOnly ? 'border-violet-400/12 bg-[#120d19]' : 'border-[#1a1a1a] bg-[#111]'}`}>
                 <div
                   className={[
                     'h-full rounded-full transition-all duration-1000',
-                    status.isCompleted ? 'bg-green-500' : status.isFull ? 'bg-red-500' : 'bg-sats-orange-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]',
+                    status.isCompleted ? 'bg-green-500' : status.isFull ? 'bg-red-500' : isPremiumOnly ? 'bg-gradient-to-r from-violet-500 via-fuchsia-400 to-sky-400 shadow-[0_0_14px_rgba(168,85,247,0.38)]' : 'bg-sats-orange-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]',
                   ].join(' ')}
                   style={{ width: `${status.progressPercent}%` }}
                 />
@@ -610,7 +620,9 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
                   : status.isFull
                     ? 'border-red-500/20 bg-red-500/10 text-red-400'
                     : isLockedPremium
-                      ? 'border-violet-400/30 bg-violet-500/15 text-violet-100 group-hover:border-violet-300/40 group-hover:bg-violet-500/20'
+                      ? 'border-yellow-500/30 bg-yellow-500/15 text-yellow-300 group-hover:border-yellow-400/40 group-hover:bg-yellow-500/20 group-hover:text-yellow-200'
+                      : isPremiumOnly
+                        ? 'border-violet-400/24 bg-[linear-gradient(135deg,#171025,#120b1d)] text-violet-100 group-hover:border-violet-300/45 group-hover:bg-[linear-gradient(135deg,#a855f7,#7c3aed)] group-hover:text-white group-hover:shadow-[0_0_24px_rgba(168,85,247,0.28)]'
                       : 'border-[#2a2a2a] bg-[#111] text-white group-hover:border-sats-orange-500 group-hover:bg-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]',
               ].join(' ')}
             >
@@ -628,28 +640,30 @@ function MetaPill({
   icon: Icon,
   iconSrc,
   label,
+  premium = false,
 }: {
   icon?: React.ComponentType<{ className?: string }> | null;
   iconSrc?: string;
   label: string;
+  premium?: boolean;
 }) {
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-2 text-[11px] font-bold text-gray-300 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
+    <div className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[11px] font-bold shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${premium ? 'border border-violet-400/14 bg-[#0d0914] text-violet-100' : 'border border-[#1a1a1a] bg-[#050505] text-gray-300'}`}>
       {iconSrc ? (
         <Image src={iconSrc} alt={label} width={14} height={14} className="h-3.5 w-3.5" />
       ) : Icon ? (
-        <Icon className="h-3.5 w-3.5 text-gray-500" />
+        <Icon className={`h-3.5 w-3.5 ${premium ? 'text-violet-300' : 'text-gray-500'}`} />
       ) : null}
       <span>{label}</span>
     </div>
   );
 }
 
-function CompactStat({ label, value }: { label: string; value: string }) {
+function CompactStat({ label, value, premium = false }: { label: string; value: string; premium?: boolean }) {
   return (
-    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
-      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">{label}</p>
-      <p className="mt-2 line-clamp-1 text-sm font-bold text-white">{value}</p>
+    <div className={`rounded-2xl p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${premium ? 'border border-violet-400/14 bg-[linear-gradient(180deg,#110c18,#09070d)]' : 'border border-[#1a1a1a] bg-[#050505]'}`}>
+      <p className={`text-[10px] font-black uppercase tracking-[0.18em] ${premium ? 'text-violet-300/70' : 'text-gray-500'}`}>{label}</p>
+      <p className={`mt-2 line-clamp-1 text-sm font-bold ${premium ? 'text-violet-50' : 'text-white'}`}>{value}</p>
     </div>
   );
 }
