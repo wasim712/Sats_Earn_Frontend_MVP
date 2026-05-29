@@ -127,7 +127,7 @@ export default function UserDailyQuizPage() {
   }, [result]);
 
   const handleSelectOption = async (questionId: string, option: string) => {
-    if (submittingQuestionId || solvedQuestions[questionId]) return;
+    if (isQuizSubmitted || submittingQuestionId || solvedQuestions[questionId]) return;
     if ((wrongOptionsByQuestion[questionId] || []).includes(option)) return;
 
     setSubmittingQuestionId(questionId);
@@ -169,7 +169,9 @@ export default function UserDailyQuizPage() {
 
   const totalQuestions = sortedQuestions.length;
   const answeredCount = Object.keys(solvedQuestions ?? {}).length;
-  const isReviewMode = Boolean(result?.passed);
+  const quizStatus = (quiz as unknown as { status?: 'available' | 'submitted' } | null)?.status;
+  const isQuizSubmitted = quizStatus === 'submitted' || Boolean(result?.passed);
+  const isReviewMode = isQuizSubmitted;
 
   if (isLoading) return <QuizPageSkeleton />;
 
@@ -179,6 +181,17 @@ export default function UserDailyQuizPage() {
         title="No Quiz Live Right Now"
         message="There isn't an active daily quiz at the moment. Please check again after some time for the next earning opportunity."
         tone="neutral"
+        onBack={() => router.push('/user/dashboard')}
+      />
+    );
+  }
+
+  if (isQuizSubmitted) {
+    return (
+      <QuizEmptyState
+        title="You already completed today's quiz"
+        message={result?.message || 'Come back tomorrow for the next daily quiz and another chance to earn sats.'}
+        tone="success"
         onBack={() => router.push('/user/dashboard')}
       />
     );
@@ -284,7 +297,7 @@ export default function UserDailyQuizPage() {
                       : Boolean(solvedAnswer) && getInstantCorrectAnswer(normalizedQuiz, question.id) === opt;
                     const isWrongOption = !isCorrectOption && isPreviouslyWrong;
                     const isQuestionSubmitting = submittingQuestionId === question.id;
-                    const isOptionDisabled = isReviewMode || Boolean(solvedAnswer) || isPreviouslyWrong || isQuestionSubmitting;
+                    const isOptionDisabled = isQuizSubmitted || Boolean(solvedAnswer) || isPreviouslyWrong || isQuestionSubmitting;
 
                     const optionClass = isReviewMode
                       ? isCorrectOption
