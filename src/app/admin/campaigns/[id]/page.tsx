@@ -151,7 +151,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const [taskForm, setTaskForm] = useState<TaskFormState>({
-    title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix(),
+    title: '', description: '', requiredPlatform: 'WEBSITE', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix(),
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -364,7 +364,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       }
 
       await fetchCampaignData();
-      setTaskForm({ title: '', description: '', requiredPlatform: 'TWITTER', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix() });
+      setTaskForm({ title: '', description: '', requiredPlatform: 'WEBSITE', proofType: 'SCREENSHOT', targetUrl:'', xpRewardOverride: 0, tierRewardMatrixOverride: createEmptyTaskTierMatrix() });
       setIsAddingTask(false);
       triggerSuccess("Task Added Successfully.");
     } catch (err) {
@@ -404,10 +404,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           title: editingTaskForm.title,
           description: editingTaskForm.description,
           proofType: editingTaskForm.proofType,
-          requiredPlatform:
-            (editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform ||
-            editingTaskForm.requiredPlatform ||
-            '',
+          requiredPlatform: editingTaskForm.requiredPlatform || 'WEBSITE',
           ...(editingTaskForm.targetUrl?.trim() ? { targetUrl: editingTaskForm.targetUrl.trim() } : { targetUrl: '' }),
           xpRewardOverride: Number(editingTaskForm.xpRewardOverride || 0),
           tierRewardMatrixOverride: normalizedTaskTierMatrix,
@@ -951,12 +948,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select
-                              value={(editingTaskForm.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || editingTaskForm.requiredPlatform || ''}
+                              value={editingTaskForm.requiredPlatform || 'WEBSITE'}
                                 onChange={e => setEditingTaskForm({
                                   ...editingTaskForm,
                                   requiredPlatform: e.target.value,
-                                  requirements: { ...(editingTaskForm.requirements || {}), requiredPlatform: e.target.value }
-                                })}
+                                                                  })}
                             className={inputCls}
                           >
                               {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
@@ -1066,7 +1062,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             
                             <div className="flex items-center gap-3 mt-4 ml-9 flex-wrap">
                               <span className="px-2.5 py-1 bg-[#111] border border-[#2a2a2a] rounded-md text-[10px] font-bold text-gray-300 uppercase tracking-wider">
-                                {task.requiredPlatform || (task.requirements as { requiredPlatform?: string } | undefined)?.requiredPlatform || 'UNKNOWN'}
+                                {task.requiredPlatform || 'WEBSITE'}
                               </span>
                               <span className="px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                                 {task.proofType ? task.proofType.replace('_', ' ') : 'NO PROOF TYPE'}
@@ -1145,4 +1141,3 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 }
 
 // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
-

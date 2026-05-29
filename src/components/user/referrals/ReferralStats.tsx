@@ -28,11 +28,15 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
 }
 
 function StatCard({ title, value, icon, unit, isHighlight = false }: StatCardProps) {
+  const formattedValue = Number.isInteger(value)
+    ? value.toLocaleString()
+    : value.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+
   return (
     <div className="bg-black border border-[#1a1a1a] rounded-[24px] p-6 transition-all duration-300 hover:border-sats-orange-500/40 hover:bg-[#050505] shadow-lg">
       <div className="flex justify-between items-start mb-5">
         <div className="flex items-baseline gap-1.5">
-          <h4 className={`text-3xl font-black ${isHighlight ? 'text-sats-orange-500' : 'text-white'}`}>{value.toLocaleString()}</h4>
+          <h4 className={`text-3xl font-black ${isHighlight ? 'text-sats-orange-500' : 'text-white'}`}>{formattedValue}</h4>
           {unit ? <span className="text-xs font-bold text-gray-500">{unit}</span> : null}
         </div>
         <div className="w-10 h-10 rounded-full bg-[#1a1a1a] flex items-center justify-center shadow-inner">

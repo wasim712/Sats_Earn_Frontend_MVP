@@ -17,6 +17,22 @@ interface RecentActivityPanelProps {
 export default function RecentActivityPanel({ activities }: RecentActivityPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const getDisplayAmount = (activity: Transaction) => {
+    const wholeSats = Number(activity.amountSats || 0);
+    const msats = Number(activity.amountMsats || 0);
+    const absoluteTotal = Math.abs(wholeSats) + Math.abs(msats) / 1000;
+
+    if (Number.isInteger(absoluteTotal)) {
+      return absoluteTotal.toLocaleString();
+    }
+
+    return absoluteTotal.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  };
+
+  const isNegativeActivity = (activity: Transaction) => {
+    return Number(activity.amountSats || 0) < 0 || Number(activity.amountMsats || 0) < 0;
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -75,8 +91,8 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         </p>
                       </div>
                     </div>
-                    <div className={`text-sm font-black whitespace-nowrap ${activity.amountSats < 0 ? 'text-red-400' : 'text-green-400'}`}>
-                      {ui.sign}{Math.abs(activity.amountSats).toLocaleString()} sats
+                    <div className={`text-sm font-black whitespace-nowrap ${isNegativeActivity(activity) ? 'text-red-400' : 'text-green-400'}`}>
+                      {ui.sign}{getDisplayAmount(activity)} sats
                     </div>
                   </li>
                 );
@@ -131,8 +147,8 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         </div>
                       </div>
                     </div>
-                    <div className={`text-base font-black whitespace-nowrap pl-4 ${activity.amountSats < 0 ? 'text-red-400' : 'text-green-400'}`}>
-                      {ui.sign}{Math.abs(activity.amountSats).toLocaleString()}
+                    <div className={`text-base font-black whitespace-nowrap pl-4 ${isNegativeActivity(activity) ? 'text-red-400' : 'text-green-400'}`}>
+                      {ui.sign}{getDisplayAmount(activity)}
                     </div>
                   </div>
                 );

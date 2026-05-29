@@ -88,8 +88,11 @@ export interface UserUnlockItem {
 export interface UserDashboard {
   balances?: {
     available?: number;
+    availableMsats?: number;
     locked?: number;
     pending?: number;
+    pendingMsats?: number;
+    btcPriceUsd?: number;
     availableBalance?: number;
     pendingBalance?: number;
     totalEarned?: number;
@@ -139,6 +142,7 @@ export interface UserDashboard {
     description?: string;
     createdAt: string;
     amountSats: number;
+    amountMsats?: number | null;
   }>;
   recentSubmissions?: Array<{
     id?: string;
@@ -177,6 +181,8 @@ export interface UserProfile {
   premiumPricing?: {
     monthlySatsMatrix?: Record<string, number>;
     yearlySatsMatrix?: Record<string, number>;
+    monthlyUsdMatrix?: Record<string, number>;
+    yearlyUsdMatrix?: Record<string, number>;
     oldSatsYearlyMatrix?: Record<string, number>;
   };
   billingHistory?: Array<{

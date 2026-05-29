@@ -185,6 +185,8 @@ export default function CampaignDetailsPage() {
     try {
       const token =
         sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+      const task = orderedTasks.find((item) => item.id === taskId);
+      const requiredPlatform = task?.requiredPlatform || 'NONE';
 
       const fetchOptions: RequestInit = {
         method: 'POST',
@@ -196,15 +198,16 @@ export default function CampaignDetailsPage() {
         if (!file) throw new Error('Please upload a screenshot.');
         const formData = new FormData();
         formData.append('proofImage', file);
+        formData.append('requiredPlatform', requiredPlatform);
         fetchOptions.body = formData;
       } else if (proofType === 'URL' || proofType === 'TEXT_RESPONSE') {
         const text = textInputs[taskId];
         if (!text || text.trim() === '') throw new Error('Response cannot be empty.');
         fetchOptions.headers = { ...fetchOptions.headers, 'Content-Type': 'application/json' };
-        fetchOptions.body = JSON.stringify({ proofText: text.trim() });
+        fetchOptions.body = JSON.stringify({ proofText: text.trim(), requiredPlatform });
       } else if (proofType === 'API_VERIFIED') {
         fetchOptions.headers = { ...fetchOptions.headers, 'Content-Type': 'application/json' };
-        fetchOptions.body = JSON.stringify({ triggerVerification: true });
+        fetchOptions.body = JSON.stringify({ triggerVerification: true, requiredPlatform });
       }
 
       const response = await obfuscatedFetch(`${API_URL}/users/tasks/${taskId}/submit`, fetchOptions);

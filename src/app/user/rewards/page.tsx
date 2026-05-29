@@ -144,6 +144,19 @@ const PREMIUM_TIERS = [
   },
 ] as const;
 
+function formatUsd(value: number | null | undefined) {
+  if (value === null || value === undefined || Number.isNaN(Number(value)) || Number(value) <= 0) {
+    return null;
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value));
+}
+
 const FREE_TIERS = [
   {
     name: 'Basic',
@@ -246,6 +259,8 @@ export default function RewardsPage() {
   const availableBalance = profile?.balanceAvailable ?? 0;
   const monthlyPricing = profile?.premiumPricing?.monthlySatsMatrix || {};
   const yearlyPricing = profile?.premiumPricing?.yearlySatsMatrix || {};
+  const monthlyUsdPricing = profile?.premiumPricing?.monthlyUsdMatrix || {};
+  const yearlyUsdPricing = profile?.premiumPricing?.yearlyUsdMatrix || {};
   const currentPremiumTier = profile?.isPremium ? profile?.premiumTier?.toUpperCase() ?? null : null;
   const currentPremiumRank = getTierRank(currentPremiumTier);
   const isPremiumUser = Boolean(profile?.isPremium);
@@ -509,6 +524,8 @@ export default function RewardsPage() {
               const state = requestMap[tier.name] || { notify: false, upgrade: false };
               const monthlySats = Number(monthlyPricing[tier.name] || 0);
               const yearlySats = Number(yearlyPricing[tier.name] || 0);
+              const monthlyUsd = formatUsd(monthlyUsdPricing[tier.name]);
+              const yearlyUsd = formatUsd(yearlyUsdPricing[tier.name]);
               const monthlyEligible = monthlySats > 0 && availableBalance >= monthlySats;
               const yearlyEligible = yearlySats > 0 && availableBalance >= yearlySats;
               const isCurrentTier = currentPremiumTier === tier.name;
@@ -532,7 +549,7 @@ export default function RewardsPage() {
                           label: 'Monthly Plan',
                           showSatsPricing,
                           oldUsdYearly: tier.monthlyUsdOriginal,
-                          newUsd: tier.monthlyUsd,
+                          newUsd: monthlyUsd,
                           oldSatsMonthly: tier.oldSatsMonthly,
                           oldSatsYearly: tier.oldSatsYearly,
                           newSats: monthlySats > 0 ? monthlySats : null,
@@ -564,7 +581,7 @@ export default function RewardsPage() {
                     label: tier.name === 'FOUNDER' ? 'Yearly Plan' : 'Yearly Plan (Save 20%)',
                     showSatsPricing,
                     oldUsdYearly: tier.yearlyUsdOriginal,
-                    newUsd: tier.yearlyUsd,
+                    newUsd: yearlyUsd,
                     oldSatsMonthly: '',
                     oldSatsYearly: tier.oldSatsYearly,
                     newSats: yearlySats > 0 ? yearlySats : null,

@@ -28,10 +28,13 @@ export interface AdminSettings {
   referralBonusPercent: number;
   baseXpPerTask: number;
   dailyStreakBonusXp: number;
+  btcPriceUsd: number;
   tierReferralMatrix: Record<string, number>;
   tierMinWithdrawalMatrix: Record<string, number>;
   premiumMonthlySatsMatrix: Record<string, number>;
   premiumYearlySatsMatrix: Record<string, number>;
+  premiumMonthlyUsdMatrix: Record<string, number>;
+  premiumYearlyUsdMatrix: Record<string, number>;
   userSidebarConfig: UserSidebarConfig;
 }
 

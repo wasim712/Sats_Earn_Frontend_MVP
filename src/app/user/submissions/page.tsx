@@ -76,7 +76,7 @@ export default function UserSubmissionsPage() {
                   </div>
 
                   <div className="text-xs text-gray-400 space-y-1 sm:text-right">
-                    <p>Reward: {submission.rewardSats.toLocaleString()} sats</p>
+                    <p>Reward: {formatSatsValue(submission.rewardSats)} sats</p>
                     <p>Submitted: {formatDate(submission.submittedAt)}</p>
                     {submission.unlockAt && <p>{submission.status === 'LOCKED_15D' ? 'Available for withdrawal:' : 'Next unlock step:'} {formatDate(submission.unlockAt)}</p>}
                     {submission.status !== 'WITHDRAWABLE' && submission.remainingMs > 0 && <p>{submission.status === 'LOCKED_15D' ? 'Becomes withdrawable in:' : 'Time left:'} {formatRemainingTime(submission.remainingMs)}</p>}
@@ -100,6 +100,11 @@ export default function UserSubmissionsPage() {
       )}
     </div>
   );
+}
+
+function formatSatsValue(value: number) {
+  if (Number.isInteger(value)) return value.toLocaleString();
+  return value.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
 }
 
 function formatDate(dateString: string | null) {
