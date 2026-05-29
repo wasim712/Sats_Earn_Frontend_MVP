@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, Sparkles } from 'lucide-react';
 
+type BillingCycle = 'MONTHLY' | 'YEARLY';
+
 type PlanConfig = {
   label: string;
   showSatsPricing: boolean;
@@ -32,13 +34,14 @@ type PremiumRewardCardProps = {
     bg: string;
     glow: string;
     chip: string;
-    perks: readonly string[];
   };
   isCurrentTier: boolean;
   monthlyUnavailable: boolean;
+  selectedBillingCycle: BillingCycle;
+  planPerks: Record<BillingCycle, readonly string[]>;
   monthlyPlan?: PlanConfig;
   yearlyPlan: PlanConfig;
-  statusBanner: React.ReactNode;
+  statusBanners: Record<BillingCycle, React.ReactNode>;
 };
 
 type CursorState = {
@@ -113,11 +116,11 @@ function PremiumPriceCard({
   const oldValue = label.toLowerCase().includes('year') ? oldSatsYearly : oldSatsMonthly;
 
   return (
-    <div className="group/plan relative flex h-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-4 md:p-5 backdrop-blur-lg transition-all duration-500 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.26)] active:scale-[0.985] sm:active:scale-100">
+    <div className="group/plan relative flex w-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 backdrop-blur-lg transition-all duration-500 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.26)] active:scale-[0.985] sm:active:scale-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(255,255,255,0.08),transparent_28%),radial-gradient(circle_at_85%_82%,rgba(255,255,255,0.06),transparent_24%)]" />
       <div className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 blur-xl transition-all duration-700 group-hover/plan:left-[88%] group-hover/plan:opacity-100 group-active/plan:left-[88%] group-active/plan:opacity-100" />
 
-      <div className="relative z-10 flex items-start justify-between gap-3 pb-1">
+      <div className="relative z-10 flex items-start justify-between gap-3 pb-2">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-500">{label}</div>
           {showUnavailable ? (
@@ -125,12 +128,12 @@ function PremiumPriceCard({
           ) : showSatsPricing ? (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newSats ? formatSats(newSats) : 'Unavailable'}</div>
-              {oldValue ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldValue}</div> : null}
+              {label.toLowerCase().includes('year') && oldValue ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldValue}</div> : null}
             </div>
           ) : (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newUsd}</div>
-              {oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null}
+              {label.toLowerCase().includes('year') && oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null}
             </div>
           )}
         </div>
@@ -143,7 +146,7 @@ function PremiumPriceCard({
       <button
         onClick={onAction}
         disabled={disabled || showUnavailable}
-        className={`mt-auto w-full rounded-xl px-3.5 py-2.5 text-sm font-bold transition-all duration-300 disabled:cursor-not-allowed disabled:scale-100 disabled:opacity-40 ${
+        className={`mt-4 w-full rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 disabled:cursor-not-allowed disabled:scale-100 disabled:opacity-40 ${
           active
             ? 'border border-green-500/30 bg-green-500/10 text-green-400'
             : showSatsPricing
@@ -162,13 +165,95 @@ function PremiumPriceCard({
   );
 }
 
+function CardFace({
+  tier,
+  isCurrentTier,
+  planLabel,
+  perks,
+  plan,
+  statusBanner,
+  monthlyUnavailable,
+  onShowAnnual,
+  iconTransform,
+  iconGlow,
+}: {
+  tier: PremiumRewardCardProps['tier'];
+  isCurrentTier: boolean;
+  planLabel: string;
+  perks: readonly string[];
+  plan?: PlanConfig;
+  statusBanner: React.ReactNode;
+  monthlyUnavailable?: boolean;
+  onShowAnnual?: () => void;
+  iconTransform: string;
+  iconGlow: string;
+}) {
+  return (
+    <div className="absolute inset-0 flex h-full flex-col rounded-[34px] p-5 sm:p-6 md:p-7 [backface-visibility:hidden]">
+      <div className="mb-5 flex min-h-[76px] items-start justify-between gap-3 sm:gap-4">
+        <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4 pr-2">
+          <div
+            className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/25 transition-transform duration-200"
+            style={{
+              transform: iconTransform,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1), 0 0 18px ${iconGlow}`,
+            }}
+          >
+            {tier.icon}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className={`text-[1.75rem] leading-none sm:text-[1.95rem] font-black tracking-tight ${tier.color}`}>{tier.label}</h3>
+            <div className="mt-2 max-w-[12rem] sm:max-w-none text-sm sm:text-[1rem] leading-snug font-semibold text-gray-300/80 break-words">{planLabel}</div>
+          </div>
+        </div>
+
+        <span className={`mt-0.5 shrink-0 whitespace-nowrap rounded-full px-2.5 sm:px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border backdrop-blur-md ${isCurrentTier ? 'border-green-500/30 bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : tier.chip}`}>
+          {isCurrentTier ? 'Active' : planLabel.toUpperCase().includes('ANNUAL') ? 'ANNUAL' : 'MONTHLY'}
+        </span>
+      </div>
+
+      <div className="space-y-3.5 border-b border-white/[0.08] pb-5 sm:pb-6">
+        {perks.map((perk) => (
+          <div key={perk} className="flex items-start gap-3">
+            <CheckCircle2 className={`mt-0.5 h-5 w-5 shrink-0 ${tier.color}`} />
+            <span className="text-sm font-medium leading-snug text-gray-100/90">{perk}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 sm:mt-6 flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col gap-4">
+          {plan ? (
+            <PremiumPriceCard {...plan} />
+          ) : monthlyUnavailable ? (
+            <div className="relative flex min-h-[172px] h-full flex-col items-center justify-center overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 text-center text-sm font-bold text-gray-400 backdrop-blur-lg">
+              <span className="relative z-10">Founder tier is available annually only.</span>
+              <button
+                type="button"
+                onClick={onShowAnnual}
+                className="relative z-10 mt-4 inline-flex items-center justify-center rounded-full border border-[#ff6a3d]/30 bg-gradient-to-r from-[#ff6a3d] to-[#ff9b78] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-black transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_18px_rgba(255,106,61,0.28)] active:scale-95"
+              >
+                Annual
+              </button>
+            </div>
+          ) : null}
+
+          {statusBanner}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PremiumRewardCard({
   tier,
   isCurrentTier,
   monthlyUnavailable,
+  selectedBillingCycle,
+  planPerks,
   monthlyPlan,
   yearlyPlan,
-  statusBanner,
+  statusBanners,
 }: PremiumRewardCardProps) {
   const visual = useMemo(() => TIER_VISUALS[tier.name] ?? TIER_VISUALS.PLATINUM, [tier.name]);
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -182,6 +267,7 @@ export function PremiumRewardCard({
   });
   const [isHovering, setIsHovering] = useState(false);
   const [isTouchActive, setIsTouchActive] = useState(false);
+  const [founderAnnualOverride, setFounderAnnualOverride] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [isRevealed, setIsRevealed] = useState(true);
   const [mobileScrollShift, setMobileScrollShift] = useState(0);
@@ -295,23 +381,22 @@ export function PremiumRewardCard({
   const handleTouchStart = () => {
     if (!isMobileView) return;
     setIsTouchActive(true);
-    setCursor({
-      rotateX: 0,
-      rotateY: 0,
-      glowX: '50%',
-      glowY: '22%',
-      iconX: 0,
-      iconY: -2,
-    });
+    setCursor({ rotateX: 0, rotateY: 0, glowX: '50%', glowY: '22%', iconX: 0, iconY: -2 });
   };
 
   const interactive = !isMobileView && isHovering;
   const touchInteractive = isMobileView && isTouchActive;
+  const effectiveBillingCycle = tier.name === 'FOUNDER' && founderAnnualOverride ? 'YEARLY' : selectedBillingCycle;
   const shellTransform = isMobileView
     ? `translateY(${mobileScrollShift}px) scale(${touchInteractive ? 1.012 : 1})`
     : interactive
       ? `translateY(-10px) scale(1.035) rotateX(${cursor.rotateX}deg) rotateY(${cursor.rotateY}deg)`
       : 'translateY(0) scale(1) rotateX(0deg) rotateY(0deg)';
+
+  const iconTransform = isMobileView
+    ? `translate3d(0px, ${touchInteractive ? -2 : 0}px, 30px) scale(${touchInteractive ? 1.03 : 1})`
+    : `translate3d(${cursor.iconX}px, ${cursor.iconY * -1}px, 30px) rotate(${cursor.rotateY * 0.35}deg) scale(${interactive ? 1.04 : 1})`;
+  const iconGlow = interactive || touchInteractive ? visual.glow : 'rgba(0,0,0,0)';
 
   return (
     <div
@@ -320,24 +405,13 @@ export function PremiumRewardCard({
       style={{
         opacity: isRevealed ? 1 : 0,
         transform: isRevealed ? 'translateY(0px)' : 'translateY(24px)',
-        transition: isMobileView
-          ? 'opacity 650ms cubic-bezier(0.22,1,0.36,1), transform 650ms cubic-bezier(0.22,1,0.36,1)'
-          : undefined,
+        transition: isMobileView ? 'opacity 650ms cubic-bezier(0.22,1,0.36,1), transform 650ms cubic-bezier(0.22,1,0.36,1)' : undefined,
       }}
     >
       <div
-        className={`relative flex h-full min-h-[100%] transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} p-6 md:p-7 transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform`}
+        className={`relative min-h-[620px] md:min-h-[640px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
         style={{
-          transformStyle: 'preserve-3d',
-          background: visual.surface,
-          transform: shellTransform,
-          boxShadow: isCurrentTier
-            ? `0 35px 80px rgba(0,0,0,0.42), 0 0 0 1px ${visual.edge} inset, 0 0 34px ${visual.glow}`
-            : interactive
-              ? `0 36px 80px rgba(0,0,0,0.45), 0 0 0 1px ${visual.edge} inset, 0 0 18px ${visual.edge}, 0 14px 40px ${visual.deepShadow}`
-              : `0 24px 55px rgba(0,0,0,0.34), 0 0 0 1px rgba(255,255,255,0.04) inset`,
-          WebkitBackdropFilter: isMobileView ? 'none' : 'blur(12px)',
-          backdropFilter: isMobileView ? 'none' : 'blur(12px)',
+          transform: `${shellTransform} ${effectiveBillingCycle === 'YEARLY' ? 'rotateY(180deg)' : 'rotateY(0deg)'}`,
         }}
         onPointerEnter={() => !isMobileView && setIsHovering(true)}
         onPointerMove={handlePointerMove}
@@ -346,121 +420,79 @@ export function PremiumRewardCard({
         onTouchEnd={resetInteraction}
         onTouchCancel={resetInteraction}
       >
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[34px]"
-          style={{
-            background: `radial-gradient(circle at ${cursor.glowX} ${cursor.glowY}, ${visual.glow} 0%, transparent 28%), ${visual.inner}`,
-            opacity: 1,
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-[1px] rounded-[33px]"
-          style={{
-            background: `linear-gradient(145deg, ${visual.edge}, transparent 18%, transparent 56%, rgba(0,0,0,0.18) 100%)`,
-            opacity: interactive ? 0.2 : 0.14,
-          }}
-        />
-        <div
-          className="pointer-events-none absolute h-40 w-40 rounded-full transition-opacity duration-200"
-          style={{
-            left: `calc(${cursor.glowX} - 5rem)`,
-            top: `calc(${cursor.glowY} - 5rem)`,
-            background: visual.glow,
-            opacity: interactive ? 0.22 : touchInteractive ? 0.18 : 0.12,
-            filter: isMobileView ? 'none' : 'blur(48px)',
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[34px] transition-opacity duration-200"
-          style={{
-            boxShadow: `inset 0 1px 0 ${visual.edge}, inset 0 -16px 28px rgba(0,0,0,0.18)`,
-            opacity: interactive ? 0.76 : 0.58,
-          }}
-        />
+        {(['MONTHLY', 'YEARLY'] as BillingCycle[]).map((cycle) => {
+          const isYearly = cycle === 'YEARLY';
+          const plan = isYearly ? yearlyPlan : monthlyPlan;
+          const planLabel = isYearly ? 'Annual premium access' : tier.name === 'FOUNDER' ? 'Yearly access only' : 'Monthly premium access';
 
-        <div
-          className="absolute inset-x-6 top-0 h-px sm:hidden"
-          style={{
-            opacity: isRevealed ? 1 : 0,
-            background: `linear-gradient(90deg, transparent, ${visual.edge}, transparent)`,
-            transition: 'opacity 550ms ease 120ms',
-          }}
-        />
-
-        <div className="relative z-10 flex h-full flex-col [transform:translateZ(32px)]">
-          <div
-            className="mb-6 flex min-h-[72px] items-start justify-between gap-4"
-            style={{
-              opacity: isRevealed ? 1 : 0,
-              transform: isRevealed ? 'translateY(0px)' : 'translateY(12px)',
-              transition: isMobileView ? 'opacity 520ms ease 120ms, transform 520ms ease 120ms' : undefined,
-            }}
-          >
-            <div className="flex min-w-0 items-center gap-4">
+          return (
+            <div
+              key={cycle}
+              className="absolute inset-0 h-full w-full rounded-[34px] [backface-visibility:hidden]"
+              style={{ transform: isYearly ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+            >
               <div
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/25 transition-transform duration-200"
+                className={`relative flex h-full min-h-[620px] md:min-h-[640px] w-full transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} transition-[box-shadow,border-color] duration-200 ease-out will-change-transform`}
                 style={{
-                  transform: isMobileView
-                    ? `translate3d(0px, ${touchInteractive ? -2 : 0}px, 30px) scale(${touchInteractive ? 1.03 : 1})`
-                    : `translate3d(${cursor.iconX}px, ${cursor.iconY * -1}px, 30px) rotate(${cursor.rotateY * 0.35}deg) scale(${interactive ? 1.04 : 1})`,
-                  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1), 0 0 18px ${interactive || touchInteractive ? visual.glow : 'rgba(0,0,0,0)'}`,
+                  background: visual.surface,
+                  boxShadow: isCurrentTier
+                    ? `0 35px 80px rgba(0,0,0,0.42), 0 0 0 1px ${visual.edge} inset, 0 0 34px ${visual.glow}`
+                    : interactive
+                      ? `0 36px 80px rgba(0,0,0,0.45), 0 0 0 1px ${visual.edge} inset, 0 0 18px ${visual.edge}, 0 14px 40px ${visual.deepShadow}`
+                      : `0 24px 55px rgba(0,0,0,0.34), 0 0 0 1px rgba(255,255,255,0.04) inset`,
+                  WebkitBackdropFilter: isMobileView ? 'none' : 'blur(12px)',
+                  backdropFilter: isMobileView ? 'none' : 'blur(12px)',
                 }}
               >
-                {tier.icon}
-              </div>
-              <div className="min-w-0">
-                <h3 className={`truncate text-2xl font-black tracking-wide ${tier.color}`}>{tier.label}</h3>
-                <div className="mt-1 text-sm font-semibold text-gray-300/80">
-                  {tier.name === 'FOUNDER' ? 'Yearly access only' : 'Monthly and yearly access'}
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-[34px]"
+                  style={{ background: `radial-gradient(circle at ${cursor.glowX} ${cursor.glowY}, ${visual.glow} 0%, transparent 28%), ${visual.inner}`, opacity: 1 }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-[1px] rounded-[33px]"
+                  style={{ background: `linear-gradient(145deg, ${visual.edge}, transparent 18%, transparent 56%, rgba(0,0,0,0.18) 100%)`, opacity: interactive ? 0.2 : 0.14 }}
+                />
+                <div
+                  className="pointer-events-none absolute h-40 w-40 rounded-full transition-opacity duration-200"
+                  style={{
+                    left: `calc(${cursor.glowX} - 5rem)`,
+                    top: `calc(${cursor.glowY} - 5rem)`,
+                    background: visual.glow,
+                    opacity: interactive ? 0.22 : touchInteractive ? 0.18 : 0.12,
+                    filter: isMobileView ? 'none' : 'blur(48px)',
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-[34px] transition-opacity duration-200"
+                  style={{ boxShadow: `inset 0 1px 0 ${visual.edge}, inset 0 -16px 28px rgba(0,0,0,0.18)`, opacity: interactive ? 0.76 : 0.58 }}
+                />
+
+                <div className="absolute inset-x-6 top-0 h-px sm:hidden" style={{ opacity: isRevealed ? 1 : 0, background: `linear-gradient(90deg, transparent, ${visual.edge}, transparent)`, transition: 'opacity 550ms ease 120ms' }} />
+
+                <div className="relative z-10 flex h-full flex-col">
+                  <CardFace
+                    tier={tier}
+                    isCurrentTier={isCurrentTier}
+                    planLabel={planLabel}
+                    perks={planPerks[cycle]}
+                    plan={plan}
+                    monthlyUnavailable={!isYearly && monthlyUnavailable}
+                    statusBanner={statusBanners[cycle]}
+                    onShowAnnual={
+                      !isYearly && tier.name === 'FOUNDER'
+                        ? () => setFounderAnnualOverride(true)
+                        : undefined
+                    }
+                    iconTransform={iconTransform}
+                    iconGlow={iconGlow}
+                  />
                 </div>
               </div>
             </div>
-
-            <span className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border backdrop-blur-md ${isCurrentTier ? 'border-green-500/30 bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : tier.chip}`}>
-              {isCurrentTier ? 'Active' : 'Premium'}
-            </span>
-          </div>
-
-          <div
-            className="space-y-3.5 border-b border-white/[0.08] pb-6"
-            style={{
-              opacity: isRevealed ? 1 : 0,
-              transform: isRevealed ? 'translateY(0px)' : 'translateY(16px)',
-              transition: isMobileView ? 'opacity 540ms ease 220ms, transform 540ms ease 220ms' : undefined,
-            }}
-          >
-            {tier.perks.map((perk) => (
-              <div key={perk} className="flex items-start gap-3">
-                <CheckCircle2 className={`mt-0.5 h-5 w-5 shrink-0 ${tier.color}`} />
-                <span className="text-sm font-medium leading-snug text-gray-100/90">{perk}</span>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="mt-6 flex flex-1 flex-col"
-            style={{
-              opacity: isRevealed ? 1 : 0,
-              transform: isRevealed ? 'translateY(0px)' : 'translateY(20px)',
-              transition: isMobileView ? 'opacity 560ms ease 320ms, transform 560ms ease 320ms' : undefined,
-            }}
-          >
-            <div className="flex flex-1 flex-col gap-4">
-              {!monthlyUnavailable && monthlyPlan ? (
-                <PremiumPriceCard {...monthlyPlan} />
-              ) : (
-                <div className="relative flex min-h-[142px] items-center justify-center overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 text-center text-sm font-bold text-gray-400 backdrop-blur-lg">
-                  <span className="relative z-10">Founder tier is available annually only.</span>
-                </div>
-              )}
-
-              <PremiumPriceCard {...yearlyPlan} />
-
-              {statusBanner}
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );
 }
+

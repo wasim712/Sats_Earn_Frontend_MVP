@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -14,9 +14,11 @@ import {
   Smartphone,
   Sparkles,
   Target,
+  Crown,
   Zap,
 } from 'lucide-react';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
+import { useAppSelector } from '@/store/hooks';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -33,6 +35,7 @@ type StandaloneTask = {
   doubleRewardsActive?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
+  isPremiumOnly?: boolean;
 };
 
 type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
@@ -90,7 +93,11 @@ const getPreviewDescription = (text: string) => {
   return `${text.slice(0, 120).trim()}...`;
 };
 
+const PREMIUM_REWARDS_ANCHOR = '/user/rewards#premium-tiers';
+
 export default function StandaloneTasksPage() {
+  const { user } = useAppSelector((state) => state.auth);
+  const isPremiumUser = Boolean(user?.isPremium);
   const [tasks, setTasks] = useState<StandaloneTask[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -246,14 +253,19 @@ export default function StandaloneTasksPage() {
       <section className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6 lg:gap-8">
         {filteredTasks.length > 0 ? filteredTasks.map((task) => {
           const reward = Number(task.taskRewardSats || 0);
-          const { label, tone, cta } = getStandaloneStatus(task);
+          const { label, tone } = getStandaloneStatus(task);
+          const status = getStandaloneStatus(task);
           const platformMeta = getRequiredPlatform(task);
           const previewText = getPreviewDescription(task.description || 'No task description available yet.');
           const coverImage = task.coverImageUrl || null;
+          const isPremiumOnly = Boolean(task.isPremiumOnly);
+          const isLockedPremium = isPremiumOnly && !isPremiumUser;
+          const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : `/user/standalone-tasks/${task.id}`;
+          const resolvedCta = isLockedPremium ? 'Upgrade to Premium' : status.cta;
 
           return (
-            <Link key={task.id} href={`/user/standalone-tasks/${task.id}`} className="group block">
-              <div className="relative rounded-[30px] border border-[#1a1a1a] bg-[#050505] overflow-hidden shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition-all duration-500 hover:-translate-y-2 hover:border-sats-orange-500/40 hover:shadow-[0_30px_80px_rgba(249,115,22,0.12)]">
+            <Link key={task.id} href={resolvedHref} className="group block">
+              <div className={`relative overflow-hidden rounded-[30px] border shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition-all duration-500 hover:-translate-y-2 ${isPremiumOnly ? 'border-violet-500/30 bg-[linear-gradient(180deg,rgba(20,12,32,1)_0%,rgba(5,5,5,1)_100%)] hover:border-violet-400/40 hover:shadow-[0_30px_80px_rgba(168,85,247,0.16)]' : 'border-[#1a1a1a] bg-[#050505] hover:border-sats-orange-500/40 hover:shadow-[0_30px_80px_rgba(249,115,22,0.12)]'}`}>
                 <div className="relative h-56 w-full overflow-hidden border-b border-[#1a1a1a] bg-[#0c0c0c]">
                   {coverImage ? (
                     <Image src={coverImage} alt={task.title} fill unoptimized className="object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -266,7 +278,14 @@ export default function StandaloneTasksPage() {
                     <Target className="h-3.5 w-3.5" /> Standalone
                   </div>
 
-                  <div className="absolute right-5 top-5 z-20 flex items-center gap-2">
+                  {isPremiumOnly ? (
+                    <div className="absolute right-5 top-5 z-20 inline-flex items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/20 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-violet-100 shadow-[0_0_24px_rgba(139,92,246,0.28)]">
+                      <Crown className="h-3.5 w-3.5 text-violet-200" />
+                      Premium Only
+                    </div>
+                  ) : null}
+
+                  <div className={`absolute z-20 flex items-center gap-2 ${isPremiumOnly ? 'right-5 top-16' : 'right-5 top-5'}`}>
                     <div className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-[11px] font-black uppercase tracking-wide backdrop-blur-md ${tone}`}>
                       {label === 'Completed' ? <CheckCircle2 className="h-4 w-4" /> : <Zap className="h-4 w-4" />}
                       {label}
@@ -293,9 +312,15 @@ export default function StandaloneTasksPage() {
                       {platformMeta.label}
                     </div>
 
-                    <div className="inline-flex items-center gap-1.5 rounded-xl border border-[#2a2a2a] bg-[#111] px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-blue-400 shadow-sm">
+                    <div className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm ${isPremiumOnly ? 'border-violet-500/30 bg-violet-500/10 text-violet-200' : 'border-[#2a2a2a] bg-[#111] text-blue-400'}`}>
                       <Zap className="w-3.5 h-3.5" /> XP {Number(task.xpReward || 0)}
                     </div>
+
+                    {isPremiumOnly ? (
+                      <div className="inline-flex items-center gap-1.5 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-violet-200 shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-sats-orange-400" /> Premium Access
+                      </div>
+                    ) : null}
 
                     {task.doubleRewardsActive ? (
                       <div className="inline-flex items-center gap-1.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.1)]">
@@ -308,9 +333,9 @@ export default function StandaloneTasksPage() {
                     <div className={`w-full py-4 px-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all border group/btn ${
                       task.isCompleted
                         ? 'bg-green-500/10 border-green-500/20 text-green-400'
-                        : 'bg-[#111] border-[#2a2a2a] text-white group-hover:bg-sats-orange-500 group-hover:border-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                        : isLockedPremium ? 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300 group-hover:bg-yellow-500/20 group-hover:border-yellow-400/40 group-hover:text-yellow-200' : 'bg-[#111] border-[#2a2a2a] text-white group-hover:bg-sats-orange-500 group-hover:border-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]'
                     }`}>
-                      <span>{cta}</span>
+                      <span>{resolvedCta}</span>
                       {!task.isCompleted && <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />}
                     </div>
                   </div>
@@ -345,3 +370,4 @@ function SummaryCard({ label, value, tone }: { label: string; value: number | st
     </div>
   );
 }
+

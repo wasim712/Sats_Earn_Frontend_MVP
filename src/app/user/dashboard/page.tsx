@@ -99,6 +99,26 @@ export default function UserDashboardPage() {
 
     return value.toLocaleString();
   };
+
+  const formatPendingSats = (pendingSats?: number, pendingMsats?: number) => {
+    const wholeSats = Number(pendingSats || 0);
+    const msats = Number(pendingMsats || 0);
+    const total = wholeSats + msats / 1000;
+
+    if (msats > 0 && total < 1) {
+      return total.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    if (msats > 0) {
+      return total.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    return wholeSats.toLocaleString();
+  };
+
+  const getAvailableSatsValue = () => {
+    return Number(data?.balances?.available || 0) + (Number(data?.balances?.availableMsats || 0) / 1000);
+  };
   
   const formatAvailableBalance = (sats: number) => {
     if (showBtc) {
@@ -121,14 +141,13 @@ export default function UserDashboardPage() {
   // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
     const btcAmount = sats / 100000000;
+    const btcPriceUsd = Number(data?.balances?.btcPriceUsd || 90000);
 
     if (!isIndiaUser || fiatCurrency === 'USD') {
-      // Assuming 1 BTC = ~$90,000 USD (Adjust as needed)
-      const usdValue = btcAmount * 90000;
+      const usdValue = btcAmount * btcPriceUsd;
       return `≈ $${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     } else {
-      // Current INR Rate
-      const inrValue = btcAmount * 7500406;
+      const inrValue = btcAmount * btcPriceUsd * 83.34;
       return `≈ ₹${inrValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} INR`;
     }
   };
@@ -270,7 +289,7 @@ export default function UserDashboardPage() {
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // CALCULATED VALUES
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  const totalLifetimeEarned = (data.balances?.available || 0) + (data.balances?.locked || 0) + (data.balances?.pending || 0); // Mocking total earned
+  const totalLifetimeEarned = getAvailableSatsValue() + (data.balances?.locked || 0) + Number(data.balances?.pending || 0) + (Number(data.balances?.pendingMsats || 0) / 1000);
   const currentStreak = data.gamification?.currentStreak || 0;
   const activeTier = data.gamification?.activeTier || 'Basic';
   const currentLevel = data.gamification?.level || 1;
@@ -372,12 +391,12 @@ export default function UserDashboardPage() {
     <p className="font-bold text-blue-200/80 uppercase tracking-widest text-[11px] mb-2">Available Balance</p>
     
     <div className="text-white mb-2 drop-shadow-md">
-      {formatAvailableBalance(data.balances?.available || 0)}
+      {formatAvailableBalance(getAvailableSatsValue())}
     </div>
     
     <div className="flex items-center justify-between gap-2">
       <p className="text-sm font-medium text-blue-200/60 truncate pr-2">
-        {getFiatValue(data.balances?.available || 0)}
+        {getFiatValue(getAvailableSatsValue())}
       </p>
 
       {isIndiaUser ? (
@@ -403,7 +422,7 @@ export default function UserDashboardPage() {
             <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending sats</p>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">{(data.balances?.pending || 0).toLocaleString()} <span className='text-2xl'>sats</span></h3>
+            <h3 className="text-3xl font-black text-white">{formatPendingSats(data.balances?.pending, data.balances?.pendingMsats)} <span className='text-2xl'>sats</span></h3>
             <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
           </div>
         </div>

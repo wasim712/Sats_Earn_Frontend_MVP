@@ -12,6 +12,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 // --- TYPES ---
 interface Balances {
   available: number;
+  availableMsats?: number;
   pending: number;
   locked: number;
 }
@@ -129,6 +130,15 @@ export default function UserWithdrawalsPage() {
   const [history, setHistory] = useState<Withdrawal[]>([]);
   const [minWithdrawal, setMinWithdrawal] = useState<number | null>(null);
   const [isWithdrawalConfigured, setIsWithdrawalConfigured] = useState(true);
+
+  const formatSatsValue = (value: number) => {
+    if (Number.isInteger(value)) return value.toLocaleString();
+    return value.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  };
+
+  const getAvailableDisplayValue = () => {
+    return Number(balances?.available || 0) + (Number(balances?.availableMsats || 0) / 1000);
+  };
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -274,7 +284,7 @@ export default function UserWithdrawalsPage() {
         <div className="bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-3xl p-6 shadow-[0_0_30px_rgba(249,115,22,0.1)] relative overflow-hidden">
           <div className="absolute -right-4 -top-4 opacity-10"><Zap className="w-32 h-32 text-sats-orange-500" /></div>
           <p className="text-xs font-black uppercase tracking-widest text-sats-orange-400 mb-2">Available to Withdraw</p>
-          <h3 className="text-4xl font-black text-sats-orange-500">{balances?.available.toLocaleString() || 0}</h3>
+          <h3 className="text-4xl font-black text-sats-orange-500">{formatSatsValue(getAvailableDisplayValue())}</h3>
           <p className="text-sm font-bold text-sats-orange-500/60 mt-1">Sats</p>
         </div>
         

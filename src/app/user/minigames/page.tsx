@@ -78,7 +78,7 @@ export default function UserMiniGamesPage() {
             </p>
           </div>
 
-          <div className="rounded-[22px] border border-[#1d1d1d] bg-[#0a0a0a] px-5 py-4 min-w-[220px]">
+          <div className="rounded-[22px] border border-[#1d1d1d] bg-[#0a0a0a] px-5 py-4 min-w-[220px] md:block hidden">
             <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-[0.22em] mb-2">
               <Clock3 className="h-4 w-4 text-sats-orange-500" />
               Status
@@ -94,6 +94,12 @@ export default function UserMiniGamesPage() {
           type="button"
           onClick={() => setActiveGame('sat-worm')}
           className="text-left rounded-[28px] border border-sats-orange-500/25 bg-[#090909] p-6 relative overflow-hidden transition-all hover:border-sats-orange-500/45 hover:-translate-y-1 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+          style={{
+            backgroundImage: "url('/sats_worm .jpeg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
         >
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.52)_48%,rgba(0,0,0,0.94)_100%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_28%)]" />

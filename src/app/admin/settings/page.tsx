@@ -39,6 +39,7 @@ export default function AdminSettingsPage() {
     referralBonusPercent: 5,
     baseXpPerTask: 10,
     dailyStreakBonusXp: 5,
+    btcPriceUsd: 90000,
     tierReferralMatrix: {
       BASIC: 5, COPPER: 5, BRONZE: 6, SILVER: 7, GOLD: 8,
       PLATINUM: 10, DIAMOND: 12, CROWN: 15, ELITE: 20, FOUNDER: 25,
@@ -52,6 +53,12 @@ export default function AdminSettingsPage() {
     } as Record<string, number>,
     premiumYearlySatsMatrix: {
       PLATINUM: 72999, DIAMOND: 102999, CROWN: 146999, ELITE: 221999, FOUNDER: 299999,
+    } as Record<string, number>,
+    premiumMonthlyUsdMatrix: {
+      PLATINUM: 4.99, DIAMOND: 6.99, CROWN: 9.99, ELITE: 15.99, FOUNDER: 0,
+    } as Record<string, number>,
+    premiumYearlyUsdMatrix: {
+      PLATINUM: 54.99, DIAMOND: 76.99, CROWN: 109.99, ELITE: 175.99, FOUNDER: 249.99,
     } as Record<string, number>,
     userSidebarConfig: {
       dashboard: true,
@@ -85,10 +92,13 @@ export default function AdminSettingsPage() {
       referralBonusPercent: settings.referralBonusPercent ?? prev.referralBonusPercent,
       baseXpPerTask: settings.baseXpPerTask ?? prev.baseXpPerTask,
       dailyStreakBonusXp: settings.dailyStreakBonusXp ?? prev.dailyStreakBonusXp,
+      btcPriceUsd: settings.btcPriceUsd ?? prev.btcPriceUsd,
       tierReferralMatrix: { ...prev.tierReferralMatrix, ...(settings.tierReferralMatrix || {}) },
       tierMinWithdrawalMatrix: { ...prev.tierMinWithdrawalMatrix, ...(settings.tierMinWithdrawalMatrix || {}) },
       premiumMonthlySatsMatrix: { ...prev.premiumMonthlySatsMatrix, ...(settings.premiumMonthlySatsMatrix || {}) },
       premiumYearlySatsMatrix: { ...prev.premiumYearlySatsMatrix, ...(settings.premiumYearlySatsMatrix || {}) },
+      premiumMonthlyUsdMatrix: { ...prev.premiumMonthlyUsdMatrix, ...(settings.premiumMonthlyUsdMatrix || {}) },
+      premiumYearlyUsdMatrix: { ...prev.premiumYearlyUsdMatrix, ...(settings.premiumYearlyUsdMatrix || {}) },
       userSidebarConfig: { ...prev.userSidebarConfig, ...(settings.userSidebarConfig || {}) },
     }));
   }, [settings]);
@@ -208,6 +218,14 @@ export default function AdminSettingsPage() {
 
                 <SettingsInputWrapper label="Daily Streak Bonus XP" icon={<Clock className="w-4 h-4 text-red-500" />}>
                   <input type="text" inputMode="numeric" pattern="[0-9]*" name="dailyStreakBonusXp" value={formData.dailyStreakBonusXp || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
+                </SettingsInputWrapper>
+              </div>
+            </SettingsSectionCard>
+
+            <SettingsSectionCard title="USD Display Settings" description="Control the frontend dollar showcase from admin settings." icon={<Coins className="w-5 h-5 text-green-500" />}>
+              <div className="space-y-6">
+                <SettingsInputWrapper label="BTC Price (USD)" icon={<Coins className="w-4 h-4 text-green-500" />}>
+                  <input type="text" inputMode="numeric" pattern="[0-9]*" name="btcPriceUsd" value={formData.btcPriceUsd || ''} onChange={handleNumberChange} required className={`${inputCls} pl-11`} />
                 </SettingsInputWrapper>
               </div>
             </SettingsSectionCard>
