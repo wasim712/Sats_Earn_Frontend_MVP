@@ -116,7 +116,15 @@ const formatDate = (isoString: string) => {
 
 const normalizeCampaignPayload = (data: any) => {
   if (!data || typeof data !== 'object') return null;
-  return data.campaign || data.data || data.item || data;
+  const campaign = data.campaign || data.data || data.item || data;
+  if (!campaign || typeof campaign !== 'object') return null;
+
+  return {
+    ...campaign,
+    maxCompletions: Number(campaign.maxCompletions || 0),
+    totalCompletions: Number(campaign.totalCompletions || 0),
+    xpReward: Number(campaign.xpReward || 0),
+  };
 };
 
 export default function SingleCampaignPage({ params }: { params: Promise<{ id: string }> }) {
@@ -138,6 +146,13 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const [isDoubleRewardsEnabled, setIsDoubleRewardsEnabled] = useState(false);
+  const [maxCompletionsInput, setMaxCompletionsInput] = useState('');
+  const [maxDebug, setMaxDebug] = useState<{
+    input?: string;
+    payload?: number;
+    response?: number;
+    campaignState?: number;
+  }>({});
   
   const [editForm, setEditForm] = useState<CampaignEditForm>({
     title:'',
@@ -164,9 +179,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       const token = sessionStorage.getItem('sats_token');
       const headers = { 'Authorization': `Bearer ${token}` };
 
+      const requestTs = Date.now();
       const [campRes, analyticsRes] = await Promise.all([
-  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}`, { headers, cache: 'no-store' }),
-  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/analytics`, { headers, cache: 'no-store' })
+  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}?_ts=${requestTs}`, { headers, cache: 'no-store' }),
+  obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/analytics?_ts=${requestTs}`, { headers, cache: 'no-store' })
 ]);
 
       if (campRes.ok) {
@@ -176,6 +192,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           throw new Error('Invalid campaign response received.');
         }
         setCampaign(campData);
+        setMaxCompletionsInput(String(Number(campData.maxCompletions || 0)));
         setEditForm({
           ...campData,
           targetCountries: campData.targetCountries || [],
@@ -289,9 +306,10 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
       requiredFreeTier: editForm.requiredFreeTier,
+      requiredPlatform: editForm.requiredPlatform,
       baseRewardSats: Number(campaign.baseRewardSats || 0),
       xpReward: Number(editForm.xpReward || 0),
-      maxCompletions: Number(editForm.maxCompletions),
+      maxCompletions: parseWholeNumber(maxCompletionsInput),
       isActive: editForm.isActive,
       targetUrl: editForm.targetUrl?.trim() || undefined,
       socialHandleTarget: editForm.socialHandleTarget?.trim() || undefined,
@@ -299,10 +317,41 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       doubleRewardsEndAt: isDoubleRewardsEnabled ? (editForm.doubleRewardsEndAt || null) : null,
     };
 
+    setMaxDebug((prev) => ({
+      ...prev,
+      input: maxCompletionsInput,
+      payload: payload.maxCompletions,
+    }));
+
     const result = await dispatch(updateCampaign({ id: campaign.id, data: payload }));
     
     if (updateCampaign.fulfilled.match(result)) {
-      await fetchCampaignData();
+      const updatedCampaign = result.payload as Campaign;
+      setMaxDebug((prev) => ({
+        ...prev,
+        response: Number(updatedCampaign.maxCompletions || 0),
+      }));
+      setCampaign((current) => {
+        if (!current) return updatedCampaign as Campaign & { tasks?: EditableTask[] };
+        return {
+          ...current,
+          ...updatedCampaign,
+          tasks: current.tasks,
+        };
+      });
+      setEditForm((current) => ({
+        ...current,
+        ...updatedCampaign,
+        targetCountries: updatedCampaign.targetCountries || [],
+        coverImageUrl: updatedCampaign.coverImageUrl || '',
+        doubleRewardsStartAt: updatedCampaign.doubleRewardsStartAt || '',
+        doubleRewardsEndAt: updatedCampaign.doubleRewardsEndAt || '',
+      }));
+      setMaxCompletionsInput(String(Number(updatedCampaign.maxCompletions || 0)));
+      setMaxDebug((prev) => ({
+        ...prev,
+        campaignState: Number(updatedCampaign.maxCompletions || 0),
+      }));
       setIsEditing(false);
       triggerSuccess("Campaign Updated Live.");
     } else {
@@ -494,6 +543,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               doubleRewardsStartAt: campaign.doubleRewardsStartAt || '',
               doubleRewardsEndAt: campaign.doubleRewardsEndAt || '',
             });
+            setMaxCompletionsInput(String(Number(campaign.maxCompletions || 0)));
             setIsEditing(false);
           }}
           onSave={handleSave}
@@ -703,7 +753,9 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                 <Field title="Campaign Economics">
                   {!isEditing ? (
                     <div className="space-y-1">
-                      <span className="text-white font-bold">{campaign.maxCompletions.toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
+                      <span className="text-white font-bold">{Number(campaign.maxCompletions || editForm.maxCompletions || 0).toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
+                      <p className="text-[10px] text-gray-500 font-mono">Campaign ID: {campaign.id}</p>
+                      <p className="text-[10px] text-cyan-400 font-mono">Debug → input: {maxDebug.input ?? '-'} | payload: {maxDebug.payload ?? '-'} | response: {maxDebug.response ?? '-'} | state: {maxDebug.campaignState ?? Number(campaign.maxCompletions || 0)}</p>
                       {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
                         <p className="text-xs text-yellow-400 font-medium">2x Window: {formatDate(campaign.doubleRewardsStartAt)} - {formatDate(campaign.doubleRewardsEndAt)}</p>
                       )}
@@ -721,8 +773,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             inputMode="numeric"
                             pattern="[0-9]*"
                             required 
-                            value={editForm.maxCompletions || ''} 
-                            onChange={e => setEditForm({...editForm, maxCompletions: parseWholeNumber(e.target.value)})} 
+                            value={maxCompletionsInput} 
+                            onChange={(e) => {
+                              const digitsOnly = e.target.value.replace(/\D/g, '');
+                              setMaxCompletionsInput(digitsOnly);
+                            }} 
                             placeholder="Max Users" 
                             className={inputCls} 
                           />
