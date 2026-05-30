@@ -56,7 +56,7 @@ export const fetchAllCampaigns = createAsyncThunk(
       const token = state.auth.token || sessionStorage.getItem('sats_token');
       if (!token) throw new Error('No authentication token found');
       
-      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns`, {
+      const response = await obfuscatedFetch(`${API_URL}/admin/campaigns?_ts=${Date.now()}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
