@@ -49,7 +49,7 @@ export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTie
       <div className={`absolute -right-10 -top-10 w-64 h-64 rounded-full blur-[100px] pointer-events-none transition-all duration-500 ${glowColor}`} />
 
       <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-8 xl:gap-12">
-        <div className="flex flex-col sm:flex-row items-start gap-5">
+        <div className="flex flex-row sm:flex-row items-start gap-5">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${iconBg}`}>
             {isFreeTier ? <Info className="w-6 h-6" /> : <Users className="w-6 h-6" />}
           </div>

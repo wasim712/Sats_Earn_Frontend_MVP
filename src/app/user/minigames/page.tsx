@@ -64,125 +64,172 @@ export default function UserMiniGamesPage() {
 
   return (
     <div className="px-4 py-5 md:px-6 md:py-6 xl:px-8 space-y-6">
-      <section className="rounded-[28px] border border-sats-orange-500/20 bg-gradient-to-b from-[#0d0d0d] to-[#070707] p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 h-40 w-40 bg-sats-orange-500/10 blur-[60px] pointer-events-none" />
-        <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-sats-orange-400">
+      
+      {/* ─── HEADER SECTION ─── */}
+      <section className="rounded-[32px] border border-white/[0.06] bg-gradient-to-b from-[#111] to-[#050505] p-6 sm:p-8 relative overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+        {/* Ambient Glows */}
+        <div className="absolute top-0 right-0 h-64 w-64 bg-sats-orange-500/10 blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-10 h-40 w-40 bg-emerald-500/5 blur-[60px] pointer-events-none translate-y-1/2" />
+        
+        <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-sats-orange-400 shadow-[inset_0_0_12px_rgba(249,115,22,0.1)]">
               <Gamepad2 className="h-3.5 w-3.5" />
               Mini Games Hub
             </div>
-            <h1 className="mt-4 text-3xl sm:text-4xl font-black tracking-tight text-white">One live game, more on the way</h1>
-            <p className="mt-3 max-w-2xl text-sm sm:text-base text-gray-400 leading-relaxed">
+            <h1 className="mt-5 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-md">
+              One live game, more on the way
+            </h1>
+            <p className="mt-3 text-sm sm:text-base text-gray-400 leading-relaxed font-medium">
               SAT-WORM is live now. This section also shows the upcoming mini-game roadmap, feature cards, and what is coming next.
             </p>
           </div>
 
-          <div className="rounded-[22px] border border-[#1d1d1d] bg-[#0a0a0a] px-5 py-4 min-w-[220px] md:block hidden">
-            <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-[0.22em] mb-2">
-              <Clock3 className="h-4 w-4 text-sats-orange-500" />
+          <div className="rounded-[24px] border border-white/[0.06] bg-black/40 px-6 py-5 min-w-[240px] md:block hidden backdrop-blur-md shadow-inner">
+            <div className="flex items-center gap-2 text-gray-500 text-[10px] font-black uppercase tracking-[0.22em] mb-2">
+              <Clock3 className="h-3.5 w-3.5 text-sats-orange-500" />
               Status
             </div>
-            <p className="text-xl font-black text-white">Live Now</p>
-            <p className="mt-1 text-sm text-gray-500">SAT-WORM is playable today. More game cards are coming next.</p>
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
+              </span>
+              <p className="text-xl font-black text-white tracking-wide">Live Now</p>
+            </div>
+            <p className="mt-2 text-xs text-gray-400 font-medium leading-relaxed">
+              SAT-WORM is playable today. More games are currently in development.
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      {/* ─── GAMES GRID ─── */}
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch">
+        
+        {/* FEATURED GAME CARD (SAT-WORM) */}
         <button
           type="button"
           onClick={() => setActiveGame('sat-worm')}
-          className="text-left rounded-[28px] border border-sats-orange-500/25 bg-[#090909] p-6 relative overflow-hidden transition-all hover:border-sats-orange-500/45 hover:-translate-y-1 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
-          style={{
-            backgroundImage: "url('/sats_worm .jpeg')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }}
+          className="group text-left rounded-[32px] border border-sats-orange-500/30 bg-[#050505] relative overflow-hidden transition-all duration-500 hover:border-sats-orange-500/60 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(249,115,22,0.12)] hover:shadow-[0_25px_50px_rgba(249,115,22,0.2)] flex flex-col min-h-[400px]"
         >
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.52)_48%,rgba(0,0,0,0.94)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_28%)]" />
-          <div className="relative z-10 p-6">
+          {/* Background Image Layer (Separated for clean zoom effect) */}
+          <div
+            className="absolute inset-0 z-0 transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{
+              backgroundImage: "url('/sats_worm .jpeg')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          
+          {/* Smart Gradients for perfect text visibility & image pop */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-transparent to-transparent h-[40%]" />
+          <div className="absolute inset-x-0 bottom-0 z-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent h-[60%]" />
+          
+          <div className="relative z-10 p-6 sm:p-7 flex flex-col h-full w-full">
+            
+            {/* Top Badges */}
             <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-black/45 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-sats-orange-300 backdrop-blur-sm">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-sats-orange-400 backdrop-blur-md">
                 <Zap className="h-3.5 w-3.5" /> ~10 SATS
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-black/45 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300 backdrop-blur-sm">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.95)]" /> LIVE NOW
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" /> LIVE
               </span>
             </div>
 
-            <div className="mt-20 sm:mt-24">
-              <h2 className="text-[30px] font-black text-sats-orange-400 tracking-tight">SAT-WORM</h2>
-              <p className="mt-2 text-sm text-white/78">Eat sats to grow, avoid inflation traps!</p>
-            </div>
+            {/* Bottom Content Area */}
+            <div className="mt-auto pt-8">
+              <h2 className="text-[32px] font-black text-white tracking-tight drop-shadow-lg group-hover:text-sats-orange-400 transition-colors duration-300">
+                SAT-WORM
+              </h2>
+              <p className="mt-2 text-sm text-gray-300 font-medium max-w-[90%]">
+                Eat sats to grow, avoid inflation traps!
+              </p>
 
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
-              <div className="flex items-center gap-2 text-sm font-bold text-white/85">
-                <span className="h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.95)]" />
-                LIVE NOW
-              </div>
-              <div className="inline-flex items-center gap-3 rounded-2xl bg-sats-orange-500 px-5 py-3 text-sm font-black text-black shadow-[0_12px_30px_rgba(249,115,22,0.35)]">
-                <Zap className="h-4 w-4" /> Play Now
-                <ChevronRight className="h-4 w-4 transition-transform" />
+              <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)] animate-pulse" />
+                  Playable Now
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sats-orange-500 to-orange-400 px-5 py-3 text-sm font-black text-black shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-transform group-hover:scale-105 active:scale-95">
+                  <Zap className="h-4 w-4" /> Play
+                  <ChevronRight className="h-4 w-4" />
+                </div>
               </div>
             </div>
           </div>
         </button>
 
+        {/* UPCOMING GAMES CARDS */}
         {upcomingCards.map((card) => {
           const Icon = card.icon;
 
           return (
             <div
               key={card.title}
-              className={`rounded-[24px] border ${card.border} bg-[#090909] p-6 relative overflow-hidden`}
+              className={`flex flex-col justify-between rounded-[32px] border ${card.border || 'border-white/[0.05]'} bg-gradient-to-b from-[#0a0a0a] to-[#050505] p-7 relative overflow-hidden transition-colors hover:bg-[#0c0c0c] hover:border-white/10`}
             >
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.74)_62%,rgba(0,0,0,0.95)_100%)]" />
-              <div className={`absolute top-0 right-0 h-24 w-24 ${card.bg} blur-3xl pointer-events-none`} />
+              {/* Internal Glows */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.03)_0%,transparent_80%)] pointer-events-none" />
+              <div className={`absolute top-0 right-0 h-32 w-32 ${card.bg || 'bg-white/5'} blur-[60px] pointer-events-none`} />
+              
               <div className="relative z-10">
-                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border ${card.border} ${card.bg}`}>
-                  <Icon className={`h-5 w-5 ${card.accent}`} />
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-lg font-black text-white tracking-tight">{card.title}</h2>
-                  <span className="rounded-full border border-[#262626] bg-[#111] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                <div className="flex items-start justify-between gap-3 mb-6">
+                  <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl border ${card.border || 'border-white/10'} ${card.bg || 'bg-black/50'} shadow-inner`}>
+                    <Icon className={`h-6 w-6 ${card.accent || 'text-white'}`} />
+                  </div>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 backdrop-blur-sm">
                     Coming Soon
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-gray-400">{card.description}</p>
+                
+                <h2 className="text-xl font-black text-white tracking-tight">{card.title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-gray-400 font-medium">{card.description}</p>
+              </div>
+              
+              {/* Decorative locked footer to match height of the playable card slightly */}
+              <div className="relative z-10 mt-8 pt-5 border-t border-white/[0.05] flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-widest">
+                <Clock3 className="w-4 h-4" /> In Development
               </div>
             </div>
           );
         })}
       </section>
 
+      {/* ─── FULLSCREEN MODAL ─── */}
       {activeGame === 'sat-worm' && (
-        <div className="fixed inset-0 z-[120] bg-black/95 backdrop-blur-sm p-3 sm:p-5 overflow-auto">
-          <div className="mx-auto max-w-[1600px] space-y-4">
-            <div className="flex items-center justify-between gap-4 rounded-[20px] border border-[#1d1d1d] bg-[#090909] px-5 py-4">
+        <div className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-xl p-4 sm:p-6 overflow-auto animate-in fade-in duration-300">
+          <div className="mx-auto max-w-[1600px] h-full flex flex-col gap-4">
+            
+            <div className="flex items-center justify-between gap-4 rounded-[24px] border border-white/10 bg-[#0a0a0a] px-6 py-4 shadow-2xl shrink-0">
               <div>
-                <h2 className="text-xl font-black text-white tracking-tight">SAT-WORM Full Screen</h2>
-                <p className="text-sm text-gray-400">Finish a run and the earned XP is claimed automatically. SAT-WORM no longer gives sats rewards.</p>
+                <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3">
+                  SAT-WORM <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase tracking-widest">Live</span>
+                </h2>
+                <p className="text-sm text-gray-400 mt-1 font-medium">Finish a run and the earned XP is claimed automatically. SAT-WORM no longer gives sats rewards.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveGame(null)}
-                className="rounded-xl border border-[#2a2a2a] bg-[#111] px-4 py-2 text-sm font-bold text-gray-300 hover:bg-[#171717] hover:text-white transition-colors"
+                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-bold text-gray-300 hover:bg-white/10 hover:text-white transition-all active:scale-95"
               >
-                Exit
+                Close Game
               </button>
             </div>
 
-            <SatWormMiniGame
-              fullscreen
-              onExit={() => setActiveGame(null)}
-              onRewardClaimed={() => {
-                dispatch(fetchUserDashboard());
-                dispatch(fetchUserNotifications());
-              }}
-            />
+            <div className="flex-1 rounded-[32px] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative bg-[#050505]">
+              <SatWormMiniGame
+                fullscreen
+                onExit={() => setActiveGame(null)}
+                onRewardClaimed={() => {
+                  dispatch(fetchUserDashboard());
+                  dispatch(fetchUserNotifications());
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

@@ -152,7 +152,7 @@ export default function UserProfilePage() {
               <Edit3 className="w-4 h-4 text-gray-400" /> Edit Profile
             </button>
             <Link
-               href={"/user/rewards"}
+               href={"/user/rewards#premium-tiers"}
               className="flex items-center justify-center gap-2 px-6 py-3 bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-xl text-sats-orange-400 font-bold hover:bg-sats-orange-500/15 transition-all active:scale-[0.98] shadow-sm whitespace-nowrap disabled:opacity-60"
             >
               <Zap className="w-4 h-4" /> {'Upgrade Tier'}

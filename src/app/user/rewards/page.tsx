@@ -462,61 +462,76 @@ export default function RewardsPage() {
 
         {/* Premium Memberships */}
         <section>
-          <div className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-            <div className="min-w-0 flex-1">
-              <div className="mb-3 flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 shrink-0">
-                  <Crown className="w-5 h-5" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white/90">Premium Memberships</h2>
-              </div>
-              <p className="text-base text-gray-400 max-w-3xl leading-relaxed">
-                Unlock exclusive tasks, instant withdrawals, and huge earning multipliers. Select your preferred payment method directly on the cards below.
-              </p>
-            </div>
-            <div className="flex w-full justify-center xl:w-auto xl:flex-1 xl:justify-center">
-              <div className="inline-flex items-center rounded-full border border-white/10 bg-[#090909]/90 p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-xl">
-                <button
-                  type="button"
-                  onClick={() => setSelectedBillingCycle('MONTHLY')}
-                  className={`relative rounded-full px-5 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
-                    selectedBillingCycle === 'MONTHLY'
-                      ? 'bg-gradient-to-r from-white to-white/85 text-black shadow-[0_6px_18px_rgba(255,255,255,0.22)]'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Monthly
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedBillingCycle('YEARLY')}
-                  className={`relative rounded-full px-5 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
-                    selectedBillingCycle === 'YEARLY'
-                      ? 'bg-gradient-to-r from-sats-orange-500 to-amber-400 text-black shadow-[0_6px_18px_rgba(249,115,22,0.28)]'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Annual
-                </button>
-              </div>
-            </div>
-            <div className="flex w-full xl:w-auto xl:justify-end">
-              <button
-                type="button"
-                onClick={() => setShowSatsPricing(!showSatsPricing)}
-                className={`inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] ${
-                  showSatsPricing
-                    ? 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black shadow-[0_0_18px_rgba(249,115,22,0.25)]'
-                    : 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-[0_0_18px_rgba(34,197,94,0.25)]'
-                }`}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>{!showSatsPricing ? 'Upgrade Using Sats' : 'Upgrade Using USD'}</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+          <div className="mb-10 flex flex-col gap-6">
+  
+  {/* TOP SECTION: Title and Description */}
+  <div className="max-w-3xl">
+    <div className="mb-3 flex items-center gap-3">
+      <div className="p-2.5 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 shrink-0">
+        <Crown className="w-5 h-5" />
+      </div>
+      <h2 className="text-2xl md:text-3xl font-black text-white/90">Premium Memberships</h2>
+    </div>
+    <p className="text-base text-gray-400 leading-relaxed">
+      Unlock exclusive tasks, instant withdrawals, and huge earning multipliers. Select your preferred payment method directly on the cards below.
+    </p>
+  </div>
+
+  {/* BOTTOM SECTION: 3-Column Grid for perfect centering & right-alignment */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
+    
+    {/* Left: Empty Spacer (Takes up 1/3 of space on desktop to force center alignment) */}
+    <div className="hidden md:block"></div>
+
+    {/* Center: Monthly / Annual Toggle */}
+    <div className="flex justify-center">
+      <div className="inline-flex items-center rounded-full border border-white/10 bg-[#090909]/90 p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+        <button
+          type="button"
+          onClick={() => setSelectedBillingCycle('MONTHLY')}
+          className={`relative rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
+            selectedBillingCycle === 'MONTHLY'
+              ? 'bg-gradient-to-r from-white to-white/85 text-black shadow-[0_6px_18px_rgba(255,255,255,0.22)]'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          onClick={() => setSelectedBillingCycle('YEARLY')}
+          className={`relative rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
+            selectedBillingCycle === 'YEARLY'
+              ? 'bg-gradient-to-r from-sats-orange-500 to-amber-400 text-black shadow-[0_6px_18px_rgba(249,115,22,0.28)]'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          Annual
+        </button>
+      </div>
+    </div>
+
+    {/* Right: Currency Toggle Button */}
+    <div className="flex justify-center md:justify-end">
+      <button
+        type="button"
+        onClick={() => setShowSatsPricing(!showSatsPricing)}
+        className={`inline-flex  sm:w-auto items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:scale-[1.02] active:scale-95 ${
+          showSatsPricing
+            ? 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black shadow-[0_0_18px_rgba(249,115,22,0.25)]'
+            : 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-[0_0_18px_rgba(34,197,94,0.25)]'
+        }`}
+      >
+        <Sparkles className="w-4 h-4" />
+        <span>{!showSatsPricing ? 'Upgrade Using Sats' : 'Upgrade Using USD'}</span>
+        <ChevronRight className="w-4 h-4" />
+      </button>
+    </div>
+
+  </div>
+</div>
             
-          </div>
+          
 
           {/* Adjusted 3x2 Grid for Desktop using Flex-Wrap */}
           <div id="premium-tiers" className="flex flex-wrap justify-center gap-6 items-stretch">
@@ -570,7 +585,7 @@ export default function RewardsPage() {
                                     : 'Insufficient Sats'
                                   : state.upgrade
                                     ? 'Request Sent'
-                                    : 'Upgrade with USD',
+                                    : 'Send Premium Request',
                           onAction: () =>
                             showSatsPricing
                               ? handleSatsUpgrade(tier.name, 'MONTHLY')
@@ -602,7 +617,7 @@ export default function RewardsPage() {
                               : 'Insufficient Sats'
                             : state.upgrade
                               ? 'Request Sent'
-                              : 'Upgrade with USD',
+                              : 'Send Premium Request',
                     onAction: () =>
                       showSatsPricing
                         ? handleSatsUpgrade(tier.name, 'YEARLY')
