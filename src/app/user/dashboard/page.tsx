@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { syncUserTier } from '@/features/auth/authSlice';
-import { AlertTriangle, Flame, Star, Wallet, Activity, Zap, Clock4, TrendingUp, LockKeyhole, Shield, Coins, Medal, Trophy, CircleStar, Gem, Crown, Sparkles, Rocket } from 'lucide-react';
-import Link from 'next/link';
+import { AlertTriangle, Flame, Star, Wallet, Zap, Clock4, TrendingUp, LockKeyhole, Shield, Coins, Medal, Trophy, CircleStar, Gem, Crown, Sparkles, Rocket } from 'lucide-react';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
 import { fetchUserNotifications } from '@/features/user/userNotificationsSlice';
@@ -12,13 +11,47 @@ import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
 import { DashboardLowerGrid, StreakSection } from '@/components/user/dashboard/DashboardSections';
 
+const ONBOARDING_CONGRATS_SEEN_KEY = 'satsearn_onboarding_congrats_seen';
+
+function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-[30px] border border-sats-orange-500/20 bg-[#080808] shadow-[0_24px_100px_rgba(0,0,0,0.65)]">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.22),transparent_60%)]" />
+        <div className="relative z-10 px-6 py-7 sm:px-8 sm:py-8 text-center">
+          <div className="mx-auto mb-5 flex h-18 w-18 items-center justify-center rounded-[22px] border border-sats-orange-500/20 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_28px_rgba(249,115,22,0.18)]">
+            <Trophy className="h-8 w-8" />
+          </div>
+          <div className="mb-3 inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-300">
+            Onboarding Complete
+          </div>
+          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Congratulations!</h2>
+          <p className="mt-4 text-base leading-8 text-gray-300 sm:text-lg">
+            You have earned <span className="font-black text-sats-orange-400">50 sats</span> for completing the onboarding flow and are in <span className="font-black text-blue-300">locked state for 15 days</span>.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-gradient-to-r from-sats-orange-500 to-amber-400 px-6 text-sm font-black text-black shadow-[0_12px_28px_rgba(249,115,22,0.24)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Start Earning
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function UserDashboardPage() {
   const dispatch = useAppDispatch();
-  const { isOpen: isTourOpen, openTour, closeTour } = useOnboarding();
+  const { isOpen: isTourOpen, openTour, closeTour, hideSkip } = useOnboarding();
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading, error } = useAppSelector((state) => state.userDashboard);
   const { notifications } = useAppSelector((state) => state.userNotifications);
   const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
+  const [showCongrats, setShowCongrats] = useState(false);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -44,15 +77,6 @@ export default function UserDashboardPage() {
   // --- HELPERS ---
   const getFirstName = () => {
     return user?.fullName ? user.fullName.split(' ')[0].charAt(0).toUpperCase() + user.fullName.split(' ')[0].slice(1) : 'Earner';
-  };
-
-  const getTierColor = (tier: string) => {
-    const t = tier?.toUpperCase() || 'BASIC';
-    if (t.includes('GOLD')) return 'text-[#FFD700]';
-    if (t.includes('SILVER')) return 'text-[#C0C0C0]';
-    if (t.includes('BRONZE')) return 'text-[#cd7f32]';
-    if (t.includes('DIAMOND') || t.includes('PLATINUM')) return 'text-[#b9f2ff]';
-    return 'text-zinc-400';
   };
 
   const getTierPillIcon = (tier: string) => {
@@ -129,19 +153,27 @@ export default function UserDashboardPage() {
         </div>
       );
     }
+
+    const [wholePart, decimalPart = '00'] = sats
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 3 })
+      .split('.');
+
     return (
       <div className="flex items-baseline ">
-        <span className={`text-2xl sm:text-3xl font-black tracking-tight`}>{sats.toLocaleString()}</span>
-        <span className={`"text-2xl font-bold text-gray-400 mb-1 ${sats>1000000?'hidden':''}`}>.00</span>
+        <span className={`text-2xl sm:text-3xl font-black tracking-tight`}>{wholePart}</span>
+        <span className={`text-2xl font-bold text-gray-400 mb-1 ${sats > 1000000 ? 'hidden' : ''}`}>.{decimalPart}</span>
         <span className="text-2xl font-bold text-white ml-1 mb-1">sats</span>
       </div>
     );
   };
 
-  // Assuming 1 BTC = ~₹5,500,000 INR for estimated conversion
   const getFiatValue = (sats: number) => {
     const btcAmount = sats / 100000000;
-    const btcPriceUsd = Number(data?.balances?.btcPriceUsd || 90000);
+    const btcPriceUsd = Number(data?.balances?.btcPriceUsd);
+
+    if (!Number.isFinite(btcPriceUsd) || btcPriceUsd <= 0) {
+      return !isIndiaUser || fiatCurrency === 'USD' ? '≈ $0.00 USD' : '≈ ₹0.00 INR';
+    }
 
     if (!isIndiaUser || fiatCurrency === 'USD') {
       const usdValue = btcAmount * btcPriceUsd;
@@ -303,16 +335,25 @@ export default function UserDashboardPage() {
   const nextStreakMilestone = streakData?.nextMilestone || null;
   const nextStreakRewardSats = streakData?.nextRewardSats || 0;
   const streakProgressPercent = streakData?.progressPercent || 0;
-  const currentRunDays = currentStreak;
   const daysRemainingToNextMilestone = streakData?.daysRemaining || 0;
   const totalClaimedMilestones = streakData?.claimedMilestonesCount || 0;
   const totalStreakMilestones = streakData?.totalMilestones || streakMilestones.length;
 
   const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
+  const handleTourFinish = () => {
+    if (typeof window === 'undefined') return;
+    const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
+    if (!alreadySeen) {
+      localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
+      setShowCongrats(true);
+    }
+  };
+
   return (
     <>
-      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} />
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onFinish={handleTourFinish} />
+      <OnboardingCongratsModal isOpen={showCongrats} onClose={() => setShowCongrats(false)} />
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
       {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}
@@ -483,3 +524,4 @@ export default function UserDashboardPage() {
     </>
   );
 }
+

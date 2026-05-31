@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Share, Sparkles, Ticket } from 'lucide-react';
 
 type BillingCycle = 'MONTHLY' | 'YEARLY';
 
@@ -146,18 +146,18 @@ function PremiumPriceCard({
       <button
         onClick={onAction}
         disabled={disabled || showUnavailable}
-        className={`mt-4 w-full rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 disabled:cursor-not-allowed disabled:scale-100 disabled:opacity-40 ${
+        className={`mt-4 w-full rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 backdrop-blur-md border disabled:cursor-not-allowed disabled:scale-100 disabled:opacity-40 ${
           active
-            ? 'border border-green-500/30 bg-green-500/10 text-green-400'
+            ? 'border-green-500/20 bg-green-500/10 text-green-400 shadow-[inset_0_1px_0_0_rgba(34,197,94,0.2)]'
             : showSatsPricing
-              ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] active:scale-95'
+              ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300 shadow-[inset_0_1px_0_0_rgba(16,185,129,0.2),0_4px_12px_rgba(0,0,0,0.1)] hover:bg-emerald-500/20 hover:border-emerald-500/40 hover:scale-[1.02] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_24px_rgba(16,185,129,0.25)] active:scale-95'
               : requestSent
-                ? 'border border-blue-500/30 bg-blue-500/10 text-blue-300'
-                : 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] active:scale-95'
+                ? 'border-blue-500/20 bg-blue-500/10 text-blue-300 shadow-[inset_0_1px_0_0_rgba(59,130,246,0.2)]'
+                : 'border-white/10 bg-white/[0.04] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_12px_rgba(0,0,0,0.1)] hover:bg-white/[0.08] hover:border-white/20 hover:scale-[1.02] hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_8px_24px_rgba(0,0,0,0.2)] active:scale-95'
         }`}
       >
-        <span className="inline-flex items-center justify-center gap-2">
-          {requestSent ? <CheckCircle2 className="h-4 w-4" /> : !active && !disabled ? <Sparkles className="h-4 w-4" /> : null}
+        <span className="inline-flex items-center justify-center gap-2 drop-shadow-md">
+          {requestSent ? <CheckCircle2 className="h-4 w-4" /> : !active && !disabled ? <Share className="h-4 w-4" /> : null}
           <span>{loading ? 'Processing...' : actionLabel}</span>
         </span>
       </button>

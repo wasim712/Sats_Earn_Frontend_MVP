@@ -32,6 +32,7 @@ import {
 
 const STORAGE_KEY = 'satsearn_onboarding_done';
 const AUTO_OPEN_TRIGGER_KEY = 'satsearn_onboarding_auto_open_once';
+const AUTO_OPEN_LOCK_SKIP_KEY = 'satsearn_onboarding_hide_skip_once';
 
 type StepTone = 'orange' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'cyan';
 
@@ -266,13 +267,17 @@ const TONE_STYLES: Record<StepTone, {
   },
 };
 
+type ToneStyle = (typeof TONE_STYLES)[StepTone];
+
 interface OnboardingTourProps {
   isOpen: boolean;
   onClose: () => void;
   referralCode?: string;
+  hideSkip?: boolean;
+  onFinish?: () => void;
 }
 
-export function OnboardingTour({ isOpen, onClose, referralCode = '' }: OnboardingTourProps) {
+export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = false, onFinish }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
@@ -282,10 +287,6 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '' }: Onboardin
     return () => {
       document.body.style.overflow = originalOverflow;
     };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) setCurrentStep(0);
   }, [isOpen]);
 
   useEffect(() => {
@@ -313,6 +314,7 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '' }: Onboardin
   const handleNext = () => {
     if (isLast) {
       localStorage.setItem(STORAGE_KEY, 'true');
+      onFinish?.();
       onClose();
       return;
     }
@@ -342,14 +344,16 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '' }: Onboardin
               </div>
             </div>
 
-            <button
-              onClick={handleSkip}
-              aria-label="Skip guide"
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#101010] px-4 text-sm font-bold text-gray-200 transition-all hover:border-white/15 hover:text-white"
-            >
-              <span>Skip</span>
-              <X className="h-4 w-4" />
-            </button>
+            {!hideSkip ? (
+              <button
+                onClick={handleSkip}
+                aria-label="Skip guide"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#101010] px-4 text-sm font-bold text-gray-200 transition-all hover:border-white/15 hover:text-white"
+              >
+                <span>Skip</span>
+                <X className="h-4 w-4" />
+              </button>
+            ) : null}
           </div>
 
           <div className="mt-5 flex items-center gap-4">
@@ -470,7 +474,7 @@ function LeftInfoCard({
   tone,
 }: {
   item: Step['leftCards'][number];
-  tone: ReturnType<typeof getToneStyles>;
+  tone: ToneStyle;
 }) {
   if (item.muted) {
     return (
@@ -507,7 +511,7 @@ function RightSlidePanel({
   referralCode,
 }: {
   step: Step;
-  tone: ReturnType<typeof getToneStyles>;
+  tone: ToneStyle;
   referralCode: string;
 }) {
   const FocusIcon = step.icon;
@@ -540,7 +544,7 @@ function MiniMetric({
   value,
   icon: Icon,
 }: {
-  tone: ReturnType<typeof getToneStyles>;
+  tone: ToneStyle;
   title: string;
   value: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -562,7 +566,7 @@ function RightVisualContent({
   referralCode,
 }: {
   step: Step;
-  tone: ReturnType<typeof getToneStyles>;
+  tone: ToneStyle;
   referralCode: string;
 }) {
   if (step.id === 'welcome') {
@@ -630,7 +634,7 @@ function FlowPill({
   );
 }
 
-function ReferralInsightCard({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function ReferralInsightCard({ tone }: { tone: ToneStyle }) {
   return (
     <div className={`rounded-2xl border ${tone.border} ${tone.soft} p-4`}>
       <div className="flex items-start gap-3">
@@ -660,7 +664,7 @@ function ReferralInsightCard({ tone }: { tone: ReturnType<typeof getToneStyles> 
   );
 }
 
-function WelcomeCoin({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function WelcomeCoin({ tone }: { tone: ToneStyle }) {
   return (
     <div className="relative flex h-[220px] w-[220px] items-center justify-center overflow-hidden rounded-[28px] border border-[#1d1d1d] bg-[radial-gradient(circle_at_50%_35%,rgba(255,184,0,0.18),transparent_46%),linear-gradient(180deg,#101010,#090909)]">
       
@@ -684,7 +688,7 @@ function WelcomeCoin({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
   );
 }
 
-function DashboardPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function DashboardPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <div className="flex items-center justify-between">
@@ -730,7 +734,7 @@ function DashboardPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) 
   );
 }
 
-function TasksPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function TasksPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <p className={`text-[11px] font-black uppercase tracking-[0.2em] ${tone.icon}`}>How tasks work</p>
@@ -765,7 +769,7 @@ function TasksPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
   );
 }
 
-function WalletPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function WalletPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Wallet Overview</p>
@@ -804,7 +808,7 @@ function WalletPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
     </div>
   );
 }
-function StreakPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function StreakPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Your Streak Progress</p>
@@ -841,7 +845,7 @@ function StreakPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
   );
 }
 
-function ReferralPreview({ tone, referralCode }: { tone: ReturnType<typeof getToneStyles>; referralCode: string }) {
+function ReferralPreview({ tone, referralCode }: { tone: ToneStyle; referralCode: string }) {
   const displayCode = referralCode?.trim() || 'ABCD123';
 
   return (
@@ -893,7 +897,7 @@ function ReferralPreview({ tone, referralCode }: { tone: ReturnType<typeof getTo
   );
 }
 
-function SecurityPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
+function SecurityPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <div className="space-y-3">
@@ -936,25 +940,25 @@ function SecurityPreview({ tone }: { tone: ReturnType<typeof getToneStyles> }) {
         </div>
       </div>
       <div className={`rounded-2xl border ${tone.border} ${tone.soft} px-4 py-3 text-sm font-semibold ${tone.icon}`}>
-        Great job! You're doing awesome. Keep it up!
+        Great job! You&apos;re doing awesome. Keep it up!
       </div>
     </div>
   );
 }
 
-function getToneStyles(tone: StepTone) {
-  return TONE_STYLES[tone];
-}
-
 export function useOnboarding() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hideSkip, setHideSkip] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const done = localStorage.getItem(STORAGE_KEY);
       const shouldAutoOpen = sessionStorage.getItem(AUTO_OPEN_TRIGGER_KEY) === 'true';
+      const shouldHideSkip = sessionStorage.getItem(AUTO_OPEN_LOCK_SKIP_KEY) === 'true';
       if (!done && shouldAutoOpen) {
         sessionStorage.removeItem(AUTO_OPEN_TRIGGER_KEY);
+        sessionStorage.removeItem(AUTO_OPEN_LOCK_SKIP_KEY);
+        setHideSkip(shouldHideSkip);
         setIsOpen(true);
       }
     }, 700);
@@ -962,15 +966,22 @@ export function useOnboarding() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const openTour = () => setIsOpen(true);
-  const closeTour = () => setIsOpen(false);
+  const openTour = () => {
+    setHideSkip(false);
+    setIsOpen(true);
+  };
+  const closeTour = () => {
+    setIsOpen(false);
+    setHideSkip(false);
+  };
 
-  return { isOpen, openTour, closeTour };
+  return { isOpen, openTour, closeTour, hideSkip };
 }
 
 export function markOnboardingForFirstAutoOpen() {
   if (typeof window === 'undefined') return;
   sessionStorage.setItem(AUTO_OPEN_TRIGGER_KEY, 'true');
+  sessionStorage.setItem(AUTO_OPEN_LOCK_SKIP_KEY, 'true');
 }
 
 interface TourButtonProps {
@@ -997,7 +1008,7 @@ export function TourButton({ onClick, variant = 'pill' }: TourButtonProps) {
       className="inline-flex items-center gap-2 rounded-xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-xs font-bold text-sats-orange-300 transition-colors hover:bg-sats-orange-500/15"
     >
       <Lightbulb className="h-3.5 w-3.5" />
-      <span className="hidden md:inline">How it works</span>
+      <span className="hidden xl:inline text-nowrap">How it works</span>
     </button>
   );
 }

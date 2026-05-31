@@ -575,7 +575,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
                 <MetaPill icon={DeviceIcon} iconSrc={deviceIconSrc} label={deviceLabel} premium={isPremiumOnly} />
                 <MetaPill icon={ListChecks} label={stepsLabel} premium={isPremiumOnly} />
                 <MetaPill icon={Users} label={`${formatCompact(Math.max(status.spotsLeft, 0))} slots`} premium={isPremiumOnly} />
-                {isPremiumOnly ? <MetaPill icon={Sparkles} label="Premium Access" premium /> : null}
+                {/* {isPremiumOnly ? <MetaPill icon={Sparkles} label="Premium Access" premium /> : null} */}
               </div>
 
               <div>
