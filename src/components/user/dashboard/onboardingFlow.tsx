@@ -622,7 +622,7 @@ function FlowPill({
 }: {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  tone: ReturnType<typeof getToneStyles>;
+  tone: ToneStyle;
 }) {
   return (
     <div className="flex flex-col items-center gap-2">
