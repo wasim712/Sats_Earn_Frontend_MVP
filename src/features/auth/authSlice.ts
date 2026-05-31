@@ -1,5 +1,6 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -37,6 +38,17 @@ interface AuthState {
   step: 1 | 2; 
   tempData: SignUpPayload | null;
 }
+
+const getSafeStorageAuth = () => {
+  const token = getSafeToken();
+  const user = getSafeUser();
+
+  return {
+    token,
+    user,
+    isAuthenticated: !!token,
+  };
+};
 
 // --- SAFE STORAGE HELPERS ---
 const getSafeToken = () => {
@@ -135,16 +147,11 @@ export const requestPasswordReset = createAsyncThunk(
   'auth/requestPasswordReset',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+      return await obfuscatedJsonRequest<{ message?: string }>(`${API_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(extractApiError(data, 'Failed to send reset code'));
-
-      return data;
     } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
     }
@@ -158,16 +165,11 @@ export const resetPassword = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetch(`${API_URL}/auth/reset-password`, {
+      return await obfuscatedJsonRequest<{ message?: string }>(`${API_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(extractApiError(data, 'Failed to reset password'));
-
-      return data;
     } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error, 'Network error occurred'));
     }
@@ -180,6 +182,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    hydrateAuthFromStorage: (state) => {
+      const { token, user, isAuthenticated } = getSafeStorageAuth();
+      state.token = token;
+      state.user = user;
+      state.isAuthenticated = isAuthenticated;
+    },
     resetAuthError: (state) => {
       state.error = null;
     },
@@ -262,5 +270,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthError, goBackToStep1, logout, syncUserTier } = authSlice.actions;
+export const { hydrateAuthFromStorage, resetAuthError, goBackToStep1, logout, syncUserTier } = authSlice.actions;
 export default authSlice.reducer;

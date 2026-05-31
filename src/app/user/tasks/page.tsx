@@ -12,6 +12,7 @@ import {
   ListChecks,
   Monitor,
   Search,
+  Shield,
   Sparkles,
   Target,
   Users,
@@ -123,6 +124,8 @@ type StandaloneTask = {
   doubleRewardsActive?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
+  isPremiumOnly?: boolean;
+  isNewUserOnly?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -134,7 +137,8 @@ const mapStandaloneTaskToCampaign = (task: StandaloneTask): Campaign => ({
   category: 'Standalone Task',
   socialHandleTarget: null,
   targetCountries: [],
-  isPremiumOnly: false,
+  isPremiumOnly: Boolean(task.isPremiumOnly),
+  isNewUserOnly: Boolean(task.isNewUserOnly),
   requiredFreeTier: 'BASIC',
   targetUrl: task.targetUrl || null,
   requiredPlatform: task.requiredPlatform || 'NONE',
@@ -190,6 +194,7 @@ export default function TasksPage() {
             headers,
           }),
         ]);
+console.log(standaloneData);
 
         setCampaigns([
           ...(Array.isArray(campaignData) ? campaignData.map((campaign) => ({ ...campaign, itemSource: 'campaign' as const })) : []),
@@ -450,6 +455,9 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
   const detailHref = campaign.itemSource === 'standalone' ? `/user/standalone-tasks/${campaign.id}` : `/user/tasks/${campaign.id}`;
   const topReward = getTopReward(campaign);
   const isPremiumOnly = Boolean(campaign.isPremiumOnly);
+  const isNewUserOnly = Boolean(campaign.isNewUserOnly);
+  console.log(isNewUserOnly);
+  
   const isLockedPremium = isPremiumOnly && !isPremiumUser;
   const ctaLabel = isLockedPremium ? 'Upgrade to Premium' : status.cta;
   const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : detailHref;
@@ -547,6 +555,13 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
               </div>
             ) : null}
 
+            {isNewUserOnly ? (
+              <div className={`absolute z-30 inline-flex items-center gap-1.5 rounded-bl-2xl border border-sats-orange-500/35 bg-[linear-gradient(135deg,#f97316,#fb923c)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(249,115,22,0.28)] ${isPremiumOnly ? 'right-0 top-11 rounded-tr-none' : 'right-0 top-0 rounded-tr-2xl'}`}>
+                <Shield className="h-3.5 w-3.5" />
+                New Users Only
+              </div>
+            ) : null}
+
             <div className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur-md ${status.tone}`}>
               <span className="h-2 w-2 rounded-full bg-current opacity-80" />
               {status.label}
@@ -575,7 +590,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
                 <MetaPill icon={DeviceIcon} iconSrc={deviceIconSrc} label={deviceLabel} premium={isPremiumOnly} />
                 <MetaPill icon={ListChecks} label={stepsLabel} premium={isPremiumOnly} />
                 <MetaPill icon={Users} label={`${formatCompact(Math.max(status.spotsLeft, 0))} slots`} premium={isPremiumOnly} />
-                {/* {isPremiumOnly ? <MetaPill icon={Sparkles} label="Premium Access" premium /> : null} */}
+                {isNewUserOnly ? <MetaPill icon={Shield} label="New Account" premium={false} /> : null}
               </div>
 
               <div>

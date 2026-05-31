@@ -8,7 +8,7 @@ import { Menu, Home, Target, Lightbulb, Wallet, Bell } from 'lucide-react';
 
 import { UserSidebar } from '@/components/user/UserSidebar';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'; 
-import { logout } from '@/features/auth/authSlice'; 
+import { logout, hydrateAuthFromStorage } from '@/features/auth/authSlice'; 
 import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
 import { useGetUserNotificationsQuery } from '@/store/services/userApi';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
@@ -90,6 +90,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   // ─── 1. Unified Mount & Resize Handler ───────────────────────────────────
   useEffect(() => {
     setMounted(true);
+    dispatch(hydrateAuthFromStorage());
     
     const handleResize = () => {
       // Auto-close the mobile drawer if the screen gets resized to desktop width
@@ -97,7 +98,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchSidebarConfig = async () => {
@@ -156,7 +157,10 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
 
   // ─── 2. Auth Guard ───────────────────────────────────────────────────────
   useEffect(() => {
-    if (mounted && isAuthenticated === false) {
+    if (!mounted) return;
+
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    if (!token && isAuthenticated === false) {
       router.push('/login');
     }
   }, [isAuthenticated, mounted, router]);

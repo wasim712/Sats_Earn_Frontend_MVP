@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks'; 
-import { signInUser, resetAuthError } from '../authSlice'; // Adjust path if needed
+import { signInUser, resetAuthError, hydrateAuthFromStorage } from '../authSlice'; // Adjust path if needed
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import { LogoText } from '@/components/ui/LogoText';
@@ -24,14 +24,33 @@ export default function LoginForm() {
   
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    dispatch(hydrateAuthFromStorage());
+
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    const storedUser = sessionStorage.getItem('sats_user') || localStorage.getItem('sats_user');
+
+    if (!token) return;
+
+    try {
+      const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+      if (parsedUser?.role === 'SUPER_ADMIN') {
+        router.replace('/admin/dashboard');
+        return;
+      }
+    } catch {}
+
+    router.replace('/user/dashboard');
+  }, [dispatch, router]);
+
   // SINGLE, UNIFIED REDIRECT LOGIC
   useEffect(() => {
     // Only redirect if both authenticated AND user data exists
     if (isAuthenticated && user) {
       if (user.role === 'SUPER_ADMIN') {
-        router.push('/admin/dashboard');
+        router.replace('/admin/dashboard');
       } else {
-        router.push('/user/dashboard');
+        router.replace('/user/dashboard');
       }
     }
   }, [isAuthenticated, user, router]);
