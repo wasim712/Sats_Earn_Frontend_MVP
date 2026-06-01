@@ -9,6 +9,7 @@ export interface Campaign {
   targetCountries: string[];
   requiredPlatform?: 'NONE' | 'DESKTOP' | 'ANDROID' | 'IOS';
   isPremiumOnly: boolean;
+  isNewUserOnly?: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
   xpReward?: number;

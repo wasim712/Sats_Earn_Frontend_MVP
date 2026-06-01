@@ -123,6 +123,8 @@ type StandaloneTask = {
   doubleRewardsActive?: boolean;
   isCompleted?: boolean;
   hasStarted?: boolean;
+  isPremiumOnly?: boolean;
+  isNewUserOnly?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -134,7 +136,8 @@ const mapStandaloneTaskToCampaign = (task: StandaloneTask): Campaign => ({
   category: 'Standalone Task',
   socialHandleTarget: null,
   targetCountries: [],
-  isPremiumOnly: false,
+  isPremiumOnly: Boolean(task.isPremiumOnly),
+  isNewUserOnly: Boolean(task.isNewUserOnly),
   requiredFreeTier: 'BASIC',
   targetUrl: task.targetUrl || null,
   requiredPlatform: task.requiredPlatform || 'NONE',
@@ -190,6 +193,7 @@ export default function TasksPage() {
             headers,
           }),
         ]);
+console.log(campaignData,standaloneData);
 
         setCampaigns([
           ...(Array.isArray(campaignData) ? campaignData.map((campaign) => ({ ...campaign, itemSource: 'campaign' as const })) : []),
@@ -453,6 +457,8 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
   const isLockedPremium = isPremiumOnly && !isPremiumUser;
   const ctaLabel = isLockedPremium ? 'Upgrade to Premium' : status.cta;
   const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : detailHref;
+  const isNewUserOnly = Boolean(campaign.isNewUserOnly);
+  
   const { icon: DeviceIcon, iconSrc: deviceIconSrc, label: deviceLabel } = getRequiredPlatform(campaign) as {
     icon?: React.ComponentType<{ className?: string }> | null;
     iconSrc?: string;
@@ -540,12 +546,21 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
           <div className={`absolute inset-0 ${isPremiumOnly ? 'bg-gradient-to-t from-[#080808] via-[#0f0a16]/40 to-transparent' : 'bg-gradient-to-t from-[#080808] via-[#080808]/35 to-transparent'}`} />
 
           <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-3">
-            {isPremiumOnly ? (
-              <div className="absolute right-0 top-0 z-30 inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-300/45 bg-[linear-gradient(135deg,#a855f7,#7c3aed)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(168,85,247,0.34)]">
-                <Crown className="h-3.5 w-3.5" />
-                Premium Only
-              </div>
-            ) : null}
+            <div className="absolute right-0 top-0 z-30 flex flex-col items-end gap-2">
+              {isPremiumOnly ? (
+                <div className="inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-300/45 bg-[linear-gradient(135deg,#a855f7,#7c3aed)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(168,85,247,0.34)]">
+                  <Crown className="h-3.5 w-3.5" />
+                  Premium Only
+                </div>
+              ) : null}
+
+              {isNewUserOnly ? (
+                <div className={`inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tl-2xl rounded-tr-2xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(249,115,22,0.22)] ${isPremiumOnly ? 'border-amber-300/45 bg-[linear-gradient(135deg,#f59e0b,#f97316)]' : 'border-sats-orange-500/45 bg-[linear-gradient(135deg,#f97316,#ea580c)]'}`}>
+                  <Sparkles className="h-3.5 w-3.5" />
+                  New User Only
+                </div>
+              ) : null}
+            </div>
 
             <div className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur-md ${status.tone}`}>
               <span className="h-2 w-2 rounded-full bg-current opacity-80" />
@@ -714,6 +729,8 @@ function TaskCardSkeleton() {
     </div>
   );
 }
+
+
 
 
 
