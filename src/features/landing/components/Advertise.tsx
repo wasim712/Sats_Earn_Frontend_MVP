@@ -79,11 +79,21 @@ export const Advertise = () => {
             </div>
 
             {/* CTA Button */}
-            <Button size="lg" onClick={() => router.push('/for-brands')} className="gap-2 group px-6 py-4 text-base shadow-[0_0_20px_rgba(249,115,22,0.2)]">
-              <Megaphone className="w-5 h-5" />
-              Advertise With Us
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Button>
+            <div className="relative inline-block group">
+  <Button
+    size="lg"
+    disabled
+    className="gap-2 px-6 py-4 text-base"
+  >
+    <Megaphone className="w-5 h-5" />
+    Advertise With Us
+    <ArrowRight className="w-5 h-5" />
+  </Button>
+
+  <div className="absolute left-1/2 -translate-x-1/2 -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black border border-orange-500 text-white text-sm px-3 py-1 rounded-md whitespace-nowrap">
+    Coming Soon 🚀
+  </div>
+</div>
           </FadeUp>
 
           {/* =========================================

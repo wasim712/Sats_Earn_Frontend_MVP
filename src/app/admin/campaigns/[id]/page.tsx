@@ -54,6 +54,7 @@ type CampaignEditForm = Partial<Campaign> & {
   targetCountries: string[];
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
+  newUserMaxAccountAgeDays?:number | null;
 };
 
 type TaskFormState = {

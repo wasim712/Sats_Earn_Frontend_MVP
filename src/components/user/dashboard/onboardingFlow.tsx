@@ -33,6 +33,16 @@ import {
 const STORAGE_KEY = 'satsearn_onboarding_done';
 const AUTO_OPEN_TRIGGER_KEY = 'satsearn_onboarding_auto_open_once';
 const AUTO_OPEN_LOCK_SKIP_KEY = 'satsearn_onboarding_hide_skip_once';
+const AUTO_OPEN_USER_KEY = 'satsearn_onboarding_auto_open_user';
+
+function normalizeOnboardingUserKey(userKey?: string | null) {
+  return userKey?.trim().toLowerCase() || '';
+}
+
+function getOnboardingStorageKey(userKey?: string | null) {
+  const normalizedUserKey = normalizeOnboardingUserKey(userKey);
+  return normalizedUserKey ? `${STORAGE_KEY}:${normalizedUserKey}` : STORAGE_KEY;
+}
 
 type StepTone = 'orange' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'cyan';
 
@@ -274,14 +284,17 @@ interface OnboardingTourProps {
   onClose: () => void;
   referralCode?: string;
   hideSkip?: boolean;
+  userKey?: string | null;
   onFinish?: () => void;
 }
 
-export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = false, onFinish }: OnboardingTourProps) {
+export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = false, userKey, onFinish }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (isOpen) setCurrentStep(0);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -291,6 +304,7 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
 
   useEffect(() => {
     if (!isOpen) return;
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
       if (event.key === 'ArrowLeft') setCurrentStep((prev) => Math.max(prev - 1, 0));
@@ -307,13 +321,13 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
   const progress = useMemo(() => ((currentStep + 1) / STEPS.length) * 100, [currentStep]);
 
   const handleSkip = () => {
-    localStorage.setItem(STORAGE_KEY, 'true');
+    localStorage.setItem(getOnboardingStorageKey(userKey), 'true');
     onClose();
   };
 
   const handleNext = () => {
     if (isLast) {
-      localStorage.setItem(STORAGE_KEY, 'true');
+      localStorage.setItem(getOnboardingStorageKey(userKey), 'true');
       onFinish?.();
       onClose();
       return;
@@ -946,25 +960,30 @@ function SecurityPreview({ tone }: { tone: ToneStyle }) {
   );
 }
 
-export function useOnboarding() {
+export function useOnboarding(userKey?: string | null) {
   const [isOpen, setIsOpen] = useState(false);
   const [hideSkip, setHideSkip] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const done = localStorage.getItem(STORAGE_KEY);
+      const normalizedUserKey = normalizeOnboardingUserKey(userKey);
+      const done = localStorage.getItem(getOnboardingStorageKey(normalizedUserKey));
       const shouldAutoOpen = sessionStorage.getItem(AUTO_OPEN_TRIGGER_KEY) === 'true';
       const shouldHideSkip = sessionStorage.getItem(AUTO_OPEN_LOCK_SKIP_KEY) === 'true';
-      if (!done && shouldAutoOpen) {
+      const targetUserKey = normalizeOnboardingUserKey(sessionStorage.getItem(AUTO_OPEN_USER_KEY));
+      const matchesCurrentUser = !targetUserKey || targetUserKey === normalizedUserKey;
+
+      if (!done && shouldAutoOpen && matchesCurrentUser) {
         sessionStorage.removeItem(AUTO_OPEN_TRIGGER_KEY);
         sessionStorage.removeItem(AUTO_OPEN_LOCK_SKIP_KEY);
+        sessionStorage.removeItem(AUTO_OPEN_USER_KEY);
         setHideSkip(shouldHideSkip);
         setIsOpen(true);
       }
     }, 700);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [userKey]);
 
   const openTour = () => {
     setHideSkip(false);
@@ -982,6 +1001,27 @@ export function markOnboardingForFirstAutoOpen() {
   if (typeof window === 'undefined') return;
   sessionStorage.setItem(AUTO_OPEN_TRIGGER_KEY, 'true');
   sessionStorage.setItem(AUTO_OPEN_LOCK_SKIP_KEY, 'true');
+}
+
+export function markOnboardingForFirstAutoOpenForUser(userKey?: string | null) {
+  if (typeof window === 'undefined') return;
+
+  const normalizedUserKey = normalizeOnboardingUserKey(userKey);
+  sessionStorage.setItem(AUTO_OPEN_TRIGGER_KEY, 'true');
+  sessionStorage.setItem(AUTO_OPEN_LOCK_SKIP_KEY, 'true');
+
+  if (normalizedUserKey) {
+    sessionStorage.setItem(AUTO_OPEN_USER_KEY, normalizedUserKey);
+  } else {
+    sessionStorage.removeItem(AUTO_OPEN_USER_KEY);
+  }
+}
+
+export function clearOnboardingFirstAutoOpen() {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem(AUTO_OPEN_TRIGGER_KEY);
+  sessionStorage.removeItem(AUTO_OPEN_LOCK_SKIP_KEY);
+  sessionStorage.removeItem(AUTO_OPEN_USER_KEY);
 }
 
 interface TourButtonProps {
