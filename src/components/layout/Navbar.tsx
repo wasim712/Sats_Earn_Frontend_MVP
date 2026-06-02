@@ -8,7 +8,6 @@ import { Button } from '../ui/Button';
 import { StaggerReveal } from '../animations/StaggerReveal';
 import { MobileSidebar } from './MobileSidebar';
 import { LogoText } from '../ui/LogoText';
-import { AnnouncementBanner } from '../ui/AnnouncementBanner';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,6 +19,8 @@ export const Navbar = () => {
     { name: 'Ways to Earn', href: '/#ways-to-earn' },
     { name: 'For Brands', href: '/#brands' },
     { name: 'FAQ', href: '/#faq' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (

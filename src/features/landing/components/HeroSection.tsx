@@ -11,14 +11,14 @@ export const HeroSection = () => {
   const router = useRouter();
 
   return (
-    <section className="relative overflow-visible  px-4  flex flex-col items-center  w-full min-h-[calc(100vh-200px)] ">
+    <section className="relative overflow-visible px-4 flex flex-col items-center w-full min-h-[calc(100vh-200px)]" id="how-it-works">
       
       <div className="w-full max-w-325 mx-auto flex flex-col">
         
         {/* 1. Global Top Headline */}
         <FadeUp className="text-center mb-12 ">
           <h2 className="text-[32px] sm:text-5xl md:text-[54px] lg:text-[58px] font-bold text-white tracking-tight leading-[1.15]">
-            The #1 Gamified Platform to Earn <span className="text-sats-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">Bitcoin</span>
+            Earn <span className="text-sats-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">Bitcoin rewards</span> by completing online tasks
           </h2>
         </FadeUp>
 
@@ -41,7 +41,7 @@ export const HeroSection = () => {
             </h1>
             
             <p className="text-[16px] sm:text-lg text-gray-300 font-medium mb-8 max-w-lg lg:mx-0 leading-relaxed">
-              Complete surveys, watch videos, engage on social media, and earn <span className="text-sats-orange-500 font-bold">Bitcoin</span> (sats) instantly.
+              SatsEarn helps users discover available surveys, offer-based tasks, referrals, and promotions that can pay out Bitcoin rewards after successful completion and review.
             </p>
 
             {/* Call to Action Button */}
@@ -65,7 +65,7 @@ export const HeroSection = () => {
                 <CheckCircle2 className="w-4.5 h-4.5 text-green-500" /> Complete tasks
               </span>
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-4.5 h-4.5 text-green-500" /> Withdraw Bitcoin
+                <CheckCircle2 className="w-4.5 h-4.5 text-green-500" /> Public support pages
               </span>
             </div>
           </FadeUp>

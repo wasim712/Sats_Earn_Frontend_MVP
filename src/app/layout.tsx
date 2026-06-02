@@ -7,16 +7,39 @@ import { RouteWrapper } from '@/components/layout/RouteWrapper';
 import { NavbarWrapper } from '@/components/layout/NavbarWrapper';
 import { PwaRegistration } from '@/components/ui/PwaRegistration';
 import { PwaInstallPrompt } from '@/components/ui/PwaInstallPrompt';
+import { ADSENSE_CLIENT, getSiteUrl, SITE_NAME, SITE_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'SatsEarn | The #1 Gamified Platform to Earn Bitcoin',
-  description: 'Complete tasks, surveys, and offers to earn Bitcoin instantly.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description:
+    'SatsEarn is a public rewards platform where users can complete online tasks, surveys, offers, and referrals to earn Bitcoin rewards.',
   manifest: '/manifest.webmanifest',
-  applicationName: 'SatsEarn',
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: getSiteUrl('/'),
+  },
+  openGraph: {
+    type: 'website',
+    url: getSiteUrl('/'),
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
+    description:
+      'Learn how SatsEarn works, what users can earn, and where to find support, privacy, and terms information.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
+    description:
+      'Complete online tasks, surveys, offers, and referrals on SatsEarn to earn Bitcoin rewards.',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'SatsEarn',
+    title: SITE_NAME,
   },
   icons: {
     icon: [
@@ -46,7 +69,7 @@ export default function RootLayout({
       <head>
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1587064567124053"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
       </head>

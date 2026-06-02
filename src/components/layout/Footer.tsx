@@ -13,17 +13,17 @@ const FOOTER_LINKS = {
     { name: 'Leaderboard', href: '/signup' },
   ],
   Company: [
-    { name: 'About Us', href: '#' },
-    { name: 'For Brands', href: '#' },
-    { name: 'Blog', href: '#' },
-    { name: 'Careers', href: '#' },
+    { name: 'About Us', href: '/about' },
+    { name: 'For Brands', href: '/#brands' },
+    { name: 'How It Works', href: '/#how-it-works' },
+    { name: 'FAQ', href: '/#faq' },
     { name: 'Contact', href: '/contact' },
   ],
   Legal: [
-    { name: 'Terms of Service', href: '#' },
+    { name: 'Terms & Conditions', href: '/terms' },
     { name: 'Privacy Policy', href: '/privacy-policy' },
-    { name: 'Anti-Fraud Policy', href: '#' },
-    { name: 'Cookie Policy', href: '#' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ],
 };
 
