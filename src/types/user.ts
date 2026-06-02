@@ -17,6 +17,9 @@ export interface AuthUser {
   activeTier?: string;
   isPremium?: boolean;
   premiumExpiresAt?: string | null;
+  hasCompletedOnboarding?: boolean;
+  hasSkippedOnboarding?: boolean;
+  shouldShowOnboarding?: boolean;
   [key: string]: unknown;
 }
 
@@ -170,6 +173,9 @@ export interface UserProfile {
   premiumExpiresAt?: string | null;
   currentStreak?: number;
   totalXp?: number;
+  hasCompletedOnboarding?: boolean;
+  hasSkippedOnboarding?: boolean;
+  shouldShowOnboarding?: boolean;
   createdAt?: string;
   joinedAt?: string;
   twitterHandle?: string | null;

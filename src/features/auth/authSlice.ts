@@ -32,11 +32,57 @@ interface AuthState {
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean; 
+  isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
   step: 1 | 2; 
   tempData: SignUpPayload | null;
 }
+
+const getStorageToken = () => {
+  if (typeof window === 'undefined') return;
+
+  return localStorage.getItem('sats_token') || sessionStorage.getItem('sats_token');
+};
+
+const getStorageUser = () => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const userStr = localStorage.getItem('sats_user') || sessionStorage.getItem('sats_user');
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (error) {
+    console.error('Failed to parse user from storage:', error);
+    return null;
+  }
+};
+
+const persistAuthSession = (token: string | null, user: AuthUser | null) => {
+  if (typeof window === 'undefined') return;
+
+  if (token) {
+    sessionStorage.setItem('sats_token', token);
+    localStorage.setItem('sats_token', token);
+  } else {
+    sessionStorage.removeItem('sats_token');
+    localStorage.removeItem('sats_token');
+  }
+
+  if (!user) {
+    sessionStorage.removeItem('sats_user');
+    localStorage.removeItem('sats_user');
+    return;
+  }
+
+  const serializedUser = JSON.stringify(user);
+  sessionStorage.setItem('sats_user', serializedUser);
+  localStorage.setItem('sats_user', serializedUser);
+};
+
+const persistAuthUser = (user: AuthUser | null) => {
+  const token = getStorageToken();
+  persistAuthSession(token || null, user);
+};
 
 // --- SAFE STORAGE HELPERS ---
 const getSafeToken = () => {
@@ -62,11 +108,45 @@ const initialState: AuthState = {
   user: userFromStorage,
   token: tokenFromStorage, 
   isAuthenticated: !!tokenFromStorage, 
+  isInitialized: false,
   isLoading: false,
   error: null,
   step: 1,
   tempData: null,
 };
+
+export const bootstrapAuth = createAsyncThunk(
+  'auth/bootstrap',
+  async (_, { rejectWithValue }) => {
+    const token = getStorageToken() || null;
+    const storedUser = getStorageUser();
+
+    if (!token) {
+      return { token: null, user: null };
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(extractApiError(data, 'Failed to restore session'));
+      }
+
+      return {
+        token,
+        user: storedUser ? { ...storedUser, ...data } : data,
+      };
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorMessage(error, 'Failed to restore session'));
+    }
+  }
+);
 
 // --- API CALLS (THUNKS) ---
 
@@ -191,6 +271,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false; 
+      state.isInitialized = true;
       state.step = 1;
       state.tempData = null;
       
@@ -203,7 +284,12 @@ const authSlice = createSlice({
     syncUserTier: (state, action: PayloadAction<Partial<AuthUser>>) => {
       if (!state.user) return;
       state.user = { ...state.user, ...action.payload };
-      sessionStorage.setItem('sats_user', JSON.stringify(state.user));
+      persistAuthUser(state.user);
+    },
+    updateOnboardingState: (state, action: PayloadAction<Pick<AuthUser, 'hasCompletedOnboarding' | 'hasSkippedOnboarding' | 'shouldShowOnboarding'>>) => {
+      if (!state.user) return;
+      state.user = { ...state.user, ...action.payload };
+      persistAuthUser(state.user);
     }
   },
   extraReducers: (builder) => {
@@ -215,14 +301,15 @@ const authSlice = createSlice({
       .addCase(signInUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true; 
+        state.isInitialized = true;
         state.user = action.payload.user; 
         state.token = action.payload.session; 
         
-        sessionStorage.setItem('sats_token', action.payload.session);
-        sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
+        persistAuthSession(action.payload.session, action.payload.user);
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.isLoading = false;
+        state.isInitialized = true;
         state.error = action.payload as string; // Will now cleanly receive a string
       })
 
@@ -247,20 +334,39 @@ const authSlice = createSlice({
       .addCase(verifySignupOtp.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true; 
+        state.isInitialized = true;
         state.user = action.payload.user; 
         state.token = action.payload.session; 
         state.step = 1; 
         state.tempData = null; 
 
-        sessionStorage.setItem('sats_token', action.payload.session);
-        sessionStorage.setItem('sats_user', JSON.stringify(action.payload.user));
+        persistAuthSession(action.payload.session, action.payload.user);
       })
       .addCase(verifySignupOtp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(bootstrapAuth.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(bootstrapAuth.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isInitialized = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.isAuthenticated = Boolean(action.payload.token && action.payload.user);
+        persistAuthSession(action.payload.token, action.payload.user);
+      })
+      .addCase(bootstrapAuth.rejected, (state) => {
+        state.isLoading = false;
+        state.isInitialized = true;
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        persistAuthSession(null, null);
       });
   },
 });
 
-export const { resetAuthError, goBackToStep1, logout, syncUserTier } = authSlice.actions;
+export const { resetAuthError, goBackToStep1, logout, syncUserTier, updateOnboardingState } = authSlice.actions;
 export default authSlice.reducer;

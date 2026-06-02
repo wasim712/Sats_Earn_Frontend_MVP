@@ -15,7 +15,6 @@ import Image from 'next/image';
 import { requestSignupOtp , verifySignupOtp, goBackToStep1, resetAuthError} from '../authSlice';
 import DatePickerInput from './DatePickerInput';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
-import { markOnboardingForFirstAutoOpenForUser } from '@/components/user/dashboard/onboardingFlow';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -214,7 +213,6 @@ export default function SignupForm() {
     void (async () => {
       try {
         await dispatch(verifySignupOtp({ email: tempData.email, otp })).unwrap();
-        markOnboardingForFirstAutoOpenForUser(tempData.email);
         router.push('/user/dashboard');
       } catch {
       }
