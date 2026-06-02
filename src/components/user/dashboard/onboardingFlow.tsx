@@ -964,8 +964,8 @@ export function useOnboarding() {
   const [isOpen, setIsOpen] = useState(false);
   const [hideSkip, setHideSkip] = useState(false);
 
-  const openTour = () => {
-    setHideSkip(false);
+  const openTour = (options?: { hideSkip?: boolean }) => {
+    setHideSkip(Boolean(options?.hideSkip));
     setIsOpen(true);
   };
   const closeTour = () => {

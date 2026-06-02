@@ -81,7 +81,7 @@ export default function UserDashboardPage() {
 
   useEffect(() => {
     if (!shouldShowOnboarding || hasAutoOpenedOnboarding) return;
-    openTour();
+    openTour({ hideSkip: true });
     setHasAutoOpenedOnboarding(true);
   }, [shouldShowOnboarding, hasAutoOpenedOnboarding, openTour]);
 
@@ -369,14 +369,16 @@ export default function UserDashboardPage() {
 
     dispatch(updateOnboardingState(payload));
 
+    let shouldOpenCongrats = false;
     if (typeof window !== 'undefined') {
       const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
       if (!alreadySeen) {
         localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
+        shouldOpenCongrats = true;
       }
     }
 
-    setShowCongrats(true);
+    setShowCongrats(shouldOpenCongrats);
   };
 
   const handleTourSkip = async () => {
