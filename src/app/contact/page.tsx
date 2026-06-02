@@ -1,5 +1,9 @@
+import { Navbar } from "@/components/layout/Navbar";
+
 export default function ContactPage() {
   return (
+    <>
+    <Navbar/>
     <main className="min-h-screen bg-[#020202] px-4 py-10 text-white md:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div>
@@ -23,5 +27,6 @@ export default function ContactPage() {
         </section>
       </div>
     </main>
+    </>
   );
 }

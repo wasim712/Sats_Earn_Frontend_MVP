@@ -17,11 +17,11 @@ const FOOTER_LINKS = {
     { name: 'For Brands', href: '#' },
     { name: 'Blog', href: '#' },
     { name: 'Careers', href: '#' },
-    { name: 'Contact', href: '#' },
+    { name: 'Contact', href: '/contact' },
   ],
   Legal: [
     { name: 'Terms of Service', href: '#' },
-    { name: 'Privacy Policy', href: '#' },
+    { name: 'Privacy Policy', href: '/privacy-policy' },
     { name: 'Anti-Fraud Policy', href: '#' },
     { name: 'Cookie Policy', href: '#' },
   ],
