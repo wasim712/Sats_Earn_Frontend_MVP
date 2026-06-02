@@ -11,8 +11,6 @@ import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
 import { DashboardLowerGrid, StreakSection } from '@/components/user/dashboard/DashboardSections';
 
-const ONBOARDING_CONGRATS_SEEN_KEY = 'satsearn_onboarding_congrats_seen';
-
 function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
 
@@ -81,7 +79,7 @@ export default function UserDashboardPage() {
 
   useEffect(() => {
     if (!shouldShowOnboarding || hasAutoOpenedOnboarding) return;
-    openTour();
+    openTour({ hideSkip: true });
     setHasAutoOpenedOnboarding(true);
   }, [shouldShowOnboarding, hasAutoOpenedOnboarding, openTour]);
 
@@ -367,16 +365,10 @@ export default function UserDashboardPage() {
       throw new Error(payload.error || 'Failed to complete onboarding');
     }
 
+    const shouldShowCongrats = shouldShowOnboarding;
+
     dispatch(updateOnboardingState(payload));
-
-    if (typeof window !== 'undefined') {
-      const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
-      if (!alreadySeen) {
-        localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
-      }
-    }
-
-    setShowCongrats(true);
+    setShowCongrats(shouldShowCongrats);
   };
 
   const handleTourSkip = async () => {

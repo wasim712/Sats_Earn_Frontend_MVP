@@ -193,7 +193,6 @@ export default function TasksPage() {
             headers,
           }),
         ]);
-console.log(campaignData,standaloneData);
 
         setCampaigns([
           ...(Array.isArray(campaignData) ? campaignData.map((campaign) => ({ ...campaign, itemSource: 'campaign' as const })) : []),
@@ -235,30 +234,24 @@ console.log(campaignData,standaloneData);
       return matchesSearch && matchesFilter && matchesDevice;
     });
 
-    if (filterMode !== 'ALL') {
-      return filtered;
-    }
-
     const getOrderBucket = (campaign: Campaign) => {
       if (campaign.isCompleted) return 2;
       if (campaign.hasStarted) return 0;
       return 1;
     };
 
+    const getLastUpdatedAt = (campaign: Campaign) => {
+      const timestamp = new Date(campaign.updatedAt || campaign.createdAt || 0).getTime();
+      return Number.isNaN(timestamp) ? 0 : timestamp;
+    };
+
     return [...filtered].sort((left, right) => {
-      if (deviceFilter !== 'ALL') {
-        const leftPlatform = typeof left.requiredPlatform === 'string' ? left.requiredPlatform.toUpperCase() : 'NONE';
-        const rightPlatform = typeof right.requiredPlatform === 'string' ? right.requiredPlatform.toUpperCase() : 'NONE';
-
-        const leftDevicePriority = leftPlatform === deviceFilter ? 0 : leftPlatform === 'NONE' ? 1 : 2;
-        const rightDevicePriority = rightPlatform === deviceFilter ? 0 : rightPlatform === 'NONE' ? 1 : 2;
-        const devicePriorityDiff = leftDevicePriority - rightDevicePriority;
-
-        if (devicePriorityDiff !== 0) return devicePriorityDiff;
-      }
-
       const bucketDiff = getOrderBucket(left) - getOrderBucket(right);
       if (bucketDiff !== 0) return bucketDiff;
+
+      const updatedDiff = getLastUpdatedAt(right) - getLastUpdatedAt(left);
+      if (updatedDiff !== 0) return updatedDiff;
+
       return left.title.localeCompare(right.title);
     });
   }, [campaigns, searchQuery, filterMode, deviceFilter]);

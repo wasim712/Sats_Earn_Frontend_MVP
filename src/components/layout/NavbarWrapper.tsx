@@ -7,8 +7,9 @@ import { AnnouncementBanner } from '../ui/AnnouncementBanner';
 export const NavbarWrapper = () => {
   const pathname = usePathname();
 
-  // Show only on homepage "/"
-  if (pathname !== '/') return null;
+  const hideOnAppRoutes = pathname.startsWith('/admin') || pathname.startsWith('/user');
+
+  if (hideOnAppRoutes) return null;
 
   return (
   <div className="sticky top-0 z-50">

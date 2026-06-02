@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 export function RouteWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const showPublicFooter = !pathname.startsWith('/admin') && !pathname.startsWith('/user');
 
   return (
     <>
@@ -22,7 +23,7 @@ export function RouteWrapper({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {isHome && <Footer />}
+      {showPublicFooter && <Footer />}
     </>
   );
 }
