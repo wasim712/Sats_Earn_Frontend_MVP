@@ -128,12 +128,12 @@ function PremiumPriceCard({
           ) : showSatsPricing ? (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newSats ? formatSats(newSats) : 'Unavailable'}</div>
-              {label.toLowerCase().includes('year') && oldValue ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldValue}</div> : null}
+              {/* {label.toLowerCase().includes('year') && oldValue ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldValue}</div> : null} */}
             </div>
           ) : (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newUsd}</div>
-              {label.toLowerCase().includes('year') && oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null}
+              {/* {label.toLowerCase().includes('year') && oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null} */}
             </div>
           )}
         </div>

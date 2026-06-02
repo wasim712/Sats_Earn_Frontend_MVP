@@ -38,16 +38,26 @@ export const CTASection = () => {
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
             
-            <Button 
-              variant="secondary" 
-              size="lg" 
-              onClick={() => router.push('/for-brands')} 
-              className="w-full sm:w-auto gap-2 group bg-sats-black-900 border-sats-black-700 hover:bg-sats-black-800"
-            >
-              <Megaphone className="w-5 h-5 text-gray-400 group-hover:text-sats-orange-500 transition-colors" />
-              Advertise With Us
-              <ArrowRight className="w-5 h-5 text-gray-500 transition-transform group-hover:translate-x-1" />
-            </Button>
+            <div className="relative inline-block group w-full sm:w-auto">
+  <Button
+    variant="secondary"
+    size="lg"
+    className="w-full sm:w-auto gap-2 bg-sats-black-900 border-sats-black-700 opacity-60 cursor-not-allowed"
+  >
+    <Megaphone className="w-5 h-5 text-gray-400" />
+    Advertise With Us
+    <ArrowRight className="w-5 h-5 text-gray-500" />
+  </Button>
+
+  {/* Tooltip */}
+  <div className="absolute left-1/2 -translate-x-1/2 -top-12 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none z-50">
+    <div className="bg-sats-black-900 border border-sats-orange-500 text-sats-orange-500 px-3 py-1.5 rounded-md text-sm whitespace-nowrap shadow-[0_0_20px_rgba(249,115,22,0.25)]">
+      Coming Soon 🚀
+    </div>
+
+    <div className="w-3 h-3 bg-sats-black-900 border-r border-b border-sats-orange-500 rotate-45 mx-auto -mt-1.5" />
+  </div>
+</div>
           </div>
 
         </FadeUp>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { syncUserTier } from '@/features/auth/authSlice';
+import { syncUserTier, updateOnboardingState } from '@/features/auth/authSlice';
 import { AlertTriangle, Flame, Star, Wallet, Zap, Clock4, TrendingUp, LockKeyhole, Shield, Coins, Medal, Trophy, CircleStar, Gem, Crown, Sparkles, Rocket } from 'lucide-react';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
@@ -29,7 +29,7 @@ function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose
           </div>
           <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Congratulations!</h2>
           <p className="mt-4 text-base leading-8 text-gray-300 sm:text-lg">
-            You have earned <span className="font-black text-sats-orange-400">50 sats</span> for completing the onboarding flow and are in <span className="font-black text-blue-300">locked state for 15 days</span>.
+            You have completed the onboarding flow and are ready to start earning on SatsEarn.
           </p>
           <button
             type="button"
@@ -52,6 +52,7 @@ export default function UserDashboardPage() {
   const { notifications } = useAppSelector((state) => state.userNotifications);
   const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
   const [showCongrats, setShowCongrats] = useState(false);
+  const [hasAutoOpenedOnboarding, setHasAutoOpenedOnboarding] = useState(false);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -73,6 +74,16 @@ export default function UserDashboardPage() {
       premiumExpiresAt: data.gamification.premiumExpiresAt || null,
     }));
   }, [data?.gamification?.activeTier, data?.gamification?.isPremium, data?.gamification?.premiumExpiresAt, dispatch]);
+
+  const shouldShowOnboarding = Boolean(
+    user && user.hasCompletedOnboarding === false && user.hasSkippedOnboarding === false,
+  );
+
+  useEffect(() => {
+    if (!shouldShowOnboarding || hasAutoOpenedOnboarding) return;
+    openTour();
+    setHasAutoOpenedOnboarding(true);
+  }, [shouldShowOnboarding, hasAutoOpenedOnboarding, openTour]);
 
   // --- HELPERS ---
   const getFirstName = () => {
@@ -341,18 +352,54 @@ export default function UserDashboardPage() {
 
   const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
-  const handleTourFinish = () => {
-    if (typeof window === 'undefined') return;
-    const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
-    if (!alreadySeen) {
-      localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
-      setShowCongrats(true);
+  const handleTourFinish = async () => {
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/onboarding/complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || 'Failed to complete onboarding');
     }
+
+    dispatch(updateOnboardingState(payload));
+
+    if (typeof window !== 'undefined') {
+      const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
+      if (!alreadySeen) {
+        localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
+      }
+    }
+
+    setShowCongrats(true);
+  };
+
+  const handleTourSkip = async () => {
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/onboarding/skip`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || 'Failed to skip onboarding');
+    }
+
+    dispatch(updateOnboardingState(payload));
   };
 
   return (
     <>
-      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onFinish={handleTourFinish} />
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onSkip={handleTourSkip} onFinish={handleTourFinish} />
       <OnboardingCongratsModal isOpen={showCongrats} onClose={() => setShowCongrats(false)} />
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
