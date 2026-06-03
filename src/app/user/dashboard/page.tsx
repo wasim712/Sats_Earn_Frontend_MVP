@@ -503,7 +503,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{formatPendingSats(data.balances?.pending, data.balances?.pendingMsats)} <span className='text-2xl'>sats</span></h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
 
@@ -517,7 +517,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Locked Period</p>
           </div>
         </div>
         {/* Card 4: Total Earned */}

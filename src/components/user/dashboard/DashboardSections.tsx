@@ -146,7 +146,7 @@ StreakSection({
                   : reachedInCurrentRun
                     ? 'border-blue-500/30 bg-blue-500/10'
                     : isNext
-                      ? 'border-teal-500/30 bg-teal-500/10'
+                      ? 'border-orange-500/30 bg-orange-500/10'
                       : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
@@ -167,7 +167,7 @@ StreakSection({
                       </div>
                     ) : null}
 
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full border-[3px] transition-all duration-500 ${achieved ? 'border-emerald-400 bg-[#111] text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]' : isPremiumLocked ? 'border-yellow-500/40 bg-[#111] text-yellow-400' : reachedInCurrentRun ? 'border-blue-400 bg-[#111] text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]' : isNext ? 'scale-110 border-teal-400 bg-[#111] text-teal-400 shadow-[0_0_15px_rgba(250,204,21,0.3)]' : 'border-[#2a2a2a] bg-[#0a0a0a] text-gray-600'}`}>
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full border-[3px] transition-all duration-500 ${achieved ? 'border-emerald-400 bg-[#111] text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.28)]' : isPremiumLocked ? 'border-yellow-500/40 bg-[#111] text-yellow-400' : reachedInCurrentRun ? 'border-blue-400 bg-[#111] text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.28)]' : isNext ? 'scale-110 border-orange-400 bg-[#111] text-orange-400 shadow-[0_0_15px_rgba(250,204,21,0.3)]' : 'border-[#2a2a2a] bg-[#0a0a0a] text-gray-600'}`}>
                       {achieved ? (
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                       ) : isPremiumLocked ? (
@@ -180,13 +180,13 @@ StreakSection({
                     </div>
 
                     <div className="text-center">
-                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : isPremiumLocked ? 'text-yellow-300' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-teal-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : isPremiumLocked ? 'text-yellow-300' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-orange-500' : 'text-gray-500'}`}>
                         {milestone.days} Days
                       </p>
                       <p className={`mt-0.5 text-[10px] font-bold ${achieved || reachedInCurrentRun || isNext || isPremiumLocked ? 'text-gray-400' : 'text-[#333]'}`}>
                         +{milestone.rewardSats} sats
                       </p>
-                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : isPremiumLocked ? 'text-yellow-300/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-teal-400' : 'text-gray-600'}`}>
+                      <p className={`mt-1 text-[9px] font-bold uppercase tracking-[0.18em] ${achieved ? 'text-emerald-400/90' : isPremiumLocked ? 'text-yellow-300/90' : reachedInCurrentRun ? 'text-blue-400/90' : isNext ? 'text-orange-400' : 'text-gray-600'}`}>
                         {achieved ? 'Claimed' : isPremiumLocked ? 'Premium' : reachedInCurrentRun ? 'Reached' : isNext ? 'Next' : 'Locked'}
                       </p>
                       {isPremiumLocked && reachedInCurrentRun ? (
