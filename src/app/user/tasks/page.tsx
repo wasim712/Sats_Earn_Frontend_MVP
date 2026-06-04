@@ -450,12 +450,10 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
   const topReward = getTopReward(campaign);
   const isPremiumOnly = Boolean(campaign.isPremiumOnly);
   const isNewUserOnly = Boolean(campaign.isNewUserOnly);
-  console.log(isNewUserOnly);
   
   const isLockedPremium = isPremiumOnly && !isPremiumUser;
   const ctaLabel = isLockedPremium ? 'Upgrade to Premium' : status.cta;
   const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : detailHref;
-  const isNewUserOnly = Boolean(campaign.isNewUserOnly);
   
   const { icon: DeviceIcon, iconSrc: deviceIconSrc, label: deviceLabel } = getRequiredPlatform(campaign) as {
     icon?: React.ComponentType<{ className?: string }> | null;

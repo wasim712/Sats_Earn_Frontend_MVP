@@ -105,6 +105,17 @@ const getSafeUser = () => {
 const tokenFromStorage = getSafeToken();
 const userFromStorage = getSafeUser();
 
+const getSafeStorageAuth = () => {
+  const token = getSafeToken();
+  const user = getSafeUser();
+
+  return {
+    token,
+    user,
+    isAuthenticated: Boolean(token),
+  };
+};
+
 const initialState: AuthState = {
   user: userFromStorage,
   token: tokenFromStorage, 
@@ -365,5 +376,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthError, goBackToStep1, logout, syncUserTier } = authSlice.actions;
+export const { hydrateAuthFromStorage, resetAuthError, goBackToStep1, logout, syncUserTier, updateOnboardingState } = authSlice.actions;
 export default authSlice.reducer;
