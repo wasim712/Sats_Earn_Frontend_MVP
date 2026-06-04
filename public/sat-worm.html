@@ -169,23 +169,37 @@ body::before{
 .dpx{background:transparent;border-color:transparent;pointer-events:none;}
 
 /* ── NOTIFICATION STRIP ─────────────────────────── */
-#notice-strip{
-  width:min(100%,var(--game-shell));
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  gap:6px;
+/* ── NOTIFICATION STRIP ─────────────────────────── */
+#notice-strip {
+  width: min(100%, var(--game-shell));
+  position: relative;
+  /* 1. Pre-reserve fixed space so the UI NEVER shifts down */
+  height: 48px;
+  min-height: 48px;
+  flex-shrink: 0;
+  z-index: 30;
 }
-.notice-banner{
-  width:100%;
-  text-align:center;pointer-events:none;
-  opacity:0;max-height:0;overflow:hidden;
-  transform:translateY(-10px) scale(.98);
-  transition:transform .28s ease,opacity .22s ease,max-height .28s ease,padding .28s ease,margin .28s ease,border-width .28s ease;
-  margin:0;padding:0 16px;border-radius:10px;
+.notice-banner {
+  width: 100%;
+  /* 2. Absolute positioning completely removes it from document flow */
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(.98);
+  /* 3. Smooth fade & scale, removing the layout-breaking height morphs */
+  transition: transform .28s ease, opacity .22s ease, visibility .28s;
+  margin: 0;
+  padding: 9px 16px;
+  border-radius: 10px;
 }
-.notice-banner.on{
-  opacity:1;max-height:120px;
-  transform:translateY(0) scale(1);
-  margin:0;padding:9px 16px;
+.notice-banner.on {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
 }
 
 /* ── REWARD POPUP ───────────────────────────────── */

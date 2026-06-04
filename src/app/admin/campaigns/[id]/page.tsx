@@ -54,6 +54,7 @@ type CampaignEditForm = Partial<Campaign> & {
   targetCountries: string[];
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
+  newUserMaxAccountAgeDays?:number | null;
 };
 
 type TaskFormState = {
@@ -305,6 +306,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
       coverImageUrl: coverImageUrl?.trim() || null,
       targetCountries: editForm.targetCountries || [],
       isPremiumOnly: editForm.isPremiumOnly,
+      isNewUserOnly: Boolean(editForm.isNewUserOnly),
+      newUserMaxAccountAgeDays: editForm.isNewUserOnly ? Number(editForm.newUserMaxAccountAgeDays || 7) : null,
       requiredFreeTier: editForm.requiredFreeTier,
       requiredPlatform: editForm.requiredPlatform,
       baseRewardSats: Number(campaign.baseRewardSats || 0),
@@ -639,27 +642,65 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                 </Field>
 
                 <Field title="Category">
-                  {!isEditing ? <span className="text-white font-bold">{campaign.category.replace('_', ' ')}</span> : (
+                  {!isEditing ? (
+                    <span className="text-white font-bold">{campaign.category.replace('_', ' ')}</span>
+                  ) : (
                     <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} className={inputCls}>
                       {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat.replace('_', ' ')}</option>)}
                     </select>
                   )}
                 </Field>
 
-                  <Field title="Access Gate">
+                <Field title="Access Gate">
                   {!isEditing ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {campaign.isPremiumOnly && <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-[10px] font-black text-yellow-400 uppercase tracking-widest"><Crown className="w-3 h-3" /> Premium Only</span>}
+                      {campaign.isNewUserOnly && <span className="px-2 py-0.5 rounded bg-sats-orange-500/10 border border-sats-orange-500/20 text-[10px] font-black text-sats-orange-400 uppercase tracking-widest">New User Only</span>}
                       <span className="text-gray-300 font-bold text-sm uppercase tracking-wider bg-[#111] px-2 py-0.5 rounded border border-[#2a2a2a]">Tier: {campaign.requiredFreeTier}</span>
                     </div>
                     ) : (
-                      <div className="flex gap-4">
-                        <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
-                          {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                        <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
-                        <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
-                      </button>
+                      <div className="space-y-3">
+                        <div className="flex gap-4">
+                          <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
+                            {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                          <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
+                          <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
+                        </button>
+                      </div>
+
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4 space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-black text-white">New User Audience</p>
+                            <p className="text-xs text-gray-500">Only show this campaign to newly created accounts.</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditForm((prev) => ({
+                              ...prev,
+                              isNewUserOnly: !prev.isNewUserOnly,
+                              newUserMaxAccountAgeDays: !prev.isNewUserOnly ? Number(prev.newUserMaxAccountAgeDays || 7) : prev.newUserMaxAccountAgeDays,
+                            }))}
+                            className={`shrink-0 px-4 py-2 rounded-xl border text-xs font-bold transition-all ${editForm.isNewUserOnly ? 'bg-sats-orange-500/10 border-sats-orange-500/30 text-sats-orange-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}
+                          >
+                            {editForm.isNewUserOnly ? 'Enabled' : 'Disabled'}
+                          </button>
+                        </div>
+
+                        {editForm.isNewUserOnly ? (
+                          <div className="max-w-[220px]">
+                            <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500">New User Window (Days)</label>
+                            <input
+                              type="number"
+                              min={1}
+                              value={Number(editForm.newUserMaxAccountAgeDays || 7)}
+                              onChange={(e) => setEditForm({ ...editForm, newUserMaxAccountAgeDays: Math.max(1, Number(e.target.value) || 1) })}
+                              className={inputCls}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   )}
                   </Field>
@@ -685,7 +726,6 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       </select>
                     )}
                   </Field>
-
                   <div className="sm:col-span-2">
                   <Field title="Target Countries">
                     {!isEditing ? (
@@ -1196,3 +1236,4 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 }
 
 // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Micro-Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+

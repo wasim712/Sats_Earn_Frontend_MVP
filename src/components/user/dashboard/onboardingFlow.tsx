@@ -30,10 +30,6 @@ import {
   Zap,
 } from 'lucide-react';
 
-const STORAGE_KEY = 'satsearn_onboarding_done';
-const AUTO_OPEN_TRIGGER_KEY = 'satsearn_onboarding_auto_open_once';
-const AUTO_OPEN_LOCK_SKIP_KEY = 'satsearn_onboarding_hide_skip_once';
-
 type StepTone = 'orange' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'cyan';
 
 type Step = {
@@ -274,14 +270,18 @@ interface OnboardingTourProps {
   onClose: () => void;
   referralCode?: string;
   hideSkip?: boolean;
-  onFinish?: () => void;
+  onSkip?: () => Promise<void> | void;
+  onFinish?: () => Promise<void> | void;
 }
 
-export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = false, onFinish }: OnboardingTourProps) {
+export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = false, onSkip, onFinish }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (isOpen) setCurrentStep(0);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -291,6 +291,7 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
 
   useEffect(() => {
     if (!isOpen) return;
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
       if (event.key === 'ArrowLeft') setCurrentStep((prev) => Math.max(prev - 1, 0));
@@ -306,16 +307,27 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
   const isLast = currentStep === STEPS.length - 1;
   const progress = useMemo(() => ((currentStep + 1) / STEPS.length) * 100, [currentStep]);
 
-  const handleSkip = () => {
-    localStorage.setItem(STORAGE_KEY, 'true');
-    onClose();
+  const handleSkip = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onSkip?.();
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isLast) {
-      localStorage.setItem(STORAGE_KEY, 'true');
-      onFinish?.();
-      onClose();
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+      try {
+        await onFinish?.();
+        onClose();
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
     setCurrentStep((prev) => prev + 1);
@@ -346,8 +358,9 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
 
             {!hideSkip ? (
               <button
-                onClick={handleSkip}
+                onClick={() => { void handleSkip(); }}
                 aria-label="Skip guide"
+                disabled={isSubmitting}
                 className="inline-flex h-11 items-center gap-2 rounded-2xl border border-[#2a2a2a] bg-[#101010] px-4 text-sm font-bold text-gray-200 transition-all hover:border-white/15 hover:text-white"
               >
                 <span>Skip</span>
@@ -456,7 +469,8 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
             </div>
 
             <button
-              onClick={handleNext}
+              onClick={() => { void handleNext(); }}
+              disabled={isSubmitting}
               className={`order-2 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r px-6 text-sm font-black shadow-[0_10px_28px_rgba(0,0,0,0.22)] transition-transform hover:scale-[1.01] md:order-2 ${tone.button}`}
             >
               <span>{isLast ? 'Start Earning' : 'Next'}</span>
@@ -950,24 +964,8 @@ export function useOnboarding() {
   const [isOpen, setIsOpen] = useState(false);
   const [hideSkip, setHideSkip] = useState(false);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const done = localStorage.getItem(STORAGE_KEY);
-      const shouldAutoOpen = sessionStorage.getItem(AUTO_OPEN_TRIGGER_KEY) === 'true';
-      const shouldHideSkip = sessionStorage.getItem(AUTO_OPEN_LOCK_SKIP_KEY) === 'true';
-      if (!done && shouldAutoOpen) {
-        sessionStorage.removeItem(AUTO_OPEN_TRIGGER_KEY);
-        sessionStorage.removeItem(AUTO_OPEN_LOCK_SKIP_KEY);
-        setHideSkip(shouldHideSkip);
-        setIsOpen(true);
-      }
-    }, 700);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const openTour = () => {
-    setHideSkip(false);
+  const openTour = (options?: { hideSkip?: boolean }) => {
+    setHideSkip(Boolean(options?.hideSkip));
     setIsOpen(true);
   };
   const closeTour = () => {
@@ -976,12 +974,6 @@ export function useOnboarding() {
   };
 
   return { isOpen, openTour, closeTour, hideSkip };
-}
-
-export function markOnboardingForFirstAutoOpen() {
-  if (typeof window === 'undefined') return;
-  sessionStorage.setItem(AUTO_OPEN_TRIGGER_KEY, 'true');
-  sessionStorage.setItem(AUTO_OPEN_LOCK_SKIP_KEY, 'true');
 }
 
 interface TourButtonProps {

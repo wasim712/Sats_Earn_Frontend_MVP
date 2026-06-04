@@ -69,7 +69,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   const [mounted, setMounted] = useState(false);
   const [sidebarConfig, setSidebarConfig] = useState<UserSidebarConfig>(DEFAULT_USER_SIDEBAR_CONFIG);
   
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, isInitialized } = useAppSelector((state) => state.auth);
   const { data: notificationsData } = useGetUserNotificationsQuery();
 
   const unreadCount = useMemo(() => {
@@ -163,7 +163,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     if (!token && isAuthenticated === false) {
       router.push('/login');
     }
-  }, [isAuthenticated, mounted, router]);
+  }, [isAuthenticated, isInitialized, mounted, router]);
 
   useEffect(() => {
     if (!mounted || !pathname) return;
@@ -183,7 +183,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
   };
 
   // ─── 4. Prevent Hydration Errors & Protected Route Flashes ───────────────
-  if (!mounted || (!isAuthenticated && !user)) {
+  if (!mounted || !isInitialized || (!isAuthenticated && !user)) {
     return null; 
   }
     // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───

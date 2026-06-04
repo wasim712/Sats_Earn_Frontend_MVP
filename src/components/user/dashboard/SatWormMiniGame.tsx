@@ -154,26 +154,28 @@ export default function SatWormMiniGame({ onRewardClaimed, onExit, fullscreen = 
 
   if (fullscreen) {
     return (
-      <div className="fixed inset-0 z-[130] bg-black overflow-hidden">
+      <div className="fixed inset-0 z-[130] bg-[#04040a] overflow-hidden flex flex-col">
         {onExit && (
-          <div className="absolute top-4 right-4 z-20">
+          <div className="flex w-full items-center justify-end px-4 py-3 shrink-0">
             <button
               type="button"
               onClick={onExit}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#2a2a2a] bg-[#111] px-4 py-2.5 text-sm font-bold text-gray-300 hover:text-white hover:bg-[#171717] transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#2a2a2a] bg-[#111] px-5 py-2.5 text-sm font-bold text-gray-300 hover:text-white hover:bg-[#171717] transition-all shadow-[0_4px_12px_rgba(0,0,0,0.5)] active:scale-95"
             >
               <X className="w-4 h-4" /> Exit
             </button>
           </div>
         )}
 
-        <iframe
-          ref={iframeRef}
-          key={reloadKey}
-          src="/sat-worm.html"
-          title="SAT-WORM Mini Game"
-          className="block h-screen w-screen overflow-hidden bg-black"
-        />
+        <div className="flex-1 w-full relative">
+          <iframe
+            ref={iframeRef}
+            key={reloadKey}
+            src="/sat-worm.html"
+            title="SAT-WORM Mini Game"
+            className="absolute inset-0 h-full w-full border-none bg-black"
+          />
+        </div>
       </div>
     );
   }

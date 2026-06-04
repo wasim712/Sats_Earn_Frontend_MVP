@@ -11,6 +11,7 @@ export interface Campaign {
   isPremiumOnly: boolean;
   isNewUserOnly?: boolean;
   newUserMaxAccountAgeDays?: number | null;
+  // isNewUserOnly?: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
   xpReward?: number;

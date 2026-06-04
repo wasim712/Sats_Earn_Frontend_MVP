@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, isInitialized } = useAppSelector((state) => state.auth);
 
   useEffect(() => { 
     setIsClient(true);
@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [dispatch]);
 
   useEffect(() => {
-    if (isClient) {
+    if (isClient && isInitialized) {
       const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
       if (!token && !isAuthenticated) {
         router.push('/login');
@@ -31,10 +31,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.push('/user/dashboard'); 
       }
     }
-  }, [isClient, isAuthenticated, user, router]);
+  }, [isClient, isAuthenticated, isInitialized, user, router]);
 
   // While validating session on reload, show premium loader
-  if (!isClient || !isAuthenticated || user?.role !== 'SUPER_ADMIN') {
+  if (!isClient || !isInitialized || !isAuthenticated || user?.role !== 'SUPER_ADMIN') {
     return (
       <div className="min-h-screen bg-[#020202] flex items-center justify-center">
         <Loader2 className="w-10 h-10 text-sats-orange-500 animate-spin" />

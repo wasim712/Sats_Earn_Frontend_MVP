@@ -1,11 +1,27 @@
+import type { Metadata } from 'next';
+import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
+import { getSiteUrl, SITE_NAME } from '@/lib/site';
+
+export const metadata: Metadata = {
+  title: `${SITE_NAME} Privacy Policy`,
+  description:
+    'Read how SatsEarn collects, uses, and protects account, usage, and support information.',
+  alternates: {
+    canonical: getSiteUrl('/privacy-policy'),
+  },
+};
+
 export default function PrivacyPolicyPage() {
   return (
-    <main className="min-h-screen bg-[#020202] px-4 py-10 text-white md:px-6 lg:px-8">
+    <main className="min-h-fit bg-[#020202] px-4 py-10 text-white md:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-sats-orange-400">Legal</p>
           <h1 className="mt-3 text-4xl font-black tracking-tight">Privacy Policy</h1>
           <p className="mt-3 text-sm text-gray-400">SatsEarn explains what information we collect, how we use it, and how users can contact us about privacy concerns.</p>
+          <div className="mt-4">
+            <PublicTrustNav />
+          </div>
         </div>
 
         <section className="rounded-3xl border border-[#1a1a1a] bg-[#080808] p-6 space-y-5">

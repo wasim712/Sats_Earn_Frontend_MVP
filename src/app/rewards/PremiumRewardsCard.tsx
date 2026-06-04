@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, Share, Sparkles, Ticket } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Sparkles, Ticket } from 'lucide-react';
 
 type BillingCycle = 'MONTHLY' | 'YEARLY';
 
@@ -113,10 +113,9 @@ function PremiumPriceCard({
   onAction,
 }: PlanConfig) {
   const showUnavailable = showSatsPricing ? !newSats : !newUsd;
-  const oldValue = label.toLowerCase().includes('year') ? oldSatsYearly : oldSatsMonthly;
 
   return (
-    <div className="group/plan relative flex w-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 backdrop-blur-lg transition-all duration-500 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.26)] active:scale-[0.985] sm:active:scale-100">
+    <div className="group/plan relative  flex w-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 backdrop-blur-lg transition-all duration-500 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.26)] active:scale-[0.985] sm:active:scale-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(255,255,255,0.08),transparent_28%),radial-gradient(circle_at_85%_82%,rgba(255,255,255,0.06),transparent_24%)]" />
       <div className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 blur-xl transition-all duration-700 group-hover/plan:left-[88%] group-hover/plan:opacity-100 group-active/plan:left-[88%] group-active/plan:opacity-100" />
 
@@ -157,7 +156,7 @@ function PremiumPriceCard({
         }`}
       >
         <span className="inline-flex items-center justify-center gap-2 drop-shadow-md">
-          {requestSent ? <CheckCircle2 className="h-4 w-4" /> : !active && !disabled ? <Share className="h-4 w-4" /> : null}
+          {requestSent ? <CheckCircle2 className="h-4 w-4" /> : !active && !disabled ? <ChevronRight className="h-4 w-4" /> : null}
           <span>{loading ? 'Processing...' : actionLabel}</span>
         </span>
       </button>
@@ -189,8 +188,8 @@ function CardFace({
   iconGlow: string;
 }) {
   return (
-    <div className="absolute inset-0 flex h-full flex-col rounded-[34px] p-5 sm:p-6 md:p-7 [backface-visibility:hidden]">
-      <div className="mb-5 flex min-h-[76px] items-start justify-between gap-3 sm:gap-4">
+    <div className="absolute inset-0   flex h-full flex-col rounded-[34px] p-5 sm:p-6 md:p-7 [backface-visibility:hidden]">
+      <div className="mb-5 flex min-h-19 items-start justify-between gap-3 sm:gap-4">
         <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4 pr-2">
           <div
             className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/25 transition-transform duration-200"
@@ -409,7 +408,7 @@ export function PremiumRewardCard({
       }}
     >
       <div
-        className={`relative min-h-[620px] md:min-h-[640px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        className={` max-w-[400px] relative min-h-[620px] md:min-h-[640px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
         style={{
           transform: `${shellTransform} ${effectiveBillingCycle === 'YEARLY' ? 'rotateY(180deg)' : 'rotateY(0deg)'}`,
         }}
@@ -495,4 +494,3 @@ export function PremiumRewardCard({
     </div>
   );
 }
-

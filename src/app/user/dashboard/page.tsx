@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { syncUserTier } from '@/features/auth/authSlice';
+import { syncUserTier, updateOnboardingState } from '@/features/auth/authSlice';
 import { AlertTriangle, Flame, Star, Wallet, Zap, Clock4, TrendingUp, LockKeyhole, Shield, Coins, Medal, Trophy, CircleStar, Gem, Crown, Sparkles, Rocket } from 'lucide-react';
 
 import { fetchUserDashboard } from '@/features/user/userDashboardSlice';
@@ -11,33 +11,46 @@ import { fetchUserLeaderboard } from '@/features/user/userLeaderboardSlice';
 import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/dashboard/onboardingFlow';
 import { DashboardLowerGrid, StreakSection } from '@/components/user/dashboard/DashboardSections';
 
-const ONBOARDING_CONGRATS_SEEN_KEY = 'satsearn_onboarding_congrats_seen';
 
 function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-[30px] border border-sats-orange-500/20 bg-[#080808] shadow-[0_24px_100px_rgba(0,0,0,0.65)]">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.22),transparent_60%)]" />
-        <div className="relative z-10 px-6 py-7 sm:px-8 sm:py-8 text-center">
-          <div className="mx-auto mb-5 flex h-18 w-18 items-center justify-center rounded-[22px] border border-sats-orange-500/20 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_28px_rgba(249,115,22,0.18)]">
-            <Trophy className="h-8 w-8" />
+    <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm transition-all">
+      <div className="relative w-full max-w-[360px] overflow-hidden rounded-[24px] border border-[#1a1a1a] bg-[#050505] shadow-[0_20px_40px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-200">
+        
+        <div className="px-6 py-8 text-center">
+          
+          {/* Minimal Icon */}
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[18px] border border-sats-orange-500/20 bg-sats-orange-500/10 text-sats-orange-400 shadow-inner">
+            <Trophy className="h-6 w-6" />
           </div>
-          <div className="mb-3 inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-300">
-            Onboarding Complete
+
+          {/* Title */}
+          <h2 className="text-2xl font-black tracking-tight text-white mb-2">
+            Congratulations!
+          </h2>
+
+          {/* Subtle Reward Badge */}
+          <div className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-lg border border-sats-orange-500/15 bg-sats-orange-500/5 px-3 py-1.5 text-xs font-black tracking-widest text-sats-orange-500">
+            <Zap className="h-3.5 w-3.5" fill="currentColor" />
+            +50 SATS
           </div>
-          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Congratulations!</h2>
-          <p className="mt-4 text-base leading-8 text-gray-300 sm:text-lg">
-            You have earned <span className="font-black text-sats-orange-400">50 sats</span> for completing the onboarding flow and are in <span className="font-black text-blue-300">locked state for 15 days</span>.
+
+          {/* Description */}
+          <p className="text-sm leading-relaxed text-gray-400 font-medium px-2">
+            You have earned your first <strong className="text-gray-200">50 sats</strong> for completing the sign up and onboarding. Welcome!
           </p>
+
+          {/* Action Button */}
           <button
             type="button"
             onClick={onClose}
-            className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-gradient-to-r from-sats-orange-500 to-amber-400 px-6 text-sm font-black text-black shadow-[0_12px_28px_rgba(249,115,22,0.24)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="mt-8 w-full inline-flex h-12 items-center justify-center rounded-xl bg-sats-orange-500 text-sm font-black text-black transition-all hover:bg-sats-orange-400 active:scale-[0.98]"
           >
             Start Earning
           </button>
+          
         </div>
       </div>
     </div>
@@ -52,6 +65,7 @@ export default function UserDashboardPage() {
   const { notifications } = useAppSelector((state) => state.userNotifications);
   const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
   const [showCongrats, setShowCongrats] = useState(false);
+  const [hasAutoOpenedOnboarding, setHasAutoOpenedOnboarding] = useState(false);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -73,6 +87,16 @@ export default function UserDashboardPage() {
       premiumExpiresAt: data.gamification.premiumExpiresAt || null,
     }));
   }, [data?.gamification?.activeTier, data?.gamification?.isPremium, data?.gamification?.premiumExpiresAt, dispatch]);
+
+  const shouldShowOnboarding = Boolean(
+    user && user.hasCompletedOnboarding === false && user.hasSkippedOnboarding === false,
+  );
+
+  useEffect(() => {
+    if (!shouldShowOnboarding || hasAutoOpenedOnboarding) return;
+    openTour({ hideSkip: true });
+    setHasAutoOpenedOnboarding(true);
+  }, [shouldShowOnboarding, hasAutoOpenedOnboarding, openTour]);
 
   // --- HELPERS ---
   const getFirstName = () => {
@@ -341,18 +365,61 @@ export default function UserDashboardPage() {
 
   const monthlyTopEarners = (leaderboardData?.monthly || []).slice(0, 5);
 
-  const handleTourFinish = () => {
-    if (typeof window === 'undefined') return;
-    const alreadySeen = localStorage.getItem(ONBOARDING_CONGRATS_SEEN_KEY) === 'true';
-    if (!alreadySeen) {
-      localStorage.setItem(ONBOARDING_CONGRATS_SEEN_KEY, 'true');
-      setShowCongrats(true);
+  const handleTourFinish = async () => {
+    const localCompletedState = {
+      hasCompletedOnboarding: true,
+      hasSkippedOnboarding: false,
+      shouldShowOnboarding: false,
+    };
+
+    const shouldShowCongrats = shouldShowOnboarding;
+
+    dispatch(updateOnboardingState(localCompletedState));
+
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/onboarding/complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      dispatch(updateOnboardingState({
+        hasCompletedOnboarding: false,
+        hasSkippedOnboarding: false,
+        shouldShowOnboarding: true,
+      }));
+      throw new Error(payload.error || 'Failed to complete onboarding');
     }
+
+    dispatch(updateOnboardingState(payload));
+    setShowCongrats(shouldShowCongrats);
+  };
+
+  const handleTourSkip = async () => {
+    const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/onboarding/skip`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || 'Failed to skip onboarding');
+    }
+
+    dispatch(updateOnboardingState(payload));
   };
 
   return (
     <>
-      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onFinish={handleTourFinish} />
+      <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onSkip={handleTourSkip} onFinish={handleTourFinish} />
       <OnboardingCongratsModal isOpen={showCongrats} onClose={() => setShowCongrats(false)} />
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
@@ -464,7 +531,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{formatPendingSats(data.balances?.pending, data.balances?.pendingMsats)} <span className='text-2xl'>sats</span></h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Pending amount</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
           </div>
         </div>
 
@@ -478,7 +545,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Pending Verification</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Locked Period</p>
           </div>
         </div>
         {/* Card 4: Total Earned */}

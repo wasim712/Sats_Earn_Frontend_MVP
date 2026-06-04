@@ -111,22 +111,22 @@ export default function UserMiniGamesPage() {
         <button
           type="button"
           onClick={() => setActiveGame('sat-worm')}
-          className="group text-left rounded-[32px] border border-sats-orange-500/30 bg-[#050505] relative overflow-hidden transition-all duration-500 hover:border-sats-orange-500/60 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(249,115,22,0.12)] hover:shadow-[0_25px_50px_rgba(249,115,22,0.2)] flex flex-col min-h-[400px]"
+          className="group text-left rounded-[32px] border border-sats-orange-500/30 bg-[#050505] relative overflow-hidden transition-all duration-500 hover:border-sats-orange-500/60 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(249,115,22,0.12)] hover:shadow-[0_25px_50px_rgba(249,115,22,0.2)] flex flex-col min-h-[340px]"
         >
-          {/* Background Image Layer (Separated for clean zoom effect) */}
+          {/* Background Image Layer: Set to 'contain' at the 'top' so the full worm is visible */}
           <div
-            className="absolute inset-0 z-0 transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-x-0 top-0 h-[50%] z-0 transition-transform duration-700 ease-out group-hover:scale-105"
             style={{
-              backgroundImage: "url('/sats_worm .jpeg')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              backgroundImage: "url('/minigames/snake_game.png')",
+              backgroundSize: 'contain',
+              backgroundPosition: 'top center',
               backgroundRepeat: 'no-repeat',
             }}
           />
           
-          {/* Smart Gradients for perfect text visibility & image pop */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-transparent to-transparent h-[40%]" />
-          <div className="absolute inset-x-0 bottom-0 z-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent h-[60%]" />
+          {/* Gradients to seamlessly blend the image bottom into the black card bottom */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-transparent to-transparent h-[30%]" />
+          <div className="absolute inset-x-0 bottom-0 z-0 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent h-[65%]" />
           
           <div className="relative z-10 p-6 sm:p-7 flex flex-col h-full w-full">
             
@@ -140,16 +140,16 @@ export default function UserMiniGamesPage() {
               </span>
             </div>
 
-            {/* Bottom Content Area */}
-            <div className="mt-auto pt-8">
+            {/* Bottom Content Area - Reduced top margin to pull it closer to the image */}
+            <div className="mt-auto pt-6">
               <h2 className="text-[32px] font-black text-white tracking-tight drop-shadow-lg group-hover:text-sats-orange-400 transition-colors duration-300">
                 SAT-WORM
               </h2>
-              <p className="mt-2 text-sm text-gray-300 font-medium max-w-[90%]">
+              <p className="mt-1 text-sm text-gray-300 font-medium max-w-[90%]">
                 Eat sats to grow, avoid inflation traps!
               </p>
 
-              <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
+              <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)] animate-pulse" />
                   Playable Now

@@ -480,13 +480,13 @@ export const UserSidebar = ({
 
           <button
             onClick={onLogout}
-            title={isCollapsed ? "Secure Logout" : ""}
+            title={isCollapsed ? "Logout" : ""}
             className={`group flex w-full items-center gap-3 rounded-xl border border-transparent py-3 font-medium text-gray-400 transition-all hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400 ${isCollapsed ? "justify-center px-0" : "px-4"}`}
           >
             <LogOut className="h-5 w-5 min-w-[20px] transition-transform duration-300 group-hover:scale-110" />
             {!isCollapsed && (
               <span className="whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1">
-                Secure Logout
+                 Logout
               </span>
             )}
           </button>

@@ -236,30 +236,24 @@ console.log(standaloneData);
       return matchesSearch && matchesFilter && matchesDevice;
     });
 
-    if (filterMode !== 'ALL') {
-      return filtered;
-    }
-
     const getOrderBucket = (campaign: Campaign) => {
       if (campaign.isCompleted) return 2;
       if (campaign.hasStarted) return 0;
       return 1;
     };
 
+    const getLastUpdatedAt = (campaign: Campaign) => {
+      const timestamp = new Date(campaign.updatedAt || campaign.createdAt || 0).getTime();
+      return Number.isNaN(timestamp) ? 0 : timestamp;
+    };
+
     return [...filtered].sort((left, right) => {
-      if (deviceFilter !== 'ALL') {
-        const leftPlatform = typeof left.requiredPlatform === 'string' ? left.requiredPlatform.toUpperCase() : 'NONE';
-        const rightPlatform = typeof right.requiredPlatform === 'string' ? right.requiredPlatform.toUpperCase() : 'NONE';
-
-        const leftDevicePriority = leftPlatform === deviceFilter ? 0 : leftPlatform === 'NONE' ? 1 : 2;
-        const rightDevicePriority = rightPlatform === deviceFilter ? 0 : rightPlatform === 'NONE' ? 1 : 2;
-        const devicePriorityDiff = leftDevicePriority - rightDevicePriority;
-
-        if (devicePriorityDiff !== 0) return devicePriorityDiff;
-      }
-
       const bucketDiff = getOrderBucket(left) - getOrderBucket(right);
       if (bucketDiff !== 0) return bucketDiff;
+
+      const updatedDiff = getLastUpdatedAt(right) - getLastUpdatedAt(left);
+      if (updatedDiff !== 0) return updatedDiff;
+
       return left.title.localeCompare(right.title);
     });
   }, [campaigns, searchQuery, filterMode, deviceFilter]);
@@ -461,6 +455,8 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
   const isLockedPremium = isPremiumOnly && !isPremiumUser;
   const ctaLabel = isLockedPremium ? 'Upgrade to Premium' : status.cta;
   const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : detailHref;
+  const isNewUserOnly = Boolean(campaign.isNewUserOnly);
+  
   const { icon: DeviceIcon, iconSrc: deviceIconSrc, label: deviceLabel } = getRequiredPlatform(campaign) as {
     icon?: React.ComponentType<{ className?: string }> | null;
     iconSrc?: string;
@@ -548,12 +544,21 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
           <div className={`absolute inset-0 ${isPremiumOnly ? 'bg-gradient-to-t from-[#080808] via-[#0f0a16]/40 to-transparent' : 'bg-gradient-to-t from-[#080808] via-[#080808]/35 to-transparent'}`} />
 
           <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-3">
-            {isPremiumOnly ? (
-              <div className="absolute right-0 top-0 z-30 inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-300/45 bg-[linear-gradient(135deg,#a855f7,#7c3aed)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(168,85,247,0.34)]">
-                <Crown className="h-3.5 w-3.5" />
-                Premium Only
-              </div>
-            ) : null}
+            <div className="absolute right-0 top-0 z-30 flex flex-col items-end gap-2">
+              {isPremiumOnly ? (
+                <div className="inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tr-2xl border border-violet-300/45 bg-[linear-gradient(135deg,#a855f7,#7c3aed)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(168,85,247,0.34)]">
+                  <Crown className="h-3.5 w-3.5" />
+                  Premium Only
+                </div>
+              ) : null}
+
+              {isNewUserOnly ? (
+                <div className={`inline-flex items-center gap-1.5 rounded-bl-2xl rounded-tl-2xl rounded-tr-2xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(249,115,22,0.22)] ${isPremiumOnly ? 'border-amber-300/45 bg-[linear-gradient(135deg,#f59e0b,#f97316)]' : 'border-sats-orange-500/45 bg-[linear-gradient(135deg,#f97316,#ea580c)]'}`}>
+                  <Sparkles className="h-3.5 w-3.5" />
+                  New User Only
+                </div>
+              ) : null}
+            </div>
 
             {isNewUserOnly ? (
               <div className={`absolute z-30 inline-flex items-center gap-1.5 rounded-bl-2xl border border-sats-orange-500/35 bg-[linear-gradient(135deg,#f97316,#fb923c)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_0_22px_rgba(249,115,22,0.28)] ${isPremiumOnly ? 'right-0 top-11 rounded-tr-none' : 'right-0 top-0 rounded-tr-2xl'}`}>
@@ -729,6 +734,8 @@ function TaskCardSkeleton() {
     </div>
   );
 }
+
+
 
 
 

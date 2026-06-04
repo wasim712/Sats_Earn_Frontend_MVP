@@ -19,6 +19,7 @@ import {
   Info,
   Lock,
   Medal,
+  MedalIcon,
   Rocket,
   Shield,
   Sparkles,
@@ -161,11 +162,12 @@ const FREE_TIERS = [
   {
     name: 'Basic',
     xp: '0 XP',
-    icon: <Shield className="w-5 h-5 text-gray-300" />,
-    color: 'text-gray-200',
-    border: 'border-slate-400/15',
-    bg: 'from-slate-500/5 via-[#0a0a0a] to-[#050505]',
-    badge: 'bg-slate-300/5 text-slate-300 border-slate-300/10',
+    icon: <Shield className="w-5 h-5 text-slate-300" />,
+    color: 'text-slate-200',
+    border: 'border-slate-400/20',
+    bg: 'from-slate-500/10 via-[#0a0a0a] to-[#050505]',
+    badge: 'bg-slate-500/10 text-slate-300 border-slate-500/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(100,116,139,0.15)] group-hover:border-slate-400/40',
     perks: ['Referral limit: 20 users'],
   },
   {
@@ -173,9 +175,10 @@ const FREE_TIERS = [
     xp: '1,000 XP',
     icon: <Coins className="w-5 h-5 text-[#b87333]" />,
     color: 'text-[#d7a06b]',
-    border: 'border-[#b87333]/15',
-    bg: 'from-[#b87333]/5 via-[#0d0906] to-[#050505]',
+    border: 'border-[#b87333]/20',
+    bg: 'from-[#b87333]/10 via-[#0d0906] to-[#050505]',
     badge: 'bg-[#b87333]/10 text-[#e6bb92] border-[#b87333]/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(184,115,51,0.15)] group-hover:border-[#b87333]/40',
     perks: ['Referral limit: 40 users'],
   },
   {
@@ -184,8 +187,9 @@ const FREE_TIERS = [
     icon: <Medal className="w-5 h-5 text-[#cd7f32]" />,
     color: 'text-[#d99962]',
     border: 'border-[#cd7f32]/20',
-    bg: 'from-[#cd7f32]/5 via-[#0e0906] to-[#050505]',
+    bg: 'from-[#cd7f32]/10 via-[#0e0906] to-[#050505]',
     badge: 'bg-[#cd7f32]/10 text-[#efbf96] border-[#cd7f32]/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(205,127,50,0.15)] group-hover:border-[#cd7f32]/40',
     perks: ['Referral limit: 60 users'],
   },
   {
@@ -194,8 +198,9 @@ const FREE_TIERS = [
     icon: <Star className="w-5 h-5 text-[#C0C0C0]" />,
     color: 'text-[#d8dde5]',
     border: 'border-[#C0C0C0]/20',
-    bg: 'from-[#C0C0C0]/5 via-[#0b0d0e] to-[#050505]',
+    bg: 'from-[#C0C0C0]/10 via-[#0b0d0e] to-[#050505]',
     badge: 'bg-[#C0C0C0]/10 text-[#eef2f5] border-[#C0C0C0]/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(192,192,192,0.15)] group-hover:border-[#C0C0C0]/40',
     perks: ['Referral limit: 80 users'],
   },
   {
@@ -204,8 +209,9 @@ const FREE_TIERS = [
     icon: <Trophy className="w-5 h-5 text-[#FFD700]" />,
     color: 'text-[#FFD700]',
     border: 'border-[#FFD700]/25',
-    bg: 'from-[#FFD700]/10 via-[#110e05] to-[#050505]',
+    bg: 'from-[#FFD700]/15 via-[#110e05] to-[#050505]',
     badge: 'bg-[#FFD700]/10 text-[#ffe985] border-[#FFD700]/25',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(255,215,0,0.15)] group-hover:border-[#FFD700]/50',
     perks: ['Referral limit: 100 users'],
   },
 ];
@@ -424,34 +430,42 @@ export default function RewardsPage() {
         {/* Free Tiers */}
         <section>
           <div className="mb-6 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white">
-              <Shield className="w-5 h-5" />
+            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white shadow-inner">
+              <MedalIcon className="w-5 h-5 text-sats-orange-500" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white/90">Free Tiers</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-white/90 tracking-tight">Free Tiers</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+          
+          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-5 gap-5">
             {FREE_TIERS.map((tier) => (
               <div
                 key={tier.name}
-                className={`group rounded-[28px] border ${tier.border} bg-gradient-to-br ${tier.bg} p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)] hover:border-white/20`}
+                className={`group relative rounded-[28px] border ${tier.border} bg-gradient-to-br ${tier.bg} p-6 transition-all duration-500 hover:-translate-y-1 ${tier.glow} overflow-hidden`}
               >
-                <div className="flex items-center justify-between gap-3 mb-6">
+                {/* Ambient Internal Glow */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors duration-500" />
+
+                <div className="relative z-10 flex items-start justify-between gap-3 mb-6">
                   <div className="flex items-center gap-3.5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/5 bg-black/40 text-xl shadow-inner group-hover:scale-105 transition-transform">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] group-hover:scale-105 transition-transform duration-300">
                       {tier.icon}
                     </div>
                     <div>
-                      <div className={`text-lg font-black tracking-wide ${tier.color}`}>{tier.name}</div>
-                      <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mt-0.5">{tier.xp}</div>
+                      <div className={`text-xl font-black tracking-wide ${tier.color} drop-shadow-sm`}>
+                        {tier.name}
+                      </div>
+                      <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-0.5">
+                        {tier.xp}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-2 border-t border-white/5">
+                <div className="relative z-10 space-y-3 pt-4 border-t border-white/[0.06]">
                   {tier.perks.map((perk) => (
-                    <div key={perk} className="flex items-start gap-2.5 text-sm font-semibold text-gray-300">
-                      <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${tier.color.replace('text-', 'bg-')}`} />
-                      <span>{perk}</span>
+                    <div key={perk} className="flex items-start gap-3 text-sm font-medium text-gray-300">
+                      <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full shadow-sm ${tier.color.replace('text-', 'bg-')}`} />
+                      <span className="leading-snug">{perk}</span>
                     </div>
                   ))}
                 </div>
@@ -461,8 +475,8 @@ export default function RewardsPage() {
         </section>
 
         {/* Premium Memberships */}
-        <section>
-          <div className="mb-10 flex flex-col gap-6">
+        <section >
+<div id="premium-tiers"  className="mb-10 flex flex-col gap-6">
   
   {/* TOP SECTION: Title and Description */}
   <div className="max-w-3xl">
@@ -489,7 +503,7 @@ export default function RewardsPage() {
         <button
           type="button"
           onClick={() => setSelectedBillingCycle('MONTHLY')}
-          className={`relative rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
+          className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
             selectedBillingCycle === 'MONTHLY'
               ? 'bg-gradient-to-r from-white to-white/85 text-black shadow-[0_6px_18px_rgba(255,255,255,0.22)]'
               : 'text-gray-400 hover:text-white'
@@ -500,7 +514,7 @@ export default function RewardsPage() {
         <button
           type="button"
           onClick={() => setSelectedBillingCycle('YEARLY')}
-          className={`relative rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
+          className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
             selectedBillingCycle === 'YEARLY'
               ? 'bg-gradient-to-r from-sats-orange-500 to-amber-400 text-black shadow-[0_6px_18px_rgba(249,115,22,0.28)]'
               : 'text-gray-400 hover:text-white'
@@ -516,7 +530,7 @@ export default function RewardsPage() {
       <button
         type="button"
         onClick={() => setShowSatsPricing(!showSatsPricing)}
-        className={`inline-flex  sm:w-auto items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:scale-[1.02] active:scale-95 ${
+        className={`inline-flex cursor-pointer  sm:w-auto items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:scale-[1.02] active:scale-95 ${
           showSatsPricing
             ? 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black shadow-[0_0_18px_rgba(249,115,22,0.25)]'
             : 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-[0_0_18px_rgba(34,197,94,0.25)]'
@@ -534,7 +548,7 @@ export default function RewardsPage() {
           
 
           {/* Adjusted 3x2 Grid for Desktop using Flex-Wrap */}
-          <div id="premium-tiers" className="flex flex-wrap justify-center gap-6 items-stretch">
+          <div  className="flex flex-wrap justify-center gap-6 items-stretch">
             {PREMIUM_TIERS.map((tier) => {
               const state = requestMap[tier.name] || { notify: false, upgrade: false };
               const monthlySats = Number(monthlyPricing[tier.name] || 0);

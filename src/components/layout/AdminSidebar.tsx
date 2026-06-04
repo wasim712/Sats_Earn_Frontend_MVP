@@ -133,17 +133,18 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
     { name: 'Payments', href: '/admin/payments', icon: MonitorCog },
   ];
     // ─── CLICK HANDLER: PREVENT REDUNDANT NAVIGATION ───
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Always close the mobile drawer when any link is clicked
+  const handleLinkClick = (
+      e: React.MouseEvent<HTMLAnchorElement>,
+      href: string,
+    ) => {
       if (window.innerWidth < 1024 && isOpen) {
         onClose();
       }
-
-      // Prevent redundant navigation only if already on this page
+  
       if (pathname === href) {
         e.preventDefault();
       }
-  };
+    };
   return (
     <>
       <div 
@@ -160,7 +161,11 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
         <div className={`h-20 flex items-center border-b border-sats-black-800 bg-sats-black-950 transition-all duration-300 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
              <button 
-               onClick={onToggleCollapse}
+               onClick={() => {
+                {
+                  isCollapsed ? onToggleCollapse() : onClose();
+                }
+              }}
                title={isCollapsed ? "Expand Sidebar" : "SatsEarn Admin"}
                className={`relative flex h-9 w-9 items-center justify-center rounded-xl bg-black border shadow-[0_0_10px_rgba(249,115,22,0.2)] transition-all duration-300 ${
                  isCollapsed ? 'border-sats-orange-500/30 group-hover/sidebar:border-sats-orange-500' : 'border-sats-orange-500/30 cursor-default'
@@ -173,7 +178,26 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
              </button>
 
              {!isCollapsed && (
-               <LogoText className="text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden transition-opacity duration-300"/>
+             <Link
+                href="/admin/dashboard"
+                onClick={(e) => {
+                  if (window.innerWidth < 1024 && isOpen) {
+                    onClose();
+                  }
+                  if (pathname === "/admin/dashboard") {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2 overflow-hidden ">
+                  <span className="whitespace-nowrap text-2xl font-bold tracking-tight text-white">
+                    Sats<span className="text-sats-orange-500">Earn</span>
+                  </span>
+                  <span className="rounded-full bg-sats-orange-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-sats-orange-500">
+                    Beta
+                  </span>
+                </div>
+              </Link>
              )}
           </div>
           
