@@ -216,6 +216,7 @@ export interface TodayQuizQuestion {
 
 export interface TodayQuiz {
   id: string;
+  date?: string;
   title: string;
   description?: string;
   rewardSats: number;

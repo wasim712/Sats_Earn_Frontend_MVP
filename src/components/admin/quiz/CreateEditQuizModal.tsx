@@ -251,7 +251,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
         // FULL CREATE PAYLOAD
         const createPayload = {
           title: form.title.trim(),
-          date: new Date(form.date).toISOString(),
+          date: form.date,
           rewardSats: Number(form.rewardSats),
           xpReward: Number(form.xpReward),
           questions: questions.map((q, index) => ({

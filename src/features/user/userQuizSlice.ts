@@ -137,13 +137,21 @@ const initialState: UserQuizState = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export const fetchTodayQuiz = createAsyncThunk(
   'userQuiz/fetchToday',
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
-      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/quiz/today`, {
+      const todayKey = getLocalDateKey();
+      const data = await obfuscatedJsonRequest<unknown>(`${API_URL}/users/quiz/today?date=${todayKey}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return normalizeQuizPayload(data);
@@ -159,10 +167,11 @@ export const submitQuizAnswer = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const todayKey = state.userQuiz.quiz?.date || getLocalDateKey();
       const data = await obfuscatedJsonRequest<SubmitQuizAnswerResponse>(`${API_URL}/users/quiz/today/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, date: todayKey }),
       });
       return data;
     } catch (error: any) {
@@ -177,10 +186,11 @@ export const submitTodayQuiz = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token || sessionStorage.getItem('sats_token');
+      const todayKey = state.userQuiz.quiz?.date || getLocalDateKey();
       const data = await obfuscatedJsonRequest<QuizResult>(`${API_URL}/users/quiz/today/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ date: todayKey, answers }),
       });
       return data;
     } catch (error: any) {

@@ -35,6 +35,7 @@ function normalizePageQuiz(quiz: TodayQuiz | null): TodayQuiz | null {
   return {
     ...resolvedQuiz,
     id: resolvedQuiz.id || '',
+    date: typeof resolvedQuiz.date === 'string' ? resolvedQuiz.date : undefined,
     title: resolvedQuiz.title || 'Daily Quiz',
     description:
       resolvedQuiz.description ||
