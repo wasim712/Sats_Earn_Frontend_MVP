@@ -51,7 +51,7 @@ export const WaysToEarn = () => {
       <section className="relative pt-16 pb-16 sm:pt-24 sm:pb-24">
         
         {/* Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-72 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+        {/* <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-72 bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" /> */}
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeUp className="text-center mb-16 sm:mb-20">

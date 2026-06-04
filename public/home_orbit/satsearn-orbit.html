@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SatsEarn — Earn Methods Orbit</title>
+  <style>
+    :root {
+      /* THE NEW BRAND ORANGE */
+      --color-sats-orange-400: #F4A440; 
+      --color-sats-orange-500: #EE8B12; 
+      --color-sats-orange-600: #D0760C; 
+      
+      /* RGB equivalents for alpha/opacity usage */
+      --color-sats-rgb-400: 244, 164, 64;
+      --color-sats-rgb-500: 238, 139, 18;
+      --color-sats-rgb-600: 208, 118, 12;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow:visible;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .interactive-tilt {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.1s ease-out;
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orbit-wrap {
+      position: relative;
+      width: 560px;
+      height: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orbit-canvas {
+      position: relative;
+      width: 520px;
+      height: 520px;
+      flex-shrink: 0;
+    }
+
+    .orbit-track {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(var(--color-sats-rgb-500), 0.15);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: inset 0 0 40px rgba(var(--color-sats-rgb-500), 0.04);
+    }
+
+    .center-wrap {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      filter: drop-shadow(0 0 20px rgba(var(--color-sats-rgb-500), 0.4));
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(var(--color-sats-rgb-500), 0.3)); }
+      50% { filter: drop-shadow(0 0 35px rgba(var(--color-sats-rgb-500), 0.6)); }
+    }
+
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: rgba(10, 5, 5, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(var(--color-sats-rgb-500), 0.25);
+      border-radius: 12px;
+      padding: 6px 14px;
+      white-space: nowrap;
+      cursor: pointer;
+      z-index: 5;
+      transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+      will-change: left, top, transform;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .node:hover {
+      border-color: var(--color-sats-orange-400);
+      background: rgba(15, 8, 4, 0.95);
+      transform: translate(-50%, -50%) scale(1.1);
+      z-index: 25;
+      box-shadow: 0 8px 24px rgba(var(--color-sats-rgb-400), 0.25);
+    }
+
+    .node-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85);
+      pointer-events: none;
+      transition: color 0.3s;
+    }
+
+    .node:hover .node-label {
+      color: var(--color-sats-orange-400);
+    }
+
+    .info-panel {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(5, 5, 5, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(var(--color-sats-rgb-500), 0.4);
+      border-radius: 16px;
+      padding: 12px 20px;
+      text-align: center;
+      min-width: 240px;
+      max-width: 300px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      z-index: 30;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    }
+
+    .info-panel.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .info-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--color-sats-orange-400);
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .info-desc {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="interactive-tilt" id="tiltWrap">
+    <div class="orbit-wrap">
+      <div class="orbit-canvas" id="canvas">
+        <div class="orbit-track" style="width:240px;height:240px;"></div>
+        <div class="orbit-track" style="width:386px;height:386px;"></div>
+
+        <div class="center-wrap">
+          <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="btcGrad" cx="30%" cy="30%" r="70%">
+                <stop offset="0%"   stop-color="var(--color-sats-orange-400)"/>
+                <stop offset="60%"  stop-color="var(--color-sats-orange-500)"/>
+                <stop offset="100%" stop-color="var(--color-sats-orange-600)"/>
+              </radialGradient>
+              <radialGradient id="glowBg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="rgba(var(--color-sats-rgb-500), 0.45)"/>
+                <stop offset="100%" stop-color="rgba(var(--color-sats-rgb-500), 0)"/>
+              </radialGradient>
+              
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            
+            <circle cx="64" cy="64" r="48" fill="url(#glowBg)"/>
+            
+            <circle cx="64" cy="64" r="38" fill="url(#btcGrad)" filter="url(#glow)"/>
+            
+            <circle cx="64" cy="64" r="37" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+            
+            <text x="64" y="64" dominant-baseline="central" text-anchor="middle"
+              font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="44" font-weight="800"
+              fill="#ffffff"
+              style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">₿</text>
+          </svg>
+        </div>
+
+        <svg id="spokeSvg" width="520" height="520" style="position:absolute;top:0;left:0;pointer-events:none;z-index:2;"></svg>
+
+        <div class="info-panel" id="infoPanel">
+          <div class="info-name" id="infoName"></div>
+          <div class="info-desc" id="infoDesc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── 1. PARENT MOUSE FORWARDING (Keeps Next.js Cursor Glow Alive) ───
+    window.addEventListener('mousemove', (e) => {
+      try {
+        if (window.parent && window.parent !== window && window.frameElement) {
+          const rect = window.frameElement.getBoundingClientRect();
+          const event = new MouseEvent('mousemove', {
+            bubbles: true,
+            cancelable: true,
+            clientX: e.clientX + rect.left,
+            clientY: e.clientY + rect.top,
+            screenX: e.screenX,
+            screenY: e.screenY
+          });
+          window.parent.document.dispatchEvent(event);
+        }
+      } catch(err) {
+        // Silently ignore cross-origin errors if loaded weirdly
+      }
+    });
+
+    // ─── 2. 3D TILT PARALLAX EFFECT ───
+    const tiltWrap = document.getElementById('tiltWrap');
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+      const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
+      tiltWrap.style.transform = `rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+    });
+    window.addEventListener('mouseleave', () => {
+      tiltWrap.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    });
+
+    // ─── 3. ORBIT LOGIC & DATA ───
+    const methods = [
+      { label: 'Social',       desc: 'Follow, like & share on social platforms',  orbit: 1 },
+      { label: 'App Installs', desc: 'Download apps for high-paying rewards',     orbit: 1 },
+      { label: 'Surveys',      desc: 'Share opinions in quick paid surveys',      orbit: 1 },
+      { label: 'Games',        desc: 'Play games and earn real sats',             orbit: 1 },
+      { label: 'Mini-games',   desc: 'Quick in-platform games, instant rewards',  orbit: 1 },
+      { label: 'Offerwalls',   desc: 'Hundreds of tasks from top networks',       orbit: 2 },
+      { label: 'PTC',          desc: 'Paid-to-click ads, easy micro-earnings',    orbit: 2 },
+      { label: 'Watch Video',  desc: 'Earn sats watching sponsored content',      orbit: 2 },
+      { label: 'Learn & Earn', desc: 'Bitcoin lessons that pay you to learn',     orbit: 2 },
+      { label: 'Referrals',    desc: 'Invite friends, earn 10% of their sats',    orbit: 2 },
+      { label: 'Quizzes',      desc: 'Answer correctly and claim your sats',      orbit: 2 },
+    ];
+
+    const CX = 260, CY = 260;
+    const radii = { 1: 120, 2: 193 };
+    const canvas = document.getElementById('canvas');
+    const spokeSvg = document.getElementById('spokeSvg');
+    const infoPanel = document.getElementById('infoPanel');
+    const infoName  = document.getElementById('infoName');
+    const infoDesc  = document.getElementById('infoDesc');
+
+    const inner = methods.filter(m => m.orbit === 1);
+    const outer = methods.filter(m => m.orbit === 2);
+
+    const baseAngles = {};
+    inner.forEach((m, i) => { baseAngles[m.label] = (i / inner.length) * Math.PI * 2 - Math.PI / 2; });
+    outer.forEach((m, i) => { baseAngles[m.label] = (i / outer.length) * Math.PI * 2 - Math.PI / 2; });
+
+    const nodeEls = {}, lineEls = {}, smoothPos = {};
+    let hoverOrbit = null; 
+
+    methods.forEach(m => {
+      const el = document.createElement('div');
+      el.className = 'node';
+      el.innerHTML = `<span class="node-label">${m.label}</span>`;
+      
+      el.addEventListener('mouseenter', () => {
+        hoverOrbit = m.orbit; 
+        infoName.textContent = m.label;
+        infoDesc.textContent = m.desc;
+        infoPanel.classList.add('visible');
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        hoverOrbit = null; 
+        infoPanel.classList.remove('visible');
+      });
+      
+      canvas.appendChild(el);
+      nodeEls[m.label] = el;
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      // Updated to use the new --color-sats-orange-500 hex in RGBA format
+      line.setAttribute('stroke', 'rgba(238, 139, 18, 0.2)'); 
+      line.setAttribute('stroke-width', '1');
+      spokeSvg.appendChild(line);
+      lineEls[m.label] = line;
+
+      smoothPos[m.label] = { x: CX, y: CY };
+    });
+
+    let t1 = 0, t2 = 0, last = null;
+    const s1 = 0.00022, s2 = 0.00014;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function animate(ts) {
+      if (!last) last = ts;
+      const dt = Math.min(ts - last, 50);
+      last = ts;
+
+      if (hoverOrbit !== 1) t1 += dt * s1;
+      if (hoverOrbit !== 2) t2 += dt * s2;
+
+      methods.forEach(m => {
+        const r     = radii[m.orbit];
+        const base  = baseAngles[m.label];
+        const angle = base + (m.orbit === 1 ? t1 : -t2);
+        const tx = CX + r * Math.cos(angle);
+        const ty = CY + r * Math.sin(angle);
+
+        const sp = smoothPos[m.label];
+        sp.x = lerp(sp.x, tx, 0.12);
+        sp.y = lerp(sp.y, ty, 0.12);
+
+        nodeEls[m.label].style.left = sp.x + 'px';
+        nodeEls[m.label].style.top  = sp.y + 'px';
+
+        const dx = sp.x - CX, dy = sp.y - CY;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        const innerR = 50;
+        const line = lineEls[m.label];
+        line.setAttribute('x1', CX + (dx/dist) * innerR);
+        line.setAttribute('y1', CY + (dy/dist) * innerR);
+        line.setAttribute('x2', CX + (dx/dist) * (dist - 18));
+        line.setAttribute('y2', CY + (dy/dist) * (dist - 18));
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

@@ -5,24 +5,16 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FadeUp } from '@/components/animations/FadeUp';
-import Image from 'next/image';
 
 export const HeroSection = () => {
   const router = useRouter();
 
   return (
-    <section className="relative overflow-visible px-4 flex flex-col items-center w-full min-h-[calc(100vh-200px)]" id="how-it-works">
+    <section className="relative overflow-visible px-4 flex flex-col items-center w-full justify-center pt-8 pb-8  sm:pb-20" id="how-it-works">
       
-      <div className="w-full max-w-325 mx-auto flex flex-col">
-        
-        {/* 1. Global Top Headline */}
-        <FadeUp className="text-center mb-12 ">
-          <h2 className="text-[32px] sm:text-5xl md:text-[54px] lg:text-[58px] font-bold text-white tracking-tight leading-[1.15]">
-            Earn <span className="text-sats-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">Bitcoin rewards</span> by completing online tasks
-          </h2>
-        </FadeUp>
+      <div className="w-full max-w-[1300px] mx-auto flex flex-col">
 
-        {/* 2. Split Content Area */}
+        {/* Split Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
           
           {/* Left Column: Copy & CTA */}
@@ -35,7 +27,7 @@ export const HeroSection = () => {
               </span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-5 sm:mb-6 leading-[1.1] tracking-tighter">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-5 sm:mb-6 leading-[1.1] tracking-tighter">
               Earn <span className="text-sats-orange-500">Bitcoin</span> by <br className="hidden lg:block" />
               Doing Simple Tasks
             </h1>
@@ -49,7 +41,7 @@ export const HeroSection = () => {
               <Button 
                 size="lg" 
                 onClick={() => router.push('/signup')} 
-                className="group w-full sm:w-auto text-base sm:text-lg font-bold py-4 px-8 rounded-xl bg-sats-orange-500 text-white hover:bg-orange-500 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(249,115,22,0.25)] border-none"
+                className="group w-full sm:w-auto text-base sm:text-lg font-bold py-6 px-8 rounded-xl bg-sats-orange-500 text-white hover:bg-orange-500 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(249,115,22,0.25)] border-none"
               >
                 Start Earning Free
                 <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
@@ -69,26 +61,27 @@ export const HeroSection = () => {
               </span>
             </div>
           </FadeUp>
-
-          {/* Right Column: High-Res Hero Image */}
-          <FadeUp className="relative w-full flex justify-center lg:justify-end items-center mt-6 lg:mt-0" delay={0.2}>
-            {/* Outer glowing border container */}
-            <div className="relative w-full max-w-[700px] rounded-[32px] sm:rounded-[40px] overflow-hidden border border-white/5 bg-[#050505] p-2 sm:p-3 shadow-[0_0_80px_rgba(249,115,22,0.12)] group hover:shadow-[0_0_100px_rgba(249,115,22,0.18)] transition-all duration-700">
-              <div className="absolute inset-0 bg-gradient-to-tr from-sats-orange-500/10 via-transparent to-transparent opacity-60" />
+{/* Right Column: Interactive Orbit Animation */}
+          <FadeUp className="relative w-full flex justify-center lg:justify-end items-center mt-4 lg:mt-0" delay={0.2}>
+            
+            {/* MOBILE CLIPPING FIX: 
+              Tuned the heights and scale factors for distinct mobile breakpoints 
+              so it perfectly hugs the animation without clipping the sides.
+            */}
+            <div className="relative flex justify-center items-center w-full h-[280px] min-[375px]:h-[340px] min-[425px]:h-[400px] sm:h-[500px] lg:min-h-[560px] z-10 overflow-hidden lg:overflow-visible">
               
-              <Image 
-                src="/hero_screen.png" 
-                alt='SatsEarn Platform Interface'
-                width={1400}     // Realistically high base width for crispness
-                height={900}     // Realistically high base height
-                quality={100}    // Tell Next.js not to compress heavily
-                priority         // Extremely important: loads image immediately without blur placeholders
-                className="w-full h-auto rounded-[24px] sm:rounded-[32px] object-cover relative z-10"
-                sizes="(max-width: 768px) 100vw, 50vw" 
-              />
+              {/* Iframe Scaler */}
+              <div className="w-[560px] h-[560px] flex items-center justify-center origin-center scale-[0.5] min-[375px]:scale-[0.6] min-[425px]:scale-[0.7] sm:scale-[0.9] lg:scale-100 transition-transform duration-300">
+                <iframe 
+                  src="/home_orbit/satsearn-orbit.html" 
+                  title="SatsEarn Earning Methods Orbit"
+                  className="w-full h-full border-none pointer-events-auto bg-transparent"
+                  scrolling="no"
+                />
+              </div>
+              
             </div>
           </FadeUp>
-
         </div>
       </div>
     </section>

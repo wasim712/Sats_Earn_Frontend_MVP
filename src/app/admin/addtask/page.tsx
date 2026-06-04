@@ -29,7 +29,7 @@ const CATEGORIES = ['SOCIAL', 'SURVEY', 'VIDEO_AD', 'APP_INSTALL', 'OFFERWALL', 
 const FREE_TIERS = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
 const PREMIUM_TIERS = ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
 const PROOF_TYPES = ['SCREENSHOT', 'URL', 'TEXT_RESPONSE', 'API_VERIFIED'];
-const PLATFORMS = ['NONE', 'DESKTOP', 'ANDROID', 'IOS'];
+const PLATFORMS = ['NONE', 'TWITTER', 'YOUTUBE', 'INSTAGRAM', 'TELEGRAM', 'FACEBOOK', 'LINKEDIN', 'APP_STORE', 'PLAY_STORE', 'WEBSITE'];
 
 const createMatrix = () => [...FREE_TIERS, ...PREMIUM_TIERS].reduce<Record<string, number>>((acc, tier) => {
   acc[tier] = 0;
@@ -41,6 +41,22 @@ const parseWholeNumber = (value: string) => {
   if (!digits) return 0;
   const parsed = Number.parseInt(digits, 10);
   return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const toIsoDateTime = (value: string) => {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+};
+
+const buildValidationMessage = (payload: any) => {
+  if (Array.isArray(payload?.details) && payload.details.length > 0) {
+    return payload.details
+      .map((detail: { path?: string; message?: string }) => `${detail.path || 'field'}: ${detail.message || 'Invalid value'}`)
+      .join(' | ');
+  }
+
+  return payload?.error || payload?.message || 'Failed to create standalone task';
 };
 
 const inputCls = 'w-full rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3 text-sm text-white outline-none transition focus:border-sats-orange-500';
@@ -152,6 +168,63 @@ export default function AddStandaloneTaskPage() {
     setErrorMsg(null);
     setSuccessMsg(null);
 
+    const trimmedTitle = formData.title.trim();
+    const trimmedDescription = formData.description.trim();
+    const trimmedTargetUrl = formData.targetUrl.trim();
+
+    if (trimmedTitle.length < 3) {
+      setErrorMsg('Title must be at least 3 characters long.');
+      return;
+    }
+
+    if (trimmedDescription.length < 5) {
+      setErrorMsg('Description must be at least 5 characters long.');
+      return;
+    }
+
+    if (formData.xpReward < 0) {
+      setErrorMsg('XP reward cannot be negative.');
+      return;
+    }
+
+    if (trimmedTargetUrl) {
+      try {
+        new URL(trimmedTargetUrl);
+      } catch {
+        setErrorMsg('Target URL must be a valid URL.');
+        return;
+      }
+    }
+
+    if (formData.coverImageUrl.trim()) {
+      try {
+        new URL(formData.coverImageUrl.trim());
+      } catch {
+        setErrorMsg('Cover image URL must be a valid URL.');
+        return;
+      }
+    }
+
+    if (formData.doubleRewardsStartAt && !toIsoDateTime(formData.doubleRewardsStartAt)) {
+      setErrorMsg('Double rewards start time is invalid.');
+      return;
+    }
+
+    if (formData.doubleRewardsEndAt && !toIsoDateTime(formData.doubleRewardsEndAt)) {
+      setErrorMsg('Double rewards end time is invalid.');
+      return;
+    }
+
+    if (formData.doubleRewardsStartAt && formData.doubleRewardsEndAt) {
+      const startMs = new Date(formData.doubleRewardsStartAt).getTime();
+      const endMs = new Date(formData.doubleRewardsEndAt).getTime();
+
+      if (endMs <= startMs) {
+        setErrorMsg('Double rewards end time must be later than start time.');
+        return;
+      }
+    }
+
     if (!hasReward) {
       setErrorMsg(formData.isPremiumOnly ? 'Add at least one premium tier reward value.' : 'Add at least one tier reward value.');
       return;
@@ -181,26 +254,26 @@ export default function AddStandaloneTaskPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
+          title: trimmedTitle,
+          description: trimmedDescription,
           category: formData.category,
           coverImageUrl: coverImageUrl || undefined,
           targetCountries: formData.targetCountries,
           isPremiumOnly: formData.isPremiumOnly,
           requiredFreeTier: formData.requiredFreeTier,
           proofType: formData.proofType,
-          targetUrl: formData.targetUrl || undefined,
+          targetUrl: trimmedTargetUrl || undefined,
           requiredPlatform: formData.requiredPlatform,
           xpReward: formData.xpReward,
           tierRewardMatrix: formData.tierRewardMatrix,
-          doubleRewardsStartAt: formData.doubleRewardsStartAt || undefined,
-          doubleRewardsEndAt: formData.doubleRewardsEndAt || undefined,
+          doubleRewardsStartAt: toIsoDateTime(formData.doubleRewardsStartAt),
+          doubleRewardsEndAt: toIsoDateTime(formData.doubleRewardsEndAt),
         }),
       });
 
       const payload = await parseObfuscatedJson<any>(response);
       if (!response.ok) {
-        throw new Error(payload?.error || payload?.message || 'Failed to create standalone task');
+        throw new Error(buildValidationMessage(payload));
       }
 
       setSuccessMsg('Standalone task created successfully.');
@@ -301,6 +374,7 @@ export default function AddStandaloneTaskPage() {
                           value={formData.coverImageUrl}
                           onChange={(e) => setFormData((prev) => ({ ...prev, coverImageUrl: e.target.value }))}
                           className={inputCls}
+                          type="url"
                           placeholder="https://example.com/cover.jpg"
                         />
                       </div>
@@ -339,6 +413,7 @@ export default function AddStandaloneTaskPage() {
                         value={formData.targetUrl}
                         onChange={(e) => setFormData((prev) => ({ ...prev, targetUrl: e.target.value }))}
                         className={inputCls}
+                        type="url"
                         placeholder="https://..."
                       />
                     </InputWrap>
@@ -465,6 +540,7 @@ export default function AddStandaloneTaskPage() {
                       onChange={(e) => setFormData((prev) => ({ ...prev, xpReward: parseWholeNumber(e.target.value) }))}
                       className="mt-2 w-full border-0 bg-transparent p-0 text-lg font-black text-white outline-none"
                       placeholder="0"
+                      required
                     />
                   </div>
                   <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
