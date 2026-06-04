@@ -94,6 +94,8 @@ export default function AddCampaignPage() {
     targetCountries: [] as string[],
     requiredPlatform: 'NONE',
     isPremiumOnly: false,
+    isNewUserOnly: false,
+    newUserMaxAccountAgeDays: 7,
     requiredFreeTier: 'BASIC',
     doubleRewardsStartAt: '',
     doubleRewardsEndAt: '',
@@ -153,6 +155,7 @@ export default function AddCampaignPage() {
     if (formData.title.length < 5) return setErrorMsg("Title must be at least 5 characters.");
     if (formData.description.length < 10) return setErrorMsg("Description must be at least 10 characters.");
     if (formData.maxCompletions <= 0) return setErrorMsg("Max Completions must be greater than 0.");
+    if (formData.isNewUserOnly && formData.newUserMaxAccountAgeDays <= 0) return setErrorMsg("New user window must be greater than 0 days.");
     setIsSaving(true);
 
     let coverImageUrl = formData.coverImageUrl || '';
@@ -178,6 +181,8 @@ export default function AddCampaignPage() {
       targetCountries: formData.targetCountries,
       requiredPlatform: formData.requiredPlatform,
       isPremiumOnly: formData.isPremiumOnly,
+      isNewUserOnly: formData.isNewUserOnly,
+      newUserMaxAccountAgeDays: formData.isNewUserOnly ? Number(formData.newUserMaxAccountAgeDays) : undefined,
       requiredFreeTier: formData.requiredFreeTier,
       maxCompletions: Number(formData.maxCompletions),
     };
@@ -363,6 +368,29 @@ export default function AddCampaignPage() {
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${formData.isPremiumOnly ? 'translate-x-[22px]' : 'translate-x-1'}`} />
                     </button>
+                  </div>
+
+                  <div className="mt-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 max-w-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-white flex items-center gap-1.5"><Shield className="w-4 h-4 text-sats-orange-400" /> New Users Only</p>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Restrict by account age</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, isNewUserOnly: !prev.isNewUserOnly }))}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 focus:outline-none ${formData.isNewUserOnly ? 'bg-sats-orange-500' : 'bg-[#1a1a1a] border border-[#2a2a2a]'}`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${formData.isNewUserOnly ? 'translate-x-[22px]' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                    {formData.isNewUserOnly ? (
+                      <div className="mt-4">
+                        <InputWrapper label="Account Age Window (Days)" required>
+                          <input type="text" inputMode="numeric" pattern="[0-9]*" name="newUserMaxAccountAgeDays" value={formData.newUserMaxAccountAgeDays || ''} onChange={handleNumberChange} placeholder="7" className={inputCls} />
+                        </InputWrapper>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 

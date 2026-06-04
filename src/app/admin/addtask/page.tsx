@@ -29,7 +29,13 @@ const CATEGORIES = ['SOCIAL', 'SURVEY', 'VIDEO_AD', 'APP_INSTALL', 'OFFERWALL', 
 const FREE_TIERS = ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD'];
 const PREMIUM_TIERS = ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
 const PROOF_TYPES = ['SCREENSHOT', 'URL', 'TEXT_RESPONSE', 'API_VERIFIED'];
-const PLATFORMS = ['NONE', 'TWITTER', 'YOUTUBE', 'INSTAGRAM', 'TELEGRAM', 'FACEBOOK', 'LINKEDIN', 'APP_STORE', 'PLAY_STORE', 'WEBSITE'];
+const PLATFORMS = ['NONE', 'DESKTOP', 'ANDROID', 'IOS'];
+const PLATFORM_LABELS: Record<string, string> = {
+  NONE: 'ALL DEVICES',
+  DESKTOP: 'DESKTOP',
+  ANDROID: 'ANDROID',
+  IOS: 'IOS',
+};
 
 const createMatrix = () => [...FREE_TIERS, ...PREMIUM_TIERS].reduce<Record<string, number>>((acc, tier) => {
   acc[tier] = 0;
@@ -105,6 +111,8 @@ export default function AddStandaloneTaskPage() {
     coverImageUrl: '',
     targetCountries: [] as string[],
     isPremiumOnly: false,
+    isNewUserOnly: false,
+    newUserMaxAccountAgeDays: 7,
     requiredFreeTier: 'BASIC',
     proofType: 'SCREENSHOT',
     targetUrl: '',
@@ -229,6 +237,10 @@ export default function AddStandaloneTaskPage() {
       setErrorMsg(formData.isPremiumOnly ? 'Add at least one premium tier reward value.' : 'Add at least one tier reward value.');
       return;
     }
+    if (formData.isNewUserOnly && formData.newUserMaxAccountAgeDays <= 0) {
+      setErrorMsg('New user window must be greater than 0 days.');
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -260,6 +272,8 @@ export default function AddStandaloneTaskPage() {
           coverImageUrl: coverImageUrl || undefined,
           targetCountries: formData.targetCountries,
           isPremiumOnly: formData.isPremiumOnly,
+          isNewUserOnly: formData.isNewUserOnly,
+          newUserMaxAccountAgeDays: formData.isNewUserOnly ? Number(formData.newUserMaxAccountAgeDays) : undefined,
           requiredFreeTier: formData.requiredFreeTier,
           proofType: formData.proofType,
           targetUrl: trimmedTargetUrl || undefined,
@@ -272,6 +286,8 @@ export default function AddStandaloneTaskPage() {
       });
 
       const payload = await parseObfuscatedJson<any>(response);
+      console.log(payload,response);
+      
       if (!response.ok) {
         throw new Error(buildValidationMessage(payload));
       }
@@ -286,6 +302,8 @@ export default function AddStandaloneTaskPage() {
         coverImageUrl: '',
         targetCountries: [],
         isPremiumOnly: false,
+        isNewUserOnly: false,
+        newUserMaxAccountAgeDays: 7,
         requiredFreeTier: 'BASIC',
         proofType: 'SCREENSHOT',
         targetUrl: '',
@@ -296,6 +314,8 @@ export default function AddStandaloneTaskPage() {
         doubleRewardsEndAt: '',
       });
     } catch (error: any) {
+      console.log(error);
+      
       setErrorMsg(error.message || 'Failed to create standalone task');
     } finally {
       setIsSaving(false);
@@ -451,12 +471,30 @@ export default function AddStandaloneTaskPage() {
                     <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
                   </InputWrap>
 
-                  <InputWrap label="Device Targeting">
+                  <InputWrap label="Platform Targeting">
                     <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
-                      {PLATFORMS.map((item) => <option key={item} value={item}>{item === 'NONE' ? 'All Devices' : item === 'DESKTOP' ? 'Desktop Only' : item === 'ANDROID' ? 'Android Only' : 'iOS Only'}</option>)}
+                      {PLATFORMS.map((item) => <option key={item} value={item}>{PLATFORM_LABELS[item] || item}</option>)}
                     </select>
                     <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
                   </InputWrap>
+
+                  <InputWrap label="New User Audience" hint="Optional onboarding-only gate">
+                    <select value={formData.isNewUserOnly ? 'NEW_USERS_ONLY' : 'ALL_USERS'} onChange={(e) => setFormData((prev) => ({
+                      ...prev,
+                      isNewUserOnly: e.target.value === 'NEW_USERS_ONLY',
+                      newUserMaxAccountAgeDays: e.target.value === 'NEW_USERS_ONLY' ? (prev.newUserMaxAccountAgeDays || 7) : 7,
+                    }))} className={`${inputCls} appearance-none cursor-pointer`}>
+                      <option value="ALL_USERS">All Users</option>
+                      <option value="NEW_USERS_ONLY">New Users Only</option>
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                  </InputWrap>
+
+                  {formData.isNewUserOnly ? (
+                    <InputWrap label="New User Window (Days)" hint="Account age limit" required>
+                      <input type="text" inputMode="numeric" pattern="[0-9]*" value={formData.newUserMaxAccountAgeDays || ''} onChange={(e) => setFormData((prev) => ({ ...prev, newUserMaxAccountAgeDays: parseWholeNumber(e.target.value) }))} className={inputCls} placeholder="7" />
+                    </InputWrap>
+                  ) : <div className="hidden md:block" />}
                 </div>
 
                 <div className="mb-8">
@@ -509,6 +547,7 @@ export default function AddStandaloneTaskPage() {
                       <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${formData.isPremiumOnly ? 'translate-x-8' : 'translate-x-1'}`} />
                     </button>
                   </div>
+
                 </div>
               </section>
 
@@ -611,6 +650,10 @@ export default function AddStandaloneTaskPage() {
                   <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
                     <span className="flex items-center gap-2"><Crown className="h-4 w-4 text-sats-orange-400" /> Access</span>
                     <span className="font-bold text-white">{formData.isPremiumOnly ? 'Premium only' : `${formData.requiredFreeTier}+`}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
+                    <span className="flex items-center gap-2"><Shield className="h-4 w-4 text-sats-orange-400" /> Audience</span>
+                    <span className="font-bold text-white">{formData.isNewUserOnly ? `New users (${formData.newUserMaxAccountAgeDays}d)` : 'All users'}</span>
                   </div>
                 </div>
               </section>

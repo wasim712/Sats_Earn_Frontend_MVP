@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Monitor,
   Search,
+  Shield,
   Smartphone,
   Sparkles,
   Target,
@@ -36,6 +37,7 @@ type StandaloneTask = {
   isCompleted?: boolean;
   hasStarted?: boolean;
   isPremiumOnly?: boolean;
+  isNewUserOnly?: boolean;
 };
 
 type DeviceFilter = 'ALL' | 'DESKTOP' | 'ANDROID' | 'IOS';
@@ -259,6 +261,7 @@ export default function StandaloneTasksPage() {
           const previewText = getPreviewDescription(task.description || 'No task description available yet.');
           const coverImage = task.coverImageUrl || null;
           const isPremiumOnly = Boolean(task.isPremiumOnly);
+          const isNewUserOnly = Boolean(task.isNewUserOnly);
           const isLockedPremium = isPremiumOnly && !isPremiumUser;
           const resolvedHref = isLockedPremium ? PREMIUM_REWARDS_ANCHOR : `/user/standalone-tasks/${task.id}`;
           const resolvedCta = isLockedPremium ? 'Upgrade to Premium' : status.cta;
@@ -285,7 +288,14 @@ export default function StandaloneTasksPage() {
                     </div>
                   ) : null}
 
-                  <div className={`absolute z-20 flex items-center gap-2 ${isPremiumOnly ? 'right-5 top-16' : 'right-5 top-5'}`}>
+                  {isNewUserOnly ? (
+                    <div className={`absolute z-20 inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/30 bg-sats-orange-500/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-sats-orange-200 shadow-[0_0_18px_rgba(249,115,22,0.16)] ${isPremiumOnly ? 'right-5 top-16' : 'right-5 top-5'}`}>
+                      <Shield className="h-3.5 w-3.5 text-sats-orange-300" />
+                      New Users Only
+                    </div>
+                  ) : null}
+
+                  <div className={`absolute z-20 flex items-center gap-2 ${isPremiumOnly || isNewUserOnly ? 'right-5 top-16' : 'right-5 top-5'}`}>
                     <div className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-[11px] font-black uppercase tracking-wide backdrop-blur-md ${tone}`}>
                       {label === 'Completed' ? <CheckCircle2 className="h-4 w-4" /> : <Zap className="h-4 w-4" />}
                       {label}
@@ -319,6 +329,12 @@ export default function StandaloneTasksPage() {
                     {isPremiumOnly ? (
                       <div className="inline-flex items-center gap-1.5 rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-violet-200 shadow-sm">
                         <Sparkles className="w-3.5 h-3.5 text-sats-orange-400" /> Premium Access
+                      </div>
+                    ) : null}
+
+                    {isNewUserOnly ? (
+                      <div className="inline-flex items-center gap-1.5 rounded-xl border border-sats-orange-500/30 bg-sats-orange-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-sats-orange-200 shadow-sm">
+                        <Shield className="w-3.5 h-3.5 text-sats-orange-300" /> New Account
                       </div>
                     ) : null}
 

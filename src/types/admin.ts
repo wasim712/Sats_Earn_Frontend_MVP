@@ -10,6 +10,8 @@ export interface Campaign {
   requiredPlatform?: 'NONE' | 'DESKTOP' | 'ANDROID' | 'IOS';
   isPremiumOnly: boolean;
   isNewUserOnly?: boolean;
+  newUserMaxAccountAgeDays?: number | null;
+  // isNewUserOnly?: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
   xpReward?: number;
@@ -41,6 +43,8 @@ export interface AdminTask {
   coverImageUrl?: string | null;
   targetCountries?: string[];
   isPremiumOnly?: boolean;
+  isNewUserOnly?: boolean;
+  newUserMaxAccountAgeDays?: number | null;
   requiredFreeTier?: string;
   targetUrl?: string | null;
   proofType?: string | null;

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { logout } from '@/features/auth/authSlice';
+import { logout, hydrateAuthFromStorage } from '@/features/auth/authSlice';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';
 import { Menu, Loader2 } from 'lucide-react';
 import { AnnouncementBanner } from '@/components/ui/AnnouncementBanner';
@@ -19,11 +19,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => { 
     setIsClient(true);
-  }, []);
+    dispatch(hydrateAuthFromStorage());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isClient && isInitialized) {
-      if (!isAuthenticated) {
+      const token = sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token');
+      if (!token && !isAuthenticated) {
         router.push('/login');
       } else if (user && user.role !== 'SUPER_ADMIN') {
         router.push('/user/dashboard'); 
