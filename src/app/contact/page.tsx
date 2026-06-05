@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
-import { getSiteUrl, SITE_NAME } from '@/lib/site';
+import { getSiteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: `Contact ${SITE_NAME}`,
+  title: `Contact `,
   description: 'Contact SatsEarn for account support, business inquiries, or policy questions.',
   alternates: {
     canonical: getSiteUrl('/contact'),

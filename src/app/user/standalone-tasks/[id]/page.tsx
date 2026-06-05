@@ -234,7 +234,7 @@ export default function StandaloneTaskDetailsPage() {
             </div>
 
             <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug mb-3">{task.title}</h1>
-            <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-3xl mb-4">{task.description}</p>
+            <p className="text-sm md:text-base text-white/40 leading-relaxed whitespace-pre-line max-w-3xl mb-4">{task.description}</p>
 
             <div className="flex flex-wrap items-center gap-3 mb-6 text-xs font-semibold text-gray-400">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">{proofMeta.label}</span>

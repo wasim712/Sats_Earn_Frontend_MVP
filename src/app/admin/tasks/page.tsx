@@ -11,6 +11,11 @@ export default function AdminStandaloneTasksPage() {
   const { tasks, isLoading, error } = useAppSelector((state) => state.adminTasks);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const getTaskPlatform = (task: any) => {
+    const platform = task.requiredPlatform || task.platform || task.deviceTarget || task.requirements?.requiredPlatform || 'NONE';
+    return platform === 'NONE' ? 'ALL DEVICES' : platform;
+  };
+
   useEffect(() => {
     dispatch(fetchStandaloneTasks());
   }, [dispatch]);
@@ -26,7 +31,7 @@ export default function AdminStandaloneTasksPage() {
       return task.title.toLowerCase().includes(normalizedSearch)
         || (task.description || '').toLowerCase().includes(normalizedSearch)
         || String(task.proofType || '').toLowerCase().includes(normalizedSearch)
-        || String(task.requiredPlatform || '').toLowerCase().includes(normalizedSearch);
+        || String(getTaskPlatform(task) || '').toLowerCase().includes(normalizedSearch);
     });
   }, [tasks, searchQuery]);
 
@@ -87,49 +92,76 @@ export default function AdminStandaloneTasksPage() {
           <SummaryCard label="Text / URL" value={summary.textBased} icon={Clock3} tone="blue" />
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-          {filteredTasks.length > 0 ? filteredTasks.map((task) => {
-            const highestReward = Math.max(...Object.values(task.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0);
+        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+  {filteredTasks.length > 0 ? filteredTasks.map((task) => {
+    const highestReward = Math.max(...Object.values(task.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0);
 
-            return (
-              <div key={task.id} className="group rounded-[28px] border border-[#1a1a1a] bg-[#050505] p-6 text-white shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition hover:border-sats-orange-500/25 hover:-translate-y-1">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-3 min-w-0">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-sats-orange-400">
-                      <CheckSquare className="h-3.5 w-3.5" /> Standalone
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-black text-white truncate">{task.title}</h2>
-                      <p className="mt-2 text-sm text-gray-400 line-clamp-3 leading-6">{task.description}</p>
-                    </div>
-                  </div>
+    return (
+      <Link 
+        key={task.id} 
+        href={`/admin/tasks/${task.id}`}
+        className="group relative flex flex-col overflow-hidden rounded-[28px] border border-white/[0.06] bg-[#050505] p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-sats-orange-500/30 hover:bg-[#0a0a0a] hover:shadow-[0_20px_40px_rgba(249,115,22,0.12)]"
+      >
+        {/* Ambient Top-Right Glow on Hover */}
+        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-sats-orange-500/5 blur-[50px] transition-colors duration-500 group-hover:bg-sats-orange-500/20" />
 
-                  <div className="shrink-0 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 text-right">
-                    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-500">Top Reward</div>
-                    <div className="mt-1 text-lg font-black text-sats-orange-400">{highestReward} sats</div>
-                  </div>
-                </div>
+        <div className="relative z-10 flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1 space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-sats-orange-400 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)]">
+              <CheckSquare className="h-3.5 w-3.5" /> Standalone
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-white truncate transition-colors duration-300 group-hover:text-sats-orange-400">
+                {task.title}
+              </h2>
+              {/* Strict 2-line limit so cards stay uniform in height */}
+              <p className="mt-2 text-sm font-medium text-gray-400 line-clamp-2 leading-relaxed pr-2">
+                {task.description}
+              </p>
+            </div>
+          </div>
 
-                <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
-                  <span className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 text-gray-300">{task.proofType || 'SCREENSHOT'}</span>
-                  <span className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 text-gray-300">{task.requiredPlatform || 'NONE'}</span>
-                  <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">XP {task.xpReward ?? task.xpRewardOverride ?? 0}</span>
-                </div>
+          <div className="shrink-0 rounded-[20px] border border-white/5 bg-white/[0.02] px-4 py-3 text-right backdrop-blur-sm transition-colors duration-300 group-hover:border-sats-orange-500/20 group-hover:bg-sats-orange-500/5">
+            <div className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Top Reward</div>
+            <div className="mt-1 flex items-baseline justify-end gap-1">
+              <span className="text-xl font-black tracking-tight text-sats-orange-400">{highestReward}</span>
+              <span className="text-xs font-bold text-sats-orange-500/70">sats</span>
+            </div>
+          </div>
+        </div>
 
-                <div className="mt-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-500">Cover Image URL</div>
-                  <div className="mt-2 truncate text-sm font-semibold text-white">{task.coverImageUrl || 'Not provided'}</div>
-                </div>
+        <div className="relative z-10 mt-6 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-wider">
+          <span className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-gray-300 shadow-inner">
+            {task.proofType || 'SCREENSHOT'}
+          </span>
+          <span className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-gray-300 shadow-inner">
+            {getTaskPlatform(task)}
+          </span>
+          <span className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-emerald-400 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]">
+            XP {task.xpReward ?? task.xpRewardOverride ?? 0}
+          </span>
+        </div>
 
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-xs font-semibold text-gray-500">Updated task configuration</div>
-                  <Link href={`/admin/tasks/${task.id}`} className="inline-flex items-center gap-2 rounded-2xl border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2.5 text-sm font-black text-sats-orange-400 transition hover:bg-sats-orange-500/15">
-                    Manage <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                  </Link>
-                </div>
-              </div>
-            );
-          }) : (
+        <div className="relative z-10 mt-4 rounded-xl border border-white/5 bg-black/60 px-4 py-3 transition-colors duration-300 group-hover:border-white/10">
+          <div className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600">Cover Image URL</div>
+          {/* Truncated single line so long URLs don't break the card */}
+          <div className="mt-1 truncate text-xs font-medium text-gray-400 group-hover:text-gray-300 transition-colors">
+            {task.coverImageUrl || 'Not provided'}
+          </div>
+        </div>
+
+        {/* Footer pushed to bottom dynamically using mt-auto */}
+        <div className="relative z-10 mt-auto pt-6 flex items-center justify-between">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 transition-colors duration-300 group-hover:text-gray-400">
+            Click to manage task
+          </div>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sats-orange-500/10 text-sats-orange-400 transition-all duration-300 group-hover:bg-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+            <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </div>
+        </div>
+      </Link>
+    )
+  }) : (
             <div className="col-span-full py-24 flex flex-col items-center justify-center text-center border border-dashed border-sats-black-800 rounded-3xl bg-sats-black-900">
               <ShieldAlert className="w-12 h-12 text-gray-600 mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No Standalone Tasks Found</h3>

@@ -534,7 +534,7 @@ export function TaskCard({
             
             <div className="pt-0.5">
               <h3 className="text-lg md:text-xl font-bold text-white/95 leading-tight tracking-wide mb-2">{task.title}</h3>
-              <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-2xl">{task.description}</p>
+              <p className="text-sm md:text-base text-white/40 leading-relaxed whitespace-pre-line max-w-2xl">{task.description}</p>
             </div>
           </div>
           <div className="hidden sm:block shrink-0 pt-1">

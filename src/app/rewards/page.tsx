@@ -149,7 +149,7 @@ const FREE_TIERS = [
   },
   {
     name: 'Copper',
-    xp: '1,000 XP',
+    xp: '10,000 XP',
     icon: <Coins className="w-5 h-5 text-[#b87333]" />,
     color: 'text-[#d7a06b]',
     border: 'border-[#b87333]/20',
@@ -160,7 +160,7 @@ const FREE_TIERS = [
   },
   {
     name: 'Bronze',
-    xp: '5,000 XP',
+    xp: '50,000 XP',
     icon: <Medal className="w-5 h-5 text-[#cd7f32]" />,
     color: 'text-[#d99962]',
     border: 'border-[#cd7f32]/20',
@@ -171,7 +171,7 @@ const FREE_TIERS = [
   },
   {
     name: 'Silver',
-    xp: '15,000 XP',
+    xp: '100,000 XP',
     icon: <Star className="w-5 h-5 text-[#C0C0C0]" />,
     color: 'text-[#d8dde5]',
     border: 'border-[#C0C0C0]/20',
@@ -182,7 +182,7 @@ const FREE_TIERS = [
   },
   {
     name: 'Gold',
-    xp: '50,000 XP',
+    xp: '150,000 XP',
     icon: <Trophy className="w-5 h-5 text-[#FFD700]" />,
     color: 'text-[#FFD700]',
     border: 'border-[#FFD700]/25',

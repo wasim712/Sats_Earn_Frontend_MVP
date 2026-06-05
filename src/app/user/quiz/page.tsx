@@ -171,8 +171,7 @@ export default function UserDailyQuizPage() {
   const totalQuestions = sortedQuestions.length;
   const answeredCount = Object.keys(solvedQuestions ?? {}).length;
   const quizStatus = (quiz as unknown as { status?: 'available' | 'submitted' } | null)?.status;
-  const hasSubmittedReview = Boolean(result?.review?.length);
-  const isQuizSubmitted = quizStatus === 'submitted' || hasSubmittedReview || Boolean(result?.submittedAt);
+  const isQuizSubmitted = quizStatus === 'submitted' || Boolean(result?.submittedAt) || Boolean(result?.passed);
   const isReviewMode = isQuizSubmitted;
 
   if (isLoading) return <QuizPageSkeleton />;
@@ -285,7 +284,7 @@ export default function UserDailyQuizPage() {
                     const isSelected = answers[question.id] === opt;
                     const isCorrectOption = isReviewMode
                       ? isCorrectReviewOption(result, question.id, opt)
-                      : Boolean(solvedAnswer) && getInstantCorrectAnswer(normalizedQuiz, question.id) === opt;
+                      : Boolean(solvedAnswer) && solvedAnswer === opt;
                     const isWrongOption = !isCorrectOption && isPreviouslyWrong;
                     const isQuestionSubmitting = submittingQuestionId === question.id;
                     const isOptionDisabled = isQuizSubmitted || Boolean(solvedAnswer) || isPreviouslyWrong || isQuestionSubmitting;
@@ -420,9 +419,6 @@ function isCorrectReviewOption(result: QuizResult | null, questionId: string, op
   return getReviewItem(result, questionId)?.correctAnswer === option;
 }
 
-function getInstantCorrectAnswer(quiz: TodayQuiz | null, questionId: string) {
-  return quiz?.questions.find((item) => item.id === questionId)?.correctAnswer || null;
-}
 
 function QuizPageSkeleton() {
   return (

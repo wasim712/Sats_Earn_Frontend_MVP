@@ -32,6 +32,7 @@ const PROOF_TYPES = ['SCREENSHOT', 'URL', 'TEXT_RESPONSE', 'API_VERIFIED'];
 const PLATFORMS = ['NONE', 'DESKTOP', 'ANDROID', 'IOS'];
 const PLATFORM_LABELS: Record<string, string> = {
   NONE: 'ALL DEVICES',
+  ALL_DEVICES: 'ALL DEVICES',
   DESKTOP: 'DESKTOP',
   ANDROID: 'ANDROID',
   IOS: 'IOS',
@@ -177,7 +178,7 @@ export default function AddStandaloneTaskPage() {
     setSuccessMsg(null);
 
     const trimmedTitle = formData.title.trim();
-    const trimmedDescription = formData.description.trim();
+    const trimmedDescription = formData.description;
     const trimmedTargetUrl = formData.targetUrl.trim();
 
     if (trimmedTitle.length < 3) {
@@ -471,7 +472,7 @@ export default function AddStandaloneTaskPage() {
                     <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
                   </InputWrap>
 
-                  <InputWrap label="Platform Targeting">
+                  <InputWrap label="Required Device">
                     <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
                       {PLATFORMS.map((item) => <option key={item} value={item}>{PLATFORM_LABELS[item] || item}</option>)}
                     </select>
@@ -497,11 +498,16 @@ export default function AddStandaloneTaskPage() {
                   ) : <div className="hidden md:block" />}
                 </div>
 
-                <div className="mb-8">
-                  <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
-                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
-                      <div className="mb-4">
-                        <input
+                  <div className="mb-8">
+                    <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
+                      <div className="mb-3 flex items-center justify-end">
+                        <span className="inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
+                          Selected Countries [{formData.targetCountries.length}/{countries.length || 196}]
+                        </span>
+                      </div>
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
+                        <div className="mb-4">
+                          <input
                           type="text"
                           value={countrySearch}
                           onChange={(e) => setCountrySearch(e.target.value)}

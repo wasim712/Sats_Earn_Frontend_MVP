@@ -142,11 +142,11 @@ export default function ReferralsPage() {
             <Info className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-200/90">Active Referral Rule</p>
-            <h2 className="mt-1 text-lg font-black text-white">Referral income unlocks after 10 active days</h2>
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-200/90">Referral Activity Status</p>
+            <h2 className="mt-1 text-lg font-black text-white">Active status tracks engagement</h2>
             <p className="mt-2 text-sm leading-7 text-sky-100/80">
               A referred user must be active on at least <strong className="text-white">10 different days in the last 30 days</strong>
-              {' '}to count as active. Only active referrals generate referral income based on your current tier.
+              {' '}to count as active. This active or inactive label is shown for engagement tracking only and does not block referral rewards.
             </p>
           </div>
         </div>

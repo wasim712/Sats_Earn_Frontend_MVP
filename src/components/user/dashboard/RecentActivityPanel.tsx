@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   Activity, ArrowRight, X, Target, Users,
-  ArrowUpRight, AlertTriangle, Gift, Clock
+  ArrowUpRight, AlertTriangle, Gift, Clock,
+  AwardIcon
 } from 'lucide-react';
 import type { UserDashboard } from '@/types/user';
 
@@ -16,6 +17,28 @@ interface RecentActivityPanelProps {
 
 export default function RecentActivityPanel({ activities }: RecentActivityPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const getActivityCategory = (activity: Transaction) => {
+    const type = String(activity.type || '').toUpperCase();
+    const description = String(activity.description || '').toLowerCase();
+
+    if (type === 'WITHDRAWAL' || description.includes('withdrawal')) {
+      return 'WITHDRAWAL';
+    }
+
+    if (
+      type === 'PURCHASED' ||
+      description.includes('premium') ||
+      description.includes('membership') ||
+      description.includes('upgrade using sats') ||
+      description.includes('upgraded to') ||
+      description.includes('purchase')
+    ) {
+      return 'PURCHASED';
+    }
+
+    return type;
+  };
 
   const getDisplayAmount = (activity: Transaction) => {
     const wholeSats = Number(activity.amountSats || 0);
@@ -42,8 +65,8 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
     });
   };
 
-  const getActivityUI = (type: string) => {
-    switch (type) {
+  const getActivityUI = (activity: Transaction) => {
+    switch (getActivityCategory(activity)) {
       case 'TASK_REWARD':
         return { icon: <Target className="w-4 h-4 text-green-400" />, bg: "bg-green-500/10 border-green-500/20", sign: "+" };
       case 'REFERRAL_BONUS':
@@ -56,8 +79,21 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
         return { icon: <ArrowUpRight className="w-4 h-4 text-sats-orange-500" />, bg: "bg-sats-orange-500/10 border-sats-orange-500/20", sign: "-" };
       case 'PENALTY':
         return { icon: <AlertTriangle className="w-4 h-4 text-red-500" />, bg: "bg-red-500/10 border-red-500/20", sign: "-" };
+      case 'PURCHASED':
+        return { icon: <AwardIcon className="w-4 h-4 text-fuchsia-400" />, bg: "bg-fuchsia-500/10 border-fuchsia-500/20", sign: "-" };
       default:
         return { icon: <Activity className="w-4 h-4 text-gray-400" />, bg: "bg-[#1a1a1a] border-[#2a2a2a]", sign: "" };
+    }
+  };
+
+  const getActivityTypeLabel = (activity: Transaction) => {
+    switch (getActivityCategory(activity)) {
+      case 'PURCHASED':
+        return 'Premium Purchase';
+      case 'WITHDRAWAL':
+        return 'Withdrawal';
+      default:
+        return String(activity.type || 'SYSTEM').replace(/_/g, ' ');
     }
   };
 
@@ -75,9 +111,9 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
 
         <div className="min-h-37.5">
           {activities && activities.length > 0 ? (
-            <ul className="space-y-3">
-              {activities.slice(0, 3).map((activity, idx) => {
-                const ui = getActivityUI(activity.type);
+              <ul className="space-y-3">
+                {activities.slice(0, 3).map((activity, idx) => {
+                const ui = getActivityUI(activity);
                 return (
                   <li key={idx} className="flex items-center justify-between p-3 bg-sats-black-950 border border-[#1a1a1a] rounded-xl hover:border-[#2a2a2a] transition-colors">
                     <div className="flex items-center gap-4">
@@ -130,7 +166,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
 
             <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-3">
               {activities.map((activity, idx) => {
-                const ui = getActivityUI(activity.type);
+                const ui = getActivityUI(activity);
                 return (
                   <div key={idx} className="flex items-center justify-between p-4 bg-[#111] border border-[#1a1a1a] rounded-2xl hover:border-[#2a2a2a] transition-colors">
                     <div className="flex items-center gap-4">
@@ -141,7 +177,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         <p className="text-sm font-bold text-white leading-tight">{activity.description || 'System Transaction'}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 bg-sats-black-950 px-2 py-0.5 rounded border border-[#2a2a2a]">
-                            {activity.type.replace(/_/g, ' ')}
+                            {getActivityTypeLabel(activity)}
                           </span>
                           <span className="text-[10px] text-gray-500 font-medium">{formatDate(activity.createdAt)}</span>
                         </div>

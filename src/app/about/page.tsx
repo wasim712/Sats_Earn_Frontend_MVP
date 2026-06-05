@@ -3,14 +3,14 @@ import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
 import { getSiteUrl, SITE_NAME } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: `About ${SITE_NAME}`,
+  title: `About`,
   description:
     'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
   alternates: {
     canonical: getSiteUrl('/about'),
   },
   openGraph: {
-    title: `About ${SITE_NAME}`,
+    title: `About`,
     description:
       'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
     url: getSiteUrl('/about'),

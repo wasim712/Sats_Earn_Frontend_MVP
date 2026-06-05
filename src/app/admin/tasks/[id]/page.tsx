@@ -130,7 +130,7 @@ export default function AdminTaskDetailPage() {
       requiredFreeTier: selectedTask.requiredFreeTier || 'BASIC',
       proofType: selectedTask.proofType || 'SCREENSHOT',
       targetUrl: selectedTask.targetUrl || '',
-      requiredPlatform: selectedTask.requiredPlatform || 'WEBSITE',
+      requiredPlatform: selectedTask.requiredPlatform || 'NONE',
       xpReward: selectedTask.xpReward ?? selectedTask.xpRewardOverride ?? 0,
       tierRewardMatrix: selectedTask.tierRewardMatrix || selectedTask.tierRewardMatrixOverride || {},
       doubleRewardsStartAt: selectedTask.doubleRewardsStartAt ? selectedTask.doubleRewardsStartAt.slice(0, 16) : '',
@@ -203,7 +203,7 @@ export default function AdminTaskDetailPage() {
         taskId,
         data: {
           title: formData.title.trim(),
-          description: formData.description.trim(),
+          description: formData.description,
           category: formData.category,
           coverImageUrl: coverImageUrl || null,
           targetCountries: formData.targetCountries,
@@ -393,6 +393,11 @@ export default function AdminTaskDetailPage() {
 
                 <div className="mb-8">
                   <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
+                  <div className="mb-3 flex items-center justify-end">
+                        <span className="inline-flex items-center rounded-full border border-sats-orange-500/40 bg-sats-orange-500 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
+                          Selected Countries [{formData.targetCountries.length}/{countries.length || 196}]
+                        </span>
+                      </div>
                     <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
                       <div className="mb-4">
                         <input type="text" value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} placeholder="Search countries..." className="w-full rounded-xl border border-[#1a1a1a] bg-black px-4 py-2.5 text-sm font-medium text-white outline-none transition-all focus:border-sats-orange-500/50 focus:bg-[#111]" />
