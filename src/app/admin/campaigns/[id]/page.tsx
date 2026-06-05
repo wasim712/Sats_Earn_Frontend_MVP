@@ -391,11 +391,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
         throw new Error('Task XP cannot be negative.');
       }
 
-      const token = sessionStorage.getItem('sats_token');
-      const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({
+      const payload = {
           title: taskForm.title,
           description: taskForm.description,
           proofType: taskForm.proofType,
@@ -403,11 +399,17 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
           targetUrl: taskForm.targetUrl || undefined,
           xpRewardOverride: Number(taskForm.xpRewardOverride || 0),
           tierRewardMatrixOverride: taskForm.tierRewardMatrixOverride,
-        })
+        }
+      const token = sessionStorage.getItem('sats_token');
+      const res = await obfuscatedFetch(`${API_URL}/admin/campaigns/${id}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
       });
-
+      
       if (!res.ok) {
         const errorData = await parseObfuscatedJson<any>(res);
+        console.log(payload,errorData);
         // Zod validation parser so you see EXACTLY why it failed!
         if (errorData.details) {
           throw new Error(errorData.details.map((d: ValidationIssue) => `${d.path}: ${d.message}`).join(' | '));
