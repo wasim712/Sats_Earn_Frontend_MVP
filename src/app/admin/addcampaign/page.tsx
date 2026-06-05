@@ -304,6 +304,11 @@ export default function AddCampaignPage() {
 
                   <div className="mb-8">
                     <InputWrapper label="Target Countries"> <span className='text-sm text-gray-500'>&nbsp; Leave selection empty to select all countries</span>
+                      <div className="mb-3 flex items-center justify-end">
+                        <span className="inline-flex items-center rounded-full border border-sats-orange-500/40 bg-sats-orange-500 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
+                          Selected Countries [{formData.targetCountries.length}/{countries.length || 196}]
+                        </span>
+                      </div>
                       <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 max-h-56 overflow-y-auto">
                         <div className="flex flex-col sm:flex-row gap-3 mb-4">
                           <input

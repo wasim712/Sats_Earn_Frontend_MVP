@@ -172,7 +172,7 @@ export default function UserDashboardPage() {
     if (showBtc) {
       return (
         <div className="flex items-baseline gap-1">
-          <span className={`text-2xl sm:text-2xl xl:text-3xl font-black tracking-tight`}>{(sats / 100000000).toFixed(8)}</span>
+          <span className={`text-2xl sm:text-3xl lg:text-2xl font-black tracking-tight`}>{(sats / 100000000).toFixed(9)}</span>
           <span className="text-2xl font-bold text-gray-300 mb-1">BTC</span>
         </div>
       );

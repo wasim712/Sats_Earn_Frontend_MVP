@@ -11,6 +11,10 @@ export default function AdminStandaloneTasksPage() {
   const { tasks, isLoading, error } = useAppSelector((state) => state.adminTasks);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const getTaskPlatform = (task: any) => {
+    return task.requiredPlatform || task.platform || task.deviceTarget || task.requirements?.requiredPlatform || 'NONE';
+  };
+
   useEffect(() => {
     dispatch(fetchStandaloneTasks());
   }, [dispatch]);
@@ -26,7 +30,7 @@ export default function AdminStandaloneTasksPage() {
       return task.title.toLowerCase().includes(normalizedSearch)
         || (task.description || '').toLowerCase().includes(normalizedSearch)
         || String(task.proofType || '').toLowerCase().includes(normalizedSearch)
-        || String(task.requiredPlatform || '').toLowerCase().includes(normalizedSearch);
+        || String(getTaskPlatform(task) || '').toLowerCase().includes(normalizedSearch);
     });
   }, [tasks, searchQuery]);
 
@@ -112,7 +116,7 @@ export default function AdminStandaloneTasksPage() {
 
                 <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
                   <span className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 text-gray-300">{task.proofType || 'SCREENSHOT'}</span>
-                  <span className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 text-gray-300">{task.requiredPlatform || 'NONE'}</span>
+                  <span className="rounded-full border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 text-gray-300">{getTaskPlatform(task)}</span>
                   <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">XP {task.xpReward ?? task.xpRewardOverride ?? 0}</span>
                 </div>
 

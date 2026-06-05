@@ -569,7 +569,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   {!isEditing ? (
                     <>
                       <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight truncate mb-2">{campaign.title}</h1>
-                      <p className="text-gray-400 leading-relaxed text-sm md:text-base">{campaign.description}</p>
+                      <p className="text-gray-400 leading-relaxed whitespace-pre-line text-sm md:text-base">{campaign.description}</p>
                     </>
                   ) : (
                     <div className="space-y-4">
@@ -738,11 +738,16 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           </span>
                         )) : <span className="text-gray-500 text-sm">All countries</span>}
                       </div>
-                    ) : (
-                      <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 space-y-4 col-span-2 w-full">
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
-                          <input
-                            type="text"
+                      ) : (
+                        <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 space-y-4 col-span-2 w-full">
+                          <div className="flex items-center justify-end">
+                            <span className="inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
+                              Selected Countries [{editForm.targetCountries?.length || 0}/{countries.length || 196}]
+                            </span>
+                          </div>
+                          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+                            <input
+                              type="text"
                             value={countrySearch}
                             onChange={(e) => setCountrySearch(e.target.value)}
                             placeholder="Search countries..."
@@ -1155,7 +1160,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                                 Reward Table
                               </span>
                             </div>
-                            <p className="text-sm text-gray-400 leading-relaxed ml-9">{task.description}</p>
+                              <p className="text-sm text-gray-400 leading-relaxed whitespace-pre-line ml-9">{task.description}</p>
                             
                             <div className="flex items-center gap-3 mt-4 ml-9 flex-wrap">
                               <span className="px-2.5 py-1 bg-[#111] border border-[#2a2a2a] rounded-md text-[10px] font-bold text-gray-300 uppercase tracking-wider">

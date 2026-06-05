@@ -497,11 +497,16 @@ export default function AddStandaloneTaskPage() {
                   ) : <div className="hidden md:block" />}
                 </div>
 
-                <div className="mb-8">
-                  <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
-                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
-                      <div className="mb-4">
-                        <input
+                  <div className="mb-8">
+                    <InputWrap label="Target Countries" hint="Leave selection empty to allow all countries">
+                      <div className="mb-3 flex items-center justify-end">
+                        <span className="inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
+                          Selected Countries [{formData.targetCountries.length}/{countries.length || 196}]
+                        </span>
+                      </div>
+                      <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4 max-h-72 overflow-y-auto">
+                        <div className="mb-4">
+                          <input
                           type="text"
                           value={countrySearch}
                           onChange={(e) => setCountrySearch(e.target.value)}
