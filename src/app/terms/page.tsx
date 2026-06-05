@@ -3,7 +3,7 @@ import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
 import { getSiteUrl, SITE_NAME } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} Terms & Conditions`,
+  title: `Terms & Conditions`,
   description:
     'Review the basic terms, account expectations, reward conditions, and anti-abuse rules for using SatsEarn.',
   alternates: {

@@ -32,6 +32,7 @@ const PROOF_TYPES = ['SCREENSHOT', 'URL', 'TEXT_RESPONSE', 'API_VERIFIED'];
 const PLATFORMS = ['NONE', 'DESKTOP', 'ANDROID', 'IOS'];
 const PLATFORM_LABELS: Record<string, string> = {
   NONE: 'ALL DEVICES',
+  ALL_DEVICES: 'ALL DEVICES',
   DESKTOP: 'DESKTOP',
   ANDROID: 'ANDROID',
   IOS: 'IOS',
@@ -471,7 +472,7 @@ export default function AddStandaloneTaskPage() {
                     <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
                   </InputWrap>
 
-                  <InputWrap label="Platform Targeting">
+                  <InputWrap label="Required Device">
                     <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
                       {PLATFORMS.map((item) => <option key={item} value={item}>{PLATFORM_LABELS[item] || item}</option>)}
                     </select>

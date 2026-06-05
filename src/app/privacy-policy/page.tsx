@@ -3,7 +3,7 @@ import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
 import { getSiteUrl, SITE_NAME } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} Privacy Policy`,
+  title: `Privacy Policy`,
   description:
     'Read how SatsEarn collects, uses, and protects account, usage, and support information.',
   alternates: {
