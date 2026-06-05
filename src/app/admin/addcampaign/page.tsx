@@ -175,7 +175,7 @@ export default function AddCampaignPage() {
     // Strict Payload Generation to match Zod exactly
     const payload = {
       title: formData.title.trim(),
-      description: formData.description.trim(),
+      description: formData.description,
       category: formData.category,
       coverImageUrl: coverImageUrl || undefined,
       targetCountries: formData.targetCountries,

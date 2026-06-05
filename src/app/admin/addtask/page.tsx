@@ -177,7 +177,7 @@ export default function AddStandaloneTaskPage() {
     setSuccessMsg(null);
 
     const trimmedTitle = formData.title.trim();
-    const trimmedDescription = formData.description.trim();
+    const trimmedDescription = formData.description;
     const trimmedTargetUrl = formData.targetUrl.trim();
 
     if (trimmedTitle.length < 3) {

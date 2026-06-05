@@ -318,7 +318,7 @@ export default function CampaignDetailsPage() {
             <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug mb-3">
               {campaign.title}
             </h1>
-            <p className="text-sm md:text-base text-white/40 leading-relaxed max-w-xl mb-6">
+            <p className="text-sm md:text-base text-white/40 leading-relaxed whitespace-pre-line max-w-xl mb-6">
               {campaign.description}
             </p>
 

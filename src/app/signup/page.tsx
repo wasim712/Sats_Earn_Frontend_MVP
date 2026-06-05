@@ -2,7 +2,7 @@
 import SignupForm from '@/features/auth/components/SignupForm';
 
 export const metadata = {
-  title: 'Sign Up | SatsEarn',
+  title: 'Sign Up',
   description: 'Create your account and start earning Bitcoin in minutes.',
 };
 

@@ -203,7 +203,7 @@ export default function AdminTaskDetailPage() {
         taskId,
         data: {
           title: formData.title.trim(),
-          description: formData.description.trim(),
+          description: formData.description,
           category: formData.category,
           coverImageUrl: coverImageUrl || null,
           targetCountries: formData.targetCountries,

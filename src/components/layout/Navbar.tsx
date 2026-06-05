@@ -17,7 +17,7 @@ export const Navbar = () => {
     { name: 'Features', href: '/#features' },
     { name: 'How It Works', href: '/#how-it-works' },
     { name: 'Ways to Earn', href: '/#ways-to-earn' },
-    { name: 'For Brands', href: '/#brands' },
+    { name: 'Rewards', href: '/rewards' },
     { name: 'FAQ', href: '/#faq' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },

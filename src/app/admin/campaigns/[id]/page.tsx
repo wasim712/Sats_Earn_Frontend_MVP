@@ -301,7 +301,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
     const payload = {
       title: editForm.title.trim(),
-      description: editForm.description.trim(),
+      description: editForm.description,
       category: editForm.category,
       coverImageUrl: coverImageUrl?.trim() || null,
       targetCountries: editForm.targetCountries || [],
