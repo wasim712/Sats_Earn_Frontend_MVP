@@ -8,13 +8,14 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import VerifyOtp from './VerifyOtp';
 import { LogoText } from '@/components/ui/LogoText';
 import { 
-  User, Mail, Calendar, MapPin, Lock, AtSign, ArrowRight, Eye, EyeOff, 
+  User, Mail, MapPin, Lock, AtSign, ArrowRight, Eye, EyeOff, 
   CheckCircle2, Circle, Gift, Search, ChevronDown, AlertTriangle, Loader2, XCircle 
 } from 'lucide-react';
 import Image from 'next/image';
 import { requestSignupOtp , verifySignupOtp, goBackToStep1, resetAuthError} from '../authSlice';
 import DatePickerInput from './DatePickerInput';
 import { fetchCountries } from '@/features/admin/adminCountriesSlice';
+import { validateEmailSecurity } from '@/lib/validators';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -24,12 +25,6 @@ const RuleItem = ({ met, text }: { met: boolean, text: string }) => (
     <span>{text}</span>
   </div>
 );
-const getThirteenYearsAgoDate = () => {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() - 13);
-  return d.toISOString().split("T")[0];
-};
-
 export default function SignupForm() {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -39,7 +34,10 @@ export default function SignupForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [toast, setToast] = useState({ show: false, message: '' });
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'loading' | 'available' | 'taken'>('idle');
-
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [isValidated, setIsValidated] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const validatedEmailRef = useRef<string>('');
   const getReferralFromUrl = () => {
     if (typeof window === "undefined") return "";
     const params = new URLSearchParams(window.location.search);
@@ -102,7 +100,7 @@ export default function SignupForm() {
         } else {
           setUsernameStatus('idle');
         }
-      } catch (err) {
+      } catch {
         setUsernameStatus('idle');
       }
     };
@@ -114,6 +112,7 @@ export default function SignupForm() {
   // ERROR INTERCEPTOR (For existing accounts)
   useEffect(() => {
     if (error && (error.toLowerCase().includes('already') || error.toLowerCase().includes('exist'))) {
+      const syncErrorState = window.setTimeout(() => {
       if (error.toLowerCase().includes('username')) {
         setUsernameStatus('taken');
         setFormError("Username is already taken.");
@@ -122,6 +121,9 @@ export default function SignupForm() {
         dispatch(resetAuthError());
         setTimeout(() => router.push('/login'), 3000);
       }
+      }, 0);
+
+      return () => window.clearTimeout(syncErrorState);
     }
   }, [error, dispatch, router]);
 
@@ -146,13 +148,52 @@ export default function SignupForm() {
 
     setFormData({ ...formData, [name]: filteredValue });
     setFormError(null); 
+
+    if (name === 'email') {
+      setEmailError(null);
+      setIsValidated(false);
+      setIsChecking(false);
+    }
   };
+
+const handleEmailBlur = async () => {
+  const raw = formData.email.trim();
+ 
+  // Don't fire for obviously incomplete addresses — saves API quota
+  if (!raw || raw.length < 6 || !raw.includes('@')) {
+    if (!raw) {
+      setEmailError('Email address is required.');
+      setIsValidated(false);
+    }
+    return;
+  }
+ 
+  // Already validated this exact value — no need to re-check
+  if (isValidated && validatedEmailRef.current === raw.toLowerCase()) return;
+ 
+  setIsChecking(true);
+  setEmailError(null);
+  setIsValidated(false);
+ 
+  const result = await validateEmailSecurity(raw);
+ 
+  setEmailError(result.error);
+  setIsValidated(result.isValid);
+  setIsChecking(false);
+ 
+  if (result.isValid) {
+    validatedEmailRef.current = raw.toLowerCase();
+  }
+};
 
   const validateForm = () => {
     if (formData.fullName.trim().length < 2) return "Full Name must be at least 2 characters.";
     if (formData.username.length < 3) return "Username must be at least 3 characters.";
     if (formData.username.length > 10) return "Username must be at less than 10 characters.";
     if (usernameStatus === 'taken') return "Please choose a different username.";
+    if (!formData.email.trim()) return "Email address is required.";
+    if (emailError) return emailError;
+    if (!isValidated) return "Please verify your email before continuing.";
     
     if (formData.dateOfBirth.length === 10) {
       const [day, month, year] = formData.dateOfBirth.split('/');
@@ -175,38 +216,63 @@ export default function SignupForm() {
     return null; 
   };
 
-  const handleStep1Submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-
-    const validationError = validateForm();
-    if (validationError) {
-      setFormError(validationError);
+const handleStep1Submit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setFormError(null);
+ 
+  const validationError = validateForm();
+  if (validationError) {
+    setFormError(validationError);
+    return;
+  }
+ 
+  if (!isPasswordValid || usernameStatus === 'taken') return;
+ 
+  const rawEmail = formData.email.trim();
+  const cleanEmail = rawEmail.toLowerCase();
+ 
+  // ── Email security check ───────────────────────────────────────────────────
+  // Skip the async validator if the email was already validated on blur
+  // and the value hasn't changed since. Otherwise run it now (covers the
+  // edge-case where a user fills the form without triggering onBlur).
+  if (!isValidated || validatedEmailRef.current !== cleanEmail) {
+    setIsChecking(true);
+    const emailCheck = await validateEmailSecurity(rawEmail);
+    setIsChecking(false);
+ 
+    if (!emailCheck.isValid) {
+      setEmailError(emailCheck.error);
+      setIsValidated(false);
+      setFormError(emailCheck.error);
       return;
     }
-    if (!isPasswordValid || usernameStatus === 'taken') return; 
-
-    // PRE-FLIGHT EMAIL CHECK
-    try {
-      const res = await fetch(`${API_URL}/users/check-email?email=${formData.email}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.exists || !data.available) {
-           setToast({ show: true, message: 'Account found. Redirecting...' });
-           setTimeout(() => router.push('/login'), 3000);
-           return; 
-        }
+ 
+    setEmailError(null);
+    setIsValidated(true);
+    validatedEmailRef.current = cleanEmail;
+  }
+ 
+  // ── Pre-flight: check if account already exists ───────────────────────────
+  try {
+    const res = await fetch(`${API_URL}/users/check-email?email=${encodeURIComponent(cleanEmail)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.exists || !data.available) {
+        setToast({ show: true, message: 'Account found. Redirecting...' });
+        setTimeout(() => router.push('/login'), 3000);
+        return;
       }
-    } catch (e) {
-      // Catch if endpoint isn't ready
     }
-
-    const [day, month, year] = formData.dateOfBirth.split('/');
-    const formattedDate = `${year}-${month}-${day}`;
-
-    dispatch(requestSignupOtp({ ...formData, dateOfBirth: formattedDate }));
-  };
-
+  } catch {
+    // Endpoint not ready — continue with signup; server will catch duplicates
+  }
+ 
+  // ── Dispatch OTP request ──────────────────────────────────────────────────
+  const [day, month, year] = formData.dateOfBirth.split('/');
+  const formattedDate = `${year}-${month}-${day}`;
+ 
+  dispatch(requestSignupOtp({ ...formData, email: cleanEmail, dateOfBirth: formattedDate }));
+};
   const handleOtpSubmit = (otp: string) => {
     if (!tempData?.email) return;
 
@@ -314,8 +380,21 @@ export default function SignupForm() {
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <Mail className="h-4 w-4 text-gray-500" />
                       </div>
-                      <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required className="w-full bg-[#050505] border border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-1 focus:ring-sats-orange-500 rounded-xl py-3 pl-10 pr-4 outline-none transition-all text-white placeholder-gray-600" />
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={() => { void handleEmailBlur(); }} placeholder="Enter your email" required className={`w-full bg-[#050505] border ${emailError ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500' : 'border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-sats-orange-500'} focus:ring-1 rounded-xl py-3 pl-10 pr-10 outline-none transition-all text-white placeholder-gray-600`} />
+                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                        {isChecking && <Loader2 className="w-4 h-4 text-sats-orange-500 animate-spin" />}
+                        {!isChecking && isValidated && <CheckCircle2 className="w-4 h-4 text-green-500 animate-in zoom-in-75 duration-200" />}
+                      </div>
                     </div>
+                    {emailError && (
+                      <p className="animate-in fade-in slide-in-from-top-1 mt-2 flex items-start gap-2 text-xs text-red-400 duration-200">
+                        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                        <span>{emailError}</span>
+                      </p>
+                    )}
+                    {isChecking && !emailError && (
+                      <p className="mt-2 text-xs text-sats-orange-400">Checking email security...</p>
+                    )}
                   </div>
                 </div>
                 {/* ddddddddddd */}
@@ -419,7 +498,7 @@ export default function SignupForm() {
                       </span>
                     </button>
 
-                    <button type="submit" disabled={isLoading || !isPasswordValid || usernameStatus === 'taken' || !hasAcceptedTerms} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-base rounded-xl py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
+                    <button type="submit" disabled={isLoading || !isPasswordValid || usernameStatus === 'taken' || isChecking || !isValidated || !hasAcceptedTerms} className="w-full bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-extrabold text-base rounded-xl py-4 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_20px_rgba(238,139,18,0.2)] active:scale-[0.98]">
                       {isLoading ? 'Processing...' : 'Create Account'}
                       {!isLoading && <ArrowRight className="ml-2 w-5 h-5" />}
                     </button>

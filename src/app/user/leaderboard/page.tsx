@@ -75,13 +75,6 @@ function getTrendMeta(rank: number) {
   return { text: '+2%', tone: 'text-gray-400' };
 }
 
-function getTasksCompleted(rank: number, value: number, mode: LeaderboardTab) {
-  if (mode === 'streaks') {
-    return Math.max(3, Math.round(value * 1.6));
-  }
-  return Math.max(2, Math.round(value / 120));
-}
-
 function SectionPill({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon: React.ReactNode }) {
   return (
     <button
@@ -125,43 +118,56 @@ function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: L
       {ordered.map((entry) => {
         const style = topRankStyles[entry.rank as 1 | 2 | 3] ?? topRankStyles[3];
         const metricLabel = mode === 'streaks' ? 'Current Streak' : 'Earned';
-        const secondaryLabel = mode === 'streaks' ? 'Longest Streak' : 'Tasks Completed';
-        const secondaryValue = mode === 'streaks' ? `${entry.value + Math.max(2, 8 - entry.rank)} Days` : `${getTasksCompleted(entry.rank, entry.value, mode)} Tasks`;
 
         return (
           <div
             key={`${mode}-top-${entry.userId}`}
-            className={`rounded-[24px] border bg-[linear-gradient(180deg,rgba(13,13,13,0.96),rgba(7,7,7,0.98))] p-4 transition-colors hover:border-sats-orange-500/25 hover:bg-[linear-gradient(180deg,rgba(16,16,16,0.98),rgba(9,9,9,0.98))] ${style.border} ${style.glow} sm:min-h-[220px] ${style.scale}`}
+            className={`group relative flex flex-col overflow-hidden rounded-[28px] border bg-[linear-gradient(180deg,rgba(15,15,15,0.96),rgba(5,5,5,0.98))] p-5 sm:p-6 transition-all duration-400 hover:-translate-y-1.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(8,8,8,0.98))] ${style.border} ${style.glow} sm:min-h-50 ${style.scale}`}
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-black ${style.badge}`}>
-                <span>{style.medal}</span>
-                <span>Rank #{entry.rank}</span>
-              </span>
-              <span className={`text-lg ${style.iconTone}`}>{style.medal}</span>
-            </div>
+            {/* Ambient Corner Glow */}
+            <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-white/5 blur-[40px] transition-colors duration-500 group-hover:bg-white/10" />
 
-            <div className="flex items-center gap-4">
-              <Avatar entry={entry} size="lg" />
-              <div className="min-w-0">
-                <p className="truncate text-lg font-black text-white">{entry.fullName}</p>
-                <p className="truncate text-sm text-gray-500">@{entry.username}</p>
+            {/* Header: Rank & Medal */}
+            <div className="relative z-10 mb-5 flex items-start justify-between gap-3">
+              <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] backdrop-blur-md shadow-sm ${style.badge}`}>
+                <span className="drop-shadow-sm">{style.medal}</span>
+                <span>Rank #{entry.rank}</span>
+              </div>
+              <div className={`text-2xl drop-shadow-md transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12 ${style.iconTone}`}>
+                {style.medal}
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-[#1b1b1b] bg-black/30 p-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-gray-500">{metricLabel}</p>
-                <p className="mt-2 text-lg font-black text-white">
-                  {formatCompactValue(entry.value)}
-                  <span className="ml-1 text-sm text-gray-400">{mode === 'streaks' ? 'Days' : 'Sats'}</span>
+            {/* User Profile Info */}
+            <div className="relative z-10 flex items-center gap-4">
+              <div className="shrink-0 rounded-full transition-transform duration-500 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]">
+                <Avatar entry={entry} size="lg" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-lg font-black text-white tracking-tight">{entry.fullName}</p>
+                <p className="truncate text-sm font-medium text-gray-500 transition-colors duration-300 group-hover:text-gray-400">
+                  @{entry.username}
                 </p>
               </div>
-              <div className="rounded-2xl border border-[#1b1b1b] bg-black/30 p-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-gray-500">{secondaryLabel}</p>
-                <p className="mt-2 text-sm font-black text-gray-200">{secondaryValue}</p>
+            </div>
+
+            {/* Primary Metric Plaque */}
+            <div className="relative z-10 mt-auto pt-6 w-full">
+              <div className="flex w-full flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.02] p-4 shadow-inner backdrop-blur-sm transition-colors duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04]">
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">
+                  {metricLabel}
+                </p>
+                <div className="mt-1.5 flex items-baseline gap-1.5">
+                  <p className={`text-2xl font-black tracking-tight drop-shadow-md ${style.iconTone}`}>
+                    {formatCompactValue(entry.value)}
+                  </p>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                    {mode === 'streaks' ? 'Days' : 'Sats'}
+                  </span>
+                </div>
               </div>
             </div>
+            
           </div>
         );
       })}
