@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { HeroSection } from '@/features/landing/components/HeroSection';
 import { Features } from '@/features/landing/components/Features';
 import { WaysToEarn } from '@/features/landing/components/WaysToEarn';
@@ -6,10 +6,14 @@ import { Advertise } from '@/features/landing/components/Advertise';
 import { FAQ } from '@/components/layout/Faq';
 import { CTASection } from '@/components/layout/CtaSection';
 import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
+import { ReferralParamStorage } from '@/components/referral/ReferralParamStorage';
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
+      <Suspense fallback={null}>
+        <ReferralParamStorage />
+      </Suspense>
       <HeroSection />
       
       {/* ─── TRUST & TRANSPARENCY SECTION ─── */}

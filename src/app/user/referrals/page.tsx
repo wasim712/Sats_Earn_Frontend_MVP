@@ -115,7 +115,7 @@ export default function ReferralsPage() {
     );
   }
 
-  const referralUrl = `https://satsearn.app/signup?ref=${data.referralCode}`;
+  const referralUrl = `https://satsearn.app/?ref=${data.referralCode}`;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
