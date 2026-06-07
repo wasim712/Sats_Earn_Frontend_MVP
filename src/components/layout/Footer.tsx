@@ -71,14 +71,14 @@ const SOCIAL_LINKS = [
     name: 'Telegram',
     href: 'https://t.me/satsearnapp',
     icon: (
-      <Image src="./telelogo.svg" height={22} width={22} alt='telegram logo' className='grayscale-100 hover:grayscale-0 hover:scale-105'>
+      <Image src="./telelogo.svg" height={22} width={22} alt='telegram logo' className='grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
 
       </Image>
     ),
   },
   {
     name: 'Instagram',
-    href: '#',
+    href: 'https://www.instagram.com/satsearn.app/',
     icon: (
       <div className="group">
         <svg
@@ -94,6 +94,15 @@ const SOCIAL_LINKS = [
           />
         </svg>
       </div>
+    ),
+  },
+  {
+    name: 'Discord',
+    href: 'https://discord.gg/VX4cB2xTnZ',
+    icon: (
+      <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className=' grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
+
+      </Image>
     ),
   },
 ];

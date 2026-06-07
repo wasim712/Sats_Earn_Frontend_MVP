@@ -132,11 +132,9 @@ export default function UserMiniGamesPage() {
             
             {/* Top Badges */}
             <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-sats-orange-400 backdrop-blur-md">
-                <Zap className="h-3.5 w-3.5" /> ~10 SATS
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" /> LIVE
+            
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-black/60 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" /> LIVE
               </span>
             </div>
 
@@ -149,11 +147,7 @@ export default function UserMiniGamesPage() {
                 Eat sats to grow, avoid inflation traps!
               </p>
 
-              <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)] animate-pulse" />
-                  Playable Now
-                </div>
+              <div className="mt-5 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
                 <div className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sats-orange-500 to-orange-400 px-5 py-3 text-sm font-black text-black shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-transform group-hover:scale-105 active:scale-95">
                   <Zap className="h-4 w-4" /> Play
                   <ChevronRight className="h-4 w-4" />

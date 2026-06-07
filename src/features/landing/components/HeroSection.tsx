@@ -10,7 +10,7 @@ export const HeroSection = () => {
   const router = useRouter();
 
   return (
-    <section className="relative overflow-visible px-4 flex flex-col items-center w-full justify-center pt-8 pb-8  sm:pb-20" id="how-it-works">
+    <section className="relative overflow-visible px-4 flex flex-col items-center w-full justify-center  sm:pb-15" id="how-it-works">
       
       <div className="w-full max-w-[1300px] mx-auto flex flex-col">
 
