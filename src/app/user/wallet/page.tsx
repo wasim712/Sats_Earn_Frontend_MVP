@@ -293,7 +293,7 @@ export default function UserWithdrawalsPage() {
             <Clock className="w-4 h-4 text-yellow-500" />
             <p className="text-xs font-black uppercase tracking-widest text-gray-500">Pending AI Review</p>
           </div>
-          <h3 className="text-3xl font-black text-white">{balances?.pending.toLocaleString() || 0}</h3>
+          <h3 className="text-3xl font-black text-white">{balances?.pending.toLocaleString() || 0} <span>sats</span></h3>
         </div>
 
         <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6">
@@ -301,7 +301,7 @@ export default function UserWithdrawalsPage() {
             <Shield className="w-4 h-4 text-blue-500" />
             <p className="text-xs font-black uppercase tracking-widest text-gray-500">Security Lock (15D)</p>
           </div>
-          <h3 className="text-3xl font-black text-white">{balances?.locked.toLocaleString() || 0}</h3>
+          <h3 className="text-3xl font-black text-white">{balances?.locked.toLocaleString() || 0} <span>sats</span></h3>
         </div>
       </div>
 
