@@ -135,6 +135,10 @@ body::before{
   box-shadow:0 4px 20px rgba(247,147,26,.35);transition:transform .1s,box-shadow .1s;
   min-width:140px;
 }
+.brevive{
+  display: none;
+}
+
 .btn:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(247,147,26,.5);}
 .btn:active{transform:translateY(0);}
 .btn2{background:transparent;color:var(--or);border:1px solid rgba(247,147,26,.4);box-shadow:none;}
@@ -572,7 +576,7 @@ body::before{
       <div id="srwd" style="display:none;">⚡ <span id="sr-n">0</span> SATS EARNED!</div>
       <div id="xprwd">🔮 +5 XP EARNED!</div>
       <div id="death-reason"></div>
-      <button class="btn btn2" id="brevive" style="display:none;">▶ WATCH AD / CONTINUE</button>
+      <button class="brevive" id="brevive"></button>
       <button class="btn" id="brt">↺ PLAY AGAIN</button>
       <div class="ovs" style="font-size:11px;max-width:none;">Press <strong style="color:var(--txt)">Enter</strong> to restart or <strong style="color:var(--txt)">Space</strong> to start a fresh run.</div>
     </div>

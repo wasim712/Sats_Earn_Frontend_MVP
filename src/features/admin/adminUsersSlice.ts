@@ -63,6 +63,11 @@ async function normalizeUserDetail(data: unknown): Promise<AdminUserDetail> {
     decryptIpField(detail.lastIpAddress),
   ]);
 
+  // console.log('Admin user detail IPs', {
+  //   registrationIp,
+  //   lastIpAddress,
+  // });
+
   return {
     ...detail,
     registrationIp,

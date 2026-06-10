@@ -260,9 +260,9 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                           {statusUi.label}
                         </span>
                         <p className="mt-2 text-sm font-black text-green-400">+{(submission.rewardSats || 0).toLocaleString()} sats</p>
-                        {submission.status === 'LOCKED_15D' && (submission.remainingMs || 0) > 0 && (
+                        {/* {submission.status === 'LOCKED_15D' && (submission.remainingMs || 0) > 0 && (
                           <p className="mt-1 text-[11px] text-yellow-400">Unlocks in {formatRemainingTime(submission.remainingMs || 0)}</p>
-                        )}
+                        )} */}
                     </div>
                       </div>
                     </div>

@@ -11,7 +11,7 @@
   const SOCIAL_LINKS = [
     {
       name: 'X (Twitter)',
-      href: 'https://twitter.com/satsearn',
+      href: 'https://x.com/satsearn',
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -57,13 +57,13 @@
           height={22}
           width={22}
           alt="Telegram logo"
-          className="grayscale hover:grayscale-0 hover:scale-105 transition-all duration-300"
+          className="grayscale hover:grayscale-0 hover:scale-110 transition-all duration-300"
         />
       ),
     },
     {
       name: 'Instagram',
-      href: '#',
+      href: 'https://www.instagram.com/satsearn.app/',
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -78,6 +78,15 @@
         </svg>
       ),
     },
+    {
+        name: 'Discord',
+        href: 'https://discord.gg/VX4cB2xTnZ',
+        icon: (
+          <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className=' grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
+    
+          </Image>
+        ),
+      },
   ];
 
   // ─── Props ────────────────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@ export const HeroSection = () => {
   const router = useRouter();
 
   return (
-    <section className="relative overflow-visible px-4 flex flex-col items-center w-full justify-center pt-8 pb-8  sm:pb-20" id="how-it-works">
+    <section className="relative overflow-visible px-4 flex flex-col items-center w-full justify-center" id="how-it-works">
       
       <div className="w-full max-w-[1300px] mx-auto flex flex-col">
 
@@ -41,7 +41,7 @@ export const HeroSection = () => {
               <Button 
                 size="lg" 
                 onClick={() => router.push('/signup')} 
-                className="group w-full sm:w-auto text-base sm:text-lg font-bold py-6 px-8 rounded-xl bg-sats-orange-500 text-white hover:bg-orange-500 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(249,115,22,0.25)] border-none"
+                className="group w-full sm:w-auto text-base sm:text-lg font-bold rounded-xl bg-sats-orange-500 text-white hover:bg-orange-500 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(249,115,22,0.25)] border-none"
               >
                 Start Earning Free
                 <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />

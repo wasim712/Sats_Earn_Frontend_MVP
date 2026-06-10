@@ -377,9 +377,6 @@ export default function CampaignDetailsPage() {
             <h2 className="text-sm font-bold text-white/50 uppercase tracking-widest">
               Tasks to Complete
             </h2>
-            <span className="text-[10px] text-white/20 font-medium">
-              {totalTasks} task{totalTasks !== 1 ? 's' : ''}
-            </span>
           </div>
 
           {orderedTasks.length === 0 ? (

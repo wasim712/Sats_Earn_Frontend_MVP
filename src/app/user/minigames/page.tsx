@@ -105,59 +105,125 @@ export default function UserMiniGamesPage() {
       </section>
 
       {/* ─── GAMES GRID ─── */}
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch">
+      <section className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-5 items-stretch">
         
-        {/* FEATURED GAME CARD (SAT-WORM) */}
+        {/* ─── MOBILE CARD (Visible ONLY on screens smaller than 'md') ─── */}
         <button
           type="button"
           onClick={() => setActiveGame('sat-worm')}
-          className="group text-left rounded-[32px] border border-sats-orange-500/30 bg-[#050505] relative overflow-hidden transition-all duration-500 hover:border-sats-orange-500/60 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(249,115,22,0.12)] hover:shadow-[0_25px_50px_rgba(249,115,22,0.2)] flex flex-col min-h-[340px]"
+          className="md:hidden group text-left rounded-[24px] border border-sats-orange-500/40 bg-[#050505] relative overflow-hidden transition-all duration-300 active:scale-[0.98] flex flex-col w-full min-h-[340px] shadow-[0_15px_40px_rgba(249,115,22,0.12)]"
         >
-          {/* Background Image Layer: Set to 'contain' at the 'top' so the full worm is visible */}
+          {/* Mobile Background Image: Pinned to top, taking top half */}
           <div
-            className="absolute inset-x-0 top-0 h-[50%] z-0 transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-x-0 top-0 h-[60%] z-0 transition-transform duration-700 ease-out group-active:scale-105"
             style={{
               backgroundImage: "url('/minigames/snake_game.png')",
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundPosition: 'top center',
               backgroundRepeat: 'no-repeat',
             }}
           />
-          
-          {/* Gradients to seamlessly blend the image bottom into the black card bottom */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-transparent to-transparent h-[30%]" />
-          <div className="absolute inset-x-0 bottom-0 z-0 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent h-[65%]" />
-          
-          <div className="relative z-10 p-6 sm:p-7 flex flex-col h-full w-full">
+
+          {/* Mobile Gradients: Heavy bottom-up fade for perfect text readability */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent h-[75%] mt-auto" />
+
+          {/* Mobile Content: Pushed safely to the bottom */}
+          <div className="relative z-10 p-5 flex flex-col w-full mt-auto items-start">
             
-            {/* Top Badges */}
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-sats-orange-400 backdrop-blur-md">
-                <Zap className="h-3.5 w-3.5" /> ~10 SATS
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" /> LIVE
+            {/* Top Badge: Purple 5 XP */}
+            <div className="flex   mb-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 backdrop-blur-md shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+                <Zap className="h-3.5 w-3.5" fill="currentColor" /> 5 XP
               </span>
             </div>
 
-            {/* Bottom Content Area - Reduced top margin to pull it closer to the image */}
-            <div className="mt-auto pt-6">
-              <h2 className="text-[32px] font-black text-white tracking-tight drop-shadow-lg group-hover:text-sats-orange-400 transition-colors duration-300">
+            {/* Title & Subtitle */}
+            <div>
+              <h2 className="text-[28px] font-black text-sats-orange-500 tracking-tight drop-shadow-lg leading-none">
                 SAT-WORM
               </h2>
-              <p className="mt-1 text-sm text-gray-300 font-medium max-w-[90%]">
+              <p className="mt-2 text-[13px] text-gray-300 font-medium leading-relaxed drop-shadow-md pr-4">
                 Eat sats to grow, avoid inflation traps!
               </p>
+            </div>
 
-              <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)] animate-pulse" />
-                  Playable Now
-                </div>
-                <div className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sats-orange-500 to-orange-400 px-5 py-3 text-sm font-black text-black shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-transform group-hover:scale-105 active:scale-95">
-                  <Zap className="h-4 w-4" /> Play
-                  <ChevronRight className="h-4 w-4" />
-                </div>
+            {/* Bottom Row */}
+            <div className="mt-6 flex items-center justify-between gap-3 w-full border-t border-white/10 pt-4">
+              {/* Live Now Indicator */}
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_rgba(52,211,153,0.9)]"></span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
+                  LIVE NOW
+                </span>
+              </div>
+
+              {/* Play Button */}
+              <div className="inline-flex items-center gap-1.5 rounded-xl bg-sats-orange-500 px-5 py-2.5 text-sm font-black text-black shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+                <Zap className="h-4 w-4" fill="currentColor" /> Play
+              </div>
+            </div>
+          </div>
+        </button>
+
+        {/* ─── DESKTOP CARD (Visible ONLY on 'md' screens and larger) ─── */}
+        <button
+          type="button"
+          onClick={() => setActiveGame('sat-worm')}
+          className="hidden md:flex group text-left rounded-[24px] border border-sats-orange-500/40 bg-[#050505] relative overflow-hidden transition-all duration-500 hover:border-sats-orange-500/80 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(249,115,22,0.12)] hover:shadow-[0_25px_50px_rgba(249,115,22,0.25)] flex-col min-h-[300px] w-full"
+        >
+          {/* Background Image Layer */}
+          <div
+            className="absolute inset-0 z-0 transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{
+              backgroundImage: "url('/minigames/snake_game.png')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'right center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          
+          {/* Smart Gradients to fade image into black on the left and bottom for text readability */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent w-[85%]" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent h-full" />
+          
+          <div className="relative z-10 p-6 lg:p-7 flex flex-col h-full w-full">
+            
+            {/* Top Badge: Purple 5 XP */}
+            <div className="flex items-start mb-5">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 backdrop-blur-md shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+                <Zap className="h-3.5 w-3.5" fill="currentColor" /> 5 XP
+              </span>
+            </div>
+
+            {/* Title & Subtitle */}
+            <div className="mb-auto max-w-[80%]">
+              <h2 className="text-[32px] font-black text-sats-orange-500 tracking-tight drop-shadow-lg">
+                SAT-WORM
+              </h2>
+              <p className="mt-1.5 text-sm text-gray-300 font-medium leading-relaxed drop-shadow-md">
+                Eat sats to grow, avoid inflation traps!
+              </p>
+            </div>
+
+            {/* Bottom Row */}
+            <div className="mt-24 flex items-center justify-between gap-3 w-full">
+              {/* Live Now Indicator */}
+              <div className="flex items-center gap-2.5">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_rgba(52,211,153,0.9)]"></span>
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
+                  LIVE NOW
+                </span>
+              </div>
+
+              {/* Play Button */}
+              <div className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-6 py-3 text-sm font-black text-black shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-transform duration-300 group-hover:scale-105 active:scale-95">
+                <Zap className="h-4 w-4" fill="currentColor" /> Play Now
               </div>
             </div>
           </div>
