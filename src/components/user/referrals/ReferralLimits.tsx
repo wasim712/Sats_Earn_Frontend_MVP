@@ -103,7 +103,7 @@ export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTie
 
           {isFreeTier ? (
             <Link
-              href="/user/rewards"
+              href="/user/rewards#premium-tiers"
               className="w-full flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-bold text-base transition-all shadow-[0_0_20px_rgba(249,115,22,0.15)] active:scale-[0.98]"
             >
               <Crown className="w-5 h-5" />

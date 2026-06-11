@@ -14,7 +14,7 @@ import {
   type UserTaskResult as TaskResult,
   type UserTaskStatus as TaskStatus,
 } from '@/components/user/tasks/CampaignTaskPageComponents';
-import { AlertTriangle, ArrowLeft, Crown, Flame, Globe2, MapPinned, Shield, Target, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Crown, Flame, Globe2, MapPinned, Monitor, Shield, Target, Zap } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -31,6 +31,16 @@ type StandaloneTaskDetails = Task & {
   hasStarted?: boolean;
   userSubmission?: { status: string } | null;
   submissions?: Array<{ status: string; submittedAt?: string }>;
+};
+
+const getRequiredPlatformLabel = (requiredPlatform?: string | null) => {
+  const normalized = String(requiredPlatform || 'NONE').toUpperCase();
+
+  if (normalized === 'DESKTOP') return 'Desktop Only';
+  if (normalized === 'ANDROID') return 'Android Only';
+  if (normalized === 'IOS') return 'iOS Only';
+
+  return 'All Devices';
 };
 
 export default function StandaloneTaskDetailsPage() {
@@ -238,7 +248,7 @@ export default function StandaloneTaskDetailsPage() {
 
             <div className="flex flex-wrap items-center gap-3 mb-6 text-xs font-semibold text-gray-400">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5">{proofMeta.label}</span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Target className="h-3.5 w-3.5" /> {task.requiredPlatform || 'NONE'}</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Monitor className="h-3.5 w-3.5" /> {getRequiredPlatformLabel(task.requiredPlatform)}</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#050505] px-3 py-1.5"><Shield className="h-3.5 w-3.5" /> {task.requiredFreeTier || 'BASIC'}+</span>
               {task.isPremiumOnly ? <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/20 bg-fuchsia-500/10 px-3 py-1.5 text-fuchsia-300"><Crown className="h-3.5 w-3.5" /> Premium Only</span> : null}
               {task.doubleRewardsActive ? <span className="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1.5 text-yellow-300"><Flame className="h-4 w-4" /> 2x Live</span> : null}

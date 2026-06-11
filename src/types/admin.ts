@@ -14,6 +14,7 @@ export interface Campaign {
   // isNewUserOnly?: boolean;
   requiredFreeTier: string;
   baseRewardSats: number;
+  basicTierRewardSats?: number;
   xpReward?: number;
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
