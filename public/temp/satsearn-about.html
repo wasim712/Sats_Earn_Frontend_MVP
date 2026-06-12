@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About SatsEarn — Why We Built the Bitcoin Earn Platform</title>
+<meta name="description" content="The story behind SatsEarn — a Lightning-native platform where you earn real Bitcoin sats by completing tasks. No buying required. Meet the team, our values, and roadmap.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://satsearn.app/about">
+<meta property="og:title" content="About SatsEarn — Why We Built the Bitcoin Earn Platform">
+<meta property="og:description" content="Bitcoin isn't bought. It's earned. The story, team, values, and roadmap behind SatsEarn.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://satsearn.app/about">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"AboutPage",
+  "name":"About SatsEarn",
+  "url":"https://satsearn.app/about",
+  "mainEntity":{
+    "@type":"Organization",
+    "name":"SatsEarn",
+    "url":"https://satsearn.app",
+    "description":"A Lightning-native Bitcoin rewards platform where users earn real satoshis by completing tasks, quizzes, streaks, and referrals.",
+    "email":"support@satsearn.app",
+    "foundingDate":"2026",
+    "founder":[{"@type":"Person","name":"Wasim Akram"},{"@type":"Person","name":"Nadeem M S"}],
+    "sameAs":["https://twitter.com/satsearn","https://www.youtube.com/@satsearnapp","https://t.me/satsearnapp","https://www.linkedin.com/company/satsearn"]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://satsearn.app/"},
+    {"@type":"ListItem","position":2,"name":"About","item":"https://satsearn.app/about"}
+  ]
+}
+</script>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800,900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --or:#f7931a;--or2:#ffb347;--org:rgba(247,147,26,0.15);--org2:rgba(247,147,26,0.06);
+  --bg:#060608;--bg2:#0a0a0f;--surf:#0f0f18;--surf2:#141420;
+  --bdr:rgba(247,147,26,0.12);--bdr2:rgba(247,147,26,0.22);
+  --txt:#f0f0f0;--txt2:#a0a0b8;--txt3:#606080;--grn:#22c55e;--gold:#fbbf24;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--txt);font-family:'Satoshi',sans-serif;overflow-x:hidden;line-height:1.6;font-size:16px;max-width:100vw;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(247,147,26,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(247,147,26,.025) 1px,transparent 1px);background-size:60px 60px;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--or);border-radius:2px;}
+
+/* NAV */
+body>nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(6,6,8,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);}
+.nav-logo{font-family:'Satoshi',sans-serif;font-size:20px;font-weight:900;color:var(--or);letter-spacing:.5px;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.nav-logo span{color:var(--txt);opacity:.4;font-size:12px;letter-spacing:2px;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{color:var(--txt2);font-size:14px;font-weight:600;text-decoration:none;letter-spacing:.3px;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--or);}
+.btn-primary{padding:8px 20px;border:none;border-radius:8px;background:var(--or);color:#000;font-family:'Satoshi',sans-serif;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap;}
+.btn-primary:hover{background:var(--or2);transform:translateY(-1px);}
+
+/* COMMONS */
+section{position:relative;z-index:1;padding:80px 20px;}
+.container{max-width:1000px;margin:0 auto;}
+.section-label{font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--or);font-weight:700;margin-bottom:12px;font-family:'Space Mono',monospace;}
+.section-title{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.5px;margin-bottom:16px;}
+.or{color:var(--or);}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bdr2),transparent);border:none;margin:0;}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* BOXED WORD (borrowed pattern) */
+.boxed{display:inline-block;border:2px solid var(--or);border-radius:10px;padding:0 14px;background:var(--org);color:var(--or);line-height:1.15;}
+.boxed-fill{display:inline-block;border-radius:10px;padding:0 14px;background:var(--or);color:#000;line-height:1.15;}
+
+/* HERO */
+#hero{padding:120px 20px 60px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--org);border:1px solid var(--bdr2);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--or);text-transform:uppercase;margin-bottom:28px;animation:fadeUp .6s ease both;}
+#hero h1{font-size:clamp(40px,7vw,82px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp .6s .1s ease both;}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--txt2);max-width:600px;margin:0 auto 36px;line-height:1.7;animation:fadeUp .6s .2s ease both;}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s .3s ease both;}
+.btn-hero{padding:14px 32px;border-radius:10px;background:var(--or);color:#000;font-family:'Satoshi',sans-serif;font-size:15px;font-weight:800;text-decoration:none;transition:all .2s;box-shadow:0 8px 32px rgba(247,147,26,.3);}
+.btn-hero:hover{background:var(--or2);transform:translateY(-2px);}
+.btn-hero-ghost{padding:14px 32px;border-radius:10px;background:transparent;color:var(--txt);font-family:'Satoshi',sans-serif;font-size:15px;font-weight:800;text-decoration:none;border:1px solid rgba(255,255,255,.15);transition:all .2s;}
+.btn-hero-ghost:hover{border-color:var(--or);color:var(--or);}
+
+/* MARQUEE (borrowed pattern) */
+.marquee{position:relative;z-index:1;overflow:hidden;background:var(--org);border-top:1px solid var(--bdr2);border-bottom:1px solid var(--bdr2);padding:14px 0;white-space:nowrap;}
+.marquee-track{display:inline-block;white-space:nowrap;animation:scroll-left 28s linear infinite;}
+.marquee-track span{font-family:'Satoshi',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;color:var(--or);text-transform:uppercase;margin:0 12px;}
+.marquee-track .dot{color:var(--or);opacity:.5;}
+.marquee.reverse .marquee-track{animation-duration:34s;animation-direction:reverse;}
+@keyframes scroll-left{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* STATS BAR */
+.stats-bar{display:flex;max-width:900px;margin:0 auto;background:var(--surf);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;}
+.stat-item{flex:1;padding:28px 16px;text-align:center;border-right:1px solid var(--bdr);}
+.stat-item:last-child{border-right:none;}
+.stat-n{font-size:36px;font-weight:800;color:var(--or);font-family:'Space Mono',monospace;line-height:1;}
+.stat-l{font-size:12px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;}
+
+/* STORY */
+.story-layout{display:grid;grid-template-columns:0.85fr 1.15fr;gap:48px;align-items:start;}
+.story-quote{position:sticky;top:90px;background:linear-gradient(135deg,var(--org2),var(--surf));border:1px solid var(--bdr2);border-radius:20px;padding:40px 32px;font-size:clamp(26px,3.4vw,38px);font-weight:800;line-height:1.25;letter-spacing:-.5px;}
+.story-quote .ql{font-size:60px;color:var(--or);line-height:0;display:block;height:30px;font-family:Georgia,serif;}
+.qsub{font-size:13px;font-weight:500;color:var(--txt2);line-height:1.6;margin-top:24px;letter-spacing:0;}
+.story-text p{font-size:15px;color:var(--txt2);line-height:1.85;margin-bottom:18px;}
+.story-text strong{color:var(--txt);}
+.story-text em{color:var(--or);font-style:italic;}
+.story-highlight{background:var(--surf);border-left:3px solid var(--or);border-radius:0 10px 10px 0;padding:18px 22px;font-size:16px;color:var(--txt);font-weight:600;line-height:1.6;margin:24px 0;font-style:italic;}
+
+/* PROBLEM/SOLUTION */
+.ps-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.ps-card{border-radius:18px;padding:32px;border:1px solid var(--bdr);}
+.ps-problem{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.18);}
+.ps-solution{background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.18);}
+.ps-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;font-family:'Space Mono',monospace;margin-bottom:8px;}
+.ps-problem .ps-label{color:#ef4444;}
+.ps-solution .ps-label{color:var(--grn);}
+.ps-title{font-size:20px;font-weight:800;margin-bottom:20px;}
+.ps-items{display:flex;flex-direction:column;gap:14px;}
+.ps-item{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--txt2);line-height:1.5;}
+.ps-item-icon{flex-shrink:0;font-size:14px;margin-top:1px;}
+
+/* BITCOIN = MONEY feature grid (borrowed centered-coin pattern) */
+#why-bitcoin{background:var(--bg2);}
+.btc-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:32px;align-items:center;max-width:960px;margin:48px auto 0;}
+.btc-col{display:flex;flex-direction:column;gap:48px;}
+.btc-feature{text-align:center;}
+.btc-feature-icon{font-size:30px;margin-bottom:14px;}
+.btc-feature-title{font-size:18px;font-weight:800;margin-bottom:10px;line-height:1.2;}
+.btc-feature-desc{font-size:13px;color:var(--txt2);line-height:1.6;max-width:240px;margin:0 auto;}
+.btc-center{display:flex;align-items:center;justify-content:center;}
+.btc-coin{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#ffc04a,#f7931a 55%,#c46f0d);display:flex;align-items:center;justify-content:center;font-size:80px;color:rgba(255,255,255,.55);font-weight:900;box-shadow:0 0 70px rgba(247,147,26,.4),inset -8px -8px 24px rgba(0,0,0,.25);position:relative;}
+.btc-coin::after{content:'';position:absolute;inset:10px;border-radius:50%;border:2px solid rgba(255,255,255,.18);}
+
+/* SIDES (old-style bordered list) */
+.sides-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+.side-col-title{font-size:20px;font-weight:800;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bdr);}
+.side-earners .side-col-title{color:var(--or);}
+.side-brands .side-col-title{color:var(--grn);}
+.side-items{display:flex;flex-direction:column;gap:16px;}
+.side-item{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:20px;border-left:3px solid;}
+.side-earners .side-item{border-left-color:var(--or);}
+.side-brands .side-item{border-left-color:var(--grn);}
+.side-item-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.side-item-desc{font-size:13px;color:var(--txt2);line-height:1.6;}
+
+/* SPLIT DIAGRAM (borrowed "Connect your own setup" pattern) */
+#ecosystem{background:var(--bg2);}
+.split-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+.split-visual{position:relative;aspect-ratio:1;max-width:380px;margin:0 auto;width:100%;}
+.split-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88px;height:88px;border-radius:18px;background:#0d0d16;border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--or);box-shadow:0 0 40px rgba(247,147,26,.3);z-index:2;}
+.split-node{position:absolute;width:56px;height:56px;border-radius:12px;background:var(--surf);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:22px;z-index:2;}
+.split-n1{top:6%;left:18%;}.split-n2{top:6%;right:18%;}
+.split-n3{top:50%;left:0;transform:translateY(-50%);}.split-n4{top:50%;right:0;transform:translateY(-50%);}
+.split-n5{bottom:6%;left:18%;}.split-n6{bottom:6%;right:18%;}
+.split-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;}
+.split-tag{font-size:13px;color:var(--or);font-weight:700;letter-spacing:1px;font-family:'Space Mono',monospace;margin-bottom:14px;}
+.split-text h2{font-size:clamp(26px,3.5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-.5px;margin-bottom:16px;}
+.split-text p{font-size:15px;color:var(--txt2);line-height:1.75;}
+
+/* VALUES */
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.value-card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:28px;transition:all .25s;}
+.value-card:hover{border-color:var(--bdr2);transform:translateY(-3px);}
+.value-icon{font-size:28px;margin-bottom:14px;}
+.value-name{font-size:17px;font-weight:800;margin-bottom:8px;}
+.value-desc{font-size:13px;color:var(--txt2);line-height:1.65;}
+
+/* TEAM */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.team-card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:28px 20px;text-align:center;position:relative;transition:all .25s;}
+.team-card:hover{border-color:var(--bdr2);transform:translateY(-3px);}
+.founder-card{border-color:var(--bdr2);background:linear-gradient(180deg,var(--org2),var(--surf));}
+.founder-tag{position:absolute;top:12px;right:12px;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--or);background:var(--org);border:1px solid var(--bdr2);border-radius:6px;padding:2px 8px;}
+.team-avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#000;font-family:'Space Mono',monospace;}
+.av1{background:linear-gradient(135deg,#f7931a,#ffcc00);}
+.av2{background:linear-gradient(135deg,#a855f7,#ec4899);}
+.av3{background:linear-gradient(135deg,#3b82f6,#06b6d4);}
+.av4{background:linear-gradient(135deg,#22c55e,#84cc16);}
+.team-name{font-size:16px;font-weight:700;margin-bottom:4px;}
+.team-role{font-size:12px;color:var(--or);font-weight:600;letter-spacing:.5px;margin-bottom:6px;}
+.team-sub{font-size:12px;color:var(--txt3);line-height:1.4;}
+
+/* ROADMAP */
+.roadmap-list{display:flex;flex-direction:column;gap:12px;max-width:820px;margin:48px auto 0;}
+.rm-item{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;}
+.rm-item.open{border-color:var(--bdr2);}
+.rm-header{display:flex;align-items:center;gap:14px;padding:20px 24px;cursor:pointer;flex-wrap:wrap;}
+.rm-phase{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--or);font-family:'Space Mono',monospace;flex-shrink:0;}
+.rm-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:.5px;}
+.rm-status.live{background:rgba(34,197,94,.12);color:var(--grn);}
+.rm-status.soon{background:var(--org);color:var(--or);}
+.rm-status.planned{background:var(--surf2);color:var(--txt3);}
+.rm-date{font-size:12px;color:var(--txt3);font-family:'Space Mono',monospace;}
+.rm-title{font-size:16px;font-weight:700;flex:1;min-width:180px;}
+.rm-toggle{font-size:22px;color:var(--or);transition:transform .3s;flex-shrink:0;}
+.rm-item.open .rm-toggle{transform:rotate(45deg);}
+.rm-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.rm-item.open .rm-body{max-height:500px;}
+.rm-body-inner{padding:0 24px 22px;}
+.rm-items{display:flex;flex-direction:column;gap:10px;padding-top:8px;border-top:1px solid var(--bdr);}
+.rm-li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--txt2);}
+.rm-li-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rm-li-dot.done{background:var(--grn);}
+.rm-li-dot.coming{background:var(--or);}
+.rm-li-dot.future{background:var(--txt3);}
+
+/* MISSION */
+#mission{background:var(--bg2);text-align:center;}
+.mission-statement{font-size:clamp(22px,3.5vw,40px);font-weight:800;line-height:1.25;max-width:800px;margin:32px auto 40px;letter-spacing:-.5px;}
+.mission-pillars{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px;}
+.pillar{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--bdr);border-radius:100px;padding:10px 20px;font-size:14px;font-weight:600;}
+.pillar span{font-size:16px;}
+
+/* CTA */
+#about-cta{position:relative;overflow:hidden;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(247,147,26,.12),transparent 70%);pointer-events:none;}
+.about-cta-inner{text-align:center;position:relative;z-index:1;}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28px;position:relative;z-index:1;}
+.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px;}
+.footer-brand .logo{font-family:'Satoshi',sans-serif;font-size:20px;font-weight:800;color:var(--or);margin-bottom:12px;display:block;}
+.footer-brand p{font-size:14px;color:var(--txt3);line-height:1.7;max-width:260px;margin-bottom:20px;}
+.footer-social{display:flex;gap:10px;flex-wrap:wrap;}
+.social-link{width:36px;height:36px;border-radius:8px;background:var(--surf);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:14px;text-decoration:none;color:var(--txt2);transition:all .2s;}
+.social-link:hover{border-color:var(--or);color:var(--or);background:var(--org);}
+.footer-col-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:16px;font-family:'Space Mono',monospace;}
+.footer-links{display:flex;flex-direction:column;gap:10px;}
+.footer-links a{font-size:14px;color:var(--txt2);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--or);}
+.footer-bottom{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:24px;border-top:1px solid var(--bdr);font-size:13px;color:var(--txt3);}
+.footer-bottom a{color:var(--txt3);text-decoration:none;}
+.footer-bottom a:hover{color:var(--or);}
+
+@media(max-width:900px){
+  body>nav{padding:0 16px;}
+  .nav-links{display:none;}
+  section{padding:64px 16px;}
+  .story-layout{grid-template-columns:1fr;gap:32px;}
+  .story-quote{position:static;}
+  .ps-layout{grid-template-columns:1fr;}
+  .sides-layout{grid-template-columns:1fr;}
+  .split-layout{grid-template-columns:1fr;gap:32px;}
+  .btc-grid{grid-template-columns:1fr;gap:36px;}
+  .btc-col{gap:36px;}
+  .btc-center{order:-1;}
+  .values-grid{grid-template-columns:1fr 1fr;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+  .stats-bar{flex-wrap:wrap;}
+  .stat-item{flex:1 1 40%;border-bottom:1px solid var(--bdr);}
+}
+@media(max-width:600px){
+  body>nav{padding:0 12px;}
+  #hero{padding:100px 16px 48px;}
+  .values-grid{grid-template-columns:1fr;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .rm-header{gap:8px;}
+  .rm-title{min-width:100%;order:4;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+  .marquee-track span{font-size:13px;}
+}
+@media(max-width:400px){.nav-logo span{display:none;}.team-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">⚡ SatsEarn <span>BETA</span></a>
+  <div class="nav-links">
+    <a href="/#ways-to-earn">Ways to Earn</a>
+    <a href="/how-it-works">How It Works</a>
+    <a href="/about" class="active">About</a>
+    <a href="/faq">FAQ</a>
+  </div>
+  <a href="/signup" class="btn-primary">Start Earning</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-badge">⚡ Our Story</div>
+  <h1>Bitcoin Isn't Bought.<br>It's <span class="boxed-fill">Earned.</span></h1>
+  <p class="hero-sub">SatsEarn is the platform where the things you already do online pay you in real Bitcoin sats. No buying. No exchange. No catch. This is why we built it.</p>
+  <div class="hero-actions">
+    <a href="/signup" class="btn-hero">⚡ Start Stacking Free</a>
+    <a href="#story" class="btn-hero-ghost">Read Our Story</a>
+  </div>
+</section>
+
+<!-- MARQUEE 1 -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<section style="padding:56px 20px;">
+  <div class="stats-bar reveal">
+    <div class="stat-item"><div class="stat-n">∞</div><div class="stat-l">Ways to Earn</div></div>
+    <div class="stat-item"><div class="stat-n">180+</div><div class="stat-l">Countries</div></div>
+    <div class="stat-item"><div class="stat-n">$0</div><div class="stat-l">Minimum to Start</div></div>
+    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">Real Sats</div></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STORY -->
+<section id="story">
+  <div class="container">
+    <div class="story-layout">
+      <div class="story-quote reveal">
+        <span class="ql">"</span>
+        Bitcoin isn't bought.<br>It's <span class="or">earned.</span>
+        <div class="qsub">— The idea that started SatsEarn. If people create value every day just by being online, they deserve to be paid in the hardest money on earth.</div>
+      </div>
+      <div class="story-text reveal">
+        <div class="section-label">Our Story</div>
+        <h2 class="section-title" style="font-size:clamp(24px,3vw,36px);margin-bottom:28px;">Why We Built This</h2>
+        <p>I watched people lose money trying to get into Bitcoin. Friends who saved for months, bought at the wrong time, panicked, sold at a loss. The dream of owning Bitcoin turned into a nightmare the moment they had to put money in. <strong>The barrier wasn't understanding. It was the buying.</strong></p>
+        <div class="story-highlight">"What if you never had to buy Bitcoin at all? What if the tasks you already do online — following, watching, sharing, engaging — could pay you in real sats instead of nothing?"</div>
+        <p>At the same time, I saw something else. Brands spending billions on marketing that reached people who scrolled past and forgot. Real users creating real value — attention, engagement, action — every single day. And getting paid absolutely nothing for it.</p>
+        <p>These two problems had one solution. <strong>A platform where earning Bitcoin is as simple as completing a task.</strong> Where brands reach people who actually care. Where Bitcoin isn't something you buy — it's something you stack, one sat at a time, through things you already do.</p>
+        <p>We started with zero users and zero hype. Just a question: <em>what if anyone with an internet connection could earn real Bitcoin today?</em> We're still answering that question. We're in early beta. We're building in public. We make mistakes and we fix them openly.</p>
+        <p><strong>This is just the beginning.</strong> Bitcoin adoption is accelerating and we believe the easiest on-ramp isn't buying — it's earning. SatsEarn is how that happens.</p>
+        <p style="color:var(--or);font-weight:700;font-size:15px;">— Wasim Akram, Founder, SatsEarn</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE 2 (reverse) -->
+<div class="marquee reverse">
+  <div class="marquee-track">
+    <span>FOLLOW</span><span class="dot">·</span><span>QUIZ</span><span class="dot">·</span><span>PLAY</span><span class="dot">·</span><span>REFER</span><span class="dot">·</span><span>EARN</span><span class="dot">·</span>
+    <span>FOLLOW</span><span class="dot">·</span><span>QUIZ</span><span class="dot">·</span><span>PLAY</span><span class="dot">·</span><span>REFER</span><span class="dot">·</span><span>EARN</span><span class="dot">·</span>
+    <span>FOLLOW</span><span class="dot">·</span><span>QUIZ</span><span class="dot">·</span><span>PLAY</span><span class="dot">·</span><span>REFER</span><span class="dot">·</span><span>EARN</span><span class="dot">·</span>
+    <span>FOLLOW</span><span class="dot">·</span><span>QUIZ</span><span class="dot">·</span><span>PLAY</span><span class="dot">·</span><span>REFER</span><span class="dot">·</span><span>EARN</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- PROBLEM / SOLUTION -->
+<section id="problem">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-label" style="display:inline-block;">The Gap We're Closing</div>
+      <h2 class="section-title">Bitcoin is Hard to Get.<br><span class="or">We Fixed That.</span></h2>
+    </div>
+    <div class="ps-layout reveal">
+      <div class="ps-card ps-problem">
+        <div class="ps-label">The Problem</div>
+        <div class="ps-title">Bitcoin Feels Out of Reach</div>
+        <div class="ps-items">
+          <div class="ps-item"><div class="ps-item-icon">❌</div>Buying requires money you may not have or want to risk</div>
+          <div class="ps-item"><div class="ps-item-icon">❌</div>Exchanges demand ID verification and bank accounts</div>
+          <div class="ps-item"><div class="ps-item-icon">❌</div>Price volatility makes buying feel like gambling</div>
+          <div class="ps-item"><div class="ps-item-icon">❌</div>Mining needs expensive hardware most people can't afford</div>
+          <div class="ps-item"><div class="ps-item-icon">❌</div>Millions create online value daily and earn nothing for it</div>
+        </div>
+      </div>
+      <div class="ps-card ps-solution">
+        <div class="ps-label">The Solution</div>
+        <div class="ps-title">Earn Bitcoin by Doing Simple Tasks</div>
+        <div class="ps-items">
+          <div class="ps-item"><div class="ps-item-icon">✅</div>No money needed — ever. Zero investment to start</div>
+          <div class="ps-item"><div class="ps-item-icon">✅</div>No ID, no bank account, no exchange required</div>
+          <div class="ps-item"><div class="ps-item-icon">✅</div>Earn from tasks, quizzes, streaks, and referrals</div>
+          <div class="ps-item"><div class="ps-item-icon">✅</div>Real sats paid via Lightning Network to your wallet</div>
+          <div class="ps-item"><div class="ps-item-icon">✅</div>Works in 180+ countries with just email and internet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WHY BITCOIN (centered coin feature grid) -->
+<section id="why-bitcoin">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label" style="display:inline-block;">Why Bitcoin</div>
+      <h2 class="section-title">The Hardest Money,<br><span class="or">Earned the Easy Way.</span></h2>
+      <p style="font-size:15px;color:var(--txt2);max-width:520px;margin:0 auto;line-height:1.7;">We pay you in Bitcoin for a reason. Here's why stacking sats beats earning anything else.</p>
+    </div>
+    <div class="btc-grid reveal">
+      <div class="btc-col">
+        <div class="btc-feature">
+          <div class="btc-feature-icon">💎</div>
+          <div class="btc-feature-title">Absolutely Scarce</div>
+          <div class="btc-feature-desc">Only 21 million Bitcoin will ever exist. Its capped supply is a mathematical law baked into the protocol.</div>
+        </div>
+        <div class="btc-feature">
+          <div class="btc-feature-icon">🔒</div>
+          <div class="btc-feature-title">Entirely Yours</div>
+          <div class="btc-feature-desc">Once it's in your wallet, it's yours. No bank, no platform, no government can freeze or seize your sats.</div>
+        </div>
+      </div>
+      <div class="btc-center">
+        <div class="btc-coin">₿</div>
+      </div>
+      <div class="btc-col">
+        <div class="btc-feature">
+          <div class="btc-feature-icon">🌍</div>
+          <div class="btc-feature-title">Global &amp; Instant</div>
+          <div class="btc-feature-desc">Send it anywhere on earth in seconds over Lightning. No borders, no middlemen, no waiting.</div>
+        </div>
+        <div class="btc-feature">
+          <div class="btc-feature-icon">♾️</div>
+          <div class="btc-feature-title">Permissionless</div>
+          <div class="btc-feature-desc">Anyone with internet can hold and use it. No approval, no application, no gatekeepers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SIDES -->
+<section id="sides">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-label" style="display:inline-block;">Two Sides, One Platform</div>
+      <h2 class="section-title">Building for <span class="or">Both</span></h2>
+    </div>
+    <div class="sides-layout reveal">
+      <div class="side-earners">
+        <div class="side-col-title">⚡ For Earners</div>
+        <div class="side-items">
+          <div class="side-item">
+            <div class="side-item-title">Earn Real Bitcoin</div>
+            <div class="side-item-desc">No gift cards, no points that expire. Real satoshis — actual Bitcoin — that you control and withdraw to your own wallet.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Simple Tasks</div>
+            <div class="side-item-desc">Follow accounts, answer quizzes, watch content, refer friends. Nothing hard. Nothing sketchy. Nothing that requires buying anything.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Referral Income</div>
+            <div class="side-item-desc">Earn 5–30% commission on every task your active referrals complete. Commission is paid on the base reward rate — consistent and transparent.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Your Bitcoin, Your Rules</div>
+            <div class="side-item-desc">Withdraw via Lightning to any wallet after 15-day maturity. No middlemen, no conversion steps, no permission needed.</div>
+          </div>
+        </div>
+      </div>
+      <div class="side-brands">
+        <div class="side-col-title">🎯 For Brands</div>
+        <div class="side-items">
+          <div class="side-item">
+            <div class="side-item-title">Real Verified Users</div>
+            <div class="side-item-desc">Every completion is verified by AI and manual review. No bots, no fake engagement. Real humans taking real action on your campaigns.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Measurable Results</div>
+            <div class="side-item-desc">Track every completion in real time. Know exactly what you're getting for your budget. Full transparency on ROI.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Smart Verification</div>
+            <div class="side-item-desc">AI catches fake engagement before it reaches your campaign. Users prove they followed, watched, or downloaded. No fraud reaches your metrics.</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-title">Flexible Campaigns</div>
+            <div class="side-item-desc">Social tasks, app installs, surveys, brand awareness, education campaigns. Build exactly what you need with custom reward structures.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ECOSYSTEM (split diagram) -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="split-layout">
+      <div class="split-visual reveal">
+        <svg class="split-svg" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M190 190 L88 46 M190 190 L292 46 M190 190 L28 190 M190 190 L352 190 M190 190 L88 334 M190 190 L292 334" stroke="rgba(247,147,26,0.35)" stroke-width="2" stroke-dasharray="4 5"/>
+        </svg>
+        <div class="split-center">₿</div>
+        <div class="split-node split-n1">📱</div>
+        <div class="split-node split-n2">🧠</div>
+        <div class="split-node split-n3">🎮</div>
+        <div class="split-node split-n4">👥</div>
+        <div class="split-node split-n5">🔥</div>
+        <div class="split-node split-n6">⚡</div>
+      </div>
+      <div class="split-text reveal">
+        <div class="split-tag">TASKS // QUIZZES // STREAKS // REFERRALS</div>
+        <h2>One Platform.<br>Every Way to <span class="or">Stack.</span></h2>
+        <p>SatsEarn connects every earning method into one Lightning-native wallet. Follow accounts, answer Bitcoin quizzes, play mini-games, keep daily streaks, and refer friends — all stacking real sats into a single balance. When you're ready, it all flows out over Lightning to the wallet of your choice. No internal coins. No conversion. Just Bitcoin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- VALUES -->
+<section id="values">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-label" style="display:inline-block;">Core Values</div>
+      <h2 class="section-title">What We Stand For</h2>
+    </div>
+    <div class="values-grid reveal">
+      <div class="value-card">
+        <div class="value-icon">🌍</div>
+        <div class="value-name">Accessibility</div>
+        <div class="value-desc">Bitcoin for everyone. 180+ countries. No ID. No bank account needed. If you have email and internet, you can earn Bitcoin on SatsEarn.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🔒</div>
+        <div class="value-name">Security</div>
+        <div class="value-desc">Your Bitcoin is yours. The 15-day maturity hold protects against fraud. AI verification catches bad actors before they affect the platform.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">💡</div>
+        <div class="value-name">Honesty</div>
+        <div class="value-desc">We're in beta. We'll tell you what works and what doesn't. No hype. No fake promises. No guaranteed earnings claims. Just real Bitcoin for real work.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">⚡</div>
+        <div class="value-name">Simplicity</div>
+        <div class="value-desc">No confusing crypto jargon. No technical requirements. If you can scroll and follow an account, you can earn Bitcoin on SatsEarn.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">📊</div>
+        <div class="value-name">Transparency</div>
+        <div class="value-desc">Public roadmap. Open policies. Clear earning rules. Every sat you earn is traceable from task completion to your Lightning wallet. We hide nothing.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <div class="value-name">Community</div>
+        <div class="value-desc">We're not a corporation. We're building with our users. Your feedback shapes our roadmap. Your success is our success. We listen and we act.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TEAM -->
+<section id="team">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-label" style="display:inline-block;">The People</div>
+      <h2 class="section-title">Meet the <span class="or">Team</span></h2>
+    </div>
+    <div class="team-grid reveal">
+      <div class="team-card founder-card">
+        <div class="founder-tag">FOUNDER</div>
+        <div class="team-avatar av1">W</div>
+        <div class="team-name">Wasim Akram</div>
+        <div class="team-role">Founder &amp; CEO</div>
+        <div class="team-sub">Product, Strategy &amp; Vision</div>
+      </div>
+      <div class="team-card founder-card">
+        <div class="founder-tag">FOUNDER</div>
+        <div class="team-avatar av2">N</div>
+        <div class="team-name">Nadeem M S</div>
+        <div class="team-role">Founder</div>
+        <div class="team-sub">Operations &amp; Growth</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar av3">S</div>
+        <div class="team-name">Saksham Arya</div>
+        <div class="team-role">Founding Engineer</div>
+        <div class="team-sub">Backend Development</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar av4">S</div>
+        <div class="team-name">Sumit Dwivedi</div>
+        <div class="team-role">Founding Engineer</div>
+        <div class="team-sub">Frontend Development</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label" style="display:inline-block;">Transparent Roadmap</div>
+      <h2 class="section-title">Where We're <span class="or">Going</span></h2>
+      <p style="font-size:15px;color:var(--txt2);max-width:540px;margin:0 auto;line-height:1.7;">We build in public. This is our honest roadmap — what's done, what's coming, and what we're planning long-term.</p>
+    </div>
+    <div class="roadmap-list reveal">
+
+      <div class="rm-item open">
+        <div class="rm-header">
+          <span class="rm-phase">Phase 1</span>
+          <span class="rm-status live">● Live</span>
+          <span class="rm-date">June – July 2026</span>
+          <span class="rm-title">Beta Launch &amp; Core Features</span>
+          <span class="rm-toggle">+</span>
+        </div>
+        <div class="rm-body">
+          <div class="rm-body-inner">
+            <div class="rm-items">
+              <div class="rm-li"><div class="rm-li-dot done"></div>Public beta launch</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Social tasks live (X, Instagram, Reddit)</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Bitcoin quizzes live</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Mini-games (SAT-WORM) live</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Streak milestone system live</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Mobile PWA available</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Paid tier subscriptions live</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Lightning withdrawal system operational</div>
+              <div class="rm-li"><div class="rm-li-dot done"></div>Early Founders community building</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-header">
+          <span class="rm-phase">Phase 2</span>
+          <span class="rm-status soon">Coming Soon</span>
+          <span class="rm-date">August – October 2026</span>
+          <span class="rm-title">Scaling &amp; New Features</span>
+          <span class="rm-toggle">+</span>
+        </div>
+        <div class="rm-body">
+          <div class="rm-body-inner">
+            <div class="rm-items">
+              <div class="rm-li"><div class="rm-li-dot coming"></div>Surveys launch</div>
+              <div class="rm-li"><div class="rm-li-dot coming"></div>Offerwalls launch</div>
+              <div class="rm-li"><div class="rm-li-dot coming"></div>Third-party SDK integrations (BitLabs, Lootably, etc.)</div>
+              <div class="rm-li"><div class="rm-li-dot coming"></div>Payment gateway integration</div>
+              <div class="rm-li"><div class="rm-li-dot coming"></div>Affiliate and brand partnerships</div>
+              <div class="rm-li"><div class="rm-li-dot coming"></div>International expansion and localisation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-header">
+          <span class="rm-phase">Phase 3</span>
+          <span class="rm-status planned">Planned</span>
+          <span class="rm-date">November – December 2026</span>
+          <span class="rm-title">Optimisation &amp; Growth</span>
+          <span class="rm-toggle">+</span>
+        </div>
+        <div class="rm-body">
+          <div class="rm-body-inner">
+            <div class="rm-items">
+              <div class="rm-li"><div class="rm-li-dot future"></div>Multi-language support</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Regional payment methods</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Advanced gamification (leaderboards, challenges, raffle rewards)</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Community features (groups, forums)</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>User analytics dashboard</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-header">
+          <span class="rm-phase">Phase 4</span>
+          <span class="rm-status planned">Planned</span>
+          <span class="rm-date">2027+</span>
+          <span class="rm-title">Long-term Vision</span>
+          <span class="rm-toggle">+</span>
+        </div>
+        <div class="rm-body">
+          <div class="rm-body-inner">
+            <div class="rm-items">
+              <div class="rm-li"><div class="rm-li-dot future"></div>Open API for brands and developers</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Native desktop and mobile app expansion</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Decentralised governance roadmap</div>
+              <div class="rm-li"><div class="rm-li-dot future"></div>Sustainable, profitable operations at scale</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MISSION -->
+<section id="mission">
+  <div class="container reveal">
+    <div class="section-label" style="text-align:center;display:block;">Our Mission</div>
+    <div class="mission-statement">
+      To make earning Bitcoin as simple as being online — so anyone, anywhere, can stack sats without ever having to <span class="or">buy one single sat. One sat at a time.</span>
+    </div>
+    <div class="mission-pillars">
+      <div class="pillar"><span>⚡</span> Real Sats Only</div>
+      <div class="pillar"><span>🌍</span> Globally Accessible</div>
+      <div class="pillar"><span>🔒</span> Fraud Protected</div>
+      <div class="pillar"><span>💡</span> No Buying Required</div>
+      <div class="pillar"><span>🤝</span> Free Forever Tier</div>
+      <div class="pillar"><span>📊</span> Fully Transparent</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE 3 -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+    <span>STACK SATS</span><span class="dot">·</span><span>EARN BITCOIN</span><span class="dot">·</span><span>NO BUYING</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<section id="about-cta">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="about-cta-inner reveal">
+      <div class="section-label" style="display:inline-block;">Join Us</div>
+      <h2 style="font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.1;margin-bottom:16px;">Start Stacking Sats.<br><span class="or">No Buying Required.</span></h2>
+      <p style="font-size:16px;color:var(--txt2);max-width:480px;margin:0 auto 36px;line-height:1.7;">Join SatsEarn today — free forever. Complete tasks, earn real Bitcoin, and withdraw via Lightning when you're ready.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+        <a href="/signup" class="btn-hero">⚡ Create Free Account</a>
+        <a href="/how-it-works" class="btn-hero-ghost">See How It Works</a>
+      </div>
+      <div style="margin-top:20px;font-size:12px;color:var(--txt3);">Earnings depend on task availability and tier. All sats subject to 15-day maturity period.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">⚡ SatsEarn</span>
+      <p>The Bitcoin earn platform. Stack real sats through tasks, quizzes, streaks, and referrals. No buying required.</p>
+      <div class="footer-social">
+        <a href="#" class="social-link" aria-label="X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Telegram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+        <a href="#" class="social-link" aria-label="YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Discord" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Threads" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.781 3.631 2.695 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.475 9.197c.98-1.452 2.568-2.252 4.482-2.252h.043c3.196.02 5.1 1.978 5.293 5.39.108.046.216.094.32.144 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65zM9.6 11.246c.066 1.205 1.388 1.766 2.658 1.697 1.242-.067 2.65-.55 2.887-3.514a10.595 10.595 0 0 0-2.633-.131c-1.852.107-2.987.94-2.912 1.948z"/></svg></a>
+        <a href="#" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg></a>
+        <a href="#" class="social-link" aria-label="Reddit" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.715 0-1.363.286-1.84.746-1.81-1.191-4.259-1.949-6.971-2.046l1.483-4.669 4.016.941-.006.058c0 1.193.975 2.163 2.174 2.163 1.198 0 2.172-.97 2.172-2.163s-.975-2.164-2.172-2.164c-.92 0-1.704.574-2.021 1.379l-4.329-1.015a.379.379 0 0 0-.44.245l-1.654 5.207c-2.759.076-5.25.834-7.087 2.034a2.642 2.642 0 0 0-1.83-.738C1.192 9.134 0 10.32 0 11.779c0 .92.475 1.73 1.192 2.205-.032.207-.049.419-.049.633 0 3.298 3.871 5.978 8.633 5.978s8.634-2.68 8.634-5.978c0-.211-.016-.421-.047-.626.718-.475 1.195-1.286 1.195-2.212zM6.776 13.937c0-.834.679-1.512 1.515-1.512.836 0 1.515.678 1.515 1.512s-.679 1.513-1.515 1.513c-.836 0-1.515-.679-1.515-1.513zm8.835 4.04c-1.005 1.005-2.91 1.077-3.47 1.077-.563 0-2.467-.072-3.472-1.077a.376.376 0 0 1 .53-.531c.633.634 1.989.858 2.942.858.953 0 2.309-.224 2.943-.858a.376.376 0 0 1 .53 0 .375.375 0 0 1-.003.531zm-.173-2.527c-.836 0-1.515-.679-1.515-1.513s.679-1.512 1.515-1.512c.836 0 1.515.678 1.515 1.512s-.679 1.513-1.515 1.513z"/></svg></a>
+        <a href="#" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Earn</div>
+      <div class="footer-links">
+        <a href="/#ways-to-earn">Social Tasks</a>
+        <a href="/#ways-to-earn">Bitcoin Quizzes</a>
+        <a href="/#ways-to-earn">Mini Games</a>
+        <a href="/#referral">Referral Programme</a>
+        <a href="/#streaks">Streak Milestones</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <div class="footer-links">
+        <a href="/how-it-works">How It Works</a>
+        <a href="/withdrawals">Withdrawals</a>
+        <a href="/#tiers">Tier System</a>
+        <a href="/#pricing">Paid Tiers</a>
+        <a href="/faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="/about">About Us</a>
+        <a href="/contact">Contact</a>
+        <a href="/#roadmap">Roadmap</a>
+        <a href="/signup">Create Account</a>
+        <a href="/login">Log In</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <div class="footer-links">
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/cookie-policy">Cookie Policy</a>
+        <a href="/refund-policy">Refund Policy</a>
+        <a href="/rewards-policy">Rewards Policy</a>
+        <a href="/mica-policy">MiCA Policy</a>
+        <a href="/legal">All Policies</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 SatsEarn. All rights reserved.</span>
+    <span>Made with 🧡 for the Bitcoin community</span>
+  </div>
+</footer>
+
+<script>
+// Reveal on scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Roadmap accordion
+document.querySelectorAll('.rm-header').forEach(h => {
+  h.addEventListener('click', () => {
+    const item = h.parentElement;
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.rm-item.open').forEach(i => i.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
