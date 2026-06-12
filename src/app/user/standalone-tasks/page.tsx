@@ -59,7 +59,7 @@ const deviceOptions: DeviceOption[] = [
 const formatCompact = (value: number) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 
 const getRequiredPlatform = (task: StandaloneTask) => {
-  const platform = String(task.requiredPlatform || 'NONE').toUpperCase();
+  const platform = String(task.requiredPlatform || 'All Devices').toUpperCase();
   if (platform === 'DESKTOP') return { icon: Monitor, label: 'Desktop Only' };
   if (platform === 'ANDROID') return { icon: null, iconSrc: '/svgs/android.svg', label: 'Android Only' };
   if (platform === 'IOS') return { icon: null, iconSrc: '/svgs/ios.svg', label: 'iOS Only' };

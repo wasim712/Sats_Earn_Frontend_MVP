@@ -119,6 +119,7 @@ type StandaloneTask = {
   targetUrl?: string | null;
   proofType?: string | null;
   requiredPlatform?: 'NONE' | 'DESKTOP' | 'ANDROID' | 'IOS';
+  baseRewardSats?: number;
   taskRewardSats?: number;
   xpReward?: number;
   doubleRewardsActive?: boolean;
@@ -143,7 +144,8 @@ const mapStandaloneTaskToCampaign = (task: StandaloneTask): Campaign => ({
   targetUrl: task.targetUrl || null,
   requiredPlatform: task.requiredPlatform || 'NONE',
   coverImageUrl: task.coverImageUrl || null,
-  baseRewardSats: Number(task.taskRewardSats || 0),
+  baseRewardSats: Number(task.baseRewardSats || 0),
+  basicTierRewardSats: Number(task.baseRewardSats || 0),
   xpReward: Number(task.xpReward || 0),
   doubleRewardsStartAt: null,
   doubleRewardsEndAt: null,
@@ -605,7 +607,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <CompactStat label="Base Reward" value={`${topReward.toLocaleString()} sats`} premium={isPremiumOnly} />
+              <CompactStat label="Base Reward" value={`${Number(campaign.basicTierRewardSats ?? campaign.baseRewardSats ?? 0).toLocaleString()} sats`} premium={isPremiumOnly} />
               <CompactStat label="XP Reward" value={`${Number(campaign.xpReward || 0).toLocaleString()} XP`} premium={isPremiumOnly} />
             </div>
           </div>
