@@ -58,9 +58,16 @@ export default function UserSubmissionsPage() {
                         {statusUi.icon}
                         {statusUi.label}
                       </span>
+                      {submission.isStandalone && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border border-purple-500/20 bg-purple-500/10 text-purple-400">
+                          Standalone
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-white font-bold text-lg">{submission.taskTitle}</h3>
-                    <p className="text-sm text-gray-500 font-medium mt-1">{submission.campaignTitle}</p>
+                    <p className="text-sm text-gray-500 font-medium mt-1">
+                      {submission.isStandalone ? 'Standalone Task' : submission.campaignTitle}
+                    </p>
                     {submission.status === 'PENDING_24H' && (
                       <div className="mt-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 text-sm">
                         <p className="font-bold text-blue-300 mb-1">Submission accepted</p>

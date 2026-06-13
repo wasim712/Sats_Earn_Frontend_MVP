@@ -16,7 +16,14 @@ const FOOTER_LINKS = {
     { name: 'About Us', href: '/about' },
     { name: 'For Brands', href: '/#brands' },
     { name: 'How It Works', href: '/#how-it-works' },
-    { name: 'FAQ', href: '/#faq' },
+    { name: 'FAQ', href: '/faq' },
+    { name: 'Contact', href: '/contact' },
+  ],
+  Others: [
+    { name: 'founders', href: '/founders' },
+    { name: 'Sat worm guid', href: '/games/sat-worm' },
+    { name: 'Referral', href: '/referral' },
+    { name: 'Support', href: '/support' },
     { name: 'Contact', href: '/contact' },
   ],
   Legal: [
@@ -137,7 +144,7 @@ export const Footer = () => {
 
           {/* Columns 2+: The Links (Responsive Grid) */}
           {/* Mobile: 2 columns | Tablet/Desktop: 3 columns */}
-          <div className="lg:w-3/5 grid grid-cols-2 sm:grid-cols-3  gap-8">
+          <div className="lg:w-3/5 grid grid-cols-2 sm:grid-cols-4  gap-8">
             {Object.entries(FOOTER_LINKS).map(([title, links]) => (
               <div key={title} className="flex flex-col">
                 <h4 className="text-white font-bold text-lg mb-6 tracking-wide">{title}</h4>
