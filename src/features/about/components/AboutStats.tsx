@@ -19,7 +19,7 @@ export const AboutStats = () => {
               <div className="text-3xl sm:text-4xl font-black text-sats-orange-500 font-mono leading-none">
                 {stat.value}
               </div>
-              <div className="text-xs text-gray-400 tracking-[0.1em] uppercase mt-2 font-bold">
+              <div className="text-xs text-gray-400 tracking-widest uppercase mt-2 font-bold">
                 {stat.label}
               </div>
             </div>
