@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -253,7 +253,15 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                             {(submission.taskTitle || '').substring(0, 10)}{(submission.taskTitle || '').length > 10 ? '...' : ''}
                           </p>
                         </div>
-                        <p className="mt-1 text-[11px] font-medium text-gray-500">by {(submission.campaignTitle || '').substring(0, 15)}...</p>
+                        <p className="mt-1 text-[11px] font-medium text-gray-500">
+                          {submission.isStandalone ? (
+                            <span className="inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-400">
+                              Standalone
+                            </span>
+                          ) : (
+                            <>by {(submission.campaignTitle || '').substring(0, 15)}...</>
+                          )}
+                        </p>
                       </div>
                       <div className="text-right">
                         <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>

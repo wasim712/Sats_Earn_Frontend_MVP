@@ -99,6 +99,7 @@ export interface UserDashboard {
     availableBalance?: number;
     pendingBalance?: number;
     totalEarned?: number;
+    totalLifetime?: number;
   };
   gamification?: {
     activeTier?: string;
@@ -151,6 +152,7 @@ export interface UserDashboard {
     id?: string;
     taskTitle?: string;
     campaignTitle?: string;
+    isStandalone?: boolean;
     status: string;
     submittedAt?: string;
     rewardSats?: number;
@@ -290,6 +292,7 @@ export interface UserSubmissionHistoryItem {
   id: string;
   taskTitle: string;
   campaignTitle: string;
+  isStandalone?: boolean;
   status: string;
   rejectionReason: string | null;
   submittedAt: string;

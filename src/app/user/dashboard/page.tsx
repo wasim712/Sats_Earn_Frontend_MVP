@@ -345,7 +345,9 @@ export default function UserDashboardPage() {
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // CALCULATED VALUES
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  const totalLifetimeEarned = getAvailableSatsValue() + (data.balances?.locked || 0) + Number(data.balances?.pending || 0) + (Number(data.balances?.pendingMsats || 0) / 1000);
+  // Use the backend-computed totalLifetime which sums only positive (income) ledger entries.
+  // This never decreases even when sats are spent on subscriptions or withdrawn.
+  const totalLifetimeEarned = data.balances?.totalLifetime || 0;
   const currentStreak = data.gamification?.currentStreak || 0;
   const activeTier = data.gamification?.activeTier || 'Basic';
   const currentLevel = data.gamification?.level || 1;
