@@ -27,8 +27,9 @@ const FOOTER_LINKS = {
     { name: 'Contact', href: '/contact' },
   ],
   Legal: [
-    { name: 'Terms & Conditions', href: '/terms' },
-    { name: 'Privacy Policy', href: '/privacy-policy' },
+    { name: 'Legal', href: '/legal' },
+    { name: 'Terms & Conditions', href: 'legal/terms' },
+    { name: 'Privacy Policy', href: 'legal/privacy' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ],
