@@ -24,11 +24,11 @@ const FOOTER_LINKS = {
     { name: 'Sat worm guid', href: '/games/sat-worm' },
     { name: 'Referral', href: '/referral' },
     { name: 'Support', href: '/support' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'For Brands', href: '/brands' },
   ],
   Legal: [
     { name: 'Legal', href: '/legal' },
-    { name: 'Terms & Conditions', href: 'legal/terms' },
+    { name: 'Terms of service', href: '/legal/terms' },
     { name: 'Privacy Policy', href: 'legal/privacy' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },

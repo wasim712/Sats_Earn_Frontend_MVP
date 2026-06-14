@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Target, Eye, BarChart3, TrendingUp, Megaphone, ArrowRight,
@@ -79,21 +80,18 @@ export const Advertise = () => {
             </div>
 
             {/* CTA Button */}
-            <div className="relative inline-block group">
-  <Button
-    size="lg"
-    disabled
-    className="gap-2 px-6 py-4 text-base"
-  >
-    <Megaphone className="w-5 h-5" />
-    Advertise With Us
-    <ArrowRight className="w-5 h-5" />
-  </Button>
-
-  <div className="absolute left-1/2 -translate-x-1/2 -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black border border-orange-500 text-white text-sm px-3 py-1 rounded-md whitespace-nowrap">
-    Coming Soon 🚀
-  </div>
-</div>
+            <div className="mt-8 relative inline-block group">
+              <Link href="/brands">
+                <Button
+                  size="lg"
+                  className="gap-2 px-6 py-4 text-base transition-transform hover:-translate-y-1"
+                >
+                  <Megaphone className="w-5 h-5" />
+                  Advertise With Us
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
           </FadeUp>
 
           {/* =========================================

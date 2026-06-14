@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: getSiteUrl('/terms'),
+      url: getSiteUrl('legal/terms'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.8,

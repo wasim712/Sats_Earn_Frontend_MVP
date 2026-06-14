@@ -4,7 +4,7 @@ const TRUST_LINKS = [
   { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
   { name: 'Privacy', href: '/privacy-policy' },
-  { name: 'Terms', href: '/terms' },
+  { name: 'Terms', href: 'legal/terms' },
 ];
 
 export function PublicTrustNav() {

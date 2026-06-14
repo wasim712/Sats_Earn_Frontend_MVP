@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FadeUp } from '@/components/animations/FadeUp';
+import { FloatingSupportButton } from '@/components/ui/FloatingSupportButton';
 
 const policies = [
   {
@@ -78,8 +79,19 @@ export default function LegalPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(238,139,18,0.05),transparent_60%)]"></div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-24">
+      <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 pt-16 pb-24">
         
+        {/* Breadcrumbs */}
+        <div className="flex justify-start mb-8">
+          <FadeUp delay={0.05}>
+            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-xs text-gray-500 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
+              <Link href="/" className="text-gray-400 hover:text-sats-orange-500 transition-colors">Home</Link>
+              <span className="text-gray-600">/</span>
+              <span className="text-sats-orange-500 font-bold">Legal</span>
+            </div>
+          </FadeUp>
+        </div>
+
         {/* HERO */}
         <header className="text-center pb-12 sm:pb-16">
           <FadeUp delay={0.1}>
@@ -163,6 +175,8 @@ export default function LegalPage() {
         </FadeUp>
 
       </div>
+
+      <FloatingSupportButton />
     </main>
   );
 }
