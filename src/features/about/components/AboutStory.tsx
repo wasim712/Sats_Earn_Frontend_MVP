@@ -7,18 +7,20 @@ export const AboutStory = () => {
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-12 items-start">
           
-          <FadeUp className="lg:sticky lg:top-24">
-            <div className="bg-gradient-to-br from-sats-orange-500/5 to-sats-black-800 border border-sats-orange-500/20 rounded-3xl p-8 sm:p-10">
-              <span className="block text-5xl sm:text-6xl text-sats-orange-500 font-serif leading-[0] h-6 sm:h-8">"</span>
-              <div className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight mt-2 mb-6 text-white">
-                Bitcoin isn't bought.<br />
-                It's <span className="text-sats-orange-500">earned.</span>
+          <div className="lg:sticky lg:top-24">
+            <FadeUp>
+              <div className="bg-gradient-to-br from-sats-orange-500/5 to-sats-black-800 border border-sats-orange-500/20 rounded-3xl p-8 sm:p-10">
+                <span className="block text-5xl sm:text-6xl text-sats-orange-500 font-serif leading-[0] h-6 sm:h-8">"</span>
+                <div className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight mt-2 mb-6 text-white">
+                  Bitcoin isn't bought.<br />
+                  It's <span className="text-sats-orange-500">earned.</span>
+                </div>
+                <div className="text-sm font-medium text-gray-400 leading-relaxed">
+                  — The idea that started SatsEarn. If people create value every day just by being online, they deserve to be paid in the hardest money on earth.
+                </div>
               </div>
-              <div className="text-sm font-medium text-gray-400 leading-relaxed">
-                — The idea that started SatsEarn. If people create value every day just by being online, they deserve to be paid in the hardest money on earth.
-              </div>
-            </div>
-          </FadeUp>
+            </FadeUp>
+          </div>
 
           <FadeUp className="text-gray-300">
             <div className="text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
