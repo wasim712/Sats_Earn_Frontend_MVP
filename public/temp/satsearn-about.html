@@ -273,11 +273,36 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
   .marquee-track span{font-size:13px;}
 }
 @media(max-width:400px){.nav-logo span{display:none;}.team-grid{grid-template-columns:1fr;}}
+
+#scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--or),var(--or2,#ffcc00));z-index:2000;transition:width .1s linear;border-radius:0 2px 2px 0;box-shadow:0 0 8px rgba(247,147,26,.6);}
+
+/* ── BITCOIN LOOP (full ecosystem) ── */
+.loop-intro{max-width:640px;margin:0 auto 48px;text-align:center;font-size:16px;color:var(--txt2);line-height:1.7;}
+.loop-flow{max-width:980px;margin:0 auto;display:flex;align-items:stretch;justify-content:center;gap:0;flex-wrap:wrap;}
+.loop-stage{flex:1;min-width:220px;background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:30px 26px;text-align:center;position:relative;transition:transform .25s,border-color .25s;}
+.loop-stage:hover{transform:translateY(-5px);border-color:var(--bdr2);}
+.loop-num{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:var(--or);opacity:.7;margin-bottom:14px;}
+.loop-icon{width:64px;height:64px;border-radius:50%;background:var(--org,rgba(247,147,26,.12));border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;}
+.loop-stage-title{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:10px;}
+.loop-stage-desc{font-size:13.5px;color:var(--txt2);line-height:1.6;}
+.loop-stage-desc b{color:var(--or);font-weight:700;}
+.loop-arrow{display:flex;align-items:center;justify-content:center;padding:0 14px;color:var(--or);font-size:24px;flex-shrink:0;}
+@media(max-width:760px){.loop-flow{flex-direction:column;align-items:stretch;}.loop-arrow{transform:rotate(90deg);padding:10px 0;}}
+.loop-rail{max-width:980px;margin:34px auto 0;display:flex;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,var(--org,rgba(247,147,26,.08)),transparent);border:1px solid var(--bdr2);border-radius:14px;padding:16px 22px;flex-wrap:wrap;}
+.loop-rail-ic{font-size:18px;flex-shrink:0;}
+.loop-rail-txt{font-size:14px;color:var(--txt2);line-height:1.55;}
+.loop-rail-txt b{color:var(--txt);font-weight:700;}
+.loop-points{max-width:980px;margin:30px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;}
+@media(max-width:640px){.loop-points{grid-template-columns:1fr;}}
+.loop-point{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--txt2);line-height:1.5;}
+.loop-point svg{width:18px;height:18px;color:var(--or);flex-shrink:0;margin-top:1px;}
 </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
+
 <nav>
-  <a href="/" class="nav-logo">⚡ SatsEarn <span>BETA</span></a>
+  <a href="/" class="nav-logo"><svg viewBox="0 0 56 72" width="15" height="19" fill="#f7931a" style="vertical-align:-3px;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg> SatsEarn <span>BETA</span></a>
   <div class="nav-links">
     <a href="/#ways-to-earn">Ways to Earn</a>
     <a href="/how-it-works">How It Works</a>
@@ -289,11 +314,11 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-badge">⚡ Our Story</div>
+  <div class="hero-badge"><svg viewBox="0 0 56 72" width="13" height="16" fill="#f7931a" style="vertical-align:-2px;display:inline-block;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg> Our Story</div>
   <h1>Bitcoin Isn't Bought.<br>It's <span class="boxed-fill">Earned.</span></h1>
   <p class="hero-sub">SatsEarn is the platform where the things you already do online pay you in real Bitcoin sats. No buying. No exchange. No catch. This is why we built it.</p>
   <div class="hero-actions">
-    <a href="/signup" class="btn-hero">⚡ Start Stacking Free</a>
+    <a href="/signup" class="btn-hero"><svg viewBox="0 0 56 72" width="13" height="16" fill="#000" style="vertical-align:-2px;display:inline-block;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg> Start Stacking Free</a>
     <a href="#story" class="btn-hero-ghost">Read Our Story</a>
   </div>
 </section>
@@ -441,7 +466,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
     </div>
     <div class="sides-layout reveal">
       <div class="side-earners">
-        <div class="side-col-title">⚡ For Earners</div>
+        <div class="side-col-title">🙌 For Earners</div>
         <div class="side-items">
           <div class="side-item">
             <div class="side-item-title">Earn Real Bitcoin</div>
@@ -502,7 +527,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
         <div class="split-node split-n3">🎮</div>
         <div class="split-node split-n4">👥</div>
         <div class="split-node split-n5">🔥</div>
-        <div class="split-node split-n6">⚡</div>
+        <div class="split-node split-n6"><svg viewBox="0 0 56 72" width="13" height="16" fill="#f7931a" style="vertical-align:-2px;display:inline-block;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg></div>
       </div>
       <div class="split-text reveal">
         <div class="split-tag">TASKS // QUIZZES // STREAKS // REFERRALS</div>
@@ -510,6 +535,54 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
         <p>SatsEarn connects every earning method into one Lightning-native wallet. Follow accounts, answer Bitcoin quizzes, play mini-games, keep daily streaks, and refer friends — all stacking real sats into a single balance. When you're ready, it all flows out over Lightning to the wallet of your choice. No internal coins. No conversion. Just Bitcoin.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BITCOIN LOOP (full ecosystem) -->
+<section id="bitcoin-loop">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:14px;">
+      <div class="section-label" style="display:inline-block;">The Whole Loop</div>
+      <h2 class="section-title">It All Runs on <span class="or">Bitcoin</span></h2>
+    </div>
+    <p class="loop-intro reveal">Most rewards platforms pay you in points or gift cards. SatsEarn is different: whatever currency a brand pays us in, <b>what reaches you is always real Bitcoin</b> — earned for genuine activity and settled over the Lightning Network. One simple loop, ending in sats you fully control.</p>
+    <div class="loop-flow reveal">
+      <div class="loop-stage">
+        <div class="loop-num">01</div>
+        <div class="loop-icon">🏢</div>
+        <div class="loop-stage-title">Brands fund campaigns</div>
+        <div class="loop-stage-desc">Advertisers fund campaigns in <b>USD, USDT, or INR</b> to reach a Bitcoin-native audience. We're based in India and work with brands worldwide.</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-stage">
+        <div class="loop-num">02</div>
+        <div class="loop-icon"><svg viewBox="0 0 56 72" width="13" height="16" fill="#f7931a" style="vertical-align:-2px;display:inline-block;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg></div>
+        <div class="loop-stage-title">You complete tasks</div>
+        <div class="loop-stage-desc">Learn about Bitcoin, play games, answer quizzes, and complete offers. Every verified action earns you <b>real satoshis</b>.</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-stage">
+        <div class="loop-num">03</div>
+        <div class="loop-icon">₿</div>
+        <div class="loop-stage-title">Sats reach your wallet</div>
+        <div class="loop-stage-desc">After maturity, withdraw <b>straight to any Lightning wallet</b>. Not points. Not gift cards. Bitcoin you fully control.</div>
+      </div>
+    </div>
+    <div class="loop-rail reveal">
+      <span class="loop-rail-ic">🔁</span>
+      <span class="loop-rail-txt"><b>However a brand pays, you get Bitcoin.</b> Campaign budgets fund the reward pool, and your rewards are paid out as real sats — settled on the Lightning Network, straight to your wallet.</span>
+    </div>
+    <div class="loop-points reveal">
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>You always earn and withdraw real Bitcoin</div>
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Instant Lightning Network settlement</div>
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Real Bitcoin rewards — never internal coins</div>
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Global reach without currency barriers</div>
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Lower fees than traditional ad rails</div>
+      <div class="loop-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Aligned incentives — brands, you, and us</div>
+    </div>
+    <p style="max-width:640px;margin:26px auto 0;text-align:center;font-size:12.5px;color:var(--txt3);font-style:italic;line-height:1.6;">SatsEarn is in beta and building its audience — this describes how the platform is designed to work, not a promise of specific earnings or advertiser results. <a href="/brands" style="color:var(--or);">Are you a brand? See how advertising works →</a></p>
   </div>
 </section>
 
@@ -711,7 +784,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
       To make earning Bitcoin as simple as being online — so anyone, anywhere, can stack sats without ever having to <span class="or">buy one single sat. One sat at a time.</span>
     </div>
     <div class="mission-pillars">
-      <div class="pillar"><span>⚡</span> Real Sats Only</div>
+      <div class="pillar"><span>🪙</span> Real Sats Only</div>
       <div class="pillar"><span>🌍</span> Globally Accessible</div>
       <div class="pillar"><span>🔒</span> Fraud Protected</div>
       <div class="pillar"><span>💡</span> No Buying Required</div>
@@ -740,7 +813,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
       <h2 style="font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.1;margin-bottom:16px;">Start Stacking Sats.<br><span class="or">No Buying Required.</span></h2>
       <p style="font-size:16px;color:var(--txt2);max-width:480px;margin:0 auto 36px;line-height:1.7;">Join SatsEarn today — free forever. Complete tasks, earn real Bitcoin, and withdraw via Lightning when you're ready.</p>
       <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
-        <a href="/signup" class="btn-hero">⚡ Create Free Account</a>
+        <a href="/signup" class="btn-hero"><svg viewBox="0 0 56 72" width="13" height="16" fill="#000" style="vertical-align:-2px;display:inline-block;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg> Create Free Account</a>
         <a href="/how-it-works" class="btn-hero-ghost">See How It Works</a>
       </div>
       <div style="margin-top:20px;font-size:12px;color:var(--txt3);">Earnings depend on task availability and tier. All sats subject to 15-day maturity period.</div>
@@ -751,7 +824,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <span class="logo">⚡ SatsEarn</span>
+      <span class="logo"><svg viewBox="0 0 56 72" width="15" height="19" fill="#f7931a" style="vertical-align:-3px;flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg> SatsEarn</span>
       <p>The Bitcoin earn platform. Stack real sats through tasks, quizzes, streaks, and referrals. No buying required.</p>
       <div class="footer-social">
         <a href="#" class="social-link" aria-label="X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
@@ -790,6 +863,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
       <div class="footer-links">
         <a href="/about">About Us</a>
         <a href="/contact">Contact</a>
+        <a href="/brands">For Brands</a>
         <a href="/#roadmap">Roadmap</a>
         <a href="/signup">Create Account</a>
         <a href="/login">Log In</a>
@@ -810,7 +884,7 @@ footer{background:var(--bg);border-top:1px solid var(--bdr);padding:60px 20px 28
   </div>
   <div class="footer-bottom">
     <span>© 2026 SatsEarn. All rights reserved.</span>
-    <span>Made with 🧡 for the Bitcoin community</span>
+    <span>Made with <span class="heart-beat" style="display:inline-block;vertical-align:-2px;"><svg viewBox="0 0 24 24" width="15" height="15" fill="#f7931a" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span> for the Bitcoin community</span>
   </div>
 </footer>
 
@@ -831,5 +905,71 @@ document.querySelectorAll('.rm-header').forEach(h => {
   });
 });
 </script>
+
+<!-- CONTACT FAB -->
+<div id="sticky-contact" style="position:fixed;bottom:28px;right:28px;z-index:1500;display:flex;flex-direction:column;align-items:flex-end;gap:10px;transition:opacity .3s,transform .3s;">
+  <div id="sticky-tray" style="display:none;flex-direction:column;gap:8px;align-items:flex-end;">
+    <a href="/contact" style="display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--bdr2);border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--txt);font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .2s;">
+      <span>📬</span> Send a Message
+    </a>
+    <a href="#" onclick="satsCloseTray();return false;" style="display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--bdr2);border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--txt);font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .2s;">
+      <span style="color:var(--or);"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></span> Telegram — Fastest
+    </a>
+    <a href="#" onclick="satsCloseTray();return false;" style="display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--bdr2);border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--txt);font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .2s;">
+      <span style="color:var(--or);"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></span> Discord Community
+    </a>
+  </div>
+  <button id="sticky-fab" onclick="satsFabClick()" style="width:56px;height:56px;border-radius:50%;background:var(--or);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px rgba(247,147,26,.55);transition:all .25s;position:relative;" aria-label="Contact Support">
+    <svg id="sticky-icon-msg" viewBox="0 0 24 24" width="22" height="22" fill="#000"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    <svg id="sticky-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="#000" style="display:none;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    <span style="position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(247,147,26,.5);animation:fab-pulse 2.4s ease-out infinite;pointer-events:none;"></span>
+  </button>
+</div>
+<style>
+@keyframes fab-pulse{0%{box-shadow:0 0 0 0 rgba(247,147,26,.5);}70%{box-shadow:0 0 0 14px rgba(247,147,26,0);}100%{box-shadow:0 0 0 0 rgba(247,147,26,0);}}
+#sticky-tray a:hover{border-color:var(--or)!important;color:var(--or)!important;}
+@media(max-width:480px){#sticky-contact{bottom:16px;right:16px;}}
+
+/* heart pulse + glow */
+.heart-beat{animation:heartBeat 1.6s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(247,147,26,.85)) drop-shadow(0 0 9px rgba(247,147,26,.5));transform-origin:center;}
+@keyframes heartBeat{0%,100%{transform:scale(1);}10%{transform:scale(1.25);}20%{transform:scale(1.05);}30%{transform:scale(1.2);}45%{transform:scale(1);}}
+@media(prefers-reduced-motion:reduce){.heart-beat{animation:none;}}
+/* footer clearance so the FAB doesn't overlap the bottom text */
+.footer-bottom{padding-bottom:74px;}
+@media(min-width:901px){.footer-bottom{padding-right:96px;}}
+</style>
+<script>
+(function(){
+  var _trayOpen=false;
+  window.satsFabClick=function(){_trayOpen?satsCloseTray():satsOpenTray();};
+  window.satsOpenTray=function(){
+    _trayOpen=true;var tray=document.getElementById('sticky-tray');
+    tray.style.display='flex';tray.style.opacity='0';tray.style.transform='translateY(10px)';
+    setTimeout(function(){tray.style.transition='opacity .2s,transform .2s';tray.style.opacity='1';tray.style.transform='translateY(0)';},10);
+    document.getElementById('sticky-icon-msg').style.display='none';
+    document.getElementById('sticky-icon-x').style.display='block';
+    var fab=document.getElementById('sticky-fab');fab.style.background='#1a1a2e';fab.style.border='1px solid var(--or)';
+    setTimeout(function(){document.addEventListener('click',satsOutsideClose,{once:true});},50);
+  };
+  window.satsCloseTray=function(){
+    _trayOpen=false;var tray=document.getElementById('sticky-tray');
+    tray.style.opacity='0';tray.style.transform='translateY(10px)';
+    setTimeout(function(){tray.style.display='none';},200);
+    document.getElementById('sticky-icon-msg').style.display='block';
+    document.getElementById('sticky-icon-x').style.display='none';
+    var fab=document.getElementById('sticky-fab');fab.style.background='var(--or)';fab.style.border='none';
+  };
+  window.satsOutsideClose=function(e){
+    var c=document.getElementById('sticky-contact');if(c&&!c.contains(e.target))satsCloseTray();
+  };
+  function prog(){
+    var el=document.getElementById('scroll-progress');if(!el)return;
+    var s=window.pageYOffset,t=document.documentElement.scrollHeight-window.innerHeight;
+    el.style.width=(t>0?Math.min(s/t*100,100):0)+'%';
+  }
+  window.addEventListener('scroll',prog,{passive:true});prog();
+})();
+</script>
+
 </body>
 </html>

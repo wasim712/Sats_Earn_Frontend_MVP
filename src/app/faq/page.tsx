@@ -776,7 +776,7 @@ export default function FAQPage() {
           q: 'What is your refund policy?',
           a: (
             <span>
-              All payments to SatsEarn are final. We do not offer refunds once a payment is completed — this includes initial subscription purchases, renewals, and subscriptions paid using earned sats. You can cancel anytime to stop future renewals, and you&apos;ll keep access until the end of the period you&apos;ve paid for. Earned sats are also non-refundable. See our <Link href="/terms" className="text-sats-orange-500 hover:underline">Terms of Service</Link> or `/terms` for full details.
+              All payments to SatsEarn are final. We do not offer refunds once a payment is completed — this includes initial subscription purchases, renewals, and subscriptions paid using earned sats. You can cancel anytime to stop future renewals, and you&apos;ll keep access until the end of the period you&apos;ve paid for. Earned sats are also non-refundable. See our <Link href="legal/terms" className="text-sats-orange-500 hover:underline">Terms of Service</Link> or `legal/terms` for full details.
             </span>
           )
         },

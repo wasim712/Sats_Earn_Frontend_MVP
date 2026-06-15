@@ -239,41 +239,45 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
             {dashboard.recentSubmissions && dashboard.recentSubmissions.length > 0 ? (
               dashboard.recentSubmissions.slice(0, 4).map((submission) => {
                 const statusUi = getSubmissionStatusUi(submission.status);
+                const isPending = submission.status === 'PENDING_24H' || submission.status === 'MANUAL_REVIEW';
+                const isLocked = submission.status === 'LOCKED_15D';
+                const remainingMs = submission.remainingMs || 0;
+                
+                let dateString = null;
+                if ((isPending || isLocked) && remainingMs > 0) {
+                  const targetDate = new Date(Date.now() + remainingMs);
+                  const formatted = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(targetDate);
+                  if (isPending) dateString = `Locks on ${formatted}`;
+                  if (isLocked) dateString = `Available on ${formatted}`;
+                }
 
                 return (
-                  <div key={submission.id} className="group grow rounded-[16px] border border-transparent bg-[#050505] p-4 transition-all duration-300 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] sm:flex-row sm:items-center">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          {statusUi.icon}
-                          <p className="truncate text-sm font-bold text-white sm:hidden">
-                            {(submission.taskTitle || '').substring(0, 20)}{(submission.taskTitle || '').length > 20 ? '...' : ''}
-                          </p>
-                          <p className="hidden truncate text-sm font-bold text-white sm:block">
-                            {(submission.taskTitle || '').substring(0, 10)}{(submission.taskTitle || '').length > 10 ? '...' : ''}
-                          </p>
-                        </div>
-                        <p className="mt-1 text-[11px] font-medium text-gray-500">
-                          {submission.isStandalone ? (
-                            <span className="inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-400">
-                              Standalone
-                            </span>
-                          ) : (
-                            <>by {(submission.campaignTitle || '').substring(0, 15)}...</>
-                          )}
+                  <div key={submission.id} className="group flex flex-col gap-3 rounded-[16px] border border-transparent bg-[#050505] p-4 sm:p-5 transition-all duration-300 hover:border-[#2a2a2a] hover:bg-[#0a0a0a] sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111] border border-[#1a1a1a] transition-colors group-hover:border-[#2a2a2a]">
+                        {statusUi.icon}
+                      </div>
+                      <div className="flex min-w-0 flex-col gap-1">
+                        <p className="truncate text-[15px] font-bold tracking-tight text-white">
+                          {submission.taskTitle || 'Unknown Task'}
                         </p>
-                      </div>
-                      <div className="text-right">
-                        <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>
-                          {statusUi.label}
-                        </span>
-                        <p className="mt-2 text-sm font-black text-green-400">+{(submission.rewardSats || 0).toLocaleString()} sats</p>
-                        {/* {submission.status === 'LOCKED_15D' && (submission.remainingMs || 0) > 0 && (
-                          <p className="mt-1 text-[11px] text-yellow-400">Unlocks in {formatRemainingTime(submission.remainingMs || 0)}</p>
-                        )} */}
-                    </div>
+                        {dateString && (
+                          <p className={`text-[11px] font-semibold uppercase tracking-wide ${isPending ? 'text-blue-400' : 'text-yellow-400'}`}>
+                            {dateString}
+                          </p>
+                        )}
                       </div>
                     </div>
+                    
+                    <div className="flex items-center justify-between border-t border-white/[0.04] pt-3 sm:flex-col sm:items-end sm:justify-center sm:gap-2 sm:border-t-0 sm:pt-0">
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>
+                        {statusUi.label}
+                      </span>
+                      <p className="text-[15px] font-black text-green-400">
+                        +{(submission.rewardSats || 0).toLocaleString()} sats
+                      </p>
+                    </div>
+                  </div>
                 );
               })
             ) : (

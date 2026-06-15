@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import {
@@ -18,6 +18,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import { PremiumRewardCard } from './PremiumRewardsCard';
+import { FadeUp } from '@/components/animations/FadeUp';
 
 type PremiumTierName = 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER';
 type BillingCycle = 'MONTHLY' | 'YEARLY';
@@ -141,86 +142,99 @@ const FREE_TIERS = [
     xp: '0 XP',
     icon: <Shield className="w-5 h-5 text-slate-300" />,
     color: 'text-slate-200',
-    border: 'border-slate-400/20',
-    bg: 'from-slate-500/10 via-[#0a0a0a] to-[#050505]',
+    border: 'border-slate-400/25',
+    bg: 'from-slate-500/15 via-sats-black-800 to-sats-black-900',
     badge: 'bg-slate-500/10 text-slate-300 border-slate-500/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(100,116,139,0.15)] group-hover:border-slate-400/40',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(100,116,139,0.2)] group-hover:border-slate-400/50',
     perks: ['Referral limit: 20 users'],
   },
   {
     name: 'Copper',
     xp: '10,000 XP',
-    icon: <Coins className="w-5 h-5 text-[#b87333]" />,
-    color: 'text-[#d7a06b]',
-    border: 'border-[#b87333]/20',
-    bg: 'from-[#b87333]/10 via-[#0d0906] to-[#050505]',
-    badge: 'bg-[#b87333]/10 text-[#e6bb92] border-[#b87333]/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(184,115,51,0.15)] group-hover:border-[#b87333]/40',
+    icon: <Coins className="w-5 h-5 text-orange-400" />,
+    color: 'text-orange-400',
+    border: 'border-orange-500/25',
+    bg: 'from-orange-500/15 via-sats-black-800 to-sats-black-900',
+    badge: 'bg-orange-500/10 text-orange-300 border-orange-500/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(249,115,22,0.2)] group-hover:border-orange-500/50',
     perks: ['Referral limit: 40 users'],
   },
   {
     name: 'Bronze',
     xp: '50,000 XP',
-    icon: <Medal className="w-5 h-5 text-[#cd7f32]" />,
-    color: 'text-[#d99962]',
-    border: 'border-[#cd7f32]/20',
-    bg: 'from-[#cd7f32]/10 via-[#0e0906] to-[#050505]',
-    badge: 'bg-[#cd7f32]/10 text-[#efbf96] border-[#cd7f32]/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(205,127,50,0.15)] group-hover:border-[#cd7f32]/40',
+    icon: <Medal className="w-5 h-5 text-amber-500" />,
+    color: 'text-amber-500',
+    border: 'border-amber-500/25',
+    bg: 'from-amber-500/15 via-sats-black-800 to-sats-black-900',
+    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group-hover:border-amber-500/50',
     perks: ['Referral limit: 60 users'],
   },
   {
     name: 'Silver',
     xp: '100,000 XP',
-    icon: <Star className="w-5 h-5 text-[#C0C0C0]" />,
-    color: 'text-[#d8dde5]',
-    border: 'border-[#C0C0C0]/20',
-    bg: 'from-[#C0C0C0]/10 via-[#0b0d0e] to-[#050505]',
-    badge: 'bg-[#C0C0C0]/10 text-[#eef2f5] border-[#C0C0C0]/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(192,192,192,0.15)] group-hover:border-[#C0C0C0]/40',
+    icon: <Star className="w-5 h-5 text-gray-300" />,
+    color: 'text-gray-300',
+    border: 'border-gray-400/25',
+    bg: 'from-gray-400/15 via-sats-black-800 to-sats-black-900',
+    badge: 'bg-gray-400/10 text-gray-200 border-gray-400/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(156,163,175,0.2)] group-hover:border-gray-400/50',
     perks: ['Referral limit: 80 users'],
   },
   {
     name: 'Gold',
     xp: '150,000 XP',
-    icon: <Trophy className="w-5 h-5 text-[#FFD700]" />,
-    color: 'text-[#FFD700]',
-    border: 'border-[#FFD700]/25',
-    bg: 'from-[#FFD700]/15 via-[#110e05] to-[#050505]',
-    badge: 'bg-[#FFD700]/10 text-[#ffe985] border-[#FFD700]/25',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(255,215,0,0.15)] group-hover:border-[#FFD700]/50',
+    icon: <Trophy className="w-5 h-5 text-yellow-400" />,
+    color: 'text-yellow-400',
+    border: 'border-yellow-400/25',
+    bg: 'from-yellow-400/15 via-sats-black-800 to-sats-black-900',
+    badge: 'bg-yellow-400/10 text-yellow-300 border-yellow-400/20',
+    glow: 'group-hover:shadow-[0_0_30px_rgba(250,204,21,0.2)] group-hover:border-yellow-400/50',
     perks: ['Referral limit: 100 users'],
   },
 ];
 
 const STREAK_MILESTONES = [
-  { days: 7, sats: 70, title: 'Pulse Start', accent: 'from-orange-500/10 via-[#0a0604] to-[#050505]', iconColor: 'text-orange-400', border: 'border-orange-500/20' },
-  { days: 21, sats: 210, title: 'Momentum Run', accent: 'from-rose-500/10 via-[#0a0406] to-[#050505]', iconColor: 'text-rose-400', border: 'border-rose-500/20' },
-  { days: 60, sats: 600, title: 'Golden Run', accent: 'from-amber-500/10 via-[#0a0804] to-[#050505]', iconColor: 'text-amber-400', border: 'border-amber-500/20' },
-  { days: 90, sats: 900, title: 'Prime Chain', accent: 'from-violet-500/10 via-[#07040a] to-[#050505]', iconColor: 'text-violet-400', border: 'border-violet-500/20' },
-  { days: 180, sats: 1800, title: 'Titan Loop', accent: 'from-fuchsia-500/10 via-[#0a040a] to-[#050505]', iconColor: 'text-fuchsia-400', border: 'border-fuchsia-500/20' },
-  { days: 365, sats: 3650, title: 'Legacy Orbit', accent: 'from-cyan-500/10 via-[#04080a] to-[#050505]', iconColor: 'text-cyan-400', border: 'border-cyan-500/20' },
+  { days: 7, sats: 70, title: 'Pulse Start', accent: 'from-white/5 via-sats-black-800 to-sats-black-900', iconColor: 'text-gray-300', border: 'border-white/10' },
+  { days: 21, sats: 210, title: 'Momentum Run', accent: 'from-sats-orange-500/5 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-200', border: 'border-sats-orange-500/10' },
+  { days: 60, sats: 600, title: 'Golden Run', accent: 'from-sats-orange-500/10 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-300', border: 'border-sats-orange-500/20' },
+  { days: 90, sats: 900, title: 'Prime Chain', accent: 'from-sats-orange-500/15 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-400', border: 'border-sats-orange-500/30' },
+  { days: 180, sats: 1800, title: 'Titan Loop', accent: 'from-sats-orange-500/20 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-500', border: 'border-sats-orange-500/40' },
+  { days: 365, sats: 3650, title: 'Legacy Orbit', accent: 'from-sats-orange-500/25 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]', border: 'border-sats-orange-500/50' },
 ] as const;
 
 export default function RewardsPage() {
   const [selectedBillingCycle, setSelectedBillingCycle] = useState<BillingCycle>('MONTHLY');
 
   return (
-    <div className="min-h-fit bg-[#050505] text-white overflow-x-hidden px-4 py-8 md:px-8 lg:px-10 relative">
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.10),_transparent_28%),radial-gradient(circle_at_80%_20%,_rgba(168,85,247,0.10),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(255,255,255,0.06),_transparent_24%)]" />
+    <main className="relative min-h-screen bg-sats-black-950 bg-grid-base overflow-x-clip px-4 py-8 md:px-8 lg:px-10 text-white">
+      {/* Background Ambient Glows */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[400px] sm:w-[800px] sm:h-[800px] bg-[radial-gradient(circle,rgba(247,147,26,0.06),transparent_60%)]"></div>
+        <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(247,147,26,0.04),transparent_65%)]"></div>
+        <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(168,85,247,0.05),transparent_60%)]"></div>
+      </div>
 
       <div className="max-w-7xl mx-auto space-y-12 lg:space-y-16 relative z-10">
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">
-              Rewards & Tiers
+        <header className="text-center pt-8 pb-4 px-4">
+          <FadeUp delay={0.1}>
+            <div className="font-mono text-xs tracking-widest uppercase text-sats-orange-500 opacity-85 mb-5 inline-flex items-center gap-2 bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-full px-4 py-1.5 backdrop-blur-md">
+              <Trophy className="w-4 h-4" /> Rewards Program
+            </div>
+          </FadeUp>
+          <FadeUp delay={0.2}>
+            <h1 className="font-black text-4xl sm:text-5xl md:text-7xl leading-[1.05] tracking-tight mb-5 text-white max-w-4xl mx-auto">
+              Rewards & <span className="bg-gradient-to-r from-sats-orange-400 via-sats-orange-500 to-sats-orange-600 bg-clip-text text-transparent relative">Tiers</span>
             </h1>
-            <p className="text-gray-400 mt-3 text-base md:text-lg leading-relaxed">
+          </FadeUp>
+          <FadeUp delay={0.3}>
+            <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Track streak milestones, unlock stronger free tiers, and explore premium access with the same polished experience across every screen.
             </p>
-          </div>
+          </FadeUp>
         </header>
 
+        <FadeUp delay={0.4}>
         <section>
           <div className="mb-6 flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white">
@@ -280,7 +294,9 @@ export default function RewardsPage() {
             })}
           </div>
         </section>
+        </FadeUp>
 
+        <FadeUp delay={0.5}>
         <section>
           <div className="mb-6 flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white">
@@ -292,7 +308,7 @@ export default function RewardsPage() {
             {FREE_TIERS.map((tier) => (
               <div
                 key={tier.name}
-                className={`group relative overflow-hidden rounded-[28px] border bg-gradient-to-br ${tier.bg} p-5 transition-all duration-300 ${tier.glow} ${tier.border}`}
+                className={`group relative overflow-hidden rounded-[28px] border bg-gradient-to-br ${tier.bg} p-5 transition-all duration-300 hover:-translate-y-1 ${tier.glow} ${tier.border}`}
               >
                 <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_28%)]" />
                 <div className="relative z-10 flex items-start justify-between gap-3">
@@ -318,7 +334,9 @@ export default function RewardsPage() {
             ))}
           </div>
         </section>
+        </FadeUp>
 
+        <FadeUp delay={0.6}>
         <section>
           <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
@@ -400,8 +418,9 @@ export default function RewardsPage() {
             ))}
           </div>
         </section>
+        </FadeUp>
       </div>
-    </div>
+    </main>
   );
 }
 

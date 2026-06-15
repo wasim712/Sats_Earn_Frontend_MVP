@@ -9,6 +9,7 @@ import { AboutProblemSolution } from '@/features/about/components/AboutProblemSo
 import { AboutWhyBitcoin } from '@/features/about/components/AboutWhyBitcoin';
 import { AboutSides } from '@/features/about/components/AboutSides';
 import { AboutEcosystem } from '@/features/about/components/AboutEcosystem';
+import { AboutBitcoinLoop } from '@/features/about/components/AboutBitcoinLoop';
 import { AboutValues } from '@/features/about/components/AboutValues';
 import { AboutTeam } from '@/features/about/components/AboutTeam';
 import { AboutRoadmap } from '@/features/about/components/AboutRoadmap';
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="w-full flex flex-col overflow-hidden bg-sats-black-950">
+    <main className="w-full flex flex-col overflow-x-clip bg-sats-black-950">
       <AboutHero />
       
       <AboutMarquee 
@@ -64,6 +65,10 @@ export default function AboutPage() {
       
       <AboutEcosystem />
       
+      <div className="h-px bg-gradient-to-r from-transparent via-sats-orange-500/20 to-transparent w-full" />
+      
+      <AboutBitcoinLoop />
+
       <div className="h-px bg-gradient-to-r from-transparent via-sats-orange-500/20 to-transparent w-full" />
       
       <AboutValues />
