@@ -109,8 +109,14 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
               <p className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
                 <Zap className="w-3.5 h-3.5" /> Reward
               </p>
-              <p className="text-sats-orange-500 text-sm font-bold tracking-tight">
-                ~ {quiz.rewardSats} Sats
+              <p className="text-sm font-bold tracking-tight flex items-center gap-1.5 truncate">
+                <span className="text-sats-orange-500 shrink-0">~ {quiz.rewardSats} Sats</span>
+                {Boolean(quiz.xpReward) && (
+                  <>
+                    <span className="text-[#333] font-normal">/</span>
+                    <span className="text-purple-400 shrink-0">{quiz.xpReward} XP</span>
+                  </>
+                )}
               </p>
             </div>
             <div>

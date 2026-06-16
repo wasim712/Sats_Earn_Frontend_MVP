@@ -131,6 +131,7 @@ export default function UserDailyQuizPage() {
     if (isQuizSubmitted || submittingQuestionId || solvedQuestions[questionId]) return;
     if ((wrongOptionsByQuestion[questionId] || []).includes(option)) return;
 
+    setAnswers((prev) => ({ ...prev, [questionId]: option }));
     setSubmittingQuestionId(questionId);
     const response = await dispatch(submitQuizAnswer({ questionId, answer: option }));
 
@@ -171,7 +172,7 @@ export default function UserDailyQuizPage() {
   const totalQuestions = sortedQuestions.length;
   const answeredCount = Object.keys(solvedQuestions ?? {}).length;
   const quizStatus = (quiz as unknown as { status?: 'available' | 'submitted' } | null)?.status;
-  const isQuizSubmitted = quizStatus === 'submitted' || Boolean(result?.submittedAt) || Boolean(result?.passed);
+  const isQuizSubmitted = quizStatus === 'submitted' || Boolean(result?.passed);
   const isReviewMode = isQuizSubmitted;
 
   if (isLoading) return <QuizPageSkeleton />;
@@ -190,7 +191,7 @@ export default function UserDailyQuizPage() {
   return (
     <div className="min-h-screen bg-[#020202] pb-10 md:pb-12 relative">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8 py-5 md:py-8">
-        <div className={`grid grid-cols-1 gap-6 items-start mb-8 ${isReviewMode ? 'hidden' : ''}`}>
+        <div className={`grid grid-cols-1 gap-6 items-start mb-8 ${isReviewMode || Boolean(result) ? 'hidden' : ''}`}>
           <div className="min-w-0">
             <div className="rounded-[30px] border border-[#1a1a1a] bg-[#080808] p-5 sm:p-6 md:p-8">
               <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3">Today&apos;s Quiz</p>
@@ -291,12 +292,12 @@ export default function UserDailyQuizPage() {
 
                     const optionClass = isReviewMode
                       ? isCorrectOption
-                        ? 'bg-[#052e1a] border-[#22c55e]/45 text-[#86efac] shadow-[0_0_24px_rgba(34,197,94,0.18)]'
+                        ? 'bg-[#052e1a] border-[#22c55e]/60 text-[#86efac] shadow-[0_0_30px_rgba(34,197,94,0.25)] ring-1 ring-[#22c55e]/30'
                         : isWrongOption
                           ? 'bg-[#2a0710] border-[#f43f5e]/45 text-[#fda4af] shadow-[0_0_24px_rgba(244,63,94,0.16)]'
                           : 'bg-[#111] border-[#1a1a1a] text-gray-300'
                       : isCorrectOption
-                        ? 'bg-[#052e1a] border-[#22c55e]/45 text-[#86efac] shadow-[0_0_24px_rgba(34,197,94,0.18)]'
+                        ? 'bg-[#052e1a] border-[#22c55e]/60 text-[#86efac] shadow-[0_0_30px_rgba(34,197,94,0.25)] ring-1 ring-[#22c55e]/30'
                         : isWrongOption
                           ? 'bg-[#2a0710] border-[#f43f5e]/45 text-[#fda4af] shadow-[0_0_24px_rgba(244,63,94,0.16)]'
                           : 'bg-[#111] border-[#1a1a1a] text-gray-300 hover:border-[#333] hover:bg-[#151515]';
@@ -326,7 +327,7 @@ export default function UserDailyQuizPage() {
 
                         {(isReviewMode || isCorrectOption || isWrongOption || isQuestionSubmitting) && (
                           <div className="ml-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest">
-                            {isCorrectOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Correct</span>}
+                            {isCorrectOption && <span className="px-2.5 py-1 rounded-full bg-[#22c55e]/15 border border-[#22c55e]/40 text-[#4ade80] flex items-center gap-1.5 shadow-[0_0_10px_rgba(34,197,94,0.2)]"><CheckCircle2 className="w-3.5 h-3.5" /> Correct</span>}
                             {isWrongOption && <span className="px-2 py-1 rounded-full bg-[#2a0710] border border-[#f43f5e]/35 text-[#fecdd3]">Locked</span>}
                             {isQuestionSubmitting && !isCorrectOption && !isWrongOption && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Checking...</span>}
                           </div>
@@ -416,7 +417,9 @@ function getReviewItem(result: QuizResult | null, questionId: string) {
 }
 
 function isCorrectReviewOption(result: QuizResult | null, questionId: string, option: string) {
-  return getReviewItem(result, questionId)?.correctAnswer === option;
+  const reviewItem = getReviewItem(result, questionId);
+  if (!reviewItem) return false;
+  return (reviewItem.correctAnswer === option) || (reviewItem.isCorrect && reviewItem.selectedAnswer === option);
 }
 
 
