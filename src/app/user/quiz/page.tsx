@@ -193,7 +193,7 @@ export default function UserDailyQuizPage() {
         <div className={`grid grid-cols-1 gap-6 items-start mb-8 ${isReviewMode ? 'hidden' : ''}`}>
           <div className="min-w-0">
             <div className="rounded-[30px] border border-[#1a1a1a] bg-[#080808] p-5 sm:p-6 md:p-8">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3">Today's Quiz</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-sats-orange-500 mb-3">Today&apos;s Quiz</p>
               <h2 className="text-2xl md:text-3xl xl:text-[2rem] leading-tight font-black text-white tracking-tight mb-3">
                 {normalizedQuiz.title}
               </h2>
@@ -226,7 +226,7 @@ export default function UserDailyQuizPage() {
                 <p className="text-sm text-gray-500 font-medium">{result.message}</p>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:min-w-[220px]">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:min-w-55">
                 <ResultStatCard icon={<CheckCircle2 className="w-5 h-5 text-[#4ade80]" />} label="Score" value={`${result.score}/${result.totalQuestions || totalQuestions || result.score}`} />
                 <ResultStatCard icon={<Coins className="w-5 h-5 text-sats-orange-500" />} label="Sats Earned" value={`${(result.rewardEarned || 0) + (result.streakBonusSats || 0)} / ${result.maxRewardSats || normalizedQuiz.rewardSats}`} />
                 <ResultStatCard icon={<Sparkles className="w-5 h-5 text-sky-400" />} label="XP Earned" value={`${result.xpEarned || 0}`} />

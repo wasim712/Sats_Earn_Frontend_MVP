@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { PremiumRewardCard } from './PremiumRewardCard';
 import { FadeUp } from '@/components/animations/FadeUp';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 type PremiumTierName = 'PLATINUM' | 'DIAMOND' | 'CROWN' | 'ELITE' | 'FOUNDER';
 type BillingCycle = 'MONTHLY' | 'YEARLY';
@@ -239,6 +240,7 @@ export default function RewardsPage() {
   const [showSatsPricing, setShowSatsPricing] = useState(false);
   const [selectedBillingCycle, setSelectedBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [celebrationTier, setCelebrationTier] = useState<string | null>(null);
+  const [pendingSatsPurchase, setPendingSatsPurchase] = useState<{ plan: PremiumTierName; billingCycle: BillingCycle } | null>(null);
 
   useEffect(() => {
     dispatch(fetchPremiumInterests());
@@ -308,6 +310,22 @@ export default function RewardsPage() {
     }
   };
 
+  const pendingPurchaseDetails = useMemo(() => {
+    if (!pendingSatsPurchase) return null;
+    const { plan, billingCycle } = pendingSatsPurchase;
+    const amount = billingCycle === 'MONTHLY' 
+      ? Number(monthlyPricing[plan] || 0) 
+      : Number(yearlyPricing[plan] || 0);
+    return { plan, billingCycle, amount, remaining: availableBalance - amount };
+  }, [pendingSatsPurchase, monthlyPricing, yearlyPricing, availableBalance]);
+
+  const confirmSatsPurchase = async () => {
+    if (!pendingSatsPurchase) return;
+    const { plan, billingCycle } = pendingSatsPurchase;
+    setPendingSatsPurchase(null);
+    await handleSatsUpgrade(plan, billingCycle);
+  };
+
   return (
     <main className="relative min-h-screen bg-sats-black-950 bg-grid-base overflow-x-clip p-4 md:p-6 lg:p-10 text-white">
       {/* Background Ambient Glows */}
@@ -316,6 +334,39 @@ export default function RewardsPage() {
         <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(247,147,26,0.04),transparent_65%)]"></div>
         <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(168,85,247,0.05),transparent_60%)]"></div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!pendingSatsPurchase}
+        onClose={() => setPendingSatsPurchase(null)}
+        onConfirm={confirmSatsPurchase}
+        title="Confirm Premium Purchase"
+        confirmText="Confirm Purchase"
+      >
+        {pendingPurchaseDetails && (
+          <div className="space-y-6">
+            <p className="text-gray-300 text-[15px] leading-relaxed">
+              Do you want to purchase the <span className="font-black text-white">{pendingPurchaseDetails.plan}</span> premium tier <span className="font-bold text-gray-400">({pendingPurchaseDetails.billingCycle.toLowerCase()})</span> using your Sats balance?
+            </p>
+            
+            <div className="bg-[#111] border border-[#2a2a2a] rounded-2xl p-4 space-y-3 shadow-inner">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400 font-medium">Available Balance</span>
+                <span className="text-white font-mono font-bold tracking-tight">{availableBalance.toLocaleString()} sats</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400 font-medium">Purchasing Amount</span>
+                <span className="text-red-400 font-mono font-bold tracking-tight">- {pendingPurchaseDetails.amount.toLocaleString()} sats</span>
+              </div>
+              <div className="h-px bg-[#2a2a2a] w-full my-2" />
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-300 font-semibold">Remaining Balance</span>
+                <span className="text-sats-orange-400 font-mono font-black tracking-tight">{pendingPurchaseDetails.remaining.toLocaleString()} sats</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </ConfirmModal>
 
       {/* Celebration Modal */}
       {celebrationTier ? (
@@ -617,7 +668,7 @@ export default function RewardsPage() {
                                     : 'Send Premium Request',
                           onAction: () =>
                             showSatsPricing
-                              ? handleSatsUpgrade(tier.name, 'MONTHLY')
+                              ? setPendingSatsPurchase({ plan: tier.name, billingCycle: 'MONTHLY' })
                               : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-monthly'),
                         }
                   }
@@ -649,7 +700,7 @@ export default function RewardsPage() {
                               : 'Send Premium Request',
                     onAction: () =>
                       showSatsPricing
-                        ? handleSatsUpgrade(tier.name, 'YEARLY')
+                        ? setPendingSatsPurchase({ plan: tier.name, billingCycle: 'YEARLY' })
                         : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-yearly'),
                   }}
                   statusBanners={{
