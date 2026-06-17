@@ -2,9 +2,9 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, CheckSquare, ChevronRight, Clock3, Plus, Search, Sparkles, ShieldAlert, Zap } from 'lucide-react';
+import { CheckCircle2, CheckSquare, ChevronRight, Clock3, Plus, Search, Sparkles, ShieldAlert, Zap, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchStandaloneTasks } from '@/features/admin/adminTasksSlice';
+import { fetchStandaloneTasks, deleteStandaloneTask } from '@/features/admin/adminTasksSlice';
 
 export default function AdminStandaloneTasksPage() {
   const dispatch = useAppDispatch();
@@ -19,6 +19,14 @@ export default function AdminStandaloneTasksPage() {
   useEffect(() => {
     dispatch(fetchStandaloneTasks());
   }, [dispatch]);
+
+  const handleDeleteTask = (e: React.MouseEvent, taskId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this standalone task?")) {
+      dispatch(deleteStandaloneTask(taskId));
+    }
+  };
 
   const filteredTasks = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
@@ -137,7 +145,7 @@ export default function AdminStandaloneTasksPage() {
           <span className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-gray-300 shadow-inner">
             {getTaskPlatform(task)}
           </span>
-          <span className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-emerald-400 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]">
+          <span className="rounded-xl border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-purple-400 shadow-[inset_0_0_10px_rgba(168,85,247,0.1)]">
             XP {task.xpReward ?? task.xpRewardOverride ?? 0}
           </span>
         </div>
@@ -152,11 +160,21 @@ export default function AdminStandaloneTasksPage() {
 
         {/* Footer pushed to bottom dynamically using mt-auto */}
         <div className="relative z-10 mt-auto pt-6 flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 transition-colors duration-300 group-hover:text-gray-400">
-            Click to manage task
-          </div>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sats-orange-500/10 text-sats-orange-400 transition-all duration-300 group-hover:bg-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-            <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          <button
+            onClick={(e) => handleDeleteTask(e, task.id)}
+            className="group/btn cursor-pointer flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 transition-colors duration-300 hover:text-red-400 z-20"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 text-red-500 transition-all duration-300 group-hover/btn:bg-red-500 group-hover/btn:text-white group-hover/btn:shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+              <Trash2 className="h-4 w-4 transition-transform duration-300 group-hover/btn:scale-110" />
+            </div>
+            Delete Task
+          </button>
+
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 transition-colors duration-300 group-hover:text-gray-400">
+            Manage
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-gray-400 transition-all duration-300 group-hover:bg-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </div>
           </div>
         </div>
       </Link>

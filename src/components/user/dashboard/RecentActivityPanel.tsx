@@ -41,15 +41,29 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
   };
 
   const getDisplayAmount = (activity: Transaction) => {
-    const wholeSats = Number(activity.amountSats || 0);
-    const msats = Number(activity.amountMsats || 0);
-    const absoluteTotal = Math.abs(wholeSats) + Math.abs(msats) / 1000;
+    let absoluteTotal = 0;
+
+    if (activity.type === 'REFERRAL_BONUS' && activity.amountMsats !== null && activity.amountMsats !== undefined) {
+      absoluteTotal = Math.abs(Number(activity.amountMsats)) / 1000;
+    } else {
+      const wholeSats = Number(activity.amountSats || 0);
+      const msats = Number(activity.amountMsats || 0);
+      absoluteTotal = Math.abs(wholeSats) + Math.abs(msats) / 1000;
+    }
 
     if (Number.isInteger(absoluteTotal)) {
       return absoluteTotal.toLocaleString();
     }
 
     return absoluteTotal.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  };
+
+  const getDisplayDescription = (activity: Transaction) => {
+    let desc = activity.description || 'System Transaction';
+    if (activity.type === 'REFERRAL_BONUS') {
+      desc = desc.replace(/Commission from/i, 'Referral from').replace(/\(admin approved\)/i, '').trim();
+    }
+    return desc;
   };
 
   const isNegativeActivity = (activity: Transaction) => {
@@ -92,6 +106,8 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
         return 'Premium Purchase';
       case 'WITHDRAWAL':
         return 'Withdrawal';
+      case 'REFERRAL_BONUS':
+        return 'Referral';
       default:
         return String(activity.type || 'SYSTEM').replace(/_/g, ' ');
     }
@@ -121,14 +137,24 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         {ui.icon}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white line-clamp-1">{activity.description || 'System Transaction'}</p>
+                        <p className="text-sm font-bold text-white line-clamp-1">{getDisplayDescription(activity)}</p>
                         <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" /> {formatDate(activity.createdAt)}
                         </p>
                       </div>
                     </div>
-                    <div className={`text-sm font-black whitespace-nowrap ${isNegativeActivity(activity) ? 'text-red-400' : 'text-green-400'}`}>
-                      {ui.sign}{getDisplayAmount(activity)} sats
+                    <div className={`text-sm font-black font-mono tracking-tight whitespace-nowrap ${
+                      getDisplayDescription(activity).toLowerCase().includes('sat-worm xp') || getDisplayDescription(activity).toLowerCase().includes('xp reward')
+                        ? 'text-purple-400'
+                        : isNegativeActivity(activity)
+                        ? 'text-red-400'
+                        : 'text-green-400'
+                    }`}>
+                      {getDisplayDescription(activity).toLowerCase().includes('sat-worm xp') || getDisplayDescription(activity).toLowerCase().includes('xp reward') ? (
+                        <>+5 <span className="text-xs">XP</span></>
+                      ) : (
+                        <>{ui.sign}{getDisplayAmount(activity)} sats</>
+                      )}
                     </div>
                   </li>
                 );
@@ -174,7 +200,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         {ui.icon}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white leading-tight">{activity.description || 'System Transaction'}</p>
+                        <p className="text-sm font-bold text-white leading-tight">{getDisplayDescription(activity)}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 bg-sats-black-950 px-2 py-0.5 rounded border border-[#2a2a2a]">
                             {getActivityTypeLabel(activity)}
@@ -183,8 +209,18 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                         </div>
                       </div>
                     </div>
-                    <div className={`text-base font-black whitespace-nowrap pl-4 ${isNegativeActivity(activity) ? 'text-red-400' : 'text-green-400'}`}>
-                      {ui.sign}{getDisplayAmount(activity)}
+                    <div className={`text-base font-black font-mono tracking-tight whitespace-nowrap pl-4 ${
+                      getDisplayDescription(activity).toLowerCase().includes('sat-worm xp') || getDisplayDescription(activity).toLowerCase().includes('xp reward')
+                        ? 'text-purple-400'
+                        : isNegativeActivity(activity)
+                        ? 'text-red-400'
+                        : 'text-green-400'
+                    }`}>
+                      {getDisplayDescription(activity).toLowerCase().includes('sat-worm xp') || getDisplayDescription(activity).toLowerCase().includes('xp reward') ? (
+                        <>+5 <span className="text-sm">XP</span></>
+                      ) : (
+                        <>{ui.sign}{getDisplayAmount(activity)} sats</>
+                      )}
                     </div>
                   </div>
                 );

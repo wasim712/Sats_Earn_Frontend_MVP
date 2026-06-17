@@ -160,6 +160,13 @@ export default function SingleQuizPage({
                   <Zap className="w-3.5 h-3.5 text-sats-orange-500" />
                   <span className="font-semibold text-white">{singleQuiz.rewardSats}</span>
                   <span className="text-white/40">Sats</span>
+                  {Boolean(singleQuiz.xpReward) && (
+                    <>
+                      <span className="text-white/20 mx-1">•</span>
+                      <span className="font-semibold text-purple-400">{singleQuiz.xpReward}</span>
+                      <span className="text-purple-400/60">XP</span>
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center gap-1.5 text-sm">
                   <span className="font-semibold text-white">

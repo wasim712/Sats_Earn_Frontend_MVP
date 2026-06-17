@@ -44,20 +44,20 @@ interface DashboardLowerGridProps {
   monthlyTopEarners: LeaderboardEntry[];
 }
 
-export function 
-StreakSection({
-  unreadStreakReward,
-  isPremium,
-  currentStreak,
-  nextStreakMilestone,
-  nextStreakRewardSats,
-  daysRemainingToNextMilestone,
-  totalClaimedMilestones,
-  totalStreakMilestones,
-  streakProgressPercent,
-  lastClaimedStreakMilestone,
-  streakMilestones,
-}: StreakSectionProps) {
+export function
+  StreakSection({
+    unreadStreakReward,
+    isPremium,
+    currentStreak,
+    nextStreakMilestone,
+    nextStreakRewardSats,
+    daysRemainingToNextMilestone,
+    totalClaimedMilestones,
+    totalStreakMilestones,
+    streakProgressPercent,
+    lastClaimedStreakMilestone,
+    streakMilestones,
+  }: StreakSectionProps) {
   const premiumLockedMilestones = new Set([90, 180, 365]);
   const lockHint = 'To claim these rewards, you need Premium.';
 
@@ -143,11 +143,11 @@ StreakSection({
                   ? 'border-emerald-500/30 bg-emerald-500/10'
                   : isPremiumLocked
                     ? 'border-[#2b2416] bg-[#0a0906]'
-                  : reachedInCurrentRun
-                    ? 'border-blue-500/30 bg-blue-500/10'
-                    : isNext
-                      ? 'border-sky-500/30 bg-sky-500/10'
-                      : 'border-[#1a1a1a] bg-[#070707]';
+                    : reachedInCurrentRun
+                      ? 'border-blue-500/30 bg-blue-500/10'
+                      : isNext
+                        ? 'border-sky-500/30 bg-sky-500/10'
+                        : 'border-[#1a1a1a] bg-[#070707]';
 
                 return (
                   <div key={milestone.days} className={`group relative flex w-[120px] cursor-default flex-col items-center gap-3 rounded-2xl border p-3 transition-all duration-300 ${cardTone}`}>
@@ -242,7 +242,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                 const isPending = submission.status === 'PENDING_24H' || submission.status === 'MANUAL_REVIEW';
                 const isLocked = submission.status === 'LOCKED_15D';
                 const remainingMs = submission.remainingMs || 0;
-                
+
                 let dateString = null;
                 if ((isPending || isLocked) && remainingMs > 0) {
                   const targetDate = new Date(Date.now() + remainingMs);
@@ -268,7 +268,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between border-t border-white/[0.04] pt-3 sm:flex-col sm:items-end sm:justify-center sm:gap-2 sm:border-t-0 sm:pt-0">
                       <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>
                         {statusUi.label}

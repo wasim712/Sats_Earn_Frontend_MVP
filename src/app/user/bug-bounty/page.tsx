@@ -275,7 +275,7 @@ export default function BugBountyPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting || Boolean(validationMessage)}
+            // disabled={isSubmitting || Boolean(validationMessage)}
             className="inline-flex items-center gap-2 rounded-xl bg-sats-orange-500 px-5 py-3 font-black text-black disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.18)]"
           >
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
