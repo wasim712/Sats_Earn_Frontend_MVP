@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Megaphone, AlertTriangle, CheckCircle2, Zap, X } from 'lucide-react';
+import { Megaphone, AlertTriangle, CheckCircle2, Info, X } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
@@ -30,39 +30,39 @@ const getUIConfig = (type: string) => {
   switch (type) {
     case 'WARNING':
       return {
-        icon: <AlertTriangle className="w-3 h-3" />,
+        icon: <AlertTriangle className="w-3.5 h-3.5" />,
         label: 'Warning',
-        trackColor: 'bg-yellow-500',
-        labelColor: 'text-yellow-400',
-        iconColor: 'text-yellow-400',
-        bgGlow: 'bg-yellow-500/5',
+        badgeBg: 'bg-yellow-500/10',
+        badgeBorder: 'border-yellow-500/20',
+        textColor: 'text-yellow-400',
+        dividerColor: 'bg-yellow-500/30',
       };
     case 'SUCCESS':
       return {
-        icon: <CheckCircle2 className="w-3 h-3" />,
-        label: 'Update',
-        trackColor: 'bg-green-500',
-        labelColor: 'text-green-400',
-        iconColor: 'text-green-400',
-        bgGlow: 'bg-green-500/5',
+        icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+        label: 'Success',
+        badgeBg: 'bg-green-500/10',
+        badgeBorder: 'border-green-500/20',
+        textColor: 'text-green-400',
+        dividerColor: 'bg-green-500/30',
       };
     case 'PROMOTION':
       return {
-        icon: <Zap className="w-3 h-3" />,
+        icon: <Megaphone className="w-3.5 h-3.5" />,
         label: 'Promo',
-        trackColor: 'bg-sats-orange-500',
-        labelColor: 'text-sats-orange-500',
-        iconColor: 'text-sats-orange-500',
-        bgGlow: 'bg-sats-orange-500/5',
+        badgeBg: 'bg-purple-500/10',
+        badgeBorder: 'border-purple-500/20',
+        textColor: 'text-purple-400',
+        dividerColor: 'bg-purple-500/30',
       };
     default:
       return {
-        icon: <Megaphone className="w-3 h-3" />,
+        icon: <Info className="w-3.5 h-3.5" />,
         label: 'Info',
-        trackColor: 'bg-blue-400',
-        labelColor: 'text-blue-400',
-        iconColor: 'text-blue-400',
-        bgGlow: 'bg-blue-500/5',
+        badgeBg: 'bg-blue-500/10',
+        badgeBorder: 'border-blue-500/20',
+        textColor: 'text-blue-400',
+        dividerColor: 'bg-blue-500/30',
       };
   }
 };
@@ -172,36 +172,33 @@ export function AnnouncementBanner() {
                 return (
                   <React.Fragment key={`${announcement.id}-${idx}`}>
                     {/* Item */}
-                    <div className="inline-flex items-center gap-3 h-full px-6">
+                    <div className="inline-flex items-center gap-3 h-full px-6 group/item hover:bg-white/[0.02] transition-colors duration-300 cursor-default">
 
                       {/* Type badge */}
-                      <div className={`inline-flex items-center gap-1.5 ${ui.iconColor}`}>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md border ${ui.badgeBorder} ${ui.badgeBg} ${ui.textColor}`}>
                         {ui.icon}
-                        <span className={`text-[9px] font-black uppercase tracking-widest ${ui.labelColor} hidden md:block`}>
+                        <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
                           {ui.label}
                         </span>
                       </div>
 
-                      {/* Thin accent divider */}
-                      <div className={`w-px h-3 ${ui.trackColor} opacity-40 shrink-0`} />
-
                       {/* Title */}
-                      <span className="text-xs font-bold text-white/80 whitespace-nowrap">
+                      <span className={`text-[13px] font-black tracking-tight ${ui.textColor}`}>
                         {announcement.title}
                       </span>
 
-                      {/* Dot separator */}
-                      <span className="w-1 h-1 rounded-full bg-white/10 shrink-0" />
+                      {/* Thin accent divider */}
+                      <div className={`w-[2px] h-3.5 ${ui.dividerColor} rounded-full shrink-0 mx-1`} />
 
                       {/* Content */}
-                      <span className="text-xs text-white/40 whitespace-nowrap font-medium">
+                      <span className="text-xs text-gray-300 font-medium whitespace-nowrap">
                         {announcement.content}
                       </span>
                     </div>
 
                     {/* Between-item separator */}
                     <div className="inline-flex items-center self-center">
-                      <div className="w-px h-4 bg-white/[0.06]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                     </div>
                   </React.Fragment>
                 );
