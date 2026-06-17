@@ -41,9 +41,9 @@ const PREMIUM_TIERS = [
     name: 'PLATINUM' as const,
     label: 'Platinum',
     shortLabel: 'PLT',
-    oldSatsMonthly:'6682',
-    oldSatsYearly:'80187',
-    oldUsdYearly:'$59.88',
+    oldSatsMonthly: '6682',
+    oldSatsYearly: '80187',
+    oldUsdYearly: '$59.88',
     monthlyUsd: '$4.99',
     monthlyUsdOriginal: '$9.99',
     yearlyUsd: '$54.99',
@@ -63,9 +63,9 @@ const PREMIUM_TIERS = [
     name: 'DIAMOND' as const,
     label: 'Diamond',
     shortLabel: 'DMD',
-    oldSatsMonthly:'9361',
-    oldSatsYearly:'112332',
-    oldUsdYearly:'$83.88',
+    oldSatsMonthly: '9361',
+    oldSatsYearly: '112332',
+    oldUsdYearly: '$83.88',
     monthlyUsd: '$6.99',
     monthlyUsdOriginal: '$8.98',
     yearlyUsd: '$76.99',
@@ -85,9 +85,9 @@ const PREMIUM_TIERS = [
     name: 'CROWN' as const,
     label: 'Crown',
     shortLabel: 'CRN',
-    oldSatsMonthly:'13378',
-    oldSatsYearly:'160536',
-    oldUsdYearly:'$119.88',
+    oldSatsMonthly: '13378',
+    oldSatsYearly: '160536',
+    oldUsdYearly: '$119.88',
     monthlyUsd: '$9.99',
     monthlyUsdOriginal: '$13.98',
     yearlyUsd: '$109.99',
@@ -107,9 +107,9 @@ const PREMIUM_TIERS = [
     name: 'ELITE' as const,
     label: 'Elite',
     shortLabel: 'ELT',
-    oldSatsMonthly:'21416',
-    oldSatsYearly:'257135',
-    oldUsdYearly:'$191.88',
+    oldSatsMonthly: '21416',
+    oldSatsYearly: '257135',
+    oldUsdYearly: '$191.88',
     monthlyUsd: '$15.99',
     monthlyUsdOriginal: '$21.98',
     yearlyUsd: '$175.99',
@@ -130,7 +130,7 @@ const PREMIUM_TIERS = [
     label: 'Founder',
     shortLabel: 'FDR',
     monthlyUsd: null,
-    oldSatsYearly:'334816',
+    oldSatsYearly: '334816',
     monthlyUsdOriginal: null,
     yearlyUsd: '$249.99',
     yearlyUsdOriginal: null,
@@ -313,8 +313,8 @@ export default function RewardsPage() {
   const pendingPurchaseDetails = useMemo(() => {
     if (!pendingSatsPurchase) return null;
     const { plan, billingCycle } = pendingSatsPurchase;
-    const amount = billingCycle === 'MONTHLY' 
-      ? Number(monthlyPricing[plan] || 0) 
+    const amount = billingCycle === 'MONTHLY'
+      ? Number(monthlyPricing[plan] || 0)
       : Number(yearlyPricing[plan] || 0);
     return { plan, billingCycle, amount, remaining: availableBalance - amount };
   }, [pendingSatsPurchase, monthlyPricing, yearlyPricing, availableBalance]);
@@ -348,7 +348,7 @@ export default function RewardsPage() {
             <p className="text-gray-300 text-[15px] leading-relaxed">
               Do you want to purchase the <span className="font-black text-white">{pendingPurchaseDetails.plan}</span> premium tier <span className="font-bold text-gray-400">({pendingPurchaseDetails.billingCycle.toLowerCase()})</span> using your Sats balance?
             </p>
-            
+
             <div className="bg-[#111] border border-[#2a2a2a] rounded-2xl p-4 space-y-3 shadow-inner">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400 font-medium">Available Balance</span>
@@ -390,7 +390,7 @@ export default function RewardsPage() {
       ) : null}
 
       <div className="max-w-7xl mx-auto space-y-12 lg:space-y-16 relative z-10">
-        
+
         {/* Header Section */}
         <header className="text-center pt-8 pb-4 px-4">
           <FadeUp delay={0.1}>
@@ -422,11 +422,10 @@ export default function RewardsPage() {
 
         {feedback ? (
           <div
-            className={`rounded-2xl border px-5 py-4 text-sm font-bold flex items-center gap-3 animate-in fade-in slide-in-from-top-4 ${
-              feedback.type === 'success'
+            className={`rounded-2xl border px-5 py-4 text-sm font-bold flex items-center gap-3 animate-in fade-in slide-in-from-top-4 ${feedback.type === 'success'
                 ? 'border-green-500/30 bg-green-500/10 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.1)]'
                 : 'border-red-500/30 bg-red-500/10 text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.1)]'
-            }`}
+              }`}
           >
             {feedback.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <Info className="w-5 h-5" />}
             {feedback.message}
@@ -434,213 +433,208 @@ export default function RewardsPage() {
         ) : null}
 
         <FadeUp delay={0.5}>
-        <section>
-          <div className="mb-6 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white">
-              <Calendar className="w-5 h-5" />
+          <section>
+            <div className="mb-6 flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-white/90">Streak Milestones</h2>
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white/90">Streak Milestones</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {STREAK_MILESTONES.map((item) => {
-              const unlocked = FREE_STREAK_DAYS.has(item.days) || isPremiumUser;
-              const premiumLocked = !FREE_STREAK_DAYS.has(item.days) && !isPremiumUser;
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {STREAK_MILESTONES.map((item) => {
+                const unlocked = FREE_STREAK_DAYS.has(item.days) || isPremiumUser;
+                const premiumLocked = !FREE_STREAK_DAYS.has(item.days) && !isPremiumUser;
 
-              return (
-                <div
-                  key={item.days}
-                  className={`group relative rounded-[28px] border p-6 bg-gradient-to-br ${item.accent} ${
-                    unlocked ? 'border-white/10' : 'border-white/5'
-                  } transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] overflow-hidden`}
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors" />
-                  <div className="relative z-10 flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-4">
-                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border bg-black/40 shadow-inner ${item.border}`}>
-                        <Calendar className={`w-6 h-6 ${item.iconColor}`} />
+                return (
+                  <div
+                    key={item.days}
+                    className={`group relative rounded-[28px] border p-6 bg-gradient-to-br ${item.accent} ${unlocked ? 'border-white/10' : 'border-white/5'
+                      } transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] overflow-hidden`}
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors" />
+                    <div className="relative z-10 flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-4">
+                        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border bg-black/40 shadow-inner ${item.border}`}>
+                          <Calendar className={`w-6 h-6 ${item.iconColor}`} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold uppercase tracking-widest text-gray-500">{item.days} Days</div>
+                          <div className="mt-1 text-lg font-black text-white tracking-wide">{item.title}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-widest text-gray-500">{item.days} Days</div>
-                        <div className="mt-1 text-lg font-black text-white tracking-wide">{item.title}</div>
-                      </div>
+                      <span
+                        className={`shrink-0 flex items-center rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border ${unlocked
+                            ? 'border-green-500/20 bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]'
+                            : 'border-white/10 bg-black/40 text-gray-500'
+                          }`}
+                      >
+                        {unlocked ? 'Unlocked' : <><Lock className="w-2.5 h-2.5 mr-1.5 inline-block -mt-0.5" /> Premium</>}
+                      </span>
                     </div>
-                    <span
-                      className={`shrink-0 flex items-center rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] border ${
-                        unlocked
-                          ? 'border-green-500/20 bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]'
-                          : 'border-white/10 bg-black/40 text-gray-500'
-                      }`}
-                    >
-                      {unlocked ? 'Unlocked' : <><Lock className="w-2.5 h-2.5 mr-1.5 inline-block -mt-0.5" /> Premium</>}
-                    </span>
-                  </div>
 
-                  <div className={`relative z-10 mt-6 font-black text-2xl tracking-tight ${item.iconColor}`}>
-                    {item.sats.toLocaleString()} <span className="text-sm font-bold text-gray-500 tracking-widest uppercase">Sats</span>
+                    <div className={`relative z-10 mt-6 font-black text-2xl tracking-tight ${item.iconColor}`}>
+                      {item.sats.toLocaleString()} <span className="text-sm font-bold text-gray-500 tracking-widest uppercase">Sats</span>
+                    </div>
+                    <p className="relative z-10 mt-3 text-sm text-gray-400/80 leading-relaxed font-medium">
+                      {premiumLocked
+                        ? 'This milestone is locked for free tiers. Upgrade to any premium membership to unlock.'
+                        : FREE_STREAK_DAYS.has(item.days)
+                          ? 'Available to all users once your daily streak reaches this milestone.'
+                          : 'Unlocked because your premium tier includes extended milestone rewards.'}
+                    </p>
                   </div>
-                  <p className="relative z-10 mt-3 text-sm text-gray-400/80 leading-relaxed font-medium">
-                    {premiumLocked
-                      ? 'This milestone is locked for free tiers. Upgrade to any premium membership to unlock.'
-                      : FREE_STREAK_DAYS.has(item.days)
-                        ? 'Available to all users once your daily streak reaches this milestone.'
-                        : 'Unlocked because your premium tier includes extended milestone rewards.'}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
         </FadeUp>
 
         <FadeUp delay={0.6}>
-        <section>
-          <div className="mb-6 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white shadow-inner">
-              <MedalIcon className="w-5 h-5 text-sats-orange-500" />
+          <section>
+            <div className="mb-6 flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white shadow-inner">
+                <MedalIcon className="w-5 h-5 text-sats-orange-500" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-white/90 tracking-tight">Free Tiers</h2>
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white/90 tracking-tight">Free Tiers</h2>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-5 gap-5">
-            {FREE_TIERS.map((tier) => (
-              <div
-                key={tier.name}
-                className={`group relative rounded-[28px] border ${tier.border} bg-gradient-to-br ${tier.bg} p-6 transition-all duration-500 hover:-translate-y-1 ${tier.glow} overflow-hidden`}
-              >
-                {/* Ambient Internal Glow */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors duration-500" />
 
-                <div className="relative z-10 flex items-start justify-between gap-3 mb-6">
-                  <div className="flex items-center gap-3.5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] group-hover:scale-105 transition-transform duration-300">
-                      {tier.icon}
-                    </div>
-                    <div>
-                      <div className={`text-xl font-black tracking-wide ${tier.color} drop-shadow-sm`}>
-                        {tier.name}
+            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-5 gap-5">
+              {FREE_TIERS.map((tier) => (
+                <div
+                  key={tier.name}
+                  className={`group relative rounded-[28px] border ${tier.border} bg-gradient-to-br ${tier.bg} p-6 transition-all duration-500 hover:-translate-y-1 ${tier.glow} overflow-hidden`}
+                >
+                  {/* Ambient Internal Glow */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors duration-500" />
+
+                  <div className="relative z-10 flex items-start justify-between gap-3 mb-6">
+                    <div className="flex items-center gap-3.5">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] group-hover:scale-105 transition-transform duration-300">
+                        {tier.icon}
                       </div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-0.5">
-                        {tier.xp}
+                      <div>
+                        <div className={`text-xl font-black tracking-wide ${tier.color} drop-shadow-sm`}>
+                          {tier.name}
+                        </div>
+                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-0.5">
+                          {tier.xp}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="relative z-10 space-y-3 pt-4 border-t border-white/[0.06]">
-                  {tier.perks.map((perk) => (
-                    <div key={perk} className="flex items-start gap-3 text-sm font-medium text-gray-300">
-                      <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full shadow-sm ${tier.color.replace('text-', 'bg-')}`} />
-                      <span className="leading-snug">{perk}</span>
-                    </div>
-                  ))}
+                  <div className="relative z-10 space-y-3 pt-4 border-t border-white/[0.06]">
+                    {tier.perks.map((perk) => (
+                      <div key={perk} className="flex items-start gap-3 text-sm font-medium text-gray-300">
+                        <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full shadow-sm ${tier.color.replace('text-', 'bg-')}`} />
+                        <span className="leading-snug">{perk}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
         </FadeUp>
 
         <FadeUp delay={0.7}>
-        <section >
-<div id="premium-tiers"  className="mb-10 flex flex-col gap-6">
-  
-  {/* TOP SECTION: Title and Description */}
-  <div className="max-w-3xl">
-    <div className="mb-3 flex items-center gap-3">
-      <div className="p-2.5 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 shrink-0">
-        <Crown className="w-5 h-5" />
-      </div>
-      <h2 className="text-2xl md:text-3xl font-black text-white/90">Premium Memberships</h2>
-    </div>
-    <p className="text-base text-gray-400 leading-relaxed">
-      Unlock exclusive tasks, instant withdrawals, and huge earning multipliers. Select your preferred payment method directly on the cards below.
-    </p>
-  </div>
+          <section >
+            <div id="premium-tiers" className="mb-10 flex flex-col gap-6">
 
-  {/* BOTTOM SECTION: 3-Column Grid for perfect centering & right-alignment */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
-    
-    {/* Left: Empty Spacer (Takes up 1/3 of space on desktop to force center alignment) */}
-    <div className="hidden md:block"></div>
+              {/* TOP SECTION: Title and Description */}
+              <div className="max-w-3xl">
+                <div className="mb-3 flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-sats-orange-500/10 border border-sats-orange-500/20 text-sats-orange-500 shrink-0">
+                    <Crown className="w-5 h-5" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-black text-white/90">Premium Memberships</h2>
+                </div>
+                <p className="text-base text-gray-400 leading-relaxed">
+                  Unlock exclusive tasks, instant withdrawals, and huge earning multipliers. Select your preferred payment method directly on the cards below.
+                </p>
+              </div>
 
-    {/* Center: Monthly / Annual Toggle */}
-    <div className="flex justify-center">
-      <div className="inline-flex items-center rounded-full border border-white/10 bg-[#090909]/90 p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-xl">
-        <button
-          type="button"
-          onClick={() => setSelectedBillingCycle('MONTHLY')}
-          className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
-            selectedBillingCycle === 'MONTHLY'
-              ? 'bg-gradient-to-r from-white to-white/85 text-black shadow-[0_6px_18px_rgba(255,255,255,0.22)]'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          Monthly
-        </button>
-        <button
-          type="button"
-          onClick={() => setSelectedBillingCycle('YEARLY')}
-          className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${
-            selectedBillingCycle === 'YEARLY'
-              ? 'bg-gradient-to-r from-sats-orange-500 to-amber-400 text-black shadow-[0_6px_18px_rgba(249,115,22,0.28)]'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          Annual
-        </button>
-      </div>
-    </div>
+              {/* BOTTOM SECTION: 3-Column Grid for perfect centering & right-alignment */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
 
-    {/* Right: Currency Toggle Button */}
-    <div className="flex justify-center md:justify-end">
-      <button
-        type="button"
-        onClick={() => setShowSatsPricing(!showSatsPricing)}
-        className={`inline-flex cursor-pointer  sm:w-auto items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:scale-[1.02] active:scale-95 ${
-          showSatsPricing
-            ? 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black shadow-[0_0_18px_rgba(249,115,22,0.25)]'
-            : 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-[0_0_18px_rgba(34,197,94,0.25)]'
-        }`}
-      >
-        <Sparkles className="w-4 h-4" />
-        <span>{!showSatsPricing ? 'Upgrade Using Sats' : 'Upgrade Using USD'}</span>
-        <ChevronRight className="w-4 h-4" />
-      </button>
-    </div>
+                {/* Left: Empty Spacer (Takes up 1/3 of space on desktop to force center alignment) */}
+                <div className="hidden md:block"></div>
 
-  </div>
-</div>
-            
-          
+                {/* Center: Monthly / Annual Toggle */}
+                <div className="flex justify-center">
+                  <div className="inline-flex items-center rounded-full border border-white/10 bg-[#090909]/90 p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBillingCycle('MONTHLY')}
+                      className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${selectedBillingCycle === 'MONTHLY'
+                          ? 'bg-gradient-to-r from-white to-white/85 text-black shadow-[0_6px_18px_rgba(255,255,255,0.22)]'
+                          : 'text-gray-400 hover:text-white'
+                        }`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBillingCycle('YEARLY')}
+                      className={`relative cursor-pointer rounded-full px-6 py-2.5 text-sm font-black tracking-wide transition-all duration-500 ${selectedBillingCycle === 'YEARLY'
+                          ? 'bg-gradient-to-r from-sats-orange-500 to-amber-400 text-black shadow-[0_6px_18px_rgba(249,115,22,0.28)]'
+                          : 'text-gray-400 hover:text-white'
+                        }`}
+                    >
+                      Annual
+                    </button>
+                  </div>
+                </div>
 
-          {/* Adjusted 3x2 Grid for Desktop using Flex-Wrap */}
-          <div  className="flex flex-wrap justify-center gap-6 items-stretch">
-            {PREMIUM_TIERS.map((tier) => {
-              const state = requestMap[tier.name] || { notify: false, upgrade: false };
-              const monthlySats = Number(monthlyPricing[tier.name] || 0);
-              const yearlySats = Number(yearlyPricing[tier.name] || 0);
-              const monthlyUsd = formatUsd(monthlyUsdPricing[tier.name]);
-              const yearlyUsd = formatUsd(yearlyUsdPricing[tier.name]);
-              const monthlyEligible = monthlySats > 0 && availableBalance >= monthlySats;
-              const yearlyEligible = yearlySats > 0 && availableBalance >= yearlySats;
-              const isCurrentTier = currentPremiumTier === tier.name;
-              const tierRank = getTierRank(tier.name);
-              const belowCurrentPremium = currentPremiumRank >= 0 && tierRank < currentPremiumRank;
-              const canUpgradeForward = currentPremiumRank < tierRank || currentPremiumRank === -1;
-              const monthlyUnavailable = tier.name === 'FOUNDER';
+                {/* Right: Currency Toggle Button */}
+                <div className="flex justify-center md:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowSatsPricing(!showSatsPricing)}
+                    className={`inline-flex cursor-pointer  sm:w-auto items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black transition-all duration-300 shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:scale-[1.02] active:scale-95 ${showSatsPricing
+                        ? 'bg-gradient-to-r from-sats-orange-500 to-orange-400 text-black shadow-[0_0_18px_rgba(249,115,22,0.25)]'
+                        : 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-[0_0_18px_rgba(34,197,94,0.25)]'
+                      }`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>{!showSatsPricing ? 'Upgrade Using Sats' : 'Upgrade Using USD'}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
 
-              return (
-                <PremiumRewardCard
-                  key={tier.name}
-                  tier={tier}
-                  isCurrentTier={isCurrentTier}
-                  monthlyUnavailable={monthlyUnavailable}
-                  selectedBillingCycle={selectedBillingCycle}
-                  planPerks={tier.planPerks}
-                  monthlyPlan={
-                    monthlyUnavailable
-                      ? undefined
-                      : {
+              </div>
+            </div>
+
+
+
+            {/* Adjusted 3x2 Grid for Desktop using Flex-Wrap */}
+            <div className="flex flex-wrap justify-center gap-6 items-stretch">
+              {PREMIUM_TIERS.map((tier) => {
+                const state = requestMap[tier.name] || { notify: false, upgrade: false };
+                const monthlySats = Number(monthlyPricing[tier.name] || 0);
+                const yearlySats = Number(yearlyPricing[tier.name] || 0);
+                const monthlyUsd = formatUsd(monthlyUsdPricing[tier.name]);
+                const yearlyUsd = formatUsd(yearlyUsdPricing[tier.name]);
+                const monthlyEligible = monthlySats > 0 && availableBalance >= monthlySats;
+                const yearlyEligible = yearlySats > 0 && availableBalance >= yearlySats;
+                const isCurrentTier = currentPremiumTier === tier.name;
+                const tierRank = getTierRank(tier.name);
+                const belowCurrentPremium = currentPremiumRank >= 0 && tierRank < currentPremiumRank;
+                const canUpgradeForward = currentPremiumRank < tierRank || currentPremiumRank === -1;
+                const monthlyUnavailable = tier.name === 'FOUNDER';
+
+                return (
+                  <PremiumRewardCard
+                    key={tier.name}
+                    tier={tier}
+                    isCurrentTier={isCurrentTier}
+                    monthlyUnavailable={monthlyUnavailable}
+                    selectedBillingCycle={selectedBillingCycle}
+                    planPerks={tier.planPerks}
+                    monthlyPlan={
+                      monthlyUnavailable
+                        ? undefined
+                        : {
                           label: 'Monthly Plan',
                           showSatsPricing,
                           oldUsdYearly: tier.monthlyUsdOriginal,
@@ -671,107 +665,107 @@ export default function RewardsPage() {
                               ? setPendingSatsPurchase({ plan: tier.name, billingCycle: 'MONTHLY' })
                               : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-monthly'),
                         }
-                  }
-                  yearlyPlan={{
-                    label: tier.name === 'FOUNDER' ? 'Yearly Plan' : 'Yearly Plan (Save 20%)',
-                    showSatsPricing,
-                    oldUsdYearly: tier.yearlyUsdOriginal,
-                    newUsd: yearlyUsd,
-                    oldSatsMonthly: '',
-                    oldSatsYearly: tier.oldSatsYearly,
-                    newSats: yearlySats > 0 ? yearlySats : null,
-                    accentClass: tier.color,
-                    eligible: yearlyEligible,
-                    active: isCurrentTier,
-                    loading: loadingKey === `${tier.name}-YEARLY`,
-                    disabled: loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !yearlyEligible),
-                    requestSent: !showSatsPricing && state.upgrade,
-                    actionLabel:
-                      isCurrentTier
-                        ? 'Currently Active'
-                        : belowCurrentPremium
-                          ? 'Higher Tier Active'
-                          : showSatsPricing
-                            ? yearlyEligible
-                              ? 'Upgrade with Sats'
-                              : 'Insufficient Sats'
-                            : state.upgrade
-                              ? 'Request Sent'
-                              : 'Send Premium Request',
-                    onAction: () =>
-                      showSatsPricing
-                        ? setPendingSatsPurchase({ plan: tier.name, billingCycle: 'YEARLY' })
-                        : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-yearly'),
-                  }}
-                  statusBanners={{
-                    MONTHLY: (
-                      <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
-                        <button
-                          onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
-                          disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
-                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
-                          <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
-                        </button>
+                    }
+                    yearlyPlan={{
+                      label: tier.name === 'FOUNDER' ? 'Yearly Plan' : 'Yearly Plan (Save 20%)',
+                      showSatsPricing,
+                      oldUsdYearly: tier.yearlyUsdOriginal,
+                      newUsd: yearlyUsd,
+                      oldSatsMonthly: '',
+                      oldSatsYearly: tier.oldSatsYearly,
+                      newSats: yearlySats > 0 ? yearlySats : null,
+                      accentClass: tier.color,
+                      eligible: yearlyEligible,
+                      active: isCurrentTier,
+                      loading: loadingKey === `${tier.name}-YEARLY`,
+                      disabled: loadingKey !== null || isCurrentTier || belowCurrentPremium || !canUpgradeForward || (!showSatsPricing && state.upgrade) || (showSatsPricing && !yearlyEligible),
+                      requestSent: !showSatsPricing && state.upgrade,
+                      actionLabel:
+                        isCurrentTier
+                          ? 'Currently Active'
+                          : belowCurrentPremium
+                            ? 'Higher Tier Active'
+                            : showSatsPricing
+                              ? yearlyEligible
+                                ? 'Upgrade with Sats'
+                                : 'Insufficient Sats'
+                              : state.upgrade
+                                ? 'Request Sent'
+                                : 'Send Premium Request',
+                      onAction: () =>
+                        showSatsPricing
+                          ? setPendingSatsPurchase({ plan: tier.name, billingCycle: 'YEARLY' })
+                          : handleNotifyOrUpgrade(tier.name, 'UPGRADE', 'rewards-page-yearly'),
+                    }}
+                    statusBanners={{
+                      MONTHLY: (
+                        <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
+                          <button
+                            onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
+                            disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
+                            <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
+                          </button>
 
-                        {isCurrentTier ? (
-                          <StatusBanner tone="green" message="This is your current premium tier." />
-                        ) : belowCurrentPremium ? (
-                          <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
-                        ) : showSatsPricing ? (
-                          <StatusBanner
-                            tone={monthlyEligible ? 'green' : 'orange'}
-                            message={
-                              monthlyEligible
-                                ? 'Enough balance for the monthly sats purchase.'
-                                : 'Switch to USD mode or add more sats to unlock the monthly purchase.'
-                            }
-                          />
-                        ) : state.upgrade ? (
-                          <StatusBanner tone="blue" message="Upgrade request sent for this monthly tier." />
-                        ) : (
-                          <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning the monthly tier later." />
-                        )}
-                      </div>
-                    ),
-                    YEARLY: (
-                      <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
-                        <button
-                          onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
-                          disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
-                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
-                          <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
-                        </button>
+                          {isCurrentTier ? (
+                            <StatusBanner tone="green" message="This is your current premium tier." />
+                          ) : belowCurrentPremium ? (
+                            <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
+                          ) : showSatsPricing ? (
+                            <StatusBanner
+                              tone={monthlyEligible ? 'green' : 'orange'}
+                              message={
+                                monthlyEligible
+                                  ? 'Enough balance for the monthly sats purchase.'
+                                  : 'Switch to USD mode or add more sats to unlock the monthly purchase.'
+                              }
+                            />
+                          ) : state.upgrade ? (
+                            <StatusBanner tone="blue" message="Upgrade request sent for this monthly tier." />
+                          ) : (
+                            <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning the monthly tier later." />
+                          )}
+                        </div>
+                      ),
+                      YEARLY: (
+                        <div className="mt-5 space-y-3 border-t border-white/[0.06] pt-5">
+                          <button
+                            onClick={() => handleNotifyOrUpgrade(tier.name, 'NOTIFY_ME', 'rewards-page-notify')}
+                            disabled={loadingKey !== null || state.notify || isCurrentTier || belowCurrentPremium}
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-2.5 text-sm font-bold text-gray-300 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {state.notify ? <CheckCircle2 className="h-4 w-4 text-green-400" /> : <Info className="h-4 w-4" />}
+                            <span>{state.notify ? 'We will notify you' : 'Notify me about updates'}</span>
+                          </button>
 
-                        {isCurrentTier ? (
-                          <StatusBanner tone="green" message="This is your current premium tier." />
-                        ) : belowCurrentPremium ? (
-                          <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
-                        ) : showSatsPricing ? (
-                          <StatusBanner
-                            tone={yearlyEligible ? 'green' : 'orange'}
-                            message={
-                              yearlyEligible
-                                ? 'Enough balance for the annual sats purchase.'
-                                : 'Switch to USD mode or add more sats to unlock the annual purchase.'
-                            }
-                          />
-                        ) : state.upgrade ? (
-                          <StatusBanner tone="blue" message="Upgrade request sent for this annual tier." />
-                        ) : (
-                          <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning the annual tier later." />
-                        )}
-                      </div>
-                    ),
-                  }}
-                />
-              );
-            })}
-          </div>
-        </section>
+                          {isCurrentTier ? (
+                            <StatusBanner tone="green" message="This is your current premium tier." />
+                          ) : belowCurrentPremium ? (
+                            <StatusBanner tone="orange" message="Your current premium tier is already higher than this one." />
+                          ) : showSatsPricing ? (
+                            <StatusBanner
+                              tone={yearlyEligible ? 'green' : 'orange'}
+                              message={
+                                yearlyEligible
+                                  ? 'Enough balance for the annual sats purchase.'
+                                  : 'Switch to USD mode or add more sats to unlock the annual purchase.'
+                              }
+                            />
+                          ) : state.upgrade ? (
+                            <StatusBanner tone="blue" message="Upgrade request sent for this annual tier." />
+                          ) : (
+                            <StatusBanner tone="violet" message="Use upgrade request or notify me if you are planning the annual tier later." />
+                          )}
+                        </div>
+                      ),
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </section>
         </FadeUp>
       </div>
     </main>
