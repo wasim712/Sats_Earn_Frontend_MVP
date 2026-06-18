@@ -77,7 +77,7 @@ export default function RootLayout({
         <StoreProvider>
           <PwaRegistration />
           <NavbarWrapper/>
-          <InteractiveBackground />
+          {/* <InteractiveBackground /> */}
           
           <RouteWrapper>
             {children}

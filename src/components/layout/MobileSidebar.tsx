@@ -104,10 +104,19 @@
     onClose,
     navLinks,
   }) => {
-    // Lock background scroll when open
+    // Lock background scroll and add class when open
     useEffect(() => {
-      document.body.style.overflow = isOpen ? 'hidden' : 'unset';
-      return () => { document.body.style.overflow = 'unset'; };
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('mobile-sidebar-open');
+      } else {
+        document.body.style.overflow = 'unset';
+        document.body.classList.remove('mobile-sidebar-open');
+      }
+      return () => { 
+        document.body.style.overflow = 'unset'; 
+        document.body.classList.remove('mobile-sidebar-open');
+      };
     }, [isOpen]);
 
     return (

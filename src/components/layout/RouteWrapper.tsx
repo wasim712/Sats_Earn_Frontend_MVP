@@ -3,6 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Footer } from '@/components/layout/Footer';
+import { FloatingSupportButton } from '@/components/ui/FloatingSupportButton';
 
 export function RouteWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,12 +19,17 @@ export function RouteWrapper({ children }: { children: React.ReactNode }) {
          </header>
       )}
 
-      {/* FIXED: Only apply max-w-7xl and mx-auto if it is the Home Page! */}
-      <main className={`relative z-10 flex min-h-screen w-full flex-col ${isHome ? 'mx-auto max-w-7xl' : ''}`}>
+      {/* Apply max-w-7xl and mx-auto to all pages except Home, which has its own full-width sections */}
+      <main className={`relative z-10 flex min-h-screen w-full flex-col overflow-x-hidden ${!isHome ? 'mx-auto max-w-7xl' : ''}`}>
         {children}
       </main>
 
-      {showPublicFooter && <Footer />}
+      {showPublicFooter && (
+        <>
+          <Footer />
+          <FloatingSupportButton />
+        </>
+      )}
     </>
   );
 }

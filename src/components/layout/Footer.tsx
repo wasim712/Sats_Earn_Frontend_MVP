@@ -6,32 +6,32 @@ import { LogoText } from '../ui/LogoText';
 // --- DATA CONFIGURATION ---
 const FOOTER_LINKS = {
   Earn: [
-    { name: 'Social Tasks', href: '/signup' },
-    { name: 'Surveys', href: '/signup' },
-    { name: 'Offerwalls', href: '/signup' },
-    { name: 'Referral Program', href: '/signup' },
-    { name: 'Leaderboard', href: '/signup' },
+    { name: 'Home', href: '/' },
+    { name: 'Games', href: '/games/sat-worm' },
+    { name: 'Rewards', href: '/rewards' },
+    { name: 'BTC-Basics', href: '/btc-basics' },
+    { name: 'Referral', href: '/referral' },
   ],
   Company: [
-    { name: 'About Us', href: '/about' },
-    { name: 'For Brands', href: '/#brands' },
-    { name: 'How It Works', href: '/#how-it-works' },
+    { name: 'For Brands', href: '/brands' },
+    { name: 'How It Works', href: '/how-it-works' },
     { name: 'FAQ', href: '/faq' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Guidelines', href: '/legal/community-guidelines' },
+    { name: 'About', href: '/about' },
   ],
   Others: [
     { name: 'founders', href: '/founders' },
-    { name: 'Sat worm guid', href: '/games/sat-worm' },
-    { name: 'Referral', href: '/referral' },
+    { name: 'Withdrawals', href: '/withdrawals' },
     { name: 'Support', href: '/support' },
-    { name: 'For Brands', href: '/brands' },
+    { name: 'Rewards policy', href: '/legal/rewards-policy' },
+    { name: 'Contact', href: '/contact' },
   ],
   Legal: [
     { name: 'Legal', href: '/legal' },
     { name: 'Terms of service', href: '/legal/terms' },
+    { name: 'Refund Policy', href: 'legal/refund-policy' },
+    { name: 'Sats Disclaimer', href: '/legal/sats-disclaimer' },
     { name: 'Privacy Policy', href: 'legal/privacy' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
   ],
 };
 
