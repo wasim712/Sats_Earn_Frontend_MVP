@@ -31,9 +31,7 @@
 }
 
 @layer base {
-  html, body {
-    @apply overflow-x-hidden;
-  }
+
   body {
     @apply bg-sats-black-950 text-white antialiased min-h-screen;
     ::selection {

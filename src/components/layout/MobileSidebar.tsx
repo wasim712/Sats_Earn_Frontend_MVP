@@ -108,13 +108,16 @@
     useEffect(() => {
       if (isOpen) {
         document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
         document.body.classList.add('mobile-sidebar-open');
       } else {
-        document.body.style.overflow = 'unset';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         document.body.classList.remove('mobile-sidebar-open');
       }
       return () => { 
-        document.body.style.overflow = 'unset'; 
+        document.body.style.overflow = ''; 
+        document.documentElement.style.overflow = '';
         document.body.classList.remove('mobile-sidebar-open');
       };
     }, [isOpen]);
@@ -123,10 +126,11 @@
       <>
         {/* ── Backdrop ── */}
         <div
-          className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+          className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden touch-none cursor-pointer ${
             isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={onClose}
+          aria-hidden="true"
         />
 
         {/* ── Sliding panel ── */}

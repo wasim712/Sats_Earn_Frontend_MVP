@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react';
 import { 
-  Mail, Copy, CheckCircle2, AlertTriangle, Shield, Clock, Zap, 
-  Send, HelpCircle, FileText, Briefcase, Loader2, ArrowUpRight, 
-  MessageSquare, Globe, Smartphone, CheckSquare,
+  Mail, Copy, CheckCircle2, AlertTriangle, Clock, Zap, 
+  Send, HelpCircle,  Loader2, ArrowUpRight, 
+  MessageSquare,
   MessageCircle
 } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import Link from 'next/link';
+
 
 export default function ContactPage() {
   const [copied, setCopied] = useState(false);
@@ -48,36 +51,39 @@ export default function ContactPage() {
     setFormStatus({ type: null, message: '' });
 
     try {
-      // ---------------------------------------------------------
-      // EMAILJS INTEGRATION TODO:
-      // 1. npm install @emailjs/browser
-      // 2. Import it: import emailjs from '@emailjs/browser';
-      // 3. Setup your EmailJS account at https://www.emailjs.com/
-      // 4. Create a Service and a Template.
-      // 5. Replace the placeholders below with your actual IDs.
-      // ---------------------------------------------------------
-      
-      /*
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error("Missing EmailJS environment variables.");
+      }
+
       await emailjs.send(
-        'YOUR_SERVICE_ID', 
-        'YOUR_TEMPLATE_ID', 
+        serviceId, 
+        templateId, 
         {
           from_name: formData.name,
           reply_to: formData.email,
           category: formData.category,
           message: formData.message,
         }, 
-        'YOUR_PUBLIC_KEY'
+        { publicKey: publicKey }
       );
-      */
-      
-      // Simulate API call for now
-      await new Promise(resolve => setTimeout(resolve, 1500));
       
       setFormStatus({ type: 'success', message: 'Your message has been sent successfully. We will get back to you soon!' });
       setFormData({ name: '', email: '', category: '', message: '' });
-    } catch (error) {
-      setFormStatus({ type: 'error', message: 'Failed to send message. Please try again later or email us directly.' });
+    } catch (error: any) {
+      console.error("EmailJS Error:", error);
+      
+      let errorMessage = "Failed to send message. Please try again later or email us directly.";
+      if (error?.text) {
+        errorMessage = `EmailJS Error: ${error.text}`; // Often returned by EmailJS API
+      } else if (error?.message) {
+        errorMessage = `Error: ${error.message}`;
+      }
+      
+      setFormStatus({ type: 'error', message: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
@@ -214,7 +220,7 @@ export default function ContactPage() {
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
               <div className="text-2xl mb-3">🤝</div>
               <div className="text-[15px] font-bold text-white mb-2">Partnerships & Brands</div>
-              <div className="text-[13px] text-gray-400 leading-relaxed">Want to run tasks, advertise, or explore a brand partnership with SatsEarn? Let's talk.</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed">Want to run tasks, advertise, or explore a brand partnership with SatsEarn? Let&apos;s talk.</div>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
               <div className="text-2xl mb-3">📣</div>
@@ -258,7 +264,7 @@ export default function ContactPage() {
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-sats-orange-500/10 border border-sats-orange-500/20 text-sm">🏆</div>
-                <div className="text-sm text-gray-400">Review the <a href="/#tiers" className="text-sats-orange-500 font-bold hover:underline">Tier System</a> — understand how your tier affects earning rates and withdrawal limits.</div>
+                <div className="text-sm text-gray-400">Review the <Link href="/#tiers" className="text-sats-orange-500 font-bold hover:underline">Tier System</Link> — understand how your tier affects earning rates and withdrawal limits.</div>
               </div>
             </div>
           </div>
