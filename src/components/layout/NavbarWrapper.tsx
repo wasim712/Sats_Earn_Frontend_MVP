@@ -12,7 +12,7 @@ export const NavbarWrapper = () => {
   if (hideOnAppRoutes) return null;
 
   return (
-  <div className="sticky top-0 z-50">
+  <div className="sticky top-0 z-[2000]">
     <div className="hidden lg:block">
       <AnnouncementBanner />
     </div>

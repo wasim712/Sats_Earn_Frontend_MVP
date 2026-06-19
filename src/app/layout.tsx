@@ -73,11 +73,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-sats-black-950 text-white font-sans " suppressHydrationWarning>
+      <body className="bg-sats-black-950 text-white font-sans overflow-x-clip" suppressHydrationWarning>
         <StoreProvider>
           <PwaRegistration />
           <NavbarWrapper/>
-          <InteractiveBackground />
+          {/* <InteractiveBackground /> */}
           
           <RouteWrapper>
             {children}

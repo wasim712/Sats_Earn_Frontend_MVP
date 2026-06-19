@@ -21,17 +21,17 @@ export const FadeUp: React.FC<FadeUpProps> = ({ children, className = '', delay 
 
     gsap.fromTo(
       containerRef.current,
-      { y: 40, opacity: 0 },
+      { y: 20, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        duration: 0.8,
+        duration: 0.5,
         delay: delay,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 90%', // Triggers just as it enters the viewport
-          toggleActions: 'play none none none', 
+          start: 'top bottom+=150', // Triggers before it enters the viewport to prevent empty screens on mobile
+          once: true, // Only trigger once, safer for performance and layout
         },
       }
     );

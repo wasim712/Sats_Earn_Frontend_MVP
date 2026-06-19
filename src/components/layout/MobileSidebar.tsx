@@ -104,26 +104,39 @@
     onClose,
     navLinks,
   }) => {
-    // Lock background scroll when open
+    // Lock background scroll and add class when open
     useEffect(() => {
-      document.body.style.overflow = isOpen ? 'hidden' : 'unset';
-      return () => { document.body.style.overflow = 'unset'; };
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.classList.add('mobile-sidebar-open');
+      } else {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.classList.remove('mobile-sidebar-open');
+      }
+      return () => { 
+        document.body.style.overflow = ''; 
+        document.documentElement.style.overflow = '';
+        document.body.classList.remove('mobile-sidebar-open');
+      };
     }, [isOpen]);
 
     return (
       <>
         {/* ── Backdrop ── */}
         <div
-          className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+          className={`fixed inset-0 z-[1600] bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden touch-none cursor-pointer ${
             isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={onClose}
+          aria-hidden="true"
         />
 
         {/* ── Sliding panel ── */}
         <aside
           className={`
-            fixed top-0 right-0 z-70 h-dvh w-72
+            fixed top-0 right-0 z-[1610] h-dvh w-72
             bg-sats-black-950 border-l border-sats-black-800
             shadow-2xl flex flex-col overflow-y-auto
             transform transition-transform duration-300 ease-in-out

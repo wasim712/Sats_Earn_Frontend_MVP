@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { decryptPayload, encryptPayload } from '@/lib/crypto';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 function isTransportEnvelope(data: unknown): data is { payload: string } {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return false;
@@ -38,7 +40,13 @@ function getRequestUrl(input: RequestInfo | URL) {
 }
 
 function isApiUrl(input: RequestInfo | URL) {
-  return getRequestUrl(input).includes('/api/');
+  const url = getRequestUrl(input);
+
+  if (!API_BASE_URL) {
+    return false;
+  }
+
+  return url.startsWith(API_BASE_URL);
 }
 
 function isAuthUrl(input: RequestInfo | URL) {

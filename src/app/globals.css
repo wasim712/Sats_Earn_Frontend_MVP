@@ -31,8 +31,9 @@
 }
 
 @layer base {
-  body {
-    @apply bg-sats-black-950 text-white antialiased min-h-screen overflow-x-hidden;
+
+  html, body {
+    @apply bg-sats-black-950 text-white antialiased min-h-screen overflow-x-clip;
     ::selection {
       @apply bg-sats-orange-500 text-white;
     }

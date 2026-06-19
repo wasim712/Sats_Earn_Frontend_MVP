@@ -2,7 +2,7 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
@@ -16,6 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
     primary: "bg-gradient-to-r from-sats-orange-500 to-sats-orange-600 text-white shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_8px_25px_rgba(249,115,22,0.6)] hover:from-sats-orange-400 hover:to-sats-orange-500 hover:-translate-y-0.5",
     secondary: "bg-sats-black-800 text-gray-100 border border-sats-black-700 hover:bg-sats-black-700 hover:border-sats-orange-500/50 hover:text-white hover:-translate-y-0.5",
     ghost: "bg-transparent text-gray-200 hover:text-sats-orange-500 hover:bg-sats-orange-500/10",
+    outline: "bg-transparent border border-white/20 text-white hover:text-sats-orange-500 hover:border-sats-orange-500 hover:bg-sats-orange-500/10",
   };
 
   return (

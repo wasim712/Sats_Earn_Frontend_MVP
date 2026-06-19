@@ -3,6 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Footer } from '@/components/layout/Footer';
+import { FloatingSupportButton } from '@/components/ui/FloatingSupportButton';
 
 export function RouteWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,7 +24,12 @@ export function RouteWrapper({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {showPublicFooter && <Footer />}
+      {showPublicFooter && (
+        <>
+          <Footer />
+          <FloatingSupportButton />
+        </>
+      )}
     </>
   );
 }
