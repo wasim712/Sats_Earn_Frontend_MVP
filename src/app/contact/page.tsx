@@ -1,15 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState ,useRef} from 'react';
 import { 
   Mail, Copy, CheckCircle2, AlertTriangle, Clock, Zap, 
   Send, HelpCircle,  Loader2, ArrowUpRight, 
   MessageSquare,
   MessageCircle
 } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 import Link from 'next/link';
+import emailjs from '@emailjs/browser';
 
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
 export default function ContactPage() {
   const [copied, setCopied] = useState(false);
@@ -22,7 +25,7 @@ export default function ContactPage() {
     category: '',
     message: ''
   });
-
+  const formRef = useRef<HTMLFormElement>(null);
   const handleCopyEmail = () => {
     navigator.clipboard.writeText('support@satsearn.app');
     setCopied(true);
@@ -44,50 +47,45 @@ export default function ContactPage() {
     }
   };
 
-  // EmailJS integration handler
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setFormStatus({ type: null, message: '' });
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setFormStatus({ type: null, message: '' });
 
-    try {
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+    setFormStatus({
+      type: 'error',
+      message: 'Email service is not configured correctly. Please try again later or email us directly.'
+    });
+    setIsSubmitting(false);
+    return;
+  }
 
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error("Missing EmailJS environment variables.");
-      }
-
-      await emailjs.send(
-        serviceId, 
-        templateId, 
-        {
-          from_name: formData.name,
-          reply_to: formData.email,
-          category: formData.category,
-          message: formData.message,
-        }, 
-        { publicKey: publicKey }
-      );
-      
+  emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_TEMPLATE_ID,
+    {
+      from_name: formData.name,
+      reply_to: formData.email,
+      category: formData.category,
+      message: formData.message,
+    },
+    {
+      publicKey: EMAILJS_PUBLIC_KEY,
+    }
+  ).then(
+    () => {
       setFormStatus({ type: 'success', message: 'Your message has been sent successfully. We will get back to you soon!' });
       setFormData({ name: '', email: '', category: '', message: '' });
-    } catch (error: any) {
-      console.error("EmailJS Error:", error);
-      
-      let errorMessage = "Failed to send message. Please try again later or email us directly.";
-      if (error?.text) {
-        errorMessage = `EmailJS Error: ${error.text}`; // Often returned by EmailJS API
-      } else if (error?.message) {
-        errorMessage = `Error: ${error.message}`;
-      }
-      
-      setFormStatus({ type: 'error', message: errorMessage });
-    } finally {
+      setIsSubmitting(false);
+    },
+    (error) => {
+      console.error('EmailJS Error:', error);
+      setFormStatus({ type: 'error', message: 'Failed to send message. Please try again later or email us directly.' });
       setIsSubmitting(false);
     }
-  };
+  );
+};
 
   return (
     <div className="min-h-screen bg-[#020202] pb-20">
@@ -297,7 +295,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
             
             {formStatus.type === 'error' && (
               <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400 text-sm font-medium">
@@ -317,22 +315,24 @@ export default function ContactPage() {
               <div>
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Your Name</label>
                 <input 
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Satoshi Nakamoto"
-                  className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm px-4 py-3.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"
-                />
+                type="text"
+                name="from_name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="Satoshi Nakamoto"
+                className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm px-4 py-3.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"
+              />
               </div>
               <div>
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Email Address</label>
                 <input 
                   type="email"
+                  name="reply_to"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  placeholder="satoshi@example.com"
+                  placeholder="name@example.com"
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm px-4 py-3.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all"
                 />
               </div>
@@ -343,6 +343,7 @@ export default function ContactPage() {
               <div className="relative">
                 <select 
                   required
+                  name="category"
                   value={formData.category}
                   onChange={(e) => setFormData({...formData, category: e.target.value})}
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm px-4 py-3.5 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all appearance-none cursor-pointer"
@@ -364,6 +365,7 @@ export default function ContactPage() {
               <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Message</label>
               <textarea 
                 required
+                name="message"
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                 placeholder="Describe your issue or inquiry in detail..."

@@ -21,10 +21,10 @@ export const HowItWorksSection = () => {
               How It Works
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             From Task to Sats<br />
             in <span className="text-sats-orange-500">4 Simple Steps</span>
-          </h2>
+          </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Every sat you earn goes through a verified, transparent process designed to protect you and the platform from fraud.
           </p>

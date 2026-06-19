@@ -126,7 +126,7 @@
       <>
         {/* ── Backdrop ── */}
         <div
-          className={`fixed inset-0 z-60 bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden touch-none cursor-pointer ${
+          className={`fixed inset-0 z-[1600] bg-sats-black-950/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden touch-none cursor-pointer ${
             isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={onClose}
@@ -136,7 +136,7 @@
         {/* ── Sliding panel ── */}
         <aside
           className={`
-            fixed top-0 right-0 z-70 h-dvh w-72
+            fixed top-0 right-0 z-[1610] h-dvh w-72
             bg-sats-black-950 border-l border-sats-black-800
             shadow-2xl flex flex-col overflow-y-auto
             transform transition-transform duration-300 ease-in-out

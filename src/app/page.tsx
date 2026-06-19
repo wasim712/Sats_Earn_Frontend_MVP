@@ -15,7 +15,7 @@ import { ReferralParamStorage } from '@/components/referral/ReferralParamStorage
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full bg-[#050505]">
+    <div className="flex flex-col w-full bg-[#050505] overflow-hidden">
       <Suspense fallback={null}>
         <ReferralParamStorage />
       </Suspense>

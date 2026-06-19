@@ -32,23 +32,16 @@ export function FloatingSupportButton() {
         .animate-fab-pulse {
           animation: fab-pulse 2.4s ease-out infinite;
         }
-        
-        /* Hide floating button when mobile sidebar is open */
-        body.mobile-sidebar-open #floating-support-btn {
-          opacity: 0 !important;
-          pointer-events: none !important;
-          transform: scale(0.8) translateY(20px) !important;
-        }
       `}</style>
       <div 
         id="floating-support-btn"
         ref={trayRef}
-        className="fixed bottom-4 right-4 z-[1500] flex flex-col items-end gap-3 sm:bottom-8 sm:right-8 transition-all duration-300 max-w-[calc(100vw-2rem)]"
+        className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 lg:bottom-8 lg:right-8 transition-all duration-300 max-w-[calc(100vw-2rem)] pointer-events-none"
       >
         {/* Tray */}
         <div 
           className={`flex flex-col gap-2 items-end transition-all duration-300 origin-bottom-right ${
-            isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+            isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
           }`}
         >
           <Link 
@@ -59,7 +52,8 @@ export function FloatingSupportButton() {
             <span>📬</span> Send a Message
           </Link>
           <Link 
-            href="/contact#connect"
+            href="https://t.me/satsearnapp"
+            target='_blank'
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-2.5 bg-sats-black-900 border border-white/[0.08] hover:border-sats-orange-500 hover:text-sats-orange-500 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all whitespace-nowrap"
           >
@@ -67,7 +61,8 @@ export function FloatingSupportButton() {
             Telegram — Fastest
           </Link>
           <Link 
-            href="/contact#connect"
+            href="https://discord.gg/VX4cB2xTnZ"
+            target='_blank'
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-2.5 bg-sats-black-900 border border-white/[0.08] hover:border-sats-orange-500 hover:text-sats-orange-500 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all whitespace-nowrap"
           >
@@ -80,7 +75,7 @@ export function FloatingSupportButton() {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Contact Support"
-          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_22px_rgba(247,147,26,0.55)] transition-all duration-300 relative group z-[1501] ${
+          className={`w-14 h-14 pointer-events-auto rounded-full flex items-center justify-center shadow-[0_0_22px_rgba(247,147,26,0.55)] transition-all duration-300 relative group z-[1501] ${
             isOpen ? 'bg-sats-black-900 border border-sats-orange-500' : 'bg-sats-orange-500 border-none hover:scale-105'
           }`}
         >

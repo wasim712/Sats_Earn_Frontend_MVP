@@ -7,7 +7,7 @@ import { LogoText } from '../ui/LogoText';
 const FOOTER_LINKS = {
   Earn: [
     { name: 'Home', href: '/' },
-    { name: 'Games', href: '/games/sat-worm' },
+    { name: 'Mini Games', href: '/games/sat-worm' },
     { name: 'Rewards', href: '/rewards' },
     { name: 'BTC-Basics', href: '/btc-basics' },
     { name: 'Referral', href: '/referral' },
@@ -20,7 +20,7 @@ const FOOTER_LINKS = {
     { name: 'About', href: '/about' },
   ],
   Others: [
-    { name: 'founders', href: '/founders' },
+    { name: 'Founders', href: '/founders' },
     { name: 'Withdrawals', href: '/withdrawals' },
     { name: 'Support', href: '/support' },
     { name: 'Rewards policy', href: '/legal/rewards-policy' },
@@ -173,11 +173,11 @@ export const Footer = () => {
                 Made with 💛 for the <span className="text-sats-orange-500">Bitcoin</span> community
               </p>
               
-              <p className="text-gray-500 text-base font-medium text-center md:text-left">
+              <p className="text-white text-base font-medium text-center md:text-left">
                   © {currentYear} SatsEarn. All rights reserved.
               </p>
             </div>
-            <p className="text-gray-400 font-medium leading-relaxed text-base hidden lg:block">
+            <p className="text-white font-medium leading-relaxed text-base hidden lg:block">
                 Made with 💛 for the <span className="text-sats-orange-500">Bitcoin</span> community
               </p>
           <div className="flex items-center gap-6">

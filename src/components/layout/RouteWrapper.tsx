@@ -19,8 +19,8 @@ export function RouteWrapper({ children }: { children: React.ReactNode }) {
          </header>
       )}
 
-      {/* Apply max-w-7xl and mx-auto to all pages except Home, which has its own full-width sections */}
-      <main className={`relative z-10 flex min-h-screen w-full flex-col overflow-x-hidden ${!isHome ? 'mx-auto max-w-7xl' : ''}`}>
+      {/* FIXED: Only apply max-w-7xl and mx-auto if it is the Home Page! */}
+      <main className={`relative z-10 flex min-h-screen w-full flex-col ${isHome ? 'mx-auto max-w-7xl' : ''}`}>
         {children}
       </main>
 

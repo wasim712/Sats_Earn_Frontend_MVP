@@ -77,7 +77,7 @@ export const WaysToEarn = () => {
               Ways to Earn
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             <span className="text-sats-orange-500">Infinite</span> Ways to<br />
             Stack Sats
           </h2>
