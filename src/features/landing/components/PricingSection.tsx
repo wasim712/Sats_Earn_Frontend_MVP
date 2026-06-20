@@ -225,6 +225,14 @@ export const PricingSection = () => {
                       <Check className="w-5 h-5 shrink-0 mt-0.5 text-yellow-500" />
                       <span className="leading-snug">Permanent Founders badge</span>
                     </li>
+                    <li className="flex items-start gap-3 text-sm text-gray-300">
+                      <Check className="w-5 h-5 shrink-0 mt-0.5 text-yellow-500" />
+                      <span className="leading-snug">Ad-free experience</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm text-gray-300">
+                      <Check className="w-5 h-5 shrink-0 mt-0.5 text-yellow-500" />
+                      <span className="leading-snug">Many more coming soon</span>
+                    </li>
                   </ul>
                 </div>
               </div>

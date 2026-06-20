@@ -139,3 +139,33 @@ input[type="number"] {
     -webkit-touch-callout: default;
   }
 }
+
+/* heart pulse + glow */
+.heart-beat {
+  animation: heartBeat 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 2px rgba(247,147,26,.4));
+  transform-origin: center;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  10% { transform: scale(1.25); }
+  20% { transform: scale(1.05); }
+  30% { transform: scale(1.2); }
+  45% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heart-beat { animation: none; }
+}
+
+/* How It Works Animations */
+.fi-task .fi-check{stroke-dasharray:14;stroke-dashoffset:0;animation:fiCheckDraw 3.2s ease-in-out infinite;}
+@keyframes fiCheckDraw{0%{stroke-dashoffset:14;opacity:.3;}25%{stroke-dashoffset:0;opacity:1;}80%{stroke-dashoffset:0;opacity:1;}90%{stroke-dashoffset:14;opacity:.3;}100%{stroke-dashoffset:14;opacity:.3;}}
+
+.fi-hourglass{animation:fiFlip 4s ease-in-out infinite;transform-origin:center;}
+@keyframes fiFlip{0%,40%{transform:rotate(0deg);}55%,90%{transform:rotate(180deg);}100%{transform:rotate(180deg);}}
+
+.fi-lock .fi-shackle{transform-origin:12px 10px;animation:fiShackle 3.5s ease-in-out infinite;}
+@keyframes fiShackle{0%,60%{transform:translateY(0);}70%{transform:translateY(-2px);}80%,100%{transform:translateY(0);}}
+
+.fi-bolt{animation:fiPulse 2.2s ease-in-out infinite;transform-origin:center;}
+@keyframes fiPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(247,147,26,.3));}50%{transform:scale(1.12);filter:drop-shadow(0 0 14px rgba(247,147,26,.6));}}

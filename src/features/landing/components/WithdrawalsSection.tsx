@@ -21,12 +21,12 @@ export const WithdrawalsSection = () => {
               <Bitcoin className="w-4 h-4" /> Withdrawals
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             Your Sats.<br />
             <span className="text-sats-orange-500">Your Lightning Wallet.</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Withdraw to any Lightning wallet once you hit your tier's minimum threshold. Fees are shown transparently at time of withdrawal.
+            Withdraw to any Lightning wallet once you hit your tier&apos;s minimum threshold. Fees are shown transparently at time of withdrawal.
           </p>
         </FadeUp>
 
@@ -35,34 +35,34 @@ export const WithdrawalsSection = () => {
           {/* Withdrawal Minimums Table */}
           <FadeUp delay={0.1} className="bg-sats-black-900/80 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
             <div>
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-sats-orange-500/10 flex items-center justify-center shrink-0">
                   <Bitcoin className="w-5 h-5 text-sats-orange-500" />
                 </div>
                 <h3 className="text-xl font-bold text-white tracking-tight">Withdrawal Minimums</h3>
               </div>
 
-              <div className="flex flex-col gap-4 mb-8">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-sats-black-950 rounded-xl border border-white/5">
-                  <span className="text-sm font-bold text-gray-300 mb-2 sm:mb-0">Basic / Copper / Bronze / Silver / Gold</span>
-                  <span className="text-sm font-bold text-white font-mono bg-white/5 px-3 py-1 rounded-lg">25,000 sats</span>
+              <div className="flex flex-col gap-2.5 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-sats-black-950 rounded-xl border border-white/5">
+                  <span className="text-sm font-bold text-gray-300 mb-1.5 sm:mb-0">Basic / Copper / Bronze / Silver / Gold</span>
+                  <span className="text-sm font-bold text-white font-mono bg-white/5 px-2.5 py-1 rounded-lg">25,000 sats</span>
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-sats-black-950 rounded-xl border border-white/5">
-                  <span className="text-sm font-bold text-gray-300 mb-2 sm:mb-0">Platinum</span>
-                  <span className="text-sm font-bold text-sats-orange-500 font-mono bg-sats-orange-500/10 px-3 py-1 rounded-lg">20,000 sats</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-sats-black-950 rounded-xl border border-white/5">
+                  <span className="text-sm font-bold text-gray-300 mb-1.5 sm:mb-0">Platinum</span>
+                  <span className="text-sm font-bold text-sats-orange-500 font-mono bg-sats-orange-500/10 px-2.5 py-1 rounded-lg">20,000 sats</span>
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-sats-black-950 rounded-xl border border-white/5">
-                  <span className="text-sm font-bold text-gray-300 mb-2 sm:mb-0">Diamond / Crown / Elite</span>
-                  <span className="text-sm font-bold text-sats-orange-500 font-mono bg-sats-orange-500/10 px-3 py-1 rounded-lg">15,000 sats</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-sats-black-950 rounded-xl border border-white/5">
+                  <span className="text-sm font-bold text-gray-300 mb-1.5 sm:mb-0">Diamond / Crown / Elite</span>
+                  <span className="text-sm font-bold text-sats-orange-500 font-mono bg-sats-orange-500/10 px-2.5 py-1 rounded-lg">15,000 sats</span>
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gradient-to-r from-yellow-500/10 to-sats-black-950 rounded-xl border border-yellow-500/20">
-                  <span className="text-sm font-bold text-yellow-500 mb-2 sm:mb-0">Founders ★</span>
-                  <span className="text-sm font-bold text-yellow-500 font-mono bg-yellow-500/20 px-3 py-1 rounded-lg">10,000 sats</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-gradient-to-r from-yellow-500/10 to-sats-black-950 rounded-xl border border-yellow-500/20">
+                  <span className="text-sm font-bold text-yellow-500 mb-1.5 sm:mb-0">Founders ★</span>
+                  <span className="text-sm font-bold text-yellow-500 font-mono bg-yellow-500/20 px-2.5 py-1 rounded-lg">10,000 sats</span>
                 </div>
               </div>
             </div>
 
-            <div className="text-xs text-gray-400 leading-relaxed border-t border-white/10 pt-4">
+            <div className="text-[11px] text-gray-400 leading-relaxed border-t border-white/10 pt-4">
               Paid tier users reach withdrawal threshold faster — both from lower minimums and higher per-task earnings. A Founders user can withdraw up to 2.5x sooner than a Basic user completing the same tasks.
             </div>
           </FadeUp>

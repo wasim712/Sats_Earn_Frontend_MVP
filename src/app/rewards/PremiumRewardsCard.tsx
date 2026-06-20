@@ -202,7 +202,7 @@ function CardFace({
           </div>
           <div className="min-w-0 flex-1">
             <h3 className={`text-[1.75rem] leading-none sm:text-[1.95rem] font-black tracking-tight ${tier.color}`}>{tier.label}</h3>
-            <div className="mt-2 max-w-[12rem] sm:max-w-none text-sm sm:text-[1rem] leading-snug font-semibold text-gray-300/80 break-words">{planLabel}</div>
+            <div className="mt-2 text-sm sm:text-[1rem] leading-snug font-semibold text-gray-300/80 whitespace-nowrap">{planLabel}</div>
           </div>
         </div>
 
@@ -225,7 +225,7 @@ function CardFace({
           {plan ? (
             <PremiumPriceCard {...plan} />
           ) : monthlyUnavailable ? (
-            <div className="relative flex min-h-[172px] h-full flex-col items-center justify-center overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 text-center text-sm font-bold text-gray-400 backdrop-blur-lg">
+            <div className="relative flex min-h-[172px]  flex-col items-center justify-center overflow-hidden rounded-[22px] border border-white/10 bg-[linear-gradient(155deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)_22%,rgba(0,0,0,0.18)_100%)] p-5 text-center text-sm font-bold text-gray-400 backdrop-blur-lg">
               <span className="relative z-10">Founder tier is available annually only.</span>
               <button
                 type="button"
@@ -408,7 +408,7 @@ export function PremiumRewardCard({
       }}
     >
       <div
-        className={` max-w-[400px] relative min-h-[620px] md:min-h-[640px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        className={` max-w-[400px] relative min-h-[600px] md:min-h-[650px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
         style={{
           transform: `${shellTransform} ${effectiveBillingCycle === 'YEARLY' ? 'rotateY(180deg)' : 'rotateY(0deg)'}`,
         }}
@@ -431,7 +431,7 @@ export function PremiumRewardCard({
               style={{ transform: isYearly ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
             >
               <div
-                className={`relative flex h-full min-h-[620px] md:min-h-[640px] w-full transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} transition-[box-shadow,border-color] duration-200 ease-out will-change-transform`}
+                className={`relative flex h-full min-h-[600px] md:min-h-[650px] w-full transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} transition-[box-shadow,border-color] duration-200 ease-out will-change-transform`}
                 style={{
                   background: visual.surface,
                   boxShadow: isCurrentTier
