@@ -40,7 +40,7 @@ export const HowItWorksSection = () => {
           <FadeUp delay={0.1} className="relative z-10 text-center px-4">
             <div className="w-[88px] h-[88px] mx-auto rounded-full bg-sats-black-900 border border-sats-orange-500/20 shadow-[0_0_40px_rgba(249,115,22,0.08)] flex items-center justify-center mb-6 relative group">
               <div className="absolute inset-0 rounded-full bg-sats-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CheckSquare className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" />
+              <div className="fi-task flex items-center justify-center"><svg className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3.5V2.5a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 16 2.5v1"/><path className="fi-check" d="m8.5 12 2.2 2.2L15 9.5"/></svg></div>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Complete a Task</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -52,7 +52,7 @@ export const HowItWorksSection = () => {
           <FadeUp delay={0.2} className="relative z-10 text-center px-4">
             <div className="w-[88px] h-[88px] mx-auto rounded-full bg-sats-black-900 border border-sats-orange-500/20 shadow-[0_0_40px_rgba(249,115,22,0.08)] flex items-center justify-center mb-6 relative group">
               <div className="absolute inset-0 rounded-full bg-sats-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Clock className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" />
+              <div className="fi-hourglass flex items-center justify-center"><svg className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2h12M6 22h12M7 2v3.2a3 3 0 0 0 1 2.2l4 3.6 4-3.6a3 3 0 0 0 1-2.2V2M7 22v-3.2a3 3 0 0 1 1-2.2l4-3.6 4 3.6a3 3 0 0 1 1 2.2V22"/><path d="M9.5 19.5h5" strokeWidth="2.2"/></svg></div>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Verification (24hrs)</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -64,7 +64,7 @@ export const HowItWorksSection = () => {
           <FadeUp delay={0.3} className="relative z-10 text-center px-4">
             <div className="w-[88px] h-[88px] mx-auto rounded-full bg-sats-black-900 border border-sats-orange-500/20 shadow-[0_0_40px_rgba(249,115,22,0.08)] flex items-center justify-center mb-6 relative group">
               <div className="absolute inset-0 rounded-full bg-sats-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Lock className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" />
+              <div className="fi-lock flex items-center justify-center"><svg className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path className="fi-shackle" d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/><path d="M12 16.8v1.7"/></svg></div>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Maturing (15 Days)</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -76,7 +76,7 @@ export const HowItWorksSection = () => {
           <FadeUp delay={0.4} className="relative z-10 text-center px-4">
             <div className="w-[88px] h-[88px] mx-auto rounded-full bg-sats-black-900 border border-sats-orange-500/20 shadow-[0_0_40px_rgba(249,115,22,0.08)] flex items-center justify-center mb-6 relative group">
               <div className="absolute inset-0 rounded-full bg-sats-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Zap className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" />
+              <div className="fi-bolt flex items-center justify-center"><svg className="w-9 h-9 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]" viewBox="0 0 56 72" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg></div>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Withdraw via Lightning</h3>
             <p className="text-sm text-gray-400 leading-relaxed">

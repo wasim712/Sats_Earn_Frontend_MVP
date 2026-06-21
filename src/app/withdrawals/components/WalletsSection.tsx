@@ -14,7 +14,7 @@ export function WalletsSection() {
   ];
 
   return (
-    <section className="py-8 sm:py-16 relative px-4 max-w-4xl mx-auto">
+    <section className="py-8  relative px-4 max-w-4xl mx-auto">
       <FadeUp delay={0.1}>
         <div className="font-mono text-xs tracking-[0.2em] uppercase text-sats-orange-500 opacity-80 flex items-center justify-center gap-3 mb-4">
           Compatible Wallets
@@ -35,7 +35,7 @@ export function WalletsSection() {
 
       <FadeUp delay={0.4}>
         <div className="bg-sats-orange-500/[0.06] border border-sats-orange-500/20 rounded-xl p-5 sm:p-6 text-sm sm:text-[15px] text-gray-300 leading-relaxed shadow-[0_8px_30px_rgba(247,147,26,0.05)]">
-          <strong className="text-white">Any Lightning-compatible wallet works.</strong> Just make sure it supports LNURL-pay or Lightning invoices. Withdrawals are Lightning-only at this time — we don't currently support on-chain Bitcoin withdrawals, though many wallets let you swap Lightning sats to on-chain if needed.
+          <strong className="text-white">Any Lightning-compatible wallet works.</strong> Just make sure it supports LNURL-pay or Lightning invoices. Withdrawals are Lightning-only at this time — we don&apos;t currently support on-chain Bitcoin withdrawals, though many wallets let you swap Lightning sats to on-chain if needed.
         </div>
       </FadeUp>
     </section>

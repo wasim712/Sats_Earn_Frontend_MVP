@@ -53,9 +53,9 @@ export const TierSystemSection = () => {
               Tier System
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             Free Forever.<br />
-            <span className="text-sats-orange-500">Upgrade to Stack Faster.</span>
+            <span className="text-3xl sm:text-6xl text-sats-orange-500">Upgrade to Stack Faster.</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Free tier is genuinely viable — earn real sats, maintain streaks, refer friends. Paid tiers amplify everything. We will never force you to upgrade.

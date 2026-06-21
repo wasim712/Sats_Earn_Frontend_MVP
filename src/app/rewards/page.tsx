@@ -44,8 +44,8 @@ const PREMIUM_TIERS = [
     glow: 'shadow-[0_0_36px_rgba(229,228,226,0.06)] hover:shadow-[0_0_40px_rgba(229,228,226,0.12)]',
     chip: 'bg-[#e5e4e2]/10 text-[#f3f2f1] border-[#e5e4e2]/25',
     planPerks: {
-      MONTHLY: ['Priority withdrawals', '10% bonus earnings', 'Exclusive task access'],
-      YEARLY: ['Priority withdrawals', '10% bonus earnings', 'Exclusive task access'],
+      MONTHLY: ['2× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
+      YEARLY: ['2× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
     },
   },
   {
@@ -66,8 +66,8 @@ const PREMIUM_TIERS = [
     glow: 'shadow-[0_0_36px_rgba(185,242,255,0.08)] hover:shadow-[0_0_40px_rgba(185,242,255,0.15)]',
     chip: 'bg-[#b9f2ff]/10 text-[#dffaff] border-[#b9f2ff]/25',
     planPerks: {
-      MONTHLY: ['Instant withdrawals', '15% bonus earnings', 'Beta feature access'],
-      YEARLY: ['Instant withdrawals', '15% bonus earnings', 'Beta feature access'],
+      MONTHLY: ['3× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
+      YEARLY: ['3× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
     },
   },
   {
@@ -88,8 +88,8 @@ const PREMIUM_TIERS = [
     glow: 'shadow-[0_0_38px_rgba(255,179,71,0.1)] hover:shadow-[0_0_45px_rgba(255,179,71,0.18)]',
     chip: 'bg-[#ffb347]/10 text-[#ffd9a0] border-[#ffb347]/30',
     planPerks: {
-      MONTHLY: ['Account manager access', '20% bonus earnings', 'Premium support queue'],
-      YEARLY: ['Account manager access', '20% bonus earnings', 'Premium support queue'],
+      MONTHLY: ['4× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
+      YEARLY: ['4× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
     },
   },
   {
@@ -110,8 +110,8 @@ const PREMIUM_TIERS = [
     glow: 'shadow-[0_0_38px_rgba(138,43,226,0.12)] hover:shadow-[0_0_45px_rgba(138,43,226,0.2)]',
     chip: 'bg-[#8a2be2]/12 text-[#d8bbff] border-[#8a2be2]/28',
     planPerks: {
-      MONTHLY: ['Private feature channel', '25% bonus earnings', 'Event priority invites'],
-      YEARLY: ['Private feature channel', '25% bonus earnings', 'Event priority invites'],
+      MONTHLY: ['5× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
+      YEARLY: ['5× task rewards vs Basic', 'Unlimited referrals', 'Premium streak milestones', 'Exclusive games access', 'Ad-free experience'],
     },
   },
   {
@@ -130,8 +130,8 @@ const PREMIUM_TIERS = [
     glow: 'shadow-[0_0_40px_rgba(255,106,61,0.14)] hover:shadow-[0_0_50px_rgba(255,106,61,0.22)]',
     chip: 'bg-[#ff6a3d]/12 text-[#ffc0ad] border-[#ff6a3d]/30',
     planPerks: {
-      MONTHLY: ['Founding member status', '30% bonus earnings', 'Revenue-share priority access'],
-      YEARLY: ['Founding member status', '30% bonus earnings', 'Revenue-share priority access'],
+      MONTHLY: ['6× task rewards vs Basic', 'Unlimited referrals + rotation', 'All premium milestones & games', 'Permanent Founders badge', 'Ad-free experience', 'Many more coming soon'],
+      YEARLY: ['6× task rewards vs Basic', 'Unlimited referrals + rotation', 'All premium milestones & games', 'Permanent Founders badge', 'Ad-free experience', 'Many more coming soon'],
     },
   },
 ];
@@ -141,11 +141,8 @@ const FREE_TIERS = [
     name: 'Basic',
     xp: '0 XP',
     icon: <Shield className="w-5 h-5 text-slate-300" />,
-    color: 'text-slate-200',
-    border: 'border-slate-400/25',
-    bg: 'from-slate-500/15 via-sats-black-800 to-sats-black-900',
-    badge: 'bg-slate-500/10 text-slate-300 border-slate-500/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(100,116,139,0.2)] group-hover:border-slate-400/50',
+    color: 'text-slate-300',
+    border: 'border-slate-500/20 hover:border-slate-500/40 hover:shadow-[0_0_20px_rgba(100,116,139,0.1)]',
     perks: ['Referral limit: 20 users'],
   },
   {
@@ -153,10 +150,7 @@ const FREE_TIERS = [
     xp: '10,000 XP',
     icon: <Coins className="w-5 h-5 text-orange-400" />,
     color: 'text-orange-400',
-    border: 'border-orange-500/25',
-    bg: 'from-orange-500/15 via-sats-black-800 to-sats-black-900',
-    badge: 'bg-orange-500/10 text-orange-300 border-orange-500/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(249,115,22,0.2)] group-hover:border-orange-500/50',
+    border: 'border-orange-500/20 hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)]',
     perks: ['Referral limit: 40 users'],
   },
   {
@@ -164,10 +158,7 @@ const FREE_TIERS = [
     xp: '50,000 XP',
     icon: <Medal className="w-5 h-5 text-amber-500" />,
     color: 'text-amber-500',
-    border: 'border-amber-500/25',
-    bg: 'from-amber-500/15 via-sats-black-800 to-sats-black-900',
-    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group-hover:border-amber-500/50',
+    border: 'border-amber-500/20 hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]',
     perks: ['Referral limit: 60 users'],
   },
   {
@@ -175,10 +166,7 @@ const FREE_TIERS = [
     xp: '100,000 XP',
     icon: <Star className="w-5 h-5 text-gray-300" />,
     color: 'text-gray-300',
-    border: 'border-gray-400/25',
-    bg: 'from-gray-400/15 via-sats-black-800 to-sats-black-900',
-    badge: 'bg-gray-400/10 text-gray-200 border-gray-400/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(156,163,175,0.2)] group-hover:border-gray-400/50',
+    border: 'border-gray-400/20 hover:border-gray-400/40 hover:shadow-[0_0_20px_rgba(156,163,175,0.1)]',
     perks: ['Referral limit: 80 users'],
   },
   {
@@ -186,21 +174,18 @@ const FREE_TIERS = [
     xp: '150,000 XP',
     icon: <Trophy className="w-5 h-5 text-yellow-400" />,
     color: 'text-yellow-400',
-    border: 'border-yellow-400/25',
-    bg: 'from-yellow-400/15 via-sats-black-800 to-sats-black-900',
-    badge: 'bg-yellow-400/10 text-yellow-300 border-yellow-400/20',
-    glow: 'group-hover:shadow-[0_0_30px_rgba(250,204,21,0.2)] group-hover:border-yellow-400/50',
+    border: 'border-yellow-400/20 hover:border-yellow-400/40 hover:shadow-[0_0_20px_rgba(250,204,21,0.1)]',
     perks: ['Referral limit: 100 users'],
   },
 ];
 
 const STREAK_MILESTONES = [
-  { days: 7, sats: 70, title: 'Pulse Start', accent: 'from-white/5 via-sats-black-800 to-sats-black-900', iconColor: 'text-gray-300', border: 'border-white/10' },
-  { days: 21, sats: 210, title: 'Momentum Run', accent: 'from-sats-orange-500/5 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-200', border: 'border-sats-orange-500/10' },
-  { days: 60, sats: 600, title: 'Golden Run', accent: 'from-sats-orange-500/10 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-300', border: 'border-sats-orange-500/20' },
-  { days: 90, sats: 900, title: 'Prime Chain', accent: 'from-sats-orange-500/15 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-400', border: 'border-sats-orange-500/30' },
-  { days: 180, sats: 1800, title: 'Titan Loop', accent: 'from-sats-orange-500/20 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-500', border: 'border-sats-orange-500/40' },
-  { days: 365, sats: 3650, title: 'Legacy Orbit', accent: 'from-sats-orange-500/25 via-sats-black-800 to-sats-black-900', iconColor: 'text-sats-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]', border: 'border-sats-orange-500/50' },
+  { days: 7, title: 'Week One', reward: 70, type: 'free' },
+  { days: 21, title: 'Three Week Run', reward: 210, type: 'free' },
+  { days: 60, title: 'Two Month Grind', reward: 600, type: 'free' },
+  { days: 90, title: 'Quarter Grind', reward: 900, type: 'premium' },
+  { days: 180, title: 'Half Year Grind', reward: 1800, type: 'premium' },
+  { days: 365, title: 'Year One', reward: 3650, type: 'premium' },
 ] as const;
 
 export default function RewardsPage() {
@@ -243,52 +228,44 @@ export default function RewardsPage() {
               <h2 className="text-2xl md:text-3xl font-black text-white/90">Streak Milestones</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {STREAK_MILESTONES.map((item) => {
-                const unlocked = FREE_STREAK_DAYS.has(item.days);
-                const premiumLocked = !FREE_STREAK_DAYS.has(item.days);
+              {STREAK_MILESTONES.map((milestone, idx) => {
+                const unlocked = FREE_STREAK_DAYS.has(milestone.days);
+                const premiumLocked = !FREE_STREAK_DAYS.has(milestone.days);
 
                 return (
-                  <div
-                    key={item.days}
-                    className={`group relative rounded-[28px] border p-6 bg-gradient-to-br ${item.accent} ${unlocked ? 'border-white/10' : 'border-white/5'} transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] overflow-hidden`}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[50px] pointer-events-none group-hover:bg-white/10 transition-colors" />
-                    <div className="relative z-10 flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-4">
-                        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border bg-black/40 shadow-inner ${item.border}`}>
-                          <Calendar className={`w-6 h-6 ${item.iconColor}`} />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold uppercase tracking-widest text-gray-500">{item.days} Days</div>
-                          <div className="mt-1 text-lg font-black text-white tracking-wide">{item.title}</div>
-                        </div>
-                      </div>
-                      {premiumLocked ? (
-                        <div className="rounded-full border border-violet-500/20 bg-violet-500/10 p-2 text-violet-300">
-                          <Lock className="w-4 h-4" />
-                        </div>
+                  <div key={idx} className={`relative p-6 rounded-[28px] overflow-hidden border transition-all duration-300 hover:-translate-y-1 ${milestone.type === 'premium' ? 'bg-gradient-to-b from-sats-orange-500/10 to-sats-black-900 border-sats-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.1)]' : 'bg-sats-black-900 border-white/5 hover:border-white/20'}`}>
+                    
+                    <div className="absolute top-4 right-4 flex items-center gap-2">
+                      
+                      {milestone.type === 'free' ? (
+                        <span className="px-2 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/20 text-[10px] font-bold tracking-wider">FREE</span>
                       ) : (
-                        <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 p-2 text-emerald-300">
-                          <Trophy className="w-4 h-4" />
-                        </div>
+                        <span className="px-2 py-0.5 rounded bg-sats-orange-500/10 text-sats-orange-500 border border-sats-orange-500/30 text-[10px] font-bold tracking-wider">PREMIUM</span>
                       )}
                     </div>
 
-                    <div className="relative z-10 mt-6 flex items-end justify-between gap-4">
-                      <div>
-                        <div className="text-sm font-semibold text-gray-400">Reward</div>
-                        <div className="mt-1 text-3xl font-black tracking-tight text-white">{item.sats.toLocaleString()} <span className="text-lg text-gray-400">sats</span></div>
-                      </div>
-                      <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${premiumLocked ? 'border-violet-500/20 bg-violet-500/10 text-violet-300' : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300'}`}>
-                        {premiumLocked ? 'Premium' : 'Open'}
-                      </span>
+                    <div className="flex items-center gap-2 text-gray-400 mb-2">
+                      <Calendar className="w-[18px] h-[18px]" />
+                      <span className="text-[14px] font-bold font-mono tracking-widest uppercase leading-none pt-0.5">{milestone.days} Days</span>
                     </div>
 
-                    <p className="relative z-10 mt-5 text-sm leading-relaxed text-gray-400">
-                      {FREE_STREAK_DAYS.has(item.days)
+                    <h3 className="text-xl font-bold text-white mb-6">{milestone.title}</h3>
+
+                    <div className="flex items-end gap-2">
+                      <div className={`text-4xl font-black font-mono tracking-tighter ${milestone.type === 'premium' ? 'text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'text-white'}`}>
+                        {milestone.reward.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">
+                        Sats
+                      </div>
+                    </div>
+
+                    <p className="relative z-10 mt-6 text-sm leading-relaxed text-gray-400/80 font-medium">
+                      {FREE_STREAK_DAYS.has(milestone.days)
                         ? 'Available to all users once your daily streak reaches this milestone.'
                         : 'This milestone reward is reserved for premium members in the full rewards flow.'}
                     </p>
+
                   </div>
                 );
               })}
@@ -308,14 +285,13 @@ export default function RewardsPage() {
               {FREE_TIERS.map((tier) => (
                 <div
                   key={tier.name}
-                  className={`group relative overflow-hidden rounded-[28px] border bg-gradient-to-br ${tier.bg} p-5 transition-all duration-300 hover:-translate-y-1 ${tier.glow} ${tier.border}`}
+                  className={`group relative overflow-hidden rounded-[28px] border bg-sats-black-900 p-5 transition-all duration-300 hover:-translate-y-1 ${tier.border}`}
                 >
-                  <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_28%)]" />
                   <div className="relative z-10 flex items-start justify-between gap-3">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-black/30 ${tier.border}`}>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-black/40 border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]`}>
                       {tier.icon}
                     </div>
-                    <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${tier.badge}`}>
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400 border-white/10 bg-white/5`}>
                       {tier.xp}
                     </span>
                   </div>
@@ -324,8 +300,8 @@ export default function RewardsPage() {
                     <div className="mt-4 space-y-2.5">
                       {tier.perks.map((perk) => (
                         <div key={perk} className="flex items-start gap-2.5 text-sm text-gray-300">
-                          <div className="mt-1 h-1.5 w-1.5 rounded-full bg-sats-orange-400" />
-                          <span>{perk}</span>
+                          <div className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${tier.color.replace('text-', 'bg-')}`} />
+                          <span className="leading-snug">{perk}</span>
                         </div>
                       ))}
                     </div>
@@ -349,7 +325,7 @@ export default function RewardsPage() {
                 </p>
               </div>
 
-              <div className="inline-flex items-center rounded-2xl border border-white/10 bg-white/[0.04] p-1.5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+              <div className="inline-flex items-center rounded-2xl w-fit border border-white/10 bg-white/[0.04] p-1.5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
                 {(['MONTHLY', 'YEARLY'] as BillingCycle[]).map((cycle) => (
                   <button
                     key={cycle}

@@ -54,11 +54,11 @@ export const FAQ = () => {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-block mb-4 px-3 py-1 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 backdrop-blur-sm">
-            <span className="text-sats-orange-500 text-xs font-bold tracking-widest uppercase font-mono">
+            <span className="text-sats-orange-500 text-xl font-bold tracking-widest uppercase font-mono">
               FAQ
             </span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">
             Common <span className="text-sats-orange-500">Questions</span>
           </h2>
         </div>

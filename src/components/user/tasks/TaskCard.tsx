@@ -265,7 +265,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle2, ChevronRight, ExternalLink, Link as LinkIcon, RotateCcw, Upload, X, Zap } from 'lucide-react';
 import { PROOF_META } from './taskPage.helpers';
 import type { ProofMeta, UserTaskPageTask, UserTaskResult, UserTaskStatus } from './taskPage.types';
@@ -327,17 +327,45 @@ function ScreenshotInput({
   file: File | null;
   onChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const dropEvent = {
+        target: { files: e.dataTransfer.files }
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+      onChange(taskId, dropEvent);
+    }
+  };
+
   return (
-    <label className="group block cursor-pointer outline-none">
-      <div className="relative flex flex-col items-center justify-center w-full h-40 rounded-2xl border-2 border-dashed border-[#2a2a2a] bg-[#0c0c0c] transition-all duration-300 ease-out group-hover:border-sats-orange-500/50 group-hover:bg-sats-orange-500/[0.04] group-hover:shadow-[0_0_30px_rgba(238,139,18,0.05)]">
+    <label 
+      className="group block cursor-pointer outline-none"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div className={`relative flex flex-col items-center justify-center w-full h-40 rounded-2xl border-2 border-dashed transition-all duration-300 ease-out group-hover:border-sats-orange-500/50 group-hover:bg-sats-orange-500/[0.04] group-hover:shadow-[0_0_30px_rgba(238,139,18,0.05)] ${isDragging ? 'border-sats-orange-500 bg-sats-orange-500/10' : 'border-[#2a2a2a] bg-[#0c0c0c]'}`}>
         <input type="file" accept="image/*" className="hidden" onChange={(e) => onChange(taskId, e)} />
         
-        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#111] to-[#1a1a1a] border border-[#222] shadow-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:border-sats-orange-500/30 group-active:scale-95">
-          <Upload className="w-5 h-5 text-white/50 group-hover:text-sats-orange-500 transition-colors duration-300" />
+        <div className={`w-12 h-12 rounded-full border shadow-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-active:scale-95 ${isDragging ? 'bg-sats-orange-500/20 border-sats-orange-500/50 text-sats-orange-500' : 'bg-gradient-to-tr from-[#111] to-[#1a1a1a] border-[#222] group-hover:border-sats-orange-500/30'}`}>
+          <Upload className={`w-5 h-5 transition-colors duration-300 ${isDragging ? 'text-sats-orange-500' : 'text-white/50 group-hover:text-sats-orange-500'}`} />
         </div>
         
-        <p className="text-sm font-semibold text-white/80 transition-colors duration-300 group-hover:text-white">
-          {file ? file.name : 'Click to upload screenshot'}
+        <p className={`text-sm font-semibold transition-colors duration-300 ${isDragging ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>
+          {file ? file.name : isDragging ? 'Drop image here' : 'Click or drop screenshot here'}
         </p>
         <p className="text-xs text-white/30 mt-1.5 font-medium">PNG, JPG up to 5MB</p>
       </div>
@@ -483,6 +511,7 @@ export function TaskCard({
   onFileChange,
   onTextChange,
   onSubmit,
+  isPremiumOnly = false,
 }: {
   task: UserTaskPageTask;
   index: number;
@@ -494,6 +523,7 @@ export function TaskCard({
   onFileChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   onTextChange: (id: string, val: string) => void;
   onSubmit: (id: string, proofType: string) => void;
+  isPremiumOnly?: boolean;
 }) {
   const meta = PROOF_META[task.proofType] ?? PROOF_META.TEXT_RESPONSE;
   const taskPlatform = inferTaskPlatform(task);
@@ -516,7 +546,9 @@ export function TaskCard({
           ? 'bg-gradient-to-b from-green-400 to-green-600 shadow-[0_0_15px_rgba(34,197,94,0.5)]' 
           : result?.success === false 
             ? 'bg-gradient-to-b from-red-400 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
-            : 'bg-gradient-to-b from-sats-orange-400 to-sats-orange-600 opacity-50'
+            : isPremiumOnly
+              ? 'bg-gradient-to-b from-violet-500 to-fuchsia-500 opacity-60 shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+              : 'bg-gradient-to-b from-sats-orange-400 to-sats-orange-600 opacity-50'
       }`} />
 
       <div className="p-6 md:p-8 pl-8 md:pl-10">

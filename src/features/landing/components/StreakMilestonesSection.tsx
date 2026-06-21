@@ -27,12 +27,12 @@ export const StreakMilestonesSection = () => {
               Streak Milestones
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             Stay Consistent.<br />
             <span className="text-sats-orange-500">Stack Bigger Rewards.</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            One-time lifetime bonus rewards for hitting streak milestones. Your progress is always protected — sats are held securely until you're ready to claim them.
+            One-time lifetime bonus rewards for hitting streak milestones. Your progress is always protected — sats are held securely until you&apos;re ready to claim them.
           </p>
         </FadeUp>
 
@@ -51,8 +51,8 @@ export const StreakMilestonesSection = () => {
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-400 mb-2">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-xs font-bold font-mono tracking-widest uppercase">{milestone.days} Days</span>
+                  <Calendar className="w-[18px] h-[18px]" />
+                  <span className="text-[14px] font-bold font-mono tracking-widest uppercase leading-none pt-0.5">{milestone.days} Days</span>
                 </div>
 
                 <h3 className="text-xl font-bold text-white mb-6">{milestone.title}</h3>

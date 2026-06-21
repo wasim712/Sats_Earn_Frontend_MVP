@@ -190,7 +190,7 @@ function CardFace({
 }) {
   return (
     <div className="absolute inset-0 flex h-full flex-col rounded-[34px] p-5 sm:p-6 md:p-7 [backface-visibility:hidden]">
-      <div className="mb-5 flex min-h-[76px] items-start justify-between gap-3 sm:gap-4">
+      <div className="mb-5 flex  items-start justify-between gap-3 sm:gap-4">
         <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4 pr-2">
           <div
             className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/25 transition-transform duration-200"
@@ -203,7 +203,7 @@ function CardFace({
           </div>
           <div className="min-w-0 flex-1">
             <h3 className={`text-[1.75rem] leading-none sm:text-[1.95rem] font-black tracking-tight ${tier.color}`}>{tier.label}</h3>
-            <div className="mt-2 max-w-[12rem] sm:max-w-none text-sm sm:text-[1rem] leading-snug font-semibold text-gray-300/80 break-words">{planLabel}</div>
+            <div className="mt-2 text-sm sm:text-[1rem] leading-snug font-semibold text-gray-300/80 whitespace-nowrap">{planLabel}</div>
           </div>
         </div>
 
@@ -409,7 +409,7 @@ export function PremiumRewardCard({
       }}
     >
       <div
-        className={`relative min-h-[620px] md:min-h-[640px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        className={` max-w-[400px] relative min-h-[690px] md:min-h-[720px] w-full transform-gpu [transform-style:preserve-3d] transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]`}
         style={{
           transform: `${shellTransform} ${effectiveBillingCycle === 'YEARLY' ? 'rotateY(180deg)' : 'rotateY(0deg)'}`,
         }}
@@ -432,7 +432,7 @@ export function PremiumRewardCard({
               style={{ transform: isYearly ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
             >
               <div
-                className={`relative flex h-full min-h-[620px] md:min-h-[640px] w-full transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} transition-[box-shadow,border-color] duration-200 ease-out will-change-transform`}
+                className={`relative flex h-full min-h-[690px] md:min-h-[720px] w-full transform-gpu flex-col overflow-hidden rounded-[34px] border ${isCurrentTier ? 'border-green-500/40 ring-2 ring-green-500/20' : tier.border} transition-[box-shadow,border-color] duration-200 ease-out will-change-transform`}
                 style={{
                   background: visual.surface,
                   boxShadow: isCurrentTier

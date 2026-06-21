@@ -11,6 +11,7 @@ import { ReferralFAQ } from '@/features/referral/components/ReferralFAQ';
 import { ReferralSecNav } from '@/features/referral/components/ReferralSecNav';
 import { ReferralContactFab } from '@/features/referral/components/ReferralContactFab';
 import { ReferralMechanics } from '@/features/referral/components/ReferralMechanics';
+import { ReferralCommissionGrid } from '@/features/referral/components/ReferralCommissionGrid';
 
 export const metadata: Metadata = {
   title: 'Referral Programme | SatsEarn',
@@ -26,6 +27,7 @@ export default function ReferralPage() {
         <ReferralHistory />
         <ReferralChallenge />
         <ReferralMechanics />
+        <ReferralCommissionGrid />
         <ReferralCalculator />
         <ReferralDashboard />
         <ReferralTiers />

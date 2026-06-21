@@ -38,7 +38,7 @@ export const ReferralPreviewSection = () => {
               <Users className="w-3.5 h-3.5" /> Referral Programme
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 tracking-tight">
             Refer Friends.<br />
             <span className="text-sats-orange-500">Stack Together.</span>
           </h2>
@@ -55,7 +55,7 @@ export const ReferralPreviewSection = () => {
                 <Info className="w-5 h-5 text-sats-orange-500" /> How Commission is Calculated
               </h3>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Your commission is always a % of the admin-set base reward — not your referral's tier earnings. Same base for everyone. Only your tier % changes.
+                Your commission is always a % of the admin-set base reward — not your referral&apos;s tier earnings. Same base for everyone. Only your tier % changes.
               </p>
             </div>
             
@@ -136,21 +136,28 @@ export const ReferralPreviewSection = () => {
             </div>
 
             <div className="flex flex-col">
-              {paidTiers.map((tier, idx) => (
-                <div key={idx} className="grid grid-cols-[1.5fr_1fr_1fr_1fr] items-center p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors last:border-b-0">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${tier.color}`} />
-                    <span className="text-sm font-bold text-white">{tier.name}</span>
+              {paidTiers.map((tier, idx) => {
+                const isFounders = tier.name === 'Founders';
+                return (
+                  <div key={idx} className={`grid grid-cols-[1.5fr_1fr_1fr_1fr] items-center p-4 border-b border-white/5 transition-colors last:border-b-0 ${isFounders ? 'bg-sats-orange-500/[0.03]' : 'hover:bg-white/[0.02]'}`}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${tier.color}`} />
+                      <span className={`text-sm font-bold ${isFounders ? 'text-sats-orange-500' : 'text-white'}`}>
+                        {tier.name}{isFounders && ' ★'}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-sats-orange-500 font-mono">{tier.rate}</span>
+                    <span className={`text-md font-bold font-mono ${isFounders ? 'text-sats-orange-500' : 'text-green-500'}`}>{tier.max}</span>
+                    <span className={`text-sm font-bold font-mono ${isFounders ? 'text-sats-orange-500' : 'text-green-500'}`}>
+                      {isFounders ? '∞ + Rotation' : tier.cap}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-sats-orange-500 font-mono">{tier.rate}</span>
-                  <span className="text-sm font-bold text-green-500 font-mono">{tier.max}</span>
-                  <span className="text-sm font-bold text-green-500 font-mono">{tier.cap}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
             
-            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-500 border-t border-white/5 text-center leading-relaxed">
-              Paid tiers enjoy completely uncapped referrals and higher commission percentages.
+            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-400 border-t border-white/5 text-left leading-relaxed">
+              <span className="text-sats-orange-500">★ Founders Rotation:</span> When a new user joins without a referral code, they are auto-assigned to the next Founder in a round-robin queue — earning that Founder commission for life.
             </div>
           </FadeUp>
 

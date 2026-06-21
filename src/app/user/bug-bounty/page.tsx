@@ -64,9 +64,16 @@ function getToken() {
   return sessionStorage.getItem('sats_token') || localStorage.getItem('sats_token') || '';
 }
 
-function getStatusUi(status: BugReport['status']) {
+function getStatusUi(status: BugReport['status'], rewardSats: number) {
   switch (status) {
     case 'REWARDED':
+      if (rewardSats === 0) {
+        return {
+          badge: 'border-yellow-500/20 bg-yellow-500/10 text-yellow-300',
+          card: 'border-yellow-500/15 bg-[linear-gradient(180deg,rgba(24,24,5,0.98),rgba(12,12,5,0.98))]',
+          label: 'Reviewed',
+        };
+      }
       return {
         badge: 'border-green-500/20 bg-green-500/10 text-green-300',
         card: 'border-green-500/15 bg-[linear-gradient(180deg,rgba(8,20,13,0.98),rgba(5,10,8,0.98))]',
@@ -294,7 +301,7 @@ export default function BugBountyPage() {
               <p className="text-sm text-gray-400">No bug reports yet.</p>
             ) : (
               history.map((item) => {
-                const statusUi = getStatusUi(item.status);
+                const statusUi = getStatusUi(item.status, item.rewardSats);
 
                 return (
                   <div key={item.id} className={`rounded-2xl border p-4 ${statusUi.card}`}>
@@ -306,11 +313,18 @@ export default function BugBountyPage() {
                       <span className={`px-2.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>{statusUi.label}</span>
                     </div>
                     <p className="text-sm text-gray-400 mt-2 leading-6">{item.description}</p>
-                    <div className="mt-3 flex items-center justify-between gap-3 text-xs text-gray-500">
+                    <div className="mt-4 flex items-center justify-between gap-3 text-xs text-gray-500">
                       <span>{new Date(item.createdAt).toLocaleString()}</span>
-                      <span>{item.rewardSats > 0 ? `${item.rewardSats.toLocaleString()} sats rewarded` : 'No reward yet'}</span>
+                      {item.rewardSats > 0 ? (
+                        <div className="inline-flex items-baseline gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                          <span className="text-[13px] font-black text-sats-orange-500">+{item.rewardSats.toLocaleString()}</span>
+                          <span className="text-[11px] font-bold text-gray-400 tracking-wide">sats</span>
+                        </div>
+                      ) : (
+                        <span>{item.status === 'OPEN' ? 'Pending review' : 'No reward'}</span>
+                      )}
                     </div>
-                    {item.adminNotes ? <p className="mt-2 text-xs text-yellow-300">Admin note: {item.adminNotes}</p> : null}
+                    {item.adminNotes ? <p className="mt-3 text-xs text-yellow-300 bg-yellow-500/10 border border-yellow-500/20 px-3 py-2 rounded-lg">Admin note: {item.adminNotes}</p> : null}
                   </div>
                 );
               })
