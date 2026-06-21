@@ -194,6 +194,11 @@ export default function StandaloneTaskDetailsPage() {
     .filter(line => line.length > 0);
 
   const coverImg = task?.campaign?.coverImageUrl || task?.coverImageUrl || '/round_logo.png';
+  const computedBaseReward = Number(
+    (task as any)?.baseRewardSats ??
+    (((task as any)?.tierRewardMatrix || {}) as Record<string, number>).BASIC ??
+    0
+  );
   const computedReward = Number(task?.taskRewardSats || 0);
   const xpReward = Number(task?.xpReward || 0);
 
@@ -381,6 +386,10 @@ export default function StandaloneTaskDetailsPage() {
             <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-5">
               <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.15em] mb-4">Reward Breakdown</h3>
               <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-white/60">Base reward</span>
+                  <span className={`font-bold ${themeColors.primary}`}>{computedBaseReward.toLocaleString()} sats</span>
+                </div>
                 <div className="flex justify-between items-center">
                   <span className="text-white/60">Your reward</span>
                   <span className={`font-bold ${themeColors.primary}`}>{computedReward.toLocaleString()} sats</span>

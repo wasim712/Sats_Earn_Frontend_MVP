@@ -286,8 +286,35 @@ export default function CampaignDetailsPage() {
 
   const coverImg = campaign?.coverImageUrl || '/round_logo.png';
   
-  // Robust base reward calculation
-  const computedBaseReward = Number(campaign?.tierRewardMatrix?.['BASIC'] ?? campaign?.baseRewardSats ?? (campaign as any)?.rewardAmount ?? (campaign as any)?.taskRewardSats ?? 0);
+  // Derive base reward from raw campaign detail payload the same way list data is built
+  const computedBaseReward = React.useMemo(() => {
+    if (!campaign) return 0;
+
+    const tasks = Array.isArray(campaign.tasks) ? campaign.tasks : [];
+    const campaignMatrix = ((campaign as any)?.tierRewardMatrix || {}) as Record<string, number>;
+
+    if (tasks.length > 0) {
+      const taskLevelBaseReward = tasks.reduce((sum, task) => {
+        const overrideMatrix = (((task as any)?.tierRewardMatrixOverride || {}) as Record<string, number>);
+        const overrideBasicReward = Number(overrideMatrix.BASIC || 0);
+        const campaignBasicReward = Number(campaignMatrix.BASIC || 0);
+        return sum + (overrideBasicReward > 0 ? overrideBasicReward : campaignBasicReward);
+      }, 0);
+
+      if (taskLevelBaseReward > 0) {
+        return taskLevelBaseReward;
+      }
+    }
+
+    return Number(
+      (campaign as any)?.basicTierRewardSats ??
+      campaign?.baseRewardSats ??
+      campaignMatrix.BASIC ??
+      (campaign as any)?.rewardAmount ??
+      (campaign as any)?.taskRewardSats ??
+      0
+    );
+  }, [campaign]);
 
   if (isLoading) return <PageSkeleton />;
 
@@ -354,7 +381,7 @@ export default function CampaignDetailsPage() {
                   <span className={`text-sm font-black ${themeColors.primary}`}>
                     {Number(campaign.displayRewardSats || 0)} Sats
                   </span>
-                  <span className={`text-xs ${themeColors.primary} opacity-70 font-medium`}>— total reward</span>
+                  <span className={`text-xs ${themeColors.primary} opacity-70 font-medium`}>â€” total reward</span>
                 </div>
                 {isPremiumOnly && (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]">
@@ -432,7 +459,7 @@ export default function CampaignDetailsPage() {
               <div>
                 <h4 className="text-sm font-bold text-sats-orange-500 mb-1.5">Keep your action live to keep your sats.</h4>
                 <p className="text-xs text-white/50 leading-relaxed">
-                  Undoing a rewarded task — unfollowing, unliking, deleting a comment, or removing a repost — is treated as gaming the system and can lead to clawed-back sats or an account ban. Only complete tasks you intend to keep.
+                  Undoing a rewarded task â€” unfollowing, unliking, deleting a comment, or removing a repost â€” is treated as gaming the system and can lead to clawed-back sats or an account ban. Only complete tasks you intend to keep.
                 </p>
               </div>
             </div>
