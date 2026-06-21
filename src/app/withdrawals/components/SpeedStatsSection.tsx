@@ -6,7 +6,7 @@ import { Zap, Globe, RefreshCcw } from 'lucide-react';
 
 export function SpeedStatsSection() {
   return (
-    <section className="py-16 sm:py-24 relative px-4 max-w-4xl mx-auto">
+    <section className="py-12 relative px-4 max-w-4xl mx-auto">
       <FadeUp delay={0.1}>
         <div className="font-mono text-xs tracking-[0.2em] uppercase text-sats-orange-500 opacity-80 flex items-center justify-center gap-3 mb-4">
           Lightning Fast

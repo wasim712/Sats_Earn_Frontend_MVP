@@ -150,7 +150,7 @@ export const ReferralMechanics = () => {
       </section>
 
       {/* THE FLOW (NETWORK DIAGRAM) */}
-      <section id="network" className="px-4 py-16 sm:py-24">
+      <section id="network" className="px-4 pb-16 sm:pb-24 pt-4 sm:pt-8">
         <div className="max-w-5xl mx-auto">
           <FadeUp className="mb-10 sm:mb-14 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">

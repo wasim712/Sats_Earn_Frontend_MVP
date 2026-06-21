@@ -38,6 +38,9 @@ export const ReferralHistory = () => {
                   <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
                     Solve a captcha, paste an address → receive <strong className="text-white">5 BTC</strong> free.
                   </li>
+                  <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
+                    He seeded it with 1,100 BTC of his own to onboard newcomers.
+                  </li>
                 </ul>
                 <div className="mt-auto self-start bg-sats-orange-500/10 border border-sats-orange-500/30 text-sats-orange-500 text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-md">
                   ~5¢ per BTC then
@@ -90,6 +93,9 @@ export const ReferralHistory = () => {
                   <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
                     Per-visit payouts shrank from whole coins to tiny fractions.
                   </li>
+                  <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
+                    Faucets stayed the main on-ramp for non-technical newcomers.
+                  </li>
                 </ul>
                 <div className="mt-auto self-start bg-sats-orange-500/10 border border-sats-orange-500/30 text-sats-orange-500 text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-md">
                   100s of faucets
@@ -116,6 +122,9 @@ export const ReferralHistory = () => {
                   <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
                     Sending someone a few sats cost more than the sats were worth.
                   </li>
+                  <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
+                    Most classic faucets quietly shut down.
+                  </li>
                 </ul>
                 <div className="mt-auto self-start bg-red-500/10 border border-red-500/30 text-red-500 text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-md">
                   Fees &gt; payouts
@@ -140,7 +149,10 @@ export const ReferralHistory = () => {
                     The Lightning Network brought instant, near-free Bitcoin payments.
                   </li>
                   <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
-                    Sending <strong className="text-white">1 sat</strong> becomes practical again.
+                    Fees drop below a single satoshi; settlement is sub-second.
+                  </li>
+                  <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
+                    Sending <strong className="text-white">1 sat</strong> becomes practical again – micro-earning is back.
                   </li>
                 </ul>
                 <div className="mt-auto self-start bg-green-500/10 border border-green-500/30 text-green-500 text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-md">
@@ -167,6 +179,9 @@ export const ReferralHistory = () => {
                   </li>
                   <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
                     Earn <strong className="text-white">real sats</strong> via tasks, quizzes, streaks & referrals.
+                  </li>
+                  <li className="relative pl-4 text-[13px] text-gray-400 leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-sats-orange-500/70">
+                    Paid straight to your Lightning wallet – no buying required.
                   </li>
                 </ul>
                 <div className="mt-auto self-start bg-sats-orange-500 text-black text-[10px] font-mono font-bold tracking-wider uppercase px-2.5 py-1 rounded-md">
@@ -211,14 +226,14 @@ export const ReferralHistory = () => {
                 { feat: "Smallest practical send", a: "~$10+", b: "1 satoshi" },
                 { feat: "Faucet / micro-earning", a: "Not viable", b: "Fully viable" }
               ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.3fr_1fr_1fr] gap-2 sm:gap-3 p-4 px-6 border-b border-white/10 last:border-0 text-center sm:text-left items-center">
-                  <div className="text-sats-orange-500 sm:text-gray-300 font-mono text-[11px] sm:text-sm uppercase sm:normal-case font-bold sm:font-normal mb-1 sm:mb-0">
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.3fr_1fr_1fr] gap-2 sm:gap-3 p-4 px-6 border-b border-white/10 last:border-0 text-center items-center">
+                  <div className="text-sats-orange-500 sm:text-gray-300 font-mono text-[11px] sm:text-sm uppercase sm:normal-case font-bold sm:font-normal mb-1 sm:mb-0 sm:text-left">
                     {row.feat}
                   </div>
-                  <div className="text-sm text-gray-400 font-mono">
+                  <div className="text-sm text-gray-400 font-mono sm:text-center">
                     <span className="sm:hidden text-gray-500">On-chain: </span>{row.a}
                   </div>
-                  <div className="text-sm font-bold text-green-500 font-mono">
+                  <div className="text-sm font-bold text-green-500 font-mono sm:text-center">
                     <span className="sm:hidden text-gray-500 font-normal">⚡ Lightning: </span>{row.b}
                   </div>
                 </div>
@@ -241,15 +256,15 @@ export const ReferralHistory = () => {
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-left">
+                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-center">
                   <div className="font-mono text-2xl sm:text-[26px] font-bold text-sats-orange-500 leading-none mb-2">21M</div>
                   <div className="text-xs text-gray-400 leading-snug">Max bitcoin, ever — fixed</div>
                 </div>
-                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-left">
+                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-center">
                   <div className="font-mono text-2xl sm:text-[26px] font-bold text-sats-orange-500 leading-none mb-2">100M</div>
                   <div className="text-xs text-gray-400 leading-snug">Sats in 1 BTC — what you stack</div>
                 </div>
-                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-left">
+                <div className="bg-sats-black-800 border border-white/10 rounded-2xl p-5 text-center">
                   <div className="font-mono text-2xl sm:text-[26px] font-bold text-sats-orange-500 leading-none mb-2">$0</div>
                   <div className="text-xs text-gray-400 leading-snug">Needed to start — earn, don't buy</div>
                 </div>

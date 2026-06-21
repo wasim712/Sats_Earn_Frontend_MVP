@@ -5,7 +5,7 @@ export const ReferralTiers = () => {
   return (
     <>
       {/* FREE VS PAID */}
-      <section id="tiers" className="px-4 py-16 sm:py-24 border-t border-white/5">
+      <section id="free-vs-paid" className="px-4 py-16 sm:py-24 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <FadeUp className="mb-10 sm:mb-14">
             <div className="flex items-center gap-3 text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">

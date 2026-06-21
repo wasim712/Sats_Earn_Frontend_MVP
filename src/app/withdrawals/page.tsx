@@ -24,7 +24,7 @@ export default function WithdrawalsPage() {
         <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(59,130,246,0.05),transparent_60%)]"></div>
       </div>
 
-      <div className="relative z-10 w-full pb-12">
+      <div className="relative z-10 w-full pb-8">
         <HeroSection />
         <MinimumsSection />
         <StepsSection />

@@ -29,7 +29,7 @@ export const ReferralCalculator = () => {
 
   return (
     <>
-      <section id="calculator" className="px-4 py-16 sm:py-24">
+      <section id="calculator" className="px-4 pb-16 sm:pb-24 border-t border-white/5 pt-16 sm:pt-24">
         <div className="max-w-5xl mx-auto">
           <FadeUp className="text-center mb-10 sm:mb-14">
             <div className="inline-block text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
@@ -202,8 +202,21 @@ export const ReferralCalculator = () => {
       </section>
 
       {/* WORKED EXAMPLE */}
-      <section className="px-4 pb-16 sm:pb-24">
+      <section className="px-4 pb-16 sm:pb-24 pt-8 sm:pt-12">
         <div className="max-w-4xl mx-auto">
+          <FadeUp className="mb-10 sm:mb-12 text-center sm:text-left">
+            <div className="flex items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
+              <div className="w-6 h-px bg-sats-orange-500/50 hidden sm:block"></div>
+              A Quick Example
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-white mb-4">
+              How it adds up
+            </h2>
+            <p className="text-base text-gray-300 max-w-2xl leading-relaxed mx-auto sm:mx-0">
+              One concrete walk-through, so the numbers make sense without touching a slider.
+            </p>
+          </FadeUp>
+
           <FadeUp>
             <div className="bg-sats-black-800 border border-sats-orange-500/30 rounded-2xl p-6 sm:p-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(249,115,22,0.08),transparent_70%)] pointer-events-none"></div>

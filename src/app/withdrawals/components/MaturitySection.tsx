@@ -6,7 +6,7 @@ import { Lock, Clock, CheckCircle } from 'lucide-react';
 
 export function MaturitySection() {
   return (
-    <section className="py-8 sm:py-16 relative px-4 max-w-4xl mx-auto">
+    <section className="py-8 relative px-4 max-w-4xl mx-auto">
       <FadeUp delay={0.1}>
         <div className="bg-gradient-to-br from-blue-500/[0.08] to-sats-black-900 border border-blue-500/20 rounded-3xl p-6 sm:p-10 shadow-[0_10px_40px_rgba(59,130,246,0.05)]">
           <div className="flex items-center gap-3 mb-4">
