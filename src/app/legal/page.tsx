@@ -70,7 +70,7 @@ const policies = [
 
 export default function LegalPage() {
   return (
-    <main className="relative min-h-screen bg-sats-black-950 bg-grid-base">
+    <main className="relative min-h-screen bg-sats-black-950 ">
       
       {/* Background Glows Container */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -79,7 +79,7 @@ export default function LegalPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(238,139,18,0.05),transparent_60%)]"></div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 pt-16 pb-24">
+      <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 pt-8 pb-24">
         
         {/* Breadcrumbs */}
         <div className="flex justify-start mb-8">

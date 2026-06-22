@@ -3,6 +3,7 @@
   import React, { useEffect } from 'react';
   import Link from 'next/link';
   import Image from 'next/image';
+  import { usePathname } from 'next/navigation';
   import { X } from 'lucide-react';
   import { Button } from '../ui/Button';
 
@@ -82,7 +83,7 @@
         name: 'Discord',
         href: 'https://discord.gg/VX4cB2xTnZ',
         icon: (
-          <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className=' grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
+          <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className='w-[22px] h-[22px] grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
     
           </Image>
         ),
@@ -104,6 +105,8 @@
     onClose,
     navLinks,
   }) => {
+    const pathname = usePathname();
+
     // Lock background scroll and add class when open
     useEffect(() => {
       if (isOpen) {
@@ -162,16 +165,21 @@
 
           {/* ── Nav links ── */}
           <nav className="flex flex-col px-6 pt-8 pb-4 space-y-6 grow">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={onClose}
-                className="text-lg font-bold text-gray-100 hover:text-sats-orange-500 transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href + '/'));
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={onClose}
+                  className={`text-lg font-bold transition-colors ${
+                    isActive ? 'text-sats-orange-500' : 'text-gray-100 hover:text-sats-orange-500'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* ── Social links ── */}

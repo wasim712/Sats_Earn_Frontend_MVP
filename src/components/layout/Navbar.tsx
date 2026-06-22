@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { Button } from '../ui/Button'; 
 import { StaggerReveal } from '../animations/StaggerReveal';
@@ -11,6 +12,7 @@ import { LogoText } from '../ui/LogoText';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   // Updated to use Anchor Links that target the IDs on your home page components
   const navLinks = [
@@ -20,6 +22,7 @@ export const Navbar = () => {
     { name: 'FAQ', href: '/faq' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
+    { name: 'Legal', href: '/legal' },
   ];
 
   return (
@@ -39,15 +42,20 @@ export const Navbar = () => {
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex gap-8">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.name} 
-                  href={link.href} 
-                  className="text-sm font-bold text-gray-300 transition-all duration-200 hover:text-sats-orange-500 hover:-translate-y-0.5"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href + '/'));
+                return (
+                  <Link 
+                    key={link.name} 
+                    href={link.href} 
+                    className={`text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 ${
+                      isActive ? 'text-sats-orange-500' : 'text-gray-300 hover:text-sats-orange-500'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Desktop Auth State */}

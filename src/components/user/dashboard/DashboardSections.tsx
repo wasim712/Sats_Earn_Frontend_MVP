@@ -241,6 +241,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                 const statusUi = getSubmissionStatusUi(submission.status);
                 const isPending = submission.status === 'PENDING_24H' || submission.status === 'MANUAL_REVIEW';
                 const isLocked = submission.status === 'LOCKED_15D';
+                const displayRewardSats = submission.status === 'REJECTED' ? 0 : Number(submission.rewardSats || 0);
                 const remainingMs = submission.remainingMs || 0;
 
                 let dateString = null;
@@ -274,7 +275,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                         {statusUi.label}
                       </span>
                       <p className="text-[15px] font-black text-green-400">
-                        +{(submission.rewardSats || 0).toLocaleString()} sats
+                        +{displayRewardSats.toLocaleString()} sats
                       </p>
                     </div>
                   </div>

@@ -31,7 +31,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
 
   // Sub-pages share this layout with the sticky sidebar
   return (
-    <div className="relative min-h-screen bg-sats-black-950 bg-grid-base">
+    <div className="relative min-h-screen bg-sats-black-950 ">
       {/* Ambient Glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-[radial-gradient(circle,rgba(238,139,18,0.08),transparent_60%)]"></div>

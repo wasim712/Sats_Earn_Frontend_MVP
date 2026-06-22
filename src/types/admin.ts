@@ -30,6 +30,7 @@ export interface Campaign {
   completedTasksCount?: number;
   totalTasksCount?: number;
   displayRewardSats?: number;
+  tasks?: AdminTask[];
   userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED';
   createdAt: string;
   updatedAt: string;
@@ -59,6 +60,7 @@ export interface AdminTask {
   tierRewardMatrixOverride?: Record<string, number> | null;
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
+  completionsCount?: number;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;

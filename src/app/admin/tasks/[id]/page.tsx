@@ -142,6 +142,7 @@ export default function AdminTaskDetailPage() {
   const filteredCountries = countries.filter((country) =>
     country.toLowerCase().includes(countrySearch.trim().toLowerCase())
   );
+  const completionsCount = Number(selectedTask?.completionsCount || 0);
 
   const totalRewardPool = useMemo(
     () => [...FREE_TIERS, ...PREMIUM_TIERS].reduce((sum, tier) => sum + Number(formData.tierRewardMatrix[tier] || 0), 0),
@@ -449,10 +450,10 @@ export default function AdminTaskDetailPage() {
                 <SectionTitle icon={<CalendarDays className="h-5 w-5" />} title="Boost Window" subtitle="Optional double rewards period for this standalone task." />
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                   <InputWrap label="Double Rewards Start">
-                    <input type="datetime-local" value={formData.doubleRewardsStartAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: e.target.value }))} className={inputCls} />
+                    <input type="datetime-local" value={formData.doubleRewardsStartAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: e.target.value }))} className={`${inputCls} [color-scheme:dark]`} />
                   </InputWrap>
                   <InputWrap label="Double Rewards End">
-                    <input type="datetime-local" value={formData.doubleRewardsEndAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: e.target.value }))} className={inputCls} />
+                    <input type="datetime-local" value={formData.doubleRewardsEndAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: e.target.value }))} className={`${inputCls} [color-scheme:dark]`} />
                   </InputWrap>
                 </div>
               </section>
@@ -504,8 +505,8 @@ export default function AdminTaskDetailPage() {
                 <SectionTitle icon={<Sparkles className="h-5 w-5" />} title="Preview Summary" subtitle="Quick health check before saving changes." />
                 <div className="space-y-3 text-sm text-white/65">
                   <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
-                    <span className="flex items-center gap-2"><CheckSquare className="h-4 w-4 text-sats-orange-400" /> Category</span>
-                    <span className="font-bold text-white">{formData.category}</span>
+                    <span className="flex items-center gap-2"><CheckSquare className="h-4 w-4 text-sats-orange-400" /> Completions</span>
+                    <span className="font-bold text-white">{completionsCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#080808] px-4 py-3">
                     <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-sats-orange-400" /> XP Reward</span>

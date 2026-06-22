@@ -513,7 +513,21 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
     ? PREMIUM_TIERS
     : [...FREE_TIERS, ...PREMIUM_TIERS];
   const hasAnyTierReward = visibleRewardTiers.some((tier) => Number(editForm.tierRewardMatrix?.[tier]) > 0);
-  const topTierReward = visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
+  const topTierReward = Array.isArray(campaign.tasks) && campaign.tasks.length > 0
+    ? campaign.tasks.reduce((sum, task) => {
+        const mergedTaskMatrix = hasTaskMatrixOverrides(task.tierRewardMatrixOverride)
+          ? mergeTaskTierMatrix(task.tierRewardMatrixOverride)
+          : mergeTaskTierMatrix(task.tierRewardMatrix);
+        const baseTaskReward = Number(task.baseRewardSatsOverride ?? task.taskRewardSats ?? 0);
+
+        const taskMaxReward = visibleRewardTiers.reduce((max, tier) => {
+          const reward = Number(mergedTaskMatrix[tier] ?? baseTaskReward);
+          return Math.max(max, reward);
+        }, baseTaskReward);
+
+        return sum + taskMaxReward;
+      }, 0)
+    : visibleRewardTiers.reduce((max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)), 0);
   const totalSpent = Number(analytics?.totalTaskRewardSatsSpent || 0);
   const totalRewardedSubmissions = Number(analytics?.totalRewardedSubmissions || analytics?.statusCounts?.verified || 0);
   const totalRewardedUsers = Number(analytics?.totalRewardedUsers || totalRewardedSubmissions || 0);

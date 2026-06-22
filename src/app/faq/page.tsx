@@ -851,7 +851,7 @@ export default function FAQPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-sats-black-950 bg-grid-base">
+    <main className="relative min-h-screen bg-sats-black-950 ">
       
       {/* Background Glows Container (with overflow-hidden so sticky works on children) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -908,7 +908,7 @@ export default function FAQPage() {
         </header>
 
         {/* MOBILE CATEGORY SCROLL BAR */}
-        <div className="md:hidden sticky top-[64px] bg-sats-black-950/80 backdrop-blur-lg z-40 border-b border-white/[0.04] py-3 -mx-4 px-4 overflow-hidden">
+        <div className="hidden sticky top-[60px] bg-sats-black-950 z-40 border-b border-white/[0.04] py-3 -mx-4 px-4 overflow-hidden">
           <div 
             ref={mobileTabContainerRef}
             className="flex gap-2 overflow-x-auto pb-1 scrollbar-none"
@@ -947,7 +947,7 @@ export default function FAQPage() {
           <div className="hidden md:block absolute left-[16.5rem] top-0 bottom-0 w-px bg-gradient-to-b from-white/[0.08] via-white/[0.02] to-transparent z-0"></div>
 
           {/* DESKTOP SIDEBAR */}
-          <aside className="w-64 flex-shrink-0 sticky top-24 self-start hidden md:flex flex-col gap-1.5 pr-6 z-10">
+          <aside className="w-64 flex-shrink-0 sticky top-32 self-start hidden md:flex flex-col gap-1.5 pr-6 z-10">
             <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 px-3">
               Categories
             </div>

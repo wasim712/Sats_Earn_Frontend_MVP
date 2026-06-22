@@ -7,11 +7,14 @@ import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAllCampaigns, toggleCampaignStatus, deleteCampaign } from '@/features/admin/adminCampaignsSlice';
 import type { Campaign } from '@/features/admin/adminCampaignsSlice';
+import { obfuscatedFetch, parseObfuscatedJson } from '@/lib/obfuscatedFetch';
 import { 
   Plus, ShieldAlert, 
   Zap, Calendar, Crown, Target, Trash2, Shield,
   ArrowUpRight, Loader2
 } from 'lucide-react';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 function getDoubleRewardsStatus(startAt?: string | null, endAt?: string | null) {
   if (!startAt || !endAt) return 'none' as const;
@@ -42,12 +45,92 @@ function formatCompactDateTime(value?: string | null) {
 
 export default function AdminCampaignsPage() {
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token) || (typeof window !== 'undefined' ? sessionStorage.getItem('sats_token') : null);
   const { campaigns, isLoading, error } = useAppSelector((state) => state.adminCampaigns);
   const visibleCampaigns = campaigns.filter((campaign) => !campaign.isStandalone);
+  const [campaignDetails, setCampaignDetails] = useState<Record<string, Campaign>>({});
 
   useEffect(() => {
     dispatch(fetchAllCampaigns());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!token || visibleCampaigns.length === 0) {
+      return;
+    }
+
+    const campaignsNeedingDetails = visibleCampaigns.filter((campaign) => {
+      if (campaignDetails[campaign.id]?.tasks?.length) {
+        return false;
+      }
+
+      if (!Array.isArray(campaign.tasks) || campaign.tasks.length === 0) {
+        return true;
+      }
+
+      return campaign.tasks.every((task) => {
+        const hasRewardFields =
+          task.baseRewardSatsOverride != null ||
+          task.taskRewardSats != null ||
+          (task.tierRewardMatrix && Object.keys(task.tierRewardMatrix).length > 0) ||
+          (task.tierRewardMatrixOverride && Object.keys(task.tierRewardMatrixOverride).length > 0);
+
+        return !hasRewardFields;
+      });
+    });
+
+    if (campaignsNeedingDetails.length === 0) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchCampaignDetails = async () => {
+      const results = await Promise.all(
+        campaignsNeedingDetails.map(async (campaign) => {
+          try {
+            const response = await obfuscatedFetch(`${API_URL}/admin/campaigns/${campaign.id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            const data = await parseObfuscatedJson<any>(response);
+
+            if (!response.ok) {
+              return null;
+            }
+
+            const normalizedCampaign = (data?.campaign || data?.data || data?.item || data) as Campaign;
+            return normalizedCampaign?.id ? normalizedCampaign : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      if (isCancelled) {
+        return;
+      }
+
+      const nextDetails = results.reduce<Record<string, Campaign>>((accumulator, campaign) => {
+        if (campaign?.id) {
+          accumulator[campaign.id] = campaign;
+        }
+        return accumulator;
+      }, {});
+
+      if (Object.keys(nextDetails).length > 0) {
+        setCampaignDetails((previous) => ({ ...previous, ...nextDetails }));
+      }
+    };
+
+    fetchCampaignDetails();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [token, visibleCampaigns, campaignDetails]);
 
   const handleToggleStatus = (id: string, currentStatus: boolean) => {
     return dispatch(toggleCampaignStatus({ id, isActive: !currentStatus }));
@@ -123,7 +206,7 @@ export default function AdminCampaignsPage() {
             visibleCampaigns.map((campaign) => (
               <CampaignCard 
                 key={campaign.id}
-                campaign={campaign} 
+                campaign={campaignDetails[campaign.id] || campaign} 
                 onDelete={handleDelete}
                 onToggleActive={handleToggleStatus}
               />
@@ -159,10 +242,23 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
   const visibleRewardTiers = campaign.isPremiumOnly
     ? ['PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER']
     : ['BASIC', 'COPPER', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'CROWN', 'ELITE', 'FOUNDER'];
-  const topTierReward = visibleRewardTiers.reduce(
-    (max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)),
-    0,
-  );
+  const topTierReward = Array.isArray(campaign.tasks) && campaign.tasks.length > 0
+    ? campaign.tasks.reduce((sum, task) => {
+        const overrideMatrix = task.tierRewardMatrixOverride || {};
+        const taskMatrix = task.tierRewardMatrix || {};
+        const baseTaskReward = Number(task.baseRewardSatsOverride ?? task.taskRewardSats ?? 0);
+
+        const taskMaxReward = visibleRewardTiers.reduce((max, tier) => {
+          const reward = Number(overrideMatrix[tier] ?? taskMatrix[tier] ?? baseTaskReward);
+          return Math.max(max, reward);
+        }, baseTaskReward);
+
+        return sum + taskMaxReward;
+      }, 0)
+    : visibleRewardTiers.reduce(
+        (max, tier) => Math.max(max, Number(campaign.tierRewardMatrix?.[tier] || 0)),
+        0,
+      );
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();

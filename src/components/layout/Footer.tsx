@@ -108,7 +108,7 @@ const SOCIAL_LINKS = [
     name: 'Discord',
     href: 'https://discord.gg/VX4cB2xTnZ',
     icon: (
-      <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className=' grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
+      <Image src="./Discord_purple.svg" height={22} width={22} alt='discord logo' className='w-[22px] h-[22px] grayscale-100 hover:grayscale-0 hover:scale-110 duration-500 transition-all'>
 
       </Image>
     ),

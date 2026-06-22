@@ -142,29 +142,29 @@ const handleSubmit = async (e: React.FormEvent) => {
               <h3 className="text-lg font-bold text-white tracking-tight">Support Channels</h3>
             </div>
             <div className="space-y-4">
-              <div className="group border border-[#1a1a1a] bg-[#0a0a0a] rounded-2xl p-4 hover:border-sats-orange-500/30 transition-colors cursor-pointer" onClick={(e) => scrollToForm(e, 'General Support')}>
+              <div className="group border border-[#1a1a1a] bg-[#0a0a0a] rounded-2xl p-4 hover:border-sats-orange-500/30 transition-colors cursor-pointer" onClick={(e) => scrollToForm(e, 'Other')}>
                 <h4 className="font-bold text-white mb-1 flex justify-between items-center">
-                  General Support
+                  <span className="flex items-center gap-2">⚡ Critical Issues</span>
                   <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-sats-orange-500 transition-colors" />
                 </h4>
-                <p className="text-xs text-gray-400 mb-2">General inquiries, technical issues, or platform questions.</p>
-                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ 24–48 hours</div>
+                <p className="text-xs text-gray-400 mb-2">Platform down, major bugs, or service interruptions.</p>
+                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ 2–4 hours</div>
               </div>
               <div className="group border border-[#1a1a1a] bg-[#0a0a0a] rounded-2xl p-4 hover:border-sats-orange-500/30 transition-colors cursor-pointer" onClick={(e) => scrollToForm(e, 'Billing')}>
                 <h4 className="font-bold text-white mb-1 flex justify-between items-center">
-                  Billing & Subscriptions
+                  <span className="flex items-center gap-2">🔒 Billing & Security</span>
                   <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-sats-orange-500 transition-colors" />
                 </h4>
-                <p className="text-xs text-gray-400 mb-2">Questions about paid-tiers, payment issues, or renewals.</p>
-                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ 24 hours</div>
+                <p className="text-xs text-gray-400 mb-2">Payment issues, vulnerabilities, or secure reports.</p>
+                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ High priority: 24h</div>
               </div>
-              <div className="group border border-[#1a1a1a] bg-[#0a0a0a] rounded-2xl p-4 hover:border-sats-orange-500/30 transition-colors cursor-pointer" onClick={(e) => scrollToForm(e, 'Security')}>
+              <div className="group border border-[#1a1a1a] bg-[#0a0a0a] rounded-2xl p-4 hover:border-sats-orange-500/30 transition-colors cursor-pointer" onClick={(e) => scrollToForm(e, 'Other')}>
                 <h4 className="font-bold text-white mb-1 flex justify-between items-center">
-                  Security Issues
+                  <span className="flex items-center gap-2">⚖️ Legal & Privacy</span>
                   <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-sats-orange-500 transition-colors" />
                 </h4>
-                <p className="text-xs text-gray-400 mb-2">Report vulnerabilities or security concerns securely.</p>
-                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ Critical: 24h</div>
+                <p className="text-xs text-gray-400 mb-2">Data requests, policy questions, or compliance.</p>
+                <div className="text-[10px] font-black uppercase tracking-widest text-sats-orange-500/80">⏱ up to 30 days</div>
               </div>
             </div>
           </div>
@@ -203,40 +203,83 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        {/* ─── WHAT CAN WE HELP WITH ─── */}
+
+
+
+{/* ─── WHAT CAN WE HELP WITH ─── */}
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <div className="text-[13px] tracking-[0.2em] uppercase text-sats-orange-500 font-black font-mono mb-2">What Can We Help With</div>
-            <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Reach Out About Anything</h2>
+            <div className="text-[13px] tracking-[0.2em] uppercase text-sats-orange-500 font-black font-mono mb-2">Support Channels</div>
+            <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Choose the Right Channel</h2>
           </div>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
               <div className="text-2xl mb-3">🛟</div>
-              <div className="text-[15px] font-bold text-white mb-2">Account & Support</div>
-              <div className="text-[13px] text-gray-400 leading-relaxed">Login issues, withdrawals, task verification, or anything not working as expected.</div>
+              <div className="text-[15px] font-bold text-white mb-2">General Support</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">General inquiries, technical issues, or platform questions.</div>
+              <div onClick={(e) => scrollToForm(e, 'General Support')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                support@satsearn.app
+              </div>
+              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: 24–48 hours</div>
             </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
-              <div className="text-2xl mb-3">🤝</div>
-              <div className="text-[15px] font-bold text-white mb-2">Partnerships & Brands</div>
-              <div className="text-[13px] text-gray-400 leading-relaxed">Want to run tasks, advertise, or explore a brand partnership with SatsEarn? Let&apos;s talk.</div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">💳</div>
+              <div className="text-[15px] font-bold text-white mb-2">Billing &amp; Subscriptions</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Questions about paid-tier subscriptions, payment issues, or renewals.</div>
+              <div onClick={(e) => scrollToForm(e, 'Billing')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                support@satsearn.app
+              </div>
+              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: 24 hours</div>
             </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
-              <div className="text-2xl mb-3">📣</div>
-              <div className="text-[15px] font-bold text-white mb-2">Press & Media</div>
-              <div className="text-[13px] text-gray-400 leading-relaxed">Writing about Bitcoin rewards or covering SatsEarn? Reach out for info and assets.</div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">🔐</div>
+              <div className="text-[15px] font-bold text-white mb-2">Privacy &amp; Data</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Data access or deletion requests, or privacy concerns.</div>
+              <div onClick={(e) => scrollToForm(e, 'Other')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                support@satsearn.app
+              </div>
+              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: up to 30 days</div>
             </div>
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6">
-              <div className="text-2xl mb-3">⚖️</div>
-              <div className="text-[15px] font-bold text-white mb-2">Legal & Privacy</div>
-              <div className="text-[13px] text-gray-400 leading-relaxed">Data requests, privacy enquiries, or questions about our <a href="/legal" className="text-sats-orange-500 hover:underline">policies</a>.</div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">🛡️</div>
+              <div className="text-[15px] font-bold text-white mb-2">Security Issues</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Report vulnerabilities or security concerns.</div>
+              <div onClick={(e) => scrollToForm(e, 'Security')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                support@satsearn.app
+              </div>
+              <div className="text-xs text-gray-500 italic mt-2">⏱ Critical: 24h · Non-critical: 72h</div>
             </div>
           </div>
-          <div className="text-center mt-6 text-sm text-gray-500 font-medium">
+<div className="text-center mt-6 text-sm text-gray-500 font-medium">
             Before emailing, you might find your answer faster in our <a href="/faq" className="text-sats-orange-500 hover:underline">FAQ &rarr;</a>
           </div>
         </div>
 
-        {/* ─── SAVE TIME ─── */}
+                {/* ─── INFINITE MARQUEE ─── */}
+        <style>{`
+          @keyframes scroll-left {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+          .animate-scroll-left {
+            animation: scroll-left 30s linear infinite;
+          }
+        `}</style>
+        <div className="relative z-10 overflow-hidden bg-sats-orange-500/5 border-y border-sats-orange-500/20 py-3.5 whitespace-nowrap mb-12 mt-8 w-screen -ml-[50vw] left-1/2">
+          <div className="inline-block whitespace-nowrap animate-scroll-left">
+            {[...Array(2)].map((_, i) => (
+              <React.Fragment key={i}>
+                <span className="font-black text-[15px] tracking-[2px] text-sats-orange-500 uppercase mx-3">WE READ EVERY MESSAGE</span><span className="text-sats-orange-500 opacity-50">·</span>
+                <span className="font-black text-[15px] tracking-[2px] text-sats-orange-500 uppercase mx-3">SUPPORT: 7 DAYS — 10AM TO 8PM IST</span><span className="text-sats-orange-500 opacity-50">·</span>
+                <span className="font-black text-[15px] tracking-[2px] text-sats-orange-500 uppercase mx-3">CRITICAL ISSUES: 2–4 HRS</span><span className="text-sats-orange-500 opacity-50">·</span>
+                <span className="font-black text-[15px] tracking-[2px] text-sats-orange-500 uppercase mx-3">BILLING &amp; SECURITY: 24 HRS</span><span className="text-sats-orange-500 opacity-50">·</span>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+        
+{/* ─── SAVE TIME ─── */}
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <div className="text-[13px] tracking-[0.2em] uppercase text-sats-orange-500 font-black font-mono mb-2">Save Time</div>
@@ -268,7 +311,54 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        {/* ─── PLATFORM HEALTH ─── */}
+        
+        
+        {/* ─── WHAT CAN WE HELP WITH ─── */}
+        <div className="max-w-3xl mx-auto mb-20">
+          <div className="text-center mb-8">
+            <div className="text-[13px] tracking-[0.2em] uppercase text-sats-orange-500 font-black font-mono mb-2">What Can We Help With</div>
+            <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Reach Out About Anything</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">🛟</div>
+              <div className="text-[15px] font-bold text-white mb-2">Account & Support</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Login issues, withdrawals, task verification, or anything not working as expected.</div>
+              <div onClick={(e) => scrollToForm(e, 'General Support')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                <Mail className="w-4 h-4" /> support@satsearn.app
+              </div>
+            </div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">🤝</div>
+              <div className="text-[15px] font-bold text-white mb-2">Partnerships & Brands</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Want to run tasks, advertise, or explore a brand partnership with SatsEarn? Let&apos;s talk.</div>
+              <div onClick={(e) => scrollToForm(e, 'Partnerships')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                <Mail className="w-4 h-4" /> support@satsearn.app
+              </div>
+            </div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">📣</div>
+              <div className="text-[15px] font-bold text-white mb-2">Press & Media</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Writing about Bitcoin rewards or covering SatsEarn? Reach out for info and assets.</div>
+              <div onClick={(e) => scrollToForm(e, 'Other')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                <Mail className="w-4 h-4" /> support@satsearn.app
+              </div>
+            </div>
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
+              <div className="text-2xl mb-3">⚖️</div>
+              <div className="text-[15px] font-bold text-white mb-2">Legal & Privacy</div>
+              <div className="text-[13px] text-gray-400 leading-relaxed mb-4">Data requests, privacy enquiries, or questions about our <a href="/legal" className="text-sats-orange-500 hover:underline">policies</a>.</div>
+              <div onClick={(e) => scrollToForm(e, 'Other')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                <Mail className="w-4 h-4" /> support@satsearn.app
+              </div>
+            </div>
+          </div>
+          <div className="text-center mt-6 text-sm text-gray-500 font-medium">
+            Before emailing, you might find your answer faster in our <a href="/faq" className="text-sats-orange-500 hover:underline">FAQ &rarr;</a>
+          </div>
+        </div>
+
+{/* ─── PLATFORM HEALTH ─── */}
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <div className="text-[13px] tracking-[0.2em] uppercase text-sats-orange-500 font-black font-mono mb-2">Platform Health</div>
@@ -516,16 +606,16 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div className="text-[13px] font-bold text-white group-hover:text-sats-orange-500 transition-colors">Discord</div>
               <div className="text-xs text-gray-500 font-mono">/satsearn</div>
             </a>
-            <a href="https://instagram.com/satsearn" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2.5 bg-[#050505] border border-[#1a1a1a] rounded-[14px] px-4 py-6 hover:border-sats-orange-500/30 hover:-translate-y-[3px] hover:bg-[#0a0a0a] transition-all group">
+            <a href="https://instagram.com/satsearn" target="_blank" rel="noopener noreferrer" className="md:col-start-2 flex flex-col items-center gap-2.5 bg-[#050505] border border-[#1a1a1a] rounded-[14px] px-4 py-6 hover:border-sats-orange-500/30 hover:-translate-y-[3px] hover:bg-[#0a0a0a] transition-all group">
               <div className="text-gray-500 group-hover:text-white transition-colors mb-1"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></div>
               <div className="text-[13px] font-bold text-white group-hover:text-sats-orange-500 transition-colors">Instagram</div>
               <div className="text-xs text-gray-500 font-mono">@satsearn</div>
             </a>
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2.5 bg-[#050505] border border-[#1a1a1a] rounded-[14px] px-4 py-6 hover:border-sats-orange-500/30 hover:-translate-y-[3px] hover:bg-[#0a0a0a] transition-all group">
+            {/* <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2.5 bg-[#050505] border border-[#1a1a1a] rounded-[14px] px-4 py-6 hover:border-sats-orange-500/30 hover:-translate-y-[3px] hover:bg-[#0a0a0a] transition-all group">
               <div className="text-gray-500 group-hover:text-white transition-colors mb-1"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.515 5.26l-.999 3.648 3.973-1.515zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.078 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg></div>
               <div className="text-[13px] font-bold text-white group-hover:text-sats-orange-500 transition-colors">WhatsApp</div>
               <div className="text-xs text-gray-500 font-mono">/satsearn</div>
-            </a>
+            </a> */}
             <a href="https://linkedin.com/company/satsearn" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2.5 bg-[#050505] border border-[#1a1a1a] rounded-[14px] px-4 py-6 hover:border-sats-orange-500/30 hover:-translate-y-[3px] hover:bg-[#0a0a0a] transition-all group">
               <div className="text-gray-500 group-hover:text-white transition-colors mb-1"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div>
               <div className="text-[13px] font-bold text-white group-hover:text-sats-orange-500 transition-colors">LinkedIn</div>
