@@ -30,6 +30,7 @@ export interface Campaign {
   completedTasksCount?: number;
   totalTasksCount?: number;
   displayRewardSats?: number;
+  tasks?: AdminTask[];
   userCompletionStatus?: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETED';
   createdAt: string;
   updatedAt: string;

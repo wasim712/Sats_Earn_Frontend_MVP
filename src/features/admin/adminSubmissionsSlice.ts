@@ -29,6 +29,7 @@ export interface AdminSubmission {
   id: string;
   userId: string;
   taskId: string;
+  displayRewardSats?: number;
   screenshotUrl: string;
   imageHash: string | null;
   confidenceScore: number | null;
