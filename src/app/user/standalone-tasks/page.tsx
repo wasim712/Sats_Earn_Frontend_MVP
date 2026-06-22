@@ -339,8 +339,8 @@ export default function StandaloneTasksPage() {
                     ) : null}
 
                     {task.doubleRewardsActive ? (
-                      <div className="inline-flex items-center gap-1.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.1)]">
-                        <Flame className="w-3.5 h-3.5" /> 2x Rewards
+                      <div className="inline-flex items-center gap-1.5 rounded-xl border border-yellow-400/40 bg-yellow-500/12 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-yellow-300 shadow-[0_0_14px_rgba(250,204,21,0.18)] ring-1 ring-yellow-400/15 animate-pulse">
+                        <Flame className="w-3.5 h-3.5 text-yellow-200" /> 2x Rewards Live
                       </div>
                     ) : null}
                   </div>

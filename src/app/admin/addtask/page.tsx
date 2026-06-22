@@ -558,13 +558,13 @@ export default function AddStandaloneTaskPage() {
               </section>
 
               <section className={cardCls}>
-                <SectionTitle icon={<CalendarDays className="h-5 w-5" />} title="Boost Window" subtitle="Optional double rewards period for this standalone task." />
+                <SectionTitle icon={<CalendarDays className=" h-5 w-5" />} title="Boost Window" subtitle="Optional double rewards period for this standalone task." />
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                   <InputWrap label="Double Rewards Start">
-                    <input type="datetime-local" value={formData.doubleRewardsStartAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: e.target.value }))} className={inputCls} />
+                    <input type="datetime-local" value={formData.doubleRewardsStartAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsStartAt: e.target.value }))} className={`${inputCls} [color-scheme:dark]`} />
                   </InputWrap>
                   <InputWrap label="Double Rewards End">
-                    <input type="datetime-local" value={formData.doubleRewardsEndAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: e.target.value }))} className={inputCls} />
+                    <input type="datetime-local" value={formData.doubleRewardsEndAt} onChange={(e) => setFormData((prev) => ({ ...prev, doubleRewardsEndAt: e.target.value }))} className={`${inputCls} [color-scheme:dark]`} />
                   </InputWrap>
                 </div>
               </section>

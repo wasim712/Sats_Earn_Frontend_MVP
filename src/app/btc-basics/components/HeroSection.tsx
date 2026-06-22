@@ -40,7 +40,7 @@ export function HeroSection() {
   return (
     <>
       {/* HERO */}
-      <header className="text-center pt-24 pb-12 sm:pt-24 sm:pb-16 px-4">
+      <header className="text-center pt-16 pb-10  px-4">
         <FadeUp delay={0.1}>
           <div className="font-mono text-xs tracking-widest uppercase text-sats-orange-500 opacity-85 mb-5 inline-flex items-center gap-2 bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-full px-4 py-1.5 backdrop-blur-md">
             Learn · Bitcoin Basics

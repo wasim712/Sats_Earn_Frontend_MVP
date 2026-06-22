@@ -125,16 +125,16 @@ export const WaysToEarn = () => {
             delay={0.45} 
             className="relative group p-6 rounded-2xl bg-gradient-to-br from-sats-orange-500/20 to-sats-black-900 border border-sats-orange-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full overflow-hidden"
           >
-            <div className="absolute top-2 right-4 text-5xl font-black text-sats-orange-500/30 font-mono pointer-events-none">
-              ∞
-            </div>
+            <div className={`absolute top-4 right-4 px-2 py-0.5 rounded-full border text-[10px] font-bold tracking-wider text-sats-orange-400 bg-black border-gray-500/20`}>
+                SOON
+              </div>
             <div className="mb-4 transform group-hover:scale-110 transition-transform duration-300 origin-left">
               <InfinityIcon className="w-8 h-8 text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
             </div>
 
             <h3 className="text-lg font-bold text-white mb-2">And Many More</h3>
             <p className="text-sm text-gray-300 mb-6 leading-relaxed flex-grow">
-              Offerwalls, app trials, partner campaigns, seasonal events and new mechanics — we're always adding fresh ways to stack sats.
+              Offerwalls, app trials, partner campaigns, seasonal events and new mechanics — we&apos;re always adding fresh ways to stack sats.
             </p>
 
             <div className="mt-auto inline-flex items-center gap-2 bg-sats-orange-500/20 border border-sats-orange-500/30 rounded-md px-3 py-1.5 self-start">

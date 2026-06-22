@@ -9,8 +9,8 @@ export default function CommunityGuidelinesPage() {
     <div className="pb-20">
       <FadeUp delay={0.1}>
         <div className="prose prose-invert max-w-none text-gray-300">
-          <div className="bg-sats-black-900/60 border border-white/[0.04] rounded-xl p-6 mb-8">
-            <p className="text-sm m-0 leading-relaxed text-gray-300">
+          <div className="bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-xl p-5 mb-8">
+            <p className="text-sm m-0 text-gray-300">
               SatsEarn is a place to learn Bitcoin and earn real sats — honestly. These guidelines keep the platform fair, safe, and sustainable for every crew member. By using SatsEarn, you agree to follow them. They work alongside our <Link href="/legal/terms" className="text-sats-orange-500 hover:underline">Terms of Service</Link> and <Link href="/legal/rewards-policy" className="text-sats-orange-500 hover:underline">Rewards Policy</Link>.
             </p>
           </div>

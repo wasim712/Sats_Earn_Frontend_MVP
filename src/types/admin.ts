@@ -60,6 +60,7 @@ export interface AdminTask {
   tierRewardMatrixOverride?: Record<string, number> | null;
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
+  completionsCount?: number;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
