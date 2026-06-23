@@ -173,7 +173,7 @@ export default function StandaloneTaskDetailsPage() {
     glowSmall: isPremiumOnly ? 'bg-violet-500/3' : 'bg-sats-orange-500/3',
   };
 
-  let difficulty = 'Easy';
+  const difficulty = 'Easy';
 
   const safeTotal = Number(task?.campaign?.totalCompletions || task?.totalCompletions) || 0;
   const safeMax = Number(task?.campaign?.maxCompletions || task?.maxCompletions) || 1;

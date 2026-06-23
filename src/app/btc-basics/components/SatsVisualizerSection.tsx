@@ -116,7 +116,7 @@ export function SatsVisualizerSection() {
                   type="number" 
                   value={btcPrice} 
                   onChange={e => setBtcPrice(Number(e.target.value) || 0)}
-                  className="w-28 bg-sats-black-950 border border-white/[0.1] focus:border-sats-orange-500 rounded-lg px-3 py-2 font-mono text-sm text-white outline-none"
+                  className="w-28 bg-sats-black-950 border border-white/10 focus:border-sats-orange-500 rounded-lg px-3 py-2 font-mono text-sm text-white outline-none"
                 />
               </div>
               <div className="flex items-center gap-3">
@@ -125,7 +125,7 @@ export function SatsVisualizerSection() {
                   type="number" 
                   value={inrPrice} 
                   onChange={e => setInrPrice(Number(e.target.value) || 0)}
-                  className="w-32 bg-sats-black-950 border border-white/[0.1] focus:border-sats-orange-500 rounded-lg px-3 py-2 font-mono text-sm text-white outline-none"
+                  className="w-32 bg-sats-black-950 border border-white/10 focus:border-sats-orange-500 rounded-lg px-3 py-2 font-mono text-sm text-white outline-none"
                 />
               </div>
             </div>

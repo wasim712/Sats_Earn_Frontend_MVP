@@ -210,6 +210,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
     if (path.includes('/help')) return 'Help Center';
     if (path.includes('/blogs')) return 'Blogs';
     if (path.includes('/profile')) return 'User Profile';
+    if (path.includes('/standalone-tasks')) return 'Browse Tasks';
     
     // Fallback: Capitalize the last word in the URL
     const segments = path.split('/').filter(Boolean);
@@ -301,7 +302,12 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
 
           {allowedDockLinks.map((item) => {
             // Highlight if exactly matching OR if viewing a sub-page (like /user/tasks/123)
-            const isActive = pathname === item.path || pathname?.startsWith(`${item.path}/`);
+            let isActive = pathname === item.path || pathname?.startsWith(`${item.path}/`);
+            
+            // Special case for Tasks to also highlight on standalone-tasks
+            if (item.key === 'tasks' && pathname?.startsWith('/user/standalone-tasks')) {
+              isActive = true;
+            }
             
             return (
               <Link

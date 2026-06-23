@@ -24,7 +24,6 @@ const UPLOAD_PATHS = [
 
 const RAW_BYPASS_PATHS = [
   '/api/auth/',
-  '/api/public/announcements/active',
 ];
 
 function getRequestUrl(input: RequestInfo | URL) {

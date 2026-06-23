@@ -196,7 +196,6 @@ export default function TasksPage() {
             headers,
           }),
         ]);
-console.log(standaloneData);
 
         setCampaigns([
           ...(Array.isArray(campaignData) ? campaignData.map((campaign) => ({ ...campaign, itemSource: 'campaign' as const })) : []),

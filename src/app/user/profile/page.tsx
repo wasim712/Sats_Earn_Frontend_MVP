@@ -198,7 +198,41 @@ export default function UserProfilePage() {
                 <InfoRow icon={Calendar} label="Member Since" value={joinDate} />
               </div>
             </div>
-
+            {/* Web3 Socials Card */}
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-gray-500" /> Connected Accounts
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <SocialBox 
+                  iconSrc="/svgs/twitter.svg" 
+                  platform="Twitter / X" 
+                  handle={profile.twitterHandle} 
+                  hoverAccent="hover:border-white/40" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/discord.svg" 
+                  platform="Discord" 
+                  handle={profile.discordHandle} 
+                  hoverAccent="hover:border-indigo-500/50" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/telelogo.svg" 
+                  platform="Telegram" 
+                  handle={profile.telegramHandle} 
+                  hoverAccent="hover:border-sky-500/50" 
+                />
+                <SocialBox 
+                  iconSrc="/svgs/instalogo.svg" 
+                  platform="Instagram" 
+                  handle={profile.instagramHandle} 
+                  hoverAccent="hover:border-pink-500/50" 
+                />
+              </div>
+            </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
                 <div>
@@ -266,41 +300,7 @@ export default function UserProfilePage() {
               ) : null}
             </div>
 
-            {/* Web3 Socials Card */}
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-gray-500" /> Connected Accounts
-                </h3>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <SocialBox 
-                  iconSrc="/svgs/twitter.svg" 
-                  platform="Twitter / X" 
-                  handle={profile.twitterHandle} 
-                  hoverAccent="hover:border-white/40" 
-                />
-                <SocialBox 
-                  iconSrc="/svgs/discord.svg" 
-                  platform="Discord" 
-                  handle={profile.discordHandle} 
-                  hoverAccent="hover:border-indigo-500/50" 
-                />
-                <SocialBox 
-                  iconSrc="/svgs/telelogo.svg" 
-                  platform="Telegram" 
-                  handle={profile.telegramHandle} 
-                  hoverAccent="hover:border-sky-500/50" 
-                />
-                <SocialBox 
-                  iconSrc="/svgs/instalogo.svg" 
-                  platform="Instagram" 
-                  handle={profile.instagramHandle} 
-                  hoverAccent="hover:border-pink-500/50" 
-                />
-              </div>
-            </div>
+            
 
           </div>
 
