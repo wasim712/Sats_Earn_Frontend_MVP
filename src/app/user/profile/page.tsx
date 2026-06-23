@@ -11,7 +11,7 @@ import { syncUserTier } from '@/features/auth/authSlice';
 import { 
   Mail, Phone, MapPin, Calendar, 
   Copy, CheckCircle2, Edit3, ShieldCheck, 
-  Share2, UserPlus, AlertTriangle, Flame, Zap
+  Share2, UserPlus, AlertTriangle, Flame, Zap, Crown, Clock3, Layers3
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -120,6 +120,14 @@ export default function UserProfilePage() {
 
   const currentStreak = dashboardData?.gamification?.currentStreak ?? 0;
   const totalXp = dashboardData?.gamification?.totalXp ?? 0;
+  const activeTier = profile.activeTier || 'BASIC';
+  const isPremium = Boolean(profile.isPremium);
+  const premiumTierLabel = profile.premiumTier || 'None';
+  const premiumEndsAt = profile.premiumExpiresAt ? new Date(profile.premiumExpiresAt) : null;
+  const queuedTierLabel = profile.queuedPremiumTier || 'None';
+  const queuedStartsAt = profile.queuedPremiumStartsAt ? new Date(profile.queuedPremiumStartsAt) : null;
+  const queuedEndsAt = profile.queuedPremiumExpiresAt ? new Date(profile.queuedPremiumExpiresAt) : null;
+  const premiumQueue = Array.isArray(profile.premiumQueue) ? profile.premiumQueue : [];
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -189,6 +197,73 @@ export default function UserProfilePage() {
                 <InfoRow icon={MapPin} label="Region" value={profile.country} />
                 <InfoRow icon={Calendar} label="Member Since" value={joinDate} />
               </div>
+            </div>
+
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-yellow-400" /> Premium Status
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1">See your active tier, current premium status, and any queued premium plan in detail.</p>
+                </div>
+                <div className={`inline-flex rounded-xl border px-3 py-2 text-xs font-semibold ${isPremium ? 'border-green-500/20 bg-green-500/10 text-green-300' : 'border-[#2a2a2a] bg-[#090909] text-gray-400'}`}>
+                  {isPremium ? 'Premium Active' : 'Free Tier Active'}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <DetailCard icon={Layers3} label="Current Active Tier" value={String(activeTier)} accent="text-sky-300" />
+                <DetailCard icon={Crown} label="Current Premium Plan" value={premiumTierLabel} accent="text-yellow-300" />
+                <DetailCard icon={Clock3} label="Current Premium Ends" value={premiumEndsAt ? premiumEndsAt.toLocaleString() : 'No active premium expiry'} accent="text-blue-300" />
+                <DetailCard icon={Crown} label="Queued Premium Plan" value={queuedTierLabel} accent="text-violet-300" />
+                <DetailCard icon={Clock3} label="Queued Plan Starts" value={queuedStartsAt ? queuedStartsAt.toLocaleString() : 'No queued premium plan'} accent="text-violet-300" />
+                <DetailCard icon={Clock3} label="Queued Plan Ends" value={queuedEndsAt ? queuedEndsAt.toLocaleString() : 'No queued premium plan'} accent="text-violet-300" />
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-[#1a1a1a] bg-[#080808] p-4 text-sm text-gray-300 leading-relaxed">
+                <p><span className="font-bold text-white">Active tier</span> is what the app currently uses for rewards and access.</p>
+                <p className="mt-2"><span className="font-bold text-white">Current premium plan</span> is the live subscription record. If it is missing but active tier is premium, check queued activation timing.</p>
+                <p className="mt-2"><span className="font-bold text-white">Queued premium</span> shows the next plan that will start after the current one ends.</p>
+              </div>
+
+              {premiumQueue.length > 0 ? (
+                <div className="mt-6 rounded-2xl border border-[#1a1a1a] bg-[#080808] p-4">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h4 className="text-sm md:text-base font-black text-white tracking-tight">Future Premium Queue</h4>
+                    <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-violet-300">
+                      {premiumQueue.length} queued
+                    </span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {premiumQueue.map((item, index) => (
+                      <div key={item.id} className="rounded-2xl border border-[#1a1a1a] bg-[#050505] p-4">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <p className="text-sm font-black text-white">#{index + 1} {item.premiumTier}</p>
+                            <p className="mt-1 text-xs text-gray-400">Purchased {new Date(item.createdAt).toLocaleString()}</p>
+                          </div>
+                          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-300">
+                            {item.billingCycle}
+                          </span>
+                        </div>
+
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          <div className="rounded-xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
+                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Starts</div>
+                            <div className="mt-2 font-semibold text-white">{item.premiumStartsAt ? new Date(item.premiumStartsAt).toLocaleString() : 'Unknown'}</div>
+                          </div>
+                          <div className="rounded-xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
+                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Ends</div>
+                            <div className="mt-2 font-semibold text-white">{item.premiumExpiresAt ? new Date(item.premiumExpiresAt).toLocaleString() : 'Unknown'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {/* Web3 Socials Card */}
@@ -413,6 +488,32 @@ function ProfileStatCard({
         <div className="min-w-0">
           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">{label}</p>
           <p className="mt-1 text-base md:text-lg font-black text-white truncate">{value}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailCard({
+  icon: Icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  accent: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#232323] bg-[#111]">
+          <Icon className={`h-4 w-4 ${accent}`} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">{label}</p>
+          <p className="mt-1 text-sm font-semibold text-white break-words">{value}</p>
         </div>
       </div>
     </div>
