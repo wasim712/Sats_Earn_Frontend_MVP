@@ -185,6 +185,21 @@ export interface UserProfile {
   telegramHandle?: string | null;
   discordHandle?: string | null;
   premiumTier?: string | null;
+  queuedPremiumTier?: string | null;
+  queuedPremiumStartsAt?: string | null;
+  queuedPremiumExpiresAt?: string | null;
+  premiumQueue?: Array<{
+    id: string;
+    premiumTier: string;
+    billingSource: string;
+    amountUsd?: number | null;
+    amountSats?: number | null;
+    createdAt: string;
+    premiumStartsAt?: string | null;
+    premiumExpiresAt?: string | null;
+    billingCycle: string;
+    adminNotes?: string | null;
+  }>;
   balanceAvailable?: number;
   premiumPricing?: {
     monthlySatsMatrix?: Record<string, number>;
