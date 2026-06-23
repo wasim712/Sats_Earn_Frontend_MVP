@@ -35,6 +35,15 @@ const nextConfig = {
       process.env.npm_package_version ||
       'dev',
   },
+  async redirects() {
+    return [
+      {
+        source: '/privacy-policy',
+        destination: '/legal/privacy',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

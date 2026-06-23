@@ -31,6 +31,10 @@ const UPLOAD_PATHS = [
   '/admin/campaigns/upload-cover',
 ];
 
+const RAW_BYPASS_PATHS = [
+  '/api/public/announcements/active',
+];
+
 function getRequestUrl(input: RequestInfo | URL) {
   return typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
 }
@@ -47,6 +51,11 @@ function isApiUrl(input: RequestInfo | URL) {
 
 function isAuthUrl(input: RequestInfo | URL) {
   return getRequestUrl(input).includes('/api/auth/');
+}
+
+function isRawBypassUrl(input: RequestInfo | URL) {
+  const url = getRequestUrl(input);
+  return RAW_BYPASS_PATHS.some((path) => url.includes(path));
 }
 
 function getMethod(input: RequestInfo | URL, init?: RequestInit) {
@@ -105,6 +114,10 @@ export function ApiObfuscationProvider() {
       const body = nextInit.body;
 
       if (isAuthUrl(input)) {
+        return originalFetch(input, init);
+      }
+
+      if (isRawBypassUrl(input)) {
         return originalFetch(input, init);
       }
 

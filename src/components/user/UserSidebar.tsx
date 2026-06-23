@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -361,7 +361,9 @@ export const UserSidebar = ({
 
         <nav className="custom-scrollbar flex-1 min-h-0 space-y-1 overflow-x-hidden px-4 py-2 pb-6">
           {navLinks.map((link) => {
-            const isActive = pathname.startsWith(link.href);
+            const isActive =
+              pathname.startsWith(link.href) ||
+              (link.key === "tasks" && pathname.includes("/standalone-tasks"));
             const Icon = link.icon;
 
             return (

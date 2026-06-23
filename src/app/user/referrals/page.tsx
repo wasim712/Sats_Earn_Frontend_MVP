@@ -44,79 +44,164 @@ export default function ReferralsPage() {
     return (
       <div className="space-y-8 animate-pulse pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
         {/* Header Skeleton */}
-        <div>
-          <div className="h-10 w-48 bg-[#1a1a1a] rounded-xl mb-3"></div>
-          <div className="h-5 w-72 bg-[#1a1a1a] rounded-lg"></div>
+        <div className="pl-2">
+          <div className="h-[36px] sm:h-[40px] w-48 bg-[#1a1a1a] rounded-xl mb-[6px]"></div>
+          <div className="h-5 sm:h-6 w-72 bg-[#1a1a1a] rounded-lg mt-1.5"></div>
         </div>
 
-        {/* ReferralHero Skeleton (Perfectly matches ReferralHero layout) */}
+        {/* ReferralHero Skeleton */}
         <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 sm:p-8 space-y-8">
-          {/* Top Row: Title & Quick Shares */}
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-            <div className="space-y-3">
-              <div className="h-8 w-48 bg-[#1a1a1a] rounded-lg"></div>
-              <div className="h-4 w-64 bg-[#1a1a1a] rounded-md"></div>
+            <div className="space-y-2">
+              <div className="h-8 w-64 bg-[#1a1a1a] rounded-lg"></div>
+              <div className="h-4 w-[280px] sm:w-[350px] bg-[#1a1a1a] rounded-md"></div>
+              <div className="h-7 w-40 bg-[#1a1a1a] rounded-full mt-2"></div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2.5 w-16 bg-[#1a1a1a] rounded mr-2"></div>
+            <div className="hidden lg:flex items-center gap-3">
+              <div className="h-3 w-16 bg-[#1a1a1a] rounded mr-2"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
               <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
             </div>
           </div>
-          {/* Bottom Row: Link Box & Code Box */}
           <div className="flex flex-col lg:flex-row items-stretch gap-4 w-full">
             <div className="flex-1 h-[56px] bg-[#050505] border border-[#1a1a1a] rounded-2xl"></div>
-            <div className="h-[56px] w-full lg:w-[220px] bg-[#1a1a1a] rounded-2xl"></div>
+            <div className="h-[56px] w-full lg:w-[260px] bg-[#050505] border border-[#1a1a1a] rounded-2xl shrink-0"></div>
+          </div>
+          <div className="flex items-center gap-3 lg:hidden mt-4">
+            <div className="h-3 w-16 bg-[#1a1a1a] rounded mr-2"></div>
+            <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+            <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+            <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+            <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
           </div>
         </div>
 
         {/* ReferralStats Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="h-[120px] bg-black border border-[#1a1a1a] rounded-3xl p-6 flex flex-col justify-between">
-              <div className="flex justify-between items-start">
-                <div className="h-8 w-12 bg-[#1a1a1a] rounded-lg"></div>
-                <div className="w-10 h-10 rounded-full bg-[#1a1a1a]"></div>
+            <div key={item} className="h-[156px] rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-6">
+                <div className="h-3 w-20 bg-[#1a1a1a] rounded mt-1"></div>
+                <div className="h-11 w-11 rounded-[14px] bg-[#1a1a1a] shrink-0"></div>
               </div>
-              <div className="h-3 w-28 bg-[#1a1a1a] rounded-md mt-auto"></div>
+              <div className="flex items-baseline gap-1.5 mt-auto">
+                <div className="h-[40px] w-16 sm:w-20 bg-[#1a1a1a] rounded-lg"></div>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* ReferralLimits Skeleton (Matches the visual weight of the limit box) */}
-        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[100px]">
-          <div className="flex items-start md:items-center gap-4 w-full md:w-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[#1a1a1a] shrink-0"></div>
-            <div className="space-y-2 w-full">
-              <div className="flex gap-3 items-center">
-                <div className="h-5 w-32 bg-[#1a1a1a] rounded-md"></div>
-                <div className="h-5 w-14 bg-[#1a1a1a] rounded-full"></div>
+        {/* ReferralLimits Skeleton */}
+        <div className="bg-[#050505] rounded-3xl p-6 sm:p-8 border border-[#1a1a1a] min-h-[140px]">
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 xl:gap-12">
+            <div className="flex flex-row sm:flex-row items-start gap-5 w-full">
+              <div className="w-14 h-14 rounded-2xl bg-[#111] shrink-0 border border-[#1a1a1a]"></div>
+              <div className="pt-1 w-full max-w-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-[28px] w-64 bg-[#1a1a1a] rounded-lg"></div>
+                  <div className="h-5 w-24 bg-[#111] rounded-full border border-[#1a1a1a]"></div>
+                </div>
+                <div className="h-[20px] w-full bg-[#111] rounded mb-2"></div>
+                <div className="h-[20px] w-4/5 bg-[#111] rounded"></div>
               </div>
-              <div className="h-3 w-full max-w-[300px] bg-[#1a1a1a] rounded-md"></div>
-              <div className="h-3 w-[200px] bg-[#1a1a1a] rounded-md md:hidden"></div>
+            </div>
+            <div className="flex flex-col gap-6 xl:min-w-[400px] shrink-0 w-full xl:w-auto mt-2 xl:mt-0">
+              <div className="w-full space-y-4">
+                <div className="flex justify-between items-end">
+                  <div className="h-[16px] w-32 bg-[#1a1a1a] rounded"></div>
+                  <div className="h-[20px] w-16 bg-[#1a1a1a] rounded"></div>
+                </div>
+                <div className="h-1.5 w-full bg-[#1a1a1a] rounded-full"></div>
+              </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
-            <div className="flex flex-col gap-2 w-full md:w-48">
-               <div className="h-2 w-full bg-[#1a1a1a] rounded-full"></div>
+        </div>
+
+        {/* ReferralTierCommission Skeleton */}
+        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-[32px] p-6 sm:p-8">
+          <div className="flex items-start gap-4 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-[#111] border border-[#1a1a1a] shrink-0"></div>
+            <div>
+              <div className="h-7 w-56 bg-[#1a1a1a] rounded-lg mb-2.5"></div>
+              <div className="h-4 w-[280px] sm:w-96 max-w-full bg-[#111] rounded"></div>
             </div>
-            <div className="w-full md:w-28 h-10 bg-[#1a1a1a] rounded-xl shrink-0"></div>
+          </div>
+          <div className="space-y-10">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-3 w-20 bg-[#1a1a1a] rounded"></div>
+                <div className="h-px flex-1 bg-white/[0.05]"></div>
+              </div>
+              <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={`free-${i}`} className="rounded-[24px] border border-white/5 bg-[#111] p-5">
+                    <div className="flex items-center gap-2.5 mb-5">
+                      <div className="h-4.5 w-4.5 rounded bg-[#222]"></div>
+                      <div className="h-4 w-16 rounded bg-[#222]"></div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-8 w-12 bg-[#222] rounded mb-1.5"></div>
+                      <div className="h-3 w-20 bg-[#1a1a1a] rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-3 w-24 bg-[#1a1a1a] rounded"></div>
+                <div className="h-px flex-1 bg-white/[0.05]"></div>
+              </div>
+              <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={`prem-${i}`} className="rounded-[24px] border border-white/5 bg-[#111] p-5">
+                    <div className="flex items-center gap-2.5 mb-5">
+                      <div className="h-4.5 w-4.5 rounded bg-[#222]"></div>
+                      <div className="h-4 w-20 rounded bg-[#222]"></div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-8 w-16 bg-[#222] rounded mb-1.5"></div>
+                      <div className="h-3 w-24 bg-[#1a1a1a] rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Box Skeleton */}
+        <div className="rounded-[24px] border border-[#1a1a1a] bg-[#050505] px-5 py-4 sm:px-6 sm:py-5">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 h-10 w-10 shrink-0 rounded-2xl border border-[#1a1a1a] bg-[#111]"></div>
+            <div className="w-full">
+              <div className="h-3 w-32 bg-[#1a1a1a] rounded mt-1 mb-2"></div>
+              <div className="h-6 w-56 sm:w-64 bg-[#1a1a1a] rounded mb-3"></div>
+              <div className="h-4 w-full max-w-2xl bg-[#111] rounded mb-1.5"></div>
+              <div className="h-4 w-3/4 max-w-xl bg-[#111] rounded"></div>
+            </div>
           </div>
         </div>
 
         {/* ReferralList Skeleton */}
-        <div className="space-y-4 pt-4">
-          <div className="h-7 w-40 bg-[#1a1a1a] rounded-lg"></div>
-          <div className="h-64 w-full bg-black border border-[#1a1a1a] rounded-[28px]"></div>
+        <div className="bg-black border border-[#1a1a1a] rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-7">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-5">
+            <div className="h-7 w-40 bg-[#1a1a1a] rounded-lg"></div>
+            <div className="h-8 w-24 bg-[#1a1a1a] rounded-lg"></div>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+               <div key={`list-${i}`} className="h-[72px] bg-[#0a0a0a] rounded-2xl border border-white/5"></div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   const referralUrl = `https://satsearn.app/?ref=${data.referralCode}`;
-
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-2 md:p-4 lg:p-6 max-w-[1600px] mx-auto w-full">
       <div className='pl-2'>

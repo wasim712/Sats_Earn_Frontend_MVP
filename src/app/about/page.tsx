@@ -34,6 +34,22 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="w-full flex flex-col overflow-x-clip bg-sats-black-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "SatsEarn",
+            "url": "https://satsearn.app",
+            "logo": "https://satsearn.app/android-chrome-512x512.png",
+            "sameAs": [
+              "https://twitter.com/satsearn",
+              "https://discord.gg/VX4cB2xTnZ"
+            ]
+          }),
+        }}
+      />
       <AboutHero />
       
       <AboutMarquee 

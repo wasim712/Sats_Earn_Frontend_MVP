@@ -230,15 +230,12 @@ export default function UserDashboardPage() {
             <div className="h-5 w-56 rounded-lg bg-[#0d0d0d]" />
           </div>
 
-          <div className="md:flex flex-wrap items-center gap-3 hidden">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-10 w-32 rounded-full border border-[#2a2a2a] bg-[#111]" />
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-3 md:hidden">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-8 w-25 rounded-full border border-[#2a2a2a] bg-[#111]" />
-            ))}
+          <div className="flex items-center gap-3">
+            <div className="inline h-9 w-24 rounded-full bg-[#111] border border-[#2a2a2a]" />
+            <div className="hidden md:flex h-9 w-28 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            <div className="flex h-9 w-24 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            <div className="flex h-9 w-24 rounded-full border border-[#2a2a2a] bg-[#111]" />
+            <div className="flex h-9 w-20 rounded-full border border-[#2a2a2a] bg-[#111]" />
           </div>
         </div>
 
@@ -277,22 +274,52 @@ export default function UserDashboardPage() {
           ))}
         </div>
 
-        <div className="rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 sm:p-7 shadow-[0_0_0_1px_rgba(255,255,255,0.015)]">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="h-6 w-40 rounded bg-[linear-gradient(90deg,#171717_0%,#212121_50%,#171717_100%)] mb-2" />
-              <div className="h-4 w-56 rounded bg-[linear-gradient(90deg,#121212_0%,#1a1a1a_50%,#121212_100%)]" />
-            </div>
-            <div className="h-10 w-28 rounded-xl border border-[#232323] bg-[linear-gradient(180deg,#121212_0%,#0c0c0c_100%)]" />
-          </div>
-          <div className="grid grid-cols-7 gap-3">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="space-y-3 text-center">
-                <div className="h-3 w-8 mx-auto rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
-                <div className="w-10 h-10 mx-auto rounded-full border border-[#202020] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)]" />
-                <div className="h-3 w-6 mx-auto rounded bg-[linear-gradient(90deg,#111111_0%,#1a1a1a_50%,#111111_100%)]" />
+        <div className="relative overflow-hidden rounded-[24px] border border-[#1a1a1a] bg-[#0a0a0a] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.015)] sm:p-8">
+          {/* Header & Stats Grid */}
+          <div className="relative z-10 mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#232323] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)]" />
+              <div>
+                <div className="h-3 w-24 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)] mb-1.5" />
+                <div className="h-8 w-32 rounded bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)] mb-2" />
+                <div className="h-3 w-48 max-w-[80vw] rounded bg-[linear-gradient(90deg,#131313_0%,#1a1a1a_50%,#131313_100%)]" />
               </div>
-            ))}
+            </div>
+            
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 lg:w-auto lg:min-w-[420px]">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-left">
+                  <div className="h-2.5 w-20 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)] mb-2.5" />
+                  <div className="h-4 w-32 max-w-full rounded bg-[linear-gradient(90deg,#1b1b1b_0%,#252525_50%,#1b1b1b_100%)]" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="relative z-10 mb-6">
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <div className="h-3 w-40 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+              <div className="h-3 w-8 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+            </div>
+            <div className="h-2.5 w-full rounded-full border border-[#1f1f1f] bg-[#121212]" />
+            <div className="mt-2 flex items-center justify-between">
+              <div className="h-3 w-16 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+              <div className="h-3 w-20 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+            </div>
+          </div>
+
+          {/* Calendar Track */}
+          <div className="relative overflow-hidden pt-2 pb-2">
+            <div className="relative flex items-start gap-2 xl:gap-12">
+              {Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className="flex min-w-[100px] sm:w-[120px] flex-col items-center gap-3 rounded-2xl border border-[#1a1a1a] bg-[#070707] p-3">
+                  <div className="h-3 w-12 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+                  <div className="w-10 h-10 rounded-full border border-[#202020] bg-[linear-gradient(180deg,#151515_0%,#101010_100%)]" />
+                  <div className="h-3 w-16 rounded bg-[linear-gradient(90deg,#171717_0%,#1f1f1f_50%,#171717_100%)]" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

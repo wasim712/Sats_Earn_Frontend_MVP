@@ -202,7 +202,119 @@ export default function StandaloneTaskDetailsPage() {
   const computedReward = Number(task?.taskRewardSats || 0);
   const xpReward = Number(task?.xpReward || 0);
 
-  if (isLoading) return <PageSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen lg:h-screen bg-[#020202] flex flex-col relative overflow-hidden animate-pulse">
+        {/* Ambient glows */}
+        <div className="fixed top-0 right-1/4 w-[400px] h-[400px] bg-sats-orange-500/4 rounded-full blur-[140px] pointer-events-none" />
+        <div className="fixed bottom-0 left-0 w-64 h-64 bg-sats-orange-500/3 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="relative max-w-[1200px] w-full mx-auto px-4 py-6 md:py-8 flex-1 flex flex-col min-h-0">
+          
+          {/* Back Button Skeleton */}
+          <div className="h-10 w-40 bg-[#111] border border-[#1a1a1a] rounded-xl mb-6 shadow-sm"></div>
+
+          <div className="flex flex-col lg:flex-row gap-6 items-start flex-1 min-h-0">
+            
+            {/* LEFT COLUMN Skeleton */}
+            <div className="flex-1 min-w-0 w-full space-y-6 lg:overflow-y-auto lg:h-full lg:pr-3 pb-24 lg:pb-6 scrollbar-hide">
+              
+              {/* Hero Image Header */}
+              <div className="h-[140px] md:h-[180px] w-full rounded-[24px] border border-[#1a1a1a] bg-[#080808]"></div>
+
+              {/* Title & Reward Pill */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-6 md:p-8">
+                <div className="flex flex-wrap items-center gap-3 mb-5">
+                  <div className="h-8 w-32 bg-[#1a1a1a] rounded-xl"></div>
+                </div>
+                <div className="h-8 md:h-10 w-3/4 max-w-xl bg-[#1a1a1a] rounded-lg mb-5"></div>
+                <div className="space-y-2 mt-6 pl-1">
+                  <div className="h-4 w-full max-w-2xl bg-[#111] rounded"></div>
+                  <div className="h-4 w-5/6 max-w-xl bg-[#111] rounded"></div>
+                  <div className="h-4 w-4/5 max-w-lg bg-[#111] rounded"></div>
+                </div>
+              </div>
+
+              {/* Progress Tracker */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl px-5 py-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-5 w-24 bg-[#1a1a1a] rounded"></div>
+                </div>
+                <div className="h-1.5 bg-[#141414] rounded-full overflow-hidden mb-2.5"></div>
+                <div className="h-4 w-32 bg-[#111] rounded"></div>
+              </div>
+
+              {/* Warning Message */}
+              <div className="bg-[#140e05] border border-[#1a1a1a] rounded-2xl p-5 flex items-start gap-3">
+                <div className="w-5 h-5 bg-[#111] rounded-full shrink-0 mt-0.5"></div>
+                <div className="w-full">
+                  <div className="h-4 w-48 bg-[#1a1a1a] rounded mb-2"></div>
+                  <div className="h-3 w-full bg-[#111] rounded mb-1"></div>
+                  <div className="h-3 w-5/6 bg-[#111] rounded"></div>
+                </div>
+              </div>
+
+              {/* Tasks Section */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-5 pb-5 border-b border-[#1a1a1a]">
+                  <div className="h-5 w-24 bg-[#1a1a1a] rounded"></div>
+                  <div className="h-6 w-16 bg-[#111] rounded-full"></div>
+                </div>
+                <div className="space-y-4">
+                  {/* Standalone has exactly 1 task usually */}
+                  <div className="h-[220px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5">
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-[#111]"></div>
+                      <div className="flex-1 space-y-3">
+                        <div className="h-5 w-3/4 bg-[#111] rounded"></div>
+                        <div className="h-4 w-1/2 bg-[#111] rounded"></div>
+                        <div className="h-[60px] w-full bg-[#111] rounded-xl mt-4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN Skeleton */}
+            <div className="w-full lg:w-[320px] shrink-0 space-y-4 lg:h-full lg:overflow-y-auto pb-24 lg:pb-6 scrollbar-hide">
+              
+              {/* Reward Breakdown */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-5">
+                <div className="h-2.5 w-32 bg-[#1a1a1a] rounded mb-5"></div>
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center"><div className="h-4 w-20 bg-[#111] rounded"></div><div className="h-4 w-20 bg-[#111] rounded"></div></div>
+                  <div className="flex justify-between items-center"><div className="h-4 w-20 bg-[#111] rounded"></div><div className="h-4 w-20 bg-[#111] rounded"></div></div>
+                  <div className="flex justify-between items-center"><div className="h-4 w-20 bg-[#111] rounded"></div><div className="h-4 w-20 bg-[#111] rounded"></div></div>
+                </div>
+              </div>
+
+              {/* Campaign Info */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-5">
+                <div className="h-2.5 w-32 bg-[#1a1a1a] rounded mb-5"></div>
+                <div className="space-y-4 text-sm">
+                  {[1, 2, 3, 4, 5].map((item) => (
+                    <div key={item} className="flex justify-between items-center"><div className="h-4 w-20 bg-[#111] rounded"></div><div className="h-4 w-20 bg-[#111] rounded"></div></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Completion Rate */}
+              <div className="bg-[#080808] border border-[#1a1a1a] rounded-2xl p-5">
+                <div className="h-2.5 w-32 bg-[#1a1a1a] rounded mb-5"></div>
+                <div className="mb-3 flex items-baseline gap-2">
+                  <div className="h-8 w-16 bg-[#1a1a1a] rounded"></div>
+                  <div className="h-3 w-24 bg-[#111] rounded"></div>
+                </div>
+                <div className="h-1 bg-[#141414] rounded-full mb-4"></div>
+                <div className="h-3 w-48 bg-[#111] rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (pageError || !task) {
     return (
@@ -265,9 +377,9 @@ export default function StandaloneTaskDetailsPage() {
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ${themeColors.primaryBgLight} ${themeColors.primaryBorderLight}`}>
                   <Zap className={`w-3.5 h-3.5 ${themeColors.primary}`} />
                   <span className={`text-sm font-black ${themeColors.primary}`}>
-                    {computedReward.toLocaleString()} Sats
+                   ~ {computedReward.toLocaleString()} sats
                   </span>
-                  <span className={`text-xs ${themeColors.primary} opacity-70 font-medium`}>— total reward</span>
+                  <span className={`text-xs ${themeColors.primary} opacity-70 font-medium`}> total reward</span>
                 </div>
                 {isPremiumOnly && (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]">

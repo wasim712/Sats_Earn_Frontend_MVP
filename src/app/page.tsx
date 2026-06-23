@@ -19,6 +19,26 @@ export default function Home() {
       <Suspense fallback={null}>
         <ReferralParamStorage />
       </Suspense>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": ["WebSite", "SoftwareApplication"],
+            "name": "SatsEarn",
+            "url": "https://satsearn.app",
+            "description": "Learn Bitcoin and earn real sats without buying. Complete tasks, answer quizzes, and stack sats daily.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          }),
+        }}
+      />
       
       <HeroSection />
       <TickerSection />

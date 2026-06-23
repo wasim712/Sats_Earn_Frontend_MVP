@@ -60,28 +60,172 @@ export default function UserProfilePage() {
     }
   };
 
-  // ─── Loading Skeleton ──────────────────────────────────────────────────────
   if (isLoading || !profile) {
     return (
-      <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8">
-        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8 animate-pulse">
-          <div className="flex flex-col xl:flex-row xl:justify-between xl:items-start gap-4 mb-8">
-            <div className="space-y-3">
-              <div className="h-8 w-40 bg-[#1a1a1a] rounded-lg" />
-              <div className="h-4 w-64 bg-[#111] rounded-lg" />
+      <div className="min-h-screen bg-[#020202] p-4 md:p-6 lg:p-8 pb-32">
+        <div className="max-w-6xl mx-auto">
+          {/* Header Area Skeleton */}
+          <div className="flex flex-col xl:flex-row xl:justify-between xl:items-start gap-4 mb-8 md:mb-10 animate-pulse">
+            <div>
+              <div className="h-[36px] md:h-[40px] w-48 bg-[#1a1a1a] rounded-lg mb-2"></div>
+              <div className="h-[20px] w-64 bg-[#111] rounded-md"></div>
             </div>
             <div className="flex w-full xl:w-auto flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap items-stretch gap-3 xl:justify-end">
-              <div className="h-20 flex-1 min-w-[140px] sm:min-w-[156px] bg-[#050505] border border-[#1a1a1a] rounded-2xl" />
-              <div className="h-20 flex-1 min-w-[140px] sm:min-w-[156px] bg-[#050505] border border-[#1a1a1a] rounded-2xl" />
-              <div className="h-10 w-full sm:w-32 bg-[#1a1a1a] rounded-xl" />
+              <div className="min-w-[140px] sm:min-w-[156px] rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-3.5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 rounded-xl bg-[#111]"></div>
+                  <div className="w-full">
+                    <div className="h-2.5 w-16 bg-[#1a1a1a] rounded mb-2 mt-1"></div>
+                    <div className="h-5 w-20 bg-[#1a1a1a] rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="min-w-[140px] sm:min-w-[156px] rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-3.5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 rounded-xl bg-[#111]"></div>
+                  <div className="w-full">
+                    <div className="h-2.5 w-16 bg-[#1a1a1a] rounded mb-2 mt-1"></div>
+                    <div className="h-5 w-24 bg-[#1a1a1a] rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="h-[48px] w-full sm:w-[140px] bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl"></div>
+              <div className="h-[48px] w-full sm:w-[150px] bg-[#111] border border-[#1a1a1a] rounded-xl"></div>
             </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="h-[280px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
-              <div className="h-[200px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
+
+          {/* Main Grid Layout Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 animate-pulse">
+            
+            {/* Left Column (Personal & Socials) */}
+            <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
+              
+              {/* Personal Details Card */}
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 flex flex-col">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10 pb-8 border-b border-[#1a1a1a]">
+                  <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-full"></div>
+                  <div>
+                    <div className="h-8 md:h-9 w-48 bg-[#1a1a1a] rounded-lg mb-3"></div>
+                    <div className="h-6 w-24 bg-[#111] rounded-full"></div>
+                  </div>
+                </div>
+
+                {/* Info Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-8">
+                  {[1, 2, 3, 4].map((item) => (
+                    <div key={`info-${item}`} className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-[#0a0a0a] border border-[#1a1a1a] shrink-0"></div>
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <div className="h-2.5 w-20 bg-[#1a1a1a] rounded mb-2.5 mt-0.5"></div>
+                        <div className="h-5 md:h-6 w-40 max-w-full bg-[#111] rounded"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Web3 Socials Card */}
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
+                <div className="mb-8">
+                  <div className="h-6 w-48 bg-[#1a1a1a] rounded"></div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((item) => (
+                    <div key={`social-${item}`} className="flex items-center gap-4 p-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a]">
+                      <div className="w-10 h-10 shrink-0 bg-[#111] rounded-xl border border-[#1a1a1a]"></div>
+                      <div className="min-w-0 flex-1">
+                        <div className="h-2.5 w-20 bg-[#1a1a1a] rounded mb-2"></div>
+                        <div className="h-5 w-32 bg-[#111] rounded"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Premium Status Card */}
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
+                  <div>
+                    <div className="h-6 md:h-8 w-48 bg-[#1a1a1a] rounded-lg mb-2"></div>
+                    <div className="h-4 w-64 md:w-96 max-w-full bg-[#111] rounded"></div>
+                  </div>
+                  <div className="h-8 w-28 bg-[#111] rounded-xl border border-[#1a1a1a]"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((item) => (
+                    <div key={`detail-${item}`} className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 rounded-xl bg-[#111] border border-[#1a1a1a]"></div>
+                        <div className="w-full">
+                          <div className="h-2.5 w-20 bg-[#1a1a1a] rounded mb-2 mt-1"></div>
+                          <div className="h-4 w-24 bg-[#111] rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[#1a1a1a] bg-[#080808] p-4 space-y-3">
+                  <div className="h-4 w-full bg-[#111] rounded"></div>
+                  <div className="h-4 w-5/6 bg-[#111] rounded"></div>
+                  <div className="h-4 w-4/5 bg-[#111] rounded"></div>
+                </div>
+              </div>
             </div>
-            <div className="h-[400px] bg-[#050505] border border-[#1a1a1a] rounded-3xl" />
+
+            {/* Right Column: Referral Center */}
+            <div className="flex flex-col h-full">
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8 h-full min-h-[400px] flex flex-col">
+                <div className="w-14 h-14 bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl mb-6"></div>
+                <div className="h-7 w-32 bg-[#1a1a1a] rounded-lg mb-4"></div>
+                <div className="space-y-2 mb-8">
+                  <div className="h-4 w-full bg-[#111] rounded"></div>
+                  <div className="h-4 w-5/6 bg-[#111] rounded"></div>
+                  <div className="h-4 w-4/5 bg-[#111] rounded"></div>
+                </div>
+                <div className="mt-auto">
+                  <div className="h-2.5 w-24 bg-[#1a1a1a] rounded mb-3"></div>
+                  <div className="flex items-stretch gap-2">
+                    <div className="flex-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-4 h-[60px]"></div>
+                    <div className="shrink-0 w-16 rounded-xl bg-[#111] border border-[#1a1a1a] h-[60px]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Billing History */}
+          <div className="mt-8 rounded-[28px] border border-[#1a1a1a] bg-[#050505] p-6 md:p-8 animate-pulse">
+            <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+              <div>
+                <div className="h-6 md:h-8 w-40 bg-[#1a1a1a] rounded-lg mb-2"></div>
+                <div className="h-4 w-64 md:w-96 max-w-full bg-[#111] rounded"></div>
+              </div>
+              <div className="h-8 w-24 bg-[#111] rounded-xl border border-[#1a1a1a]"></div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
+              {[1, 2, 3].map((item) => (
+                <div key={`billing-${item}`} className="rounded-3xl border border-[#1a1a1a] bg-[#0a0a0a] p-5">
+                  <div className="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                      <div className="h-6 w-24 bg-[#1a1a1a] rounded mb-2"></div>
+                      <div className="h-4 w-32 bg-[#111] rounded"></div>
+                    </div>
+                    <div className="h-6 w-20 bg-[#111] rounded-full"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3 h-[72px]"></div>
+                    <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3 h-[72px]"></div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="h-6 w-20 bg-[#111] rounded-full border border-[#1a1a1a]"></div>
+                    <div className="h-6 w-32 bg-[#111] rounded-full border border-[#1a1a1a]"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

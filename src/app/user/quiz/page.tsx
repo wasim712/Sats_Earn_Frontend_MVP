@@ -425,45 +425,90 @@ function isCorrectReviewOption(result: QuizResult | null, questionId: string, op
 
 function QuizPageSkeleton() {
   return (
-    <div className="min-h-screen bg-[#020202] px-4 md:px-6 lg:px-8 py-6 md:py-8 animate-pulse">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-6 py-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-[#111]" />
-          <div className="space-y-2 flex-1">
-            <div className="h-3 w-16 rounded-full bg-[#111]" />
-            <div className="h-8 w-40 rounded-xl bg-[#111]" />
+    <div className="min-h-screen bg-[#020202] pb-10 md:pb-12 relative animate-pulse">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8 py-5 md:py-8">
+        <div className="grid grid-cols-1 gap-6 items-start mb-8">
+          <div className="min-w-0">
+            <div className="rounded-[30px] border border-[#1a1a1a] bg-[#080808] p-5 sm:p-6 md:p-8">
+              <div className="h-[12px] w-[100px] bg-[#1a1a1a] rounded mb-4"></div>
+              <div className="h-[32px] md:h-[36px] xl:h-[40px] w-3/4 sm:w-[350px] bg-[#1a1a1a] rounded-lg mb-4"></div>
+              <div className="space-y-3">
+                <div className="h-[18px] md:h-[20px] w-full max-w-3xl bg-[#111] rounded"></div>
+                <div className="h-[18px] md:h-[20px] w-4/5 max-w-3xl bg-[#111] rounded"></div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 xl:gap-8">
-          <div className="rounded-[30px] bg-[#080808] border border-[#1a1a1a] p-6 md:p-8 space-y-4">
-            <div className="h-4 w-24 rounded-full bg-[#111]" />
-            <div className="h-10 w-3/4 rounded-2xl bg-[#111]" />
-            <div className="h-5 w-2/3 rounded-xl bg-[#111]" />
-          </div>
-          <div className="w-full grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3">
+          <div className="w-full grid-cols-3 sm:grid-cols-3 xl:grid-cols-3 gap-3 grid">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-28 rounded-[24px] bg-[#0a0a0a] border border-[#1a1a1a]" />
+              <div key={`info-${item}`} className="rounded-[24px] border border-[#1a1a1a] bg-[#080808] p-5">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="h-[12px] w-[60px] sm:w-[80px] bg-[#1a1a1a] rounded"></div>
+                  <div className="w-5 h-5 bg-[#1a1a1a] rounded-full"></div>
+                </div>
+                <div className="h-[28px] md:h-[32px] w-[60px] sm:w-[100px] bg-[#111] rounded-lg"></div>
+              </div>
             ))}
           </div>
         </div>
 
-        {[1, 2, 3].map((item) => (
-          <div key={item} className="rounded-[28px] bg-[#080808] border border-[#1a1a1a] p-6 md:p-8">
-            <div className="flex gap-4 mb-6">
-              <div className="w-11 h-11 rounded-2xl bg-[#111]" />
-              <div className="flex-1 space-y-3">
-                <div className="h-6 rounded-xl bg-[#111] w-4/5" />
-                <div className="h-4 rounded-xl bg-[#0f0f0f] w-2/5" />
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-3 px-1">
+            <div>
+              <div className="h-[12px] w-[120px] bg-[#1a1a1a] rounded mb-3"></div>
+              <div className="h-[24px] md:h-[28px] w-[200px] sm:w-[280px] md:w-[350px] bg-[#111] rounded-lg"></div>
+            </div>
+            <div className="hidden md:flex h-[34px] w-[220px] rounded-full border border-[#1a1a1a] bg-[#080808]"></div>
+          </div>
+
+          {[1, 2, 3].map((item) => (
+            <div key={`question-${item}`} className="bg-[#080808] border border-[#1a1a1a] rounded-[28px] p-5 sm:p-6 md:p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="shrink-0 w-11 h-11 rounded-2xl border border-[#1a1a1a] bg-[#111]"></div>
+                <div className="min-w-0 flex-1">
+                  <div className="h-[12px] w-[80px] bg-[#1a1a1a] rounded mb-3.5"></div>
+                  <div className="space-y-3">
+                    <div className="h-[24px] md:h-[28px] w-full bg-[#111] rounded-lg"></div>
+                    <div className="h-[24px] md:h-[28px] w-3/4 bg-[#111] rounded-lg"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
+                {[1, 2, 3, 4].map((option) => (
+                  <div key={`option-${option}`} className="relative flex items-center w-full p-4 md:p-5 rounded-2xl border border-[#1a1a1a] bg-[#111]">
+                    <div className="shrink-0 w-5 h-5 rounded-full border-2 border-[#1a1a1a] bg-[#222] mr-4"></div>
+                    <div className="h-[20px] md:h-[24px] w-3/4 bg-[#1a1a1a] rounded"></div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 md:pl-[3.75rem]">
-              {[1, 2, 3, 4].map((option) => (
-                <div key={option} className="h-16 rounded-2xl bg-[#111] border border-[#1a1a1a]" />
-              ))}
+          ))}
+
+          <div className="pt-2 md:pt-4 flex justify-center">
+            <div className="w-full max-w-3xl rounded-[28px] border border-[#1a1a1a] bg-[#080808] px-4 sm:px-5 md:px-6 py-4 md:py-5 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                      <div className="h-[10px] w-[60px] bg-[#1a1a1a] rounded mb-2"></div>
+                      <div className="h-[20px] w-[100px] bg-[#111] rounded"></div>
+                    </div>
+                    <div className="sm:hidden flex items-center gap-1.5">
+                      {[1, 2, 3, 4, 5].map((_, idx) => (
+                        <div key={`dots-${idx}`} className="h-1.5 w-2 rounded-full bg-[#1a1a1a]"></div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="hidden sm:block">
+                    <div className="h-1.5 w-full bg-[#1a1a1a] rounded-full"></div>
+                  </div>
+                </div>
+                <div className="w-full sm:w-auto sm:min-w-[220px] h-[48px] rounded-2xl border border-[#1a1a1a] bg-[#111]"></div>
+              </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

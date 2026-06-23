@@ -305,7 +305,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             let isActive = pathname === item.path || pathname?.startsWith(`${item.path}/`);
             
             // Special case for Tasks to also highlight on standalone-tasks
-            if (item.key === 'tasks' && pathname?.startsWith('/user/standalone-tasks')) {
+            if (item.key === 'tasks' && pathname?.includes('/standalone-tasks')) {
               isActive = true;
             }
             
