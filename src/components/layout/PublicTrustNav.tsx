@@ -3,8 +3,8 @@ import Link from 'next/link';
 const TRUST_LINKS = [
   { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
-  { name: 'Privacy', href: '/legal/privacy-policy' },
-  { name: 'Terms', href: 'legal/terms' },
+  { name: 'Privacy', href: '/legal/privacy' },
+  { name: 'Terms', href: '/legal/terms' },
 ];
 
 export function PublicTrustNav() {
