@@ -206,7 +206,7 @@ export default function FAQPage() {
           <div className="hidden md:block absolute left-[16.5rem] top-0 bottom-0 w-px bg-gradient-to-b from-white/[0.08] via-white/[0.02] to-transparent z-0"></div>
 
           {/* DESKTOP SIDEBAR */}
-          <aside className="w-64 flex-shrink-0 sticky top-40 self-start hidden md:flex flex-col gap-1.5 pr-6 z-10">
+          <aside className="w-64 flex-shrink-0 sticky top-32 self-start hidden md:flex flex-col gap-1.5 pr-6 z-10">
             <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 px-3">
               Categories
             </div>

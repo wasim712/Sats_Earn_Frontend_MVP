@@ -6,11 +6,11 @@ import { LogoText } from '../ui/LogoText';
 // --- DATA CONFIGURATION ---
 const FOOTER_LINKS = {
   Earn: [
-    { name: 'Home', href: '/' },
     { name: 'Mini Games', href: '/games/sat-worm' },
     { name: 'Rewards', href: '/rewards' },
     { name: 'BTC-Basics', href: '/btc-basics' },
     { name: 'Referral', href: '/referral' },
+    { name: 'Blogs', href: '/blogs' },
   ],
   Company: [
     { name: 'For Brands', href: '/brands' },

@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 const TRUST_LINKS = [
   { name: 'About', href: '/about' },
+  { name: 'Blogs', href: '/blogs' },
   { name: 'Contact', href: '/contact' },
   { name: 'Privacy', href: '/legal/privacy' },
   { name: 'Terms', href: '/legal/terms' },

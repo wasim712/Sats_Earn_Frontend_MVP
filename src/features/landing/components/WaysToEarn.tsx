@@ -28,7 +28,7 @@ export const WaysToEarn = () => {
       icon: <Gamepad2 className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" />,
       title: 'Mini Games',
       description: 'Browser-based games built for SatsEarn. Free tier earns XP. Paid tier exclusive games earn real sats.',
-      reward: 'XP + Sats (Paid)'
+      reward: 'XP reward per game'
     },
     {
       status: 'LIVE',
