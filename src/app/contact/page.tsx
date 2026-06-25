@@ -203,7 +203,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
 
-
+        <p className='text-center text-gray-400'>Indicative targets — goals we&apos;re working toward, not contractual guarantees.</p>
 
 
 {/* ─── WHAT CAN WE HELP WITH ─── */}
