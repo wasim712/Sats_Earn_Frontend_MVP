@@ -118,7 +118,7 @@ export default function SupportPage() {
               We aim to be fast and genuinely helpful. These are our target response windows by request type.
             </p>
             <div className="inline-flex font-mono text-[11px] tracking-[0.15em] uppercase text-gray-400 border border-dashed border-gray-600 rounded-md px-3 py-1.5 mb-8">
-              Indicative targets · pre-launch
+              Indicative targets · early-stage
             </div>
           </FadeUp>
 

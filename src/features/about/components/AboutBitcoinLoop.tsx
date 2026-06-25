@@ -114,7 +114,8 @@ export const AboutBitcoinLoop = () => {
         {/* Disclaimer */}
         <FadeUp delay={0.5}>
           <p className="max-w-2xl mx-auto mt-10 text-center text-xs text-gray-500 italic leading-relaxed">
-            SatsEarn is in beta and building its audience — this describes how the platform is designed to work, not a promise of specific earnings or advertiser results.{' '}
+            This describes how the platform works, not a promise of specific earnings or advertiser results{' '}
+            <br />
             <Link href="/brands" className="text-sats-orange-500 hover:text-sats-orange-400 not-italic font-semibold transition-colors">
               Are you a brand? See how advertising works →
             </Link>

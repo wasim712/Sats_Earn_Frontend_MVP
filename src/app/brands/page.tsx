@@ -63,7 +63,9 @@ export default function BrandsPage() {
             </div>
             
             <div className="max-w-2xl mx-auto bg-sats-orange-500/10 border border-sats-orange-500/20 rounded-2xl p-4 sm:p-5 text-sm sm:text-base text-gray-300 leading-relaxed text-center">
-              <b className="text-sats-orange-500">We&apos;re pre-launch.</b> SatsEarn is building its user base now, and we&apos;re opening conversations with early advertising partners. No inflated metrics, no fake numbers — just an honest pitch and the chance to get in early.{' '}
+              <b className="text-sats-orange-500">We&apos;re live and growing. </b> SatsEarn is early-stage with an engaged, growing user base, and we&apos;re opening
+conversations with advertising partners. No inflated metrics, no fake numbers — just an honest pitch and the
+chance to get in early.{' '}
               <Link href="/contact?topic=partnership" className="text-sats-orange-500 font-bold hover:underline ml-1">Let&apos;s talk →</Link>
             </div>
           </FadeUp>
@@ -343,8 +345,9 @@ export default function BrandsPage() {
               <svg viewBox="0 0 56 72" width="16" height="19" fill="#000" style={{ verticalAlign: '-2px', flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg>
               Talk to Us
             </Link>
-            <div className="mt-8 pt-6 border-t border-white/[0.06] text-xs text-gray-500 max-w-lg mx-auto">
-              SatsEarn is pre-launch and building its audience. We make no guarantees about reach, ROAS, or specific results. All campaign terms are agreed directly with you.
+            <div className="mt-8 pt-6 border-t border-white/[0.06] text-[14px] text-gray-400 max-w-lg mx-auto">
+              SatsEarn is early-stage and growing its audience. We make no guarantees about reach, ROAS, or specific results.
+            All campaign terms are agreed directly with you.
             </div>
           </div>
         </FadeUp>

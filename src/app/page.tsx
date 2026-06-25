@@ -8,14 +8,14 @@ import { StreakMilestonesSection } from '@/features/landing/components/StreakMil
 import { ReferralPreviewSection } from '@/features/landing/components/ReferralPreviewSection';
 import { WithdrawalsSection } from '@/features/landing/components/WithdrawalsSection';
 import { PricingSection } from '@/features/landing/components/PricingSection';
+import { BlogPreviewSection } from '@/features/landing/components/BlogPreviewSection';
 import { FAQ } from '@/components/layout/Faq';
 import { CTASection } from '@/components/layout/CtaSection';
-import { PublicTrustNav } from '@/components/layout/PublicTrustNav';
 import { ReferralParamStorage } from '@/components/referral/ReferralParamStorage';
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full bg-[#050505] overflow-hidden">
+    <div className="flex w-full flex-col overflow-hidden bg-[#050505]">
       <Suspense fallback={null}>
         <ReferralParamStorage />
       </Suspense>
@@ -24,22 +24,22 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": ["WebSite", "SoftwareApplication"],
-            "name": "SatsEarn",
-            "url": "https://satsearn.app",
-            "description": "Learn Bitcoin and earn real sats without buying. Complete tasks, answer quizzes, and stack sats daily.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            }
+            '@context': 'https://schema.org',
+            '@type': ['WebSite', 'SoftwareApplication'],
+            name: 'SatsEarn',
+            url: 'https://satsearn.app',
+            description: 'Learn Bitcoin and earn real sats without buying. Complete tasks, answer quizzes, and stack sats daily.',
+            applicationCategory: 'FinanceApplication',
+            operatingSystem: 'Any',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'USD',
+            },
           }),
         }}
       />
-      
+
       <HeroSection />
       <TickerSection />
       <HowItWorksSection />
@@ -49,9 +49,9 @@ export default function Home() {
       <ReferralPreviewSection />
       <WithdrawalsSection />
       <PricingSection />
+      <BlogPreviewSection />
       <FAQ />
       <CTASection />
-      
     </div>
   );
 }

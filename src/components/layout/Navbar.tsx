@@ -17,8 +17,9 @@ export const Navbar = () => {
   // Updated to use Anchor Links that target the IDs on your home page components
   const navLinks = [
     { name: 'How It Works', href: '/how-it-works' },
-    { name: 'Withdrawals', href: '/withdrawals' },
     { name: 'Rewards', href: '/rewards' },
+    { name: 'Withdrawals', href: '/withdrawals' },
+    { name: 'Blogs', href: '/blogs' },
     { name: 'FAQ', href: '/faq' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
