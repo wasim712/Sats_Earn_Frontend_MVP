@@ -22,8 +22,7 @@ export const Navbar = () => {
     { name: 'Blogs', href: '/blogs' },
     { name: 'FAQ', href: '/faq' },
     { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Legal', href: '/legal' },
+    { name: 'Contact', href: '/contact' }
   ];
 
   return (
