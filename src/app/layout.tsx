@@ -2,7 +2,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/store/StoreProvider';
-import Script from 'next/script';
+import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { RouteWrapper } from '@/components/layout/RouteWrapper';
 import { NavbarWrapper } from '@/components/layout/NavbarWrapper';
 import { PwaRegistration } from '@/components/ui/PwaRegistration';
@@ -72,35 +72,21 @@ export default function RootLayout({
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-          strategy="afterInteractive"
-        />
-
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-              page_path: window.location.pathname,
-            });
-          `}
-        </Script>
       </head>
       <body className="bg-sats-black-950 text-white font-sans overflow-x-clip" suppressHydrationWarning>
-        <StoreProvider>
-          <PwaRegistration />
-          <NavbarWrapper/>
-          {/* <InteractiveBackground /> */}
-          
-          <RouteWrapper>
-            {children}
-          </RouteWrapper>
-          <PwaInstallPrompt />
-          
-        </StoreProvider>
+        <AnalyticsProvider>
+          <StoreProvider>
+            <PwaRegistration />
+            <NavbarWrapper/>
+            {/* <InteractiveBackground /> */}
+            
+            <RouteWrapper>
+              {children}
+            </RouteWrapper>
+            <PwaInstallPrompt />
+            
+          </StoreProvider>
+        </AnalyticsProvider>
       </body>
     </html>
   );
