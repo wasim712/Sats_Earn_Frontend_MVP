@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FadeUp } from '@/components/animations/FadeUp';
+import { Play } from 'lucide-react';
 
 export const WormCta = () => {
   const tips = [
@@ -39,7 +40,7 @@ export const WormCta = () => {
       <div>
         <div className="mb-8">
           <FadeUp delay={0.1}>
-            <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
+            <div className="flex items-center gap-2 font-mono text-[12px] sm:text-xs tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
               <span className="w-6 h-px bg-sats-orange-500/50 inline-block"></span>
               Pro Tips
             </div>
@@ -111,7 +112,7 @@ export const WormCta = () => {
               href="/user/minigames" 
               className="w-full sm:w-auto px-10 py-4 rounded-xl bg-sats-orange-500 text-black font-extrabold text-sm sm:text-base transition-all hover:bg-sats-orange-400 hover:-translate-y-0.5 shadow-[0_8px_32px_rgba(249,115,22,0.3)] tracking-wider uppercase font-mono flex items-center justify-center gap-2"
             >
-              🐍 Play SAT WORM
+              <Play className='text-black fill-black'> </Play> Play SAT WORM
             </Link>
           </div>
         </FadeUp>

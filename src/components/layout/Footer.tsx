@@ -29,9 +29,9 @@ const FOOTER_LINKS = {
   Legal: [
     { name: 'Legal', href: '/legal' },
     { name: 'Terms of service', href: '/legal/terms' },
-    { name: 'Refund Policy', href: 'legal/refund-policy' },
+    { name: 'Refund Policy', href: '/legal/refund-policy' },
     { name: 'Sats Disclaimer', href: '/legal/sats-disclaimer' },
-    { name: 'Privacy Policy', href: 'legal/privacy' },
+    { name: 'Privacy Policy', href: '/legal/privacy' },
   ],
 };
 

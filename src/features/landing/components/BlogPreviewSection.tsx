@@ -48,7 +48,7 @@ export const BlogPreviewSection = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           <FadeUp delay={0.1} className="overflow-hidden rounded-[32px] border border-sats-orange-500/16 bg-[#080808] shadow-[0_20px_70px_rgba(0,0,0,0.40)]">
             <div className="border-b border-white/6 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.10),transparent_35%)] p-6 sm:p-8">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-sky-300">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1 text-[12px] font-black uppercase tracking-[0.2em] text-sky-300">
                 <Globe2 className="h-3.5 w-3.5" />
                 Public Access
               </div>
@@ -80,7 +80,7 @@ export const BlogPreviewSection = () => {
 
           <FadeUp delay={0.15} className="flex flex-col justify-between rounded-[32px] border border-white/8 bg-[#080808] p-6 shadow-[0_20px_70px_rgba(0,0,0,0.32)] sm:p-8">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/10 px-3 py-1 text-[12px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
                 <Sparkles className="h-3.5 w-3.5" />
                 Live Route Ready
               </div>

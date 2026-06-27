@@ -763,5 +763,5 @@ function StatusBanner({ tone, message }: { tone: 'green' | 'orange' | 'violet' |
     blue: 'border-blue-500/20 bg-blue-500/10 text-blue-300',
   };
 
-  return <div className={`rounded-xl border px-3 py-2.5 text-[11px] sm:text-xs font-bold leading-relaxed ${styles[tone]}`}>{message}</div>;
+  return <div className={`rounded-xl border px-3 py-2.5 text-[12px] sm:text-xs font-bold leading-relaxed ${styles[tone]}`}>{message}</div>;
 }

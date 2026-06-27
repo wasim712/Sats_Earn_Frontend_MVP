@@ -270,7 +270,7 @@ export default function UserDailyQuizPage() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Question {index + 1}</p>
+                    <p className="text-[12px] font-black uppercase tracking-widest text-gray-400 mb-2">Question {index + 1}</p>
                     <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed">{question.questionText}</h3>
                   </div>
                 </div>
@@ -573,7 +573,7 @@ function ResultStatCard({ icon, label, value }: { icon: React.ReactNode; label: 
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-4">
       <div className="flex items-center gap-3 mb-2">
         {icon}
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">{label}</p>
+        <p className="text-[12px] font-black uppercase tracking-widest text-gray-400">{label}</p>
       </div>
       <p className="text-xl font-black text-white">{value}</p>
     </div>

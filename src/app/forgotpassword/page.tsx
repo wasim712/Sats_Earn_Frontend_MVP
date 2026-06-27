@@ -125,7 +125,7 @@ export default function ForgetPasswordPage() {
 
               <form onSubmit={handleRequestOtp} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                  <label htmlFor="email" className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
                   <div className="relative group">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                     <input
@@ -175,7 +175,7 @@ export default function ForgetPasswordPage() {
                 <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-sats-orange-500/5 blur-2xl rounded-full pointer-events-none" />
                   
-                  <label className="flex items-center justify-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                  <label className="flex items-center justify-center gap-2 text-[12px] font-black text-gray-400 uppercase tracking-widest mb-3">
                     <KeyRound className="w-3.5 h-3.5" /> Recovery Code
                   </label>
                   
@@ -194,7 +194,7 @@ export default function ForgetPasswordPage() {
                 {/* Visual Block 2: New Password */}
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Password</label>
+                    <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Password</label>
                     <div className="relative group">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                       <input
@@ -222,7 +222,7 @@ export default function ForgetPasswordPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
+                    <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
                     <div className="relative group">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                       <input

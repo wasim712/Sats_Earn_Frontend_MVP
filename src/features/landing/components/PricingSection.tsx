@@ -155,7 +155,7 @@ export const PricingSection = () => {
                 <Button 
                   onClick={() => router.push('/signup')} 
                   variant="secondary"
-                  className="w-full font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all rounded-xl py-6"
+                  className="w-full font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all rounded-xl py-4"
                 >
                   Get {tier.name}
                 </Button>
@@ -186,7 +186,7 @@ export const PricingSection = () => {
                 
                 <Button 
                   onClick={() => router.push('/signup')}
-                  className="w-full md:w-auto px-8 py-6 font-bold bg-yellow-500 text-black hover:bg-yellow-400 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] border-none"
+                  className="w-full md:w-auto px-8 py-4 font-bold bg-yellow-500 text-black hover:bg-yellow-400 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] border-none"
                 >
                   Claim Founders Spot
                 </Button>

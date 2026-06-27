@@ -46,7 +46,7 @@ export function FaqList({
               <p className="mt-3 whitespace-pre-wrap text-xs text-gray-400">{item.answer}</p>
 
               <div className="mt-3 flex items-center justify-between gap-3">
-                <span className="text-[11px] text-gray-400">{new Date(item.createdAt).toLocaleString()}</span>
+                <span className="text-[12px] text-gray-400">{new Date(item.createdAt).toLocaleString()}</span>
 
                 <div className="flex items-center gap-2">
                   <button

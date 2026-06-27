@@ -200,7 +200,7 @@ export default function StandaloneTasksPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-4 md:p-6 lg:p-8 pb-24">
       <section className="rounded-[30px] border border-[#1a1a1a] bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.10),transparent_32%),#050505] p-6 md:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.38)]">
         <div className="space-y-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[12px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
             <Sparkles className="h-4 w-4" /> Standalone Tasks
           </div>
           <div>
@@ -296,7 +296,7 @@ export default function StandaloneTasksPage() {
                   ) : null}
 
                   <div className={`absolute z-20 flex items-center gap-2 ${isPremiumOnly || isNewUserOnly ? 'right-5 top-16' : 'right-5 top-5'}`}>
-                    <div className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-[11px] font-black uppercase tracking-wide backdrop-blur-md ${tone}`}>
+                    <div className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-[12px] font-black uppercase tracking-wide backdrop-blur-md ${tone}`}>
                       {label === 'Completed' ? <CheckCircle2 className="h-4 w-4" /> : <Zap className="h-4 w-4" />}
                       {label}
                     </div>
@@ -381,7 +381,7 @@ function SummaryCard({ label, value, tone }: { label: string; value: number | st
 
   return (
     <div className={`rounded-3xl border p-5 ${toneMap[tone]}`}>
-      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/60">{label}</div>
+      <div className="text-[12px] font-black uppercase tracking-[0.18em] text-white/60">{label}</div>
       <div className="mt-3 text-3xl font-black text-white">{value}</div>
     </div>
   );

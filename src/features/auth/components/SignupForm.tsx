@@ -20,7 +20,7 @@ import { validateEmailSecurity } from '@/lib/validators';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 const RuleItem = ({ met, text }: { met: boolean, text: string }) => (
-  <div className={`flex items-center space-x-2 text-[11px] transition-colors duration-300 ${met ? 'text-green-400' : 'text-gray-400'}`}>
+  <div className={`flex items-center space-x-2 text-[12px] transition-colors duration-300 ${met ? 'text-green-400' : 'text-gray-400'}`}>
     {met ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
     <span>{text}</span>
   </div>
@@ -493,7 +493,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                       <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${hasAcceptedTerms ? 'border-sats-orange-400 bg-sats-orange-500 text-black shadow-[0_0_16px_rgba(238,139,18,0.35)]' : 'border-[#3a3a3a] bg-[#0d0d0d] text-transparent'}`}>
                         <CheckCircle2 className="h-3.5 w-3.5" />
                       </span>
-                      <span className="text-[11px] leading-relaxed text-gray-400">
+                      <span className="text-[12px] leading-relaxed text-gray-400">
                         By creating an account, you accept our <span className="font-bold text-sats-orange-400 drop-shadow-[0_0_10px_rgba(238,139,18,0.2)]">Terms &amp; Conditions</span>.
                       </span>
                     </button>

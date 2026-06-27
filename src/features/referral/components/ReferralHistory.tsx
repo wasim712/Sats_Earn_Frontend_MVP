@@ -227,7 +227,7 @@ export const ReferralHistory = () => {
                 { feat: "Faucet / micro-earning", a: "Not viable", b: "Fully viable" }
               ].map((row, i) => (
                 <div key={i} className="grid grid-cols-1 sm:grid-cols-[1.3fr_1fr_1fr] gap-2 sm:gap-3 p-4 px-6 border-b border-white/10 last:border-0 text-center items-center">
-                  <div className="text-sats-orange-500 sm:text-gray-300 font-mono text-[11px] sm:text-sm uppercase sm:normal-case font-bold sm:font-normal mb-1 sm:mb-0 sm:text-left">
+                  <div className="text-sats-orange-500 sm:text-gray-300 font-mono text-[12px] sm:text-sm uppercase sm:normal-case font-bold sm:font-normal mb-1 sm:mb-0 sm:text-left">
                     {row.feat}
                   </div>
                   <div className="text-sm text-gray-400 font-mono sm:text-center">

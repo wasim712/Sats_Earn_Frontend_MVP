@@ -50,7 +50,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
         {/* FREE TIERS SECTION */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40">Free Tiers</p>
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/40">Free Tiers</p>
             <div className="h-px flex-1 bg-gradient-to-r from-white/[0.05] to-transparent" />
           </div>
           
@@ -83,11 +83,11 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
                     {item.commission}
                   </p>
                   
-                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
+                  <p className={`text-[12px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
                     Base referral reward
                   </p>
                   
-                  <p className={`text-[11px] font-bold mt-4 ${isActive ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-[12px] font-bold mt-4 ${isActive ? 'text-gray-400' : 'text-gray-600'}`}>
                     {item.subtitle}
                   </p>
                 </div>
@@ -106,7 +106,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
         {/* PAID TIERS SECTION */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40">Paid / Premium Tiers</p>
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/40">Paid / Premium Tiers</p>
             <div className="h-px flex-1 bg-gradient-to-r from-white/[0.05] to-transparent" />
           </div>
           
@@ -139,11 +139,11 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
                     {item.commission}
                   </p>
                   
-                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
+                  <p className={`text-[12px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
                     Premium referral reward
                   </p>
                   
-                  <p className={`text-[11px] font-bold mt-4 ${isActive ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-[12px] font-bold mt-4 ${isActive ? 'text-gray-400' : 'text-gray-600'}`}>
                     {item.subtitle}
                   </p>
                 </div>

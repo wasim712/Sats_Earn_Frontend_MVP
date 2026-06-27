@@ -60,7 +60,7 @@ export default function PublicBlogsPage() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/"
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] font-bold text-gray-300 transition hover:border-sats-orange-500/25 hover:text-white"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[12px] font-bold text-gray-300 transition hover:border-sats-orange-500/25 hover:text-white"
                 >
                   <ArrowLeft className="h-3.5 w-3.5 text-sky-400" />
                   Back to Home
@@ -159,7 +159,7 @@ export default function PublicBlogsPage() {
                 </div>
 
                 <div className="space-y-4 p-5">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                  <div className="flex flex-wrap items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-gray-400">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                       {formatContentDate(blog.publishedAt || blog.createdAt)}

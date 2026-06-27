@@ -20,7 +20,7 @@ export function FaqAccordion({ items }: { items: UserFaqItem[] }) {
     <div className="space-y-6">
       {Object.entries(groupedItems).map(([category, categoryItems]) => (
         <section key={category} className="rounded-[28px] border border-[#161616] bg-[#050505] p-5 md:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-sats-orange-400">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[12px] font-black uppercase tracking-[0.24em] text-sats-orange-400">
             <CircleHelp className="h-4 w-4" />
             {category}
           </div>

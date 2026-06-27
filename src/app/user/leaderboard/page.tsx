@@ -161,7 +161,7 @@ function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: L
                   <p className={`text-2xl font-black tracking-tight drop-shadow-md ${style.iconTone}`}>
                     {formatCompactValue(entry.value)}
                   </p>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                  <span className="text-[12px] font-bold uppercase tracking-widest text-gray-400">
                     {mode === 'streaks' ? 'Days' : 'Sats'}
                   </span>
                 </div>
@@ -245,7 +245,7 @@ function LeaderboardRows({ entries, mode }: { entries: LeaderboardEntry[]; mode:
               <p className="truncate text-sm font-bold text-white/80 tracking-wide group-hover:text-white transition-colors duration-200">
                 {entry.fullName}
               </p>
-              <p className="truncate text-[11px] text-white/30 font-medium mt-0.5 group-hover:text-white/50 transition-colors duration-200">
+              <p className="truncate text-[12px] text-white/30 font-medium mt-0.5 group-hover:text-white/50 transition-colors duration-200">
                 @{entry.username}
               </p>
             </div>
@@ -353,7 +353,7 @@ export default function UserLeaderboardPage() {
           <div className="overflow-hidden rounded-[30px] border border-[#171717] bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.08),transparent_30%),linear-gradient(180deg,#090909_0%,#050505_100%)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)] md:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-sats-orange-400">
+                <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[12px] font-black uppercase tracking-[0.16em] text-sats-orange-400">
                   <Sparkles className="h-3.5 w-3.5" />
                   Global Leaderboards
                 </div>

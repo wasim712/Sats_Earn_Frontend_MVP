@@ -111,7 +111,7 @@ export const ReferralPreviewSection = () => {
               ))}
             </div>
             
-            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-400 border-t border-white/5 text-center leading-relaxed">
+            <div className="p-4 bg-sats-black-950/50 text-[12px] text-gray-400 border-t border-white/5 text-center leading-relaxed">
               Caps are cumulative across all free tiers. Commission only paid on active referrals. Caps lift completely on any paid tier.
             </div>
           </FadeUp>
@@ -156,7 +156,7 @@ export const ReferralPreviewSection = () => {
               })}
             </div>
             
-            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-400 border-t border-white/5 text-left leading-relaxed">
+            <div className="p-4 bg-sats-black-950/50 text-[12px] text-gray-400 border-t border-white/5 text-left leading-relaxed">
               <span className="text-sats-orange-500">★ Founders Rotation:</span> When a new user joins without a referral code, they are auto-assigned to the next Founder in a round-robin queue — earning that Founder commission for life.
             </div>
           </FadeUp>

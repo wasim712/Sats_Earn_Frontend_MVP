@@ -57,7 +57,7 @@ export default function ReferralLimits({ currentReferrals, limit = 20, isFreeTie
           <div className="pt-1">
             <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide mb-2 flex items-center gap-3 flex-wrap">
               {isFreeTier ? 'Free Tier Limit' : 'Premium Referral Access'}
-              <span className={`px-3 py-0.5 rounded-full border text-[11px] font-bold tracking-widest ${tagColor}`}>
+              <span className={`px-3 py-0.5 rounded-full border text-[12px] font-bold tracking-widest ${tagColor}`}>
                 {isFreeTier ? `${safeCurrentReferrals} / ${resolvedLimit}` : `${activeTier} · NO CAP`}
               </span>
             </h3>

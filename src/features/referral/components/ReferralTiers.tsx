@@ -23,7 +23,7 @@ export const ReferralTiers = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             <FadeUp>
               <div className="bg-sats-black-800 border border-white/10 rounded-3xl p-8 sm:p-10 h-full transition-all hover:-translate-y-1 hover:border-white/20">
-                <div className="font-mono text-[11px] tracking-wider uppercase text-gray-400 font-bold mb-4">
+                <div className="font-mono text-[12px] tracking-wider uppercase text-gray-400 font-bold mb-4">
                   Free tiers · Basic–Gold
                 </div>
                 <div className="font-mono text-5xl sm:text-6xl font-black text-sats-orange-500 leading-none mb-8">
@@ -55,7 +55,7 @@ export const ReferralTiers = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(249,115,22,0.1),transparent_70%)] pointer-events-none"></div>
                 
                 <div className="relative z-10">
-                  <div className="font-mono text-[11px] tracking-wider uppercase text-sats-orange-500 font-bold mb-4">
+                  <div className="font-mono text-[12px] tracking-wider uppercase text-sats-orange-500 font-bold mb-4">
                     Paid tiers · Platinum–Founders
                   </div>
                   <div className="font-mono text-5xl sm:text-6xl font-black text-sats-orange-500 leading-none mb-8">

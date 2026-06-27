@@ -442,7 +442,7 @@ export const UserSidebar = ({
                       <p className="truncate text-sm font-bold leading-tight text-white/95 tracking-wide max-w-[15ch]">
                         {generateHandle(user?.name)}
                       </p>
-                      <div className="mt-1 flex items-center gap-2 text-[11px] font-bold leading-none text-white/40 ">
+                      <div className="mt-1 flex items-center gap-2 text-[12px] font-bold leading-none text-white/40 ">
                         <span
                           className={`flex items-center gap-1 uppercase tracking-wider ${tierMeta.textClass}`}
                         >

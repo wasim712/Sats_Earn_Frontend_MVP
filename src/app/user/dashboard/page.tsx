@@ -525,7 +525,7 @@ export default function UserDashboardPage() {
   
   {/* ROW 2: Balance Data */}
   <div className="relative z-10 mt-auto">
-    <p className="font-bold text-blue-200/80 uppercase tracking-widest text-[11px] mb-2">Available Balance</p>
+    <p className="font-bold text-blue-200/80 uppercase tracking-widest text-[12px] mb-2">Available Balance</p>
     
     <div className="text-white mb-2 drop-shadow-md">
       {formatAvailableBalance(getAvailableSatsValue())}

@@ -58,7 +58,7 @@ export const HeroSection = () => {
             <div className="flex items-start gap-3 bg-green-500/10 border border-green-500/20 rounded-xl p-3 sm:p-4 mb-8 max-w-[500px] text-left">
               <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 mt-1.5 shadow-[0_0_8px_rgba(34,197,94,1)]" />
               <p className="text-sm text-gray-300 leading-relaxed">
-                Real people. Real sats. Zero bots. Every action on SatsEarn is performed by a verified human — never automated.
+                Real people. Real sats. Zero bots. Every action on SatsEarn is performed by a verified human .
               </p>
             </div>
 

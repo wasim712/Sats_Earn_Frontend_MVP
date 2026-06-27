@@ -63,7 +63,7 @@ export function TransactionTable({ transactions }: { transactions: AdminUserTran
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-400">
+        <thead className="text-[12px] uppercase tracking-widest text-gray-400">
           <tr>
             <th className="py-3 pr-4 text-left">Date</th>
             <th className="py-3 pr-4 text-left">Amount</th>
@@ -96,7 +96,7 @@ export function SubmissionTable({ detail }: { detail: AdminUserDetail }) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-400">
+        <thead className="text-[12px] uppercase tracking-widest text-gray-400">
           <tr>
             <th className="py-3 pr-4 text-left">Submitted</th>
             <th className="py-3 pr-4 text-left">Campaign</th>

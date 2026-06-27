@@ -117,7 +117,7 @@ export default function SupportPage() {
             <p className="text-gray-400 max-w-2xl mb-8 text-base sm:text-lg">
               We aim to be fast and genuinely helpful. These are our target response windows by request type.
             </p>
-            <div className="inline-flex font-mono text-[11px] tracking-[0.15em] uppercase text-gray-400 border border-dashed border-gray-600 rounded-md px-3 py-1.5 mb-8">
+            <div className="inline-flex font-mono text-[12px] tracking-[0.15em] uppercase text-gray-400 border border-dashed border-gray-600 rounded-md px-3 py-1.5 mb-8">
               Indicative targets · early-stage
             </div>
           </FadeUp>

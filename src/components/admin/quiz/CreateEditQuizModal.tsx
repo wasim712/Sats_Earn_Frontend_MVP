@@ -410,7 +410,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-7 gap-2 text-center text-[11px] font-bold uppercase tracking-wide text-gray-400">
+                      <div className="grid grid-cols-7 gap-2 text-center text-[12px] font-bold uppercase tracking-wide text-gray-400">
                         {CALENDAR_DAYS.map((day) => (
                           <div key={day} className="py-1">{day}</div>
                         ))}

@@ -456,7 +456,7 @@ export default function HowItWorksPage() {
                   { price: '$1M+', label: 'If', now: false }
                 ].map((col, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center">
-                    <div className={`font-mono text-[9px] sm:text-[11px] font-bold ${col.now ? 'text-green-500' : 'text-gray-300'}`}>{col.price}</div>
+                    <div className={`font-mono text-[9px] sm:text-[12px] font-bold ${col.now ? 'text-green-500' : 'text-gray-300'}`}>{col.price}</div>
                     <div className={`font-mono text-[8px] sm:text-[9px] uppercase tracking-wider ${col.now ? 'text-green-500' : 'text-gray-400'}`}>{col.label}</div>
                   </div>
                 ))}
@@ -470,7 +470,7 @@ export default function HowItWorksPage() {
               <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-5 text-sm text-gray-300 leading-relaxed mb-4">
                 <strong className="text-green-500">This is why starting early matters.</strong> The sats you earn per task are highest while Bitcoin&apos;s price is lower. As (and if) the price climbs, we reduce sat-denominated rewards to keep payouts sustainable — so the per-task sat rates available today are higher than what later phases will offer. That&apos;s a feature of the model, not a promise about how much you&apos;ll earn or where Bitcoin&apos;s price will go.
               </div>
-              <p className="text-center text-[11px] text-gray-400 italic max-w-2xl mx-auto">
+              <p className="text-center text-[12px] text-gray-400 italic max-w-2xl mx-auto">
                 The price levels shown are illustrative scenarios for explaining the reward model — they are not forecasts, targets, or financial advice. Bitcoin&apos;s price can fall as well as rise. Exact sat rewards vary by task, tier, and campaign, and are always set by the platform.
               </p>
             </div>

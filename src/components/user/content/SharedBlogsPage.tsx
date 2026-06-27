@@ -235,7 +235,7 @@ export function SharedBlogsPage({ apiPath, backHref, backLabel }: SharedBlogsPag
                       </div>
 
                       <div className="space-y-4 p-5">
-                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                        <div className="flex flex-wrap items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-gray-400">
                           <span className="inline-flex items-center gap-1.5">
                             <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                             {formatContentDate(blog.publishedAt || blog.createdAt)}
@@ -293,7 +293,7 @@ export function SharedBlogsPage({ apiPath, backHref, backLabel }: SharedBlogsPag
             <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
               {selectedBlog ? (
                 <>
-                  <div className="mb-6 flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                  <div className="mb-6 flex flex-wrap items-center gap-3 text-[12px] font-bold uppercase tracking-[0.18em] text-gray-400">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                       {formatContentDate(selectedBlog.publishedAt || selectedBlog.createdAt)}

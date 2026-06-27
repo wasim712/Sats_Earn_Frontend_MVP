@@ -590,7 +590,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       <input type="text" value={editForm.title} required minLength={5} onChange={e => setEditForm({...editForm, title: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-white text-xl font-bold px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 transition-all" placeholder="Campaign Title (Min 5 chars)" />
                       <textarea value={editForm.description} required minLength={10} onChange={e => setEditForm({...editForm, description: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-gray-300 px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 min-h-30 transition-all" placeholder="Description (Min 10 chars)" />
                       <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 space-y-3">
-                        <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest">Campaign Cover Image</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest">Campaign Cover Image</label>
                         <input
                           type="file"
                           accept="image/*"
@@ -706,7 +706,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                         {editForm.isNewUserOnly ? (
                           <div className="max-w-[220px]">
-                            <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-gray-400">New User Window (Days)</label>
+                            <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.18em] text-gray-400">New User Window (Days)</label>
                             <input
                               type="number"
                               min={1}
@@ -826,7 +826,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-5 items-start">
                         {/* Max Users */}
                         <div>
-                          <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                          <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                             Max Completions (Users)
                           </label>
                           <input 
@@ -845,7 +845,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                          <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                             2x Rewards Toggle
                           </label>
                           <div className="flex items-center justify-between p-4 bg-linear-to-r from-yellow-500/10 via-[#0a0a0a] to-[#0a0a0a] border border-yellow-500/20 rounded-2xl shadow-[0_0_0_1px_rgba(234,179,8,0.05)]">
@@ -879,7 +879,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-5 items-start">
                             <div>
-                              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                              <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                 Double Rewards Start Date
                               </label>
                               <DateTimePickerInput
@@ -891,7 +891,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                             {/* Double Rewards End */}
                             <div>
-                              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                              <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                 Double Rewards End Date
                               </label>
                               <DateTimePickerInput
@@ -975,7 +975,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         />
                       </div>
                       {taskForm.targetUrl && !/^https?:\/\/.+/.test(taskForm.targetUrl) && (
-                        <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
+                        <p className="text-[12px] text-red-400/70 mt-1.5 flex items-center gap-1">
                           <span>Ã¢Å¡Â </span> Must start with http:// or https://
                         </p>
                       )}
@@ -1098,7 +1098,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             />
                           </div>
                           {editingTaskForm.targetUrl && !/^https?:\/\/.+/.test(editingTaskForm.targetUrl) && (
-                            <p className="text-[11px] text-red-400/70 mt-1.5 flex items-center gap-1">
+                            <p className="text-[12px] text-red-400/70 mt-1.5 flex items-center gap-1">
                               <span>Ã¢Å¡Â </span> Must start with http:// or https://
                             </p>
                           )}

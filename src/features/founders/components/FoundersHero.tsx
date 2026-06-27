@@ -102,7 +102,7 @@ export const FoundersHero = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
           
           <div className="flex justify-between items-baseline mb-3">
-            <span className="font-mono text-[11px] sm:text-xs tracking-wider uppercase text-gray-300">Founding Members</span>
+            <span className="font-mono text-[12px] sm:text-xs tracking-wider uppercase text-gray-300">Founding Members</span>
             <span className="font-mono text-sm sm:text-base font-bold text-sats-orange-500">
               {spotsCount} / {totalSpots}
             </span>

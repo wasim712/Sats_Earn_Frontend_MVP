@@ -102,10 +102,10 @@ export const AboutRoadmap = () => {
                     className="flex flex-wrap items-center gap-3 sm:gap-4 p-5 sm:p-6 cursor-pointer"
                     onClick={() => setOpenIndex(isOpen ? -1 : index)}
                   >
-                    <span className="text-[11px] font-bold tracking-[0.15em] text-sats-orange-500 font-mono shrink-0">
+                    <span className="text-[12px] font-bold tracking-[0.15em] text-sats-orange-500 font-mono shrink-0">
                       {item.phase}
                     </span>
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-md tracking-wide ${item.statusColor}`}>
+                    <span className={`text-[12px] font-bold px-2.5 py-1 rounded-md tracking-wide ${item.statusColor}`}>
                       {item.status === 'Live' && '● '}
                       {item.status}
                     </span>
