@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 
 const faqs = [
   {
@@ -84,7 +85,7 @@ export const FAQ = () => {
                 </span>
                 <ChevronDown 
                   className={`w-5 h-5 shrink-0 transition-transform duration-300 ${
-                    openIndex === index ? 'text-sats-orange-500 rotate-180' : 'text-gray-500'
+                    openIndex === index ? 'text-sats-orange-500 rotate-180' : 'text-gray-400'
                   }`} 
                 />
               </button>
@@ -102,6 +103,16 @@ export const FAQ = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link 
+            href="/faq" 
+            className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-sats-black-950 border border-white/[0.05] text-sm sm:text-base text-gray-300 font-medium hover:text-white hover:border-sats-orange-500/30 hover:bg-sats-orange-500/5 hover:shadow-[0_0_15px_rgba(249,115,22,0.1)] transition-all duration-300"
+          >
+            Read all frequently asked questions
+            <ArrowRight className="w-4 h-4 text-sats-orange-500 group-hover:translate-x-1 transition-transform duration-300" />
+          </Link>
         </div>
       </div>
     </section>

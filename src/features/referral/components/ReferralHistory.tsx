@@ -231,10 +231,10 @@ export const ReferralHistory = () => {
                     {row.feat}
                   </div>
                   <div className="text-sm text-gray-400 font-mono sm:text-center">
-                    <span className="sm:hidden text-gray-500">On-chain: </span>{row.a}
+                    <span className="sm:hidden text-gray-400">On-chain: </span>{row.a}
                   </div>
                   <div className="text-sm font-bold text-green-500 font-mono sm:text-center">
-                    <span className="sm:hidden text-gray-500 font-normal">⚡ Lightning: </span>{row.b}
+                    <span className="sm:hidden text-gray-400 font-normal">⚡ Lightning: </span>{row.b}
                   </div>
                 </div>
               ))}

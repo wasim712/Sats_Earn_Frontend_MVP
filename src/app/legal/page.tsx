@@ -84,7 +84,7 @@ export default function LegalPage() {
         {/* Breadcrumbs */}
         <div className="flex justify-start mb-8">
           <FadeUp delay={0.05}>
-            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-xs text-gray-500 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
+            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-xs text-gray-400 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
               <Link href="/" className="text-gray-400 hover:text-sats-orange-500 transition-colors">Home</Link>
               <span className="text-gray-600">/</span>
               <span className="text-sats-orange-500 font-bold">Legal</span>
@@ -109,7 +109,7 @@ export default function LegalPage() {
             <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed mb-6">
               SatsEarn is committed to operating openly and honestly. All our policies are written in plain language so you understand exactly how the platform works, what we collect, and what your rights are.
             </p>
-            <div className="font-mono text-xs sm:text-sm text-gray-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <div className="font-mono text-xs sm:text-sm text-gray-400 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
               <span>Effective Date: <strong className="text-sats-orange-500 font-bold">March 1, 2026</strong></span>
               <span className="hidden sm:inline">•</span>
               <span>Operated in India</span>

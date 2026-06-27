@@ -14,7 +14,7 @@ export function RouteWrapper({ children }: { children: React.ReactNode }) {
     <>
       {isHome && (
          <header>
-            <div className="p-5 text-center  text-gray-500">
+            <div className="p-5 text-center  text-gray-400">
             </div>
          </header>
       )}

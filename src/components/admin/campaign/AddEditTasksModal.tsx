@@ -161,7 +161,7 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
         <div className="p-6 border-b border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between shrink-0 rounded-t-3xl">
           <div>
             <h2 className="text-xl font-black text-white">{isEditMode ? 'Edit Task' : 'Add New Task'}</h2>
-            <p className="text-xs text-gray-500 mt-1">Configure action requirements and overrides.</p>
+            <p className="text-xs text-gray-400 mt-1">Configure action requirements and overrides.</p>
           </div>
           {/* ONLY WAY TO CLOSE */}
           <button onClick={onClose} disabled={isSaving} className="p-2 rounded-xl bg-[#111] hover:bg-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-50">
@@ -181,17 +181,17 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
           {/* Basic Details */}
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Task Title <span className="text-sats-orange-500">*</span></label>
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Task Title <span className="text-sats-orange-500">*</span></label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required minLength={3} className={inputCls} placeholder="e.g. Retweet our pinned post" />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Description (Optional)</label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Description (Optional)</label>
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${inputCls} min-h-[100px] resize-none`} placeholder="Specific instructions..." />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Target URL (Optional)</label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Target URL (Optional)</label>
                 <input type="url" value={targetUrl} onChange={(e) => setTargetUrl(e.target.value)} className={inputCls} placeholder="https://..." />
                 
                 <div className="mt-4">
@@ -211,7 +211,7 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
             <div className="flex items-center justify-between mb-4 bg-[#0a0a0a] border border-[#1a1a1a] p-4 rounded-2xl">
               <div>
                 <p className="text-sm font-bold text-white flex items-center gap-1.5"><Coins className="w-4 h-4 text-yellow-500" /> Economic Overrides</p>
-                <p className="text-xs text-gray-500 mt-0.5">Override the parent campaign's default payouts for this specific task.</p>
+                <p className="text-xs text-gray-400 mt-0.5">Override the parent campaign's default payouts for this specific task.</p>
               </div>
               <button type="button" onClick={() => setHasOverrides(!hasOverrides)} className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none ${hasOverrides ? 'bg-yellow-500' : 'bg-[#111] border border-[#2a2a2a]'}`}>
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${hasOverrides ? 'translate-x-[22px]' : 'translate-x-1'}`} />
@@ -221,19 +221,19 @@ export default function AddEditTaskModal({ isOpen, onClose, campaignId, task, on
             {hasOverrides && (
               <div className="bg-[#0a0a0a] border border-[#1a1a1a] p-5 rounded-2xl space-y-6 animate-in fade-in slide-in-from-top-2">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Base Reward Override (Sats) <span className="text-sats-orange-500">*</span></label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Base Reward Override (Sats) <span className="text-sats-orange-500">*</span></label>
                   <input type="text" inputMode="numeric" pattern="[0-9]*" value={baseReward || ''} onChange={(e) => setBaseReward(parseWholeNumber(e.target.value))} className={inputCls} placeholder="0" />
                 </div>
                 
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Tier Matrix Override</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Tier Matrix Override</label>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-3">
-                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                      <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">Free Tiers</div>
                       <div className="grid grid-cols-1 gap-3">
                         {FREE_TIERS.map((tier) => (
                           <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#050505] p-2.5 flex items-center justify-between">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider truncate mr-2">{tier}</label>
                             <input
                               type="text"
                               inputMode="numeric"

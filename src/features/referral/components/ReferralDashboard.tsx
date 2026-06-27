@@ -34,7 +34,7 @@ export const ReferralDashboard = () => {
               <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
               <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
               <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-              <div className="ml-3 font-mono text-[11px] sm:text-xs text-gray-500 font-bold tracking-wide">
+              <div className="ml-3 font-mono text-[11px] sm:text-xs text-gray-400 font-bold tracking-wide">
                 satsearn.app / user / referrals
               </div>
             </div>
@@ -87,7 +87,7 @@ export const ReferralDashboard = () => {
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 italic mt-6 text-center">
+              <p className="text-xs text-gray-400 italic mt-6 text-center">
                 Illustrative preview. Commission moves from Maturing → Available as each entry clears its 15-day lock.
               </p>
             </div>

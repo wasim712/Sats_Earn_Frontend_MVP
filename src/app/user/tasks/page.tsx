@@ -297,7 +297,7 @@ export default function TasksPage() {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="relative w-full xl:max-w-md group">
             <div className="pointer-events-none absolute inset-y-0 left-0 pl-4 flex items-center">
-              <Search className="h-5 w-5 text-gray-500 transition-colors group-focus-within:text-sats-orange-500" />
+              <Search className="h-5 w-5 text-gray-400 transition-colors group-focus-within:text-sats-orange-500" />
             </div>
             <input
               type="text"
@@ -378,7 +378,7 @@ export default function TasksPage() {
           ) : !error && (
             <div className="flex flex-col items-center justify-center rounded-[28px] border border-[#1a1a1a] bg-black px-4 py-24 text-center shadow-lg">
               <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1a1a] bg-sats-black-950 shadow-inner">
-                <CheckCircle2 className="h-8 w-8 text-gray-500" />
+                <CheckCircle2 className="h-8 w-8 text-gray-400" />
               </div>
               <h3 className="mb-2 text-2xl font-black text-white">You are all caught up!</h3>
               <p className="font-medium text-gray-400">There are no new tasks matching your criteria right now.</p>
@@ -434,7 +434,7 @@ function SummaryCard({
     <div className={`rounded-2xl border px-4 py-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${style.card}`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase ] text-gray-500">{label}</p>
+          <p className="text-[10px] font-black uppercase ] text-gray-400">{label}</p>
           <p className={`mt-2 text-2xl font-black ${style.value}`}>{value}</p>
         </div>
         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-[0_10px_25px_rgba(0,0,0,0.2)] ${style.badge}`}>
@@ -614,10 +614,10 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
           <div className="mt-auto pt-6 space-y-5">
             <div className="space-y-3">
               <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.18em]">
-                <span className={status.isCompleted ? 'text-green-400' : status.isFull ? 'text-red-400' : 'text-gray-500'}>
+                <span className={status.isCompleted ? 'text-green-400' : status.isFull ? 'text-red-400' : 'text-gray-400'}>
                   {status.progressText}
                 </span>
-                <span className="text-gray-500">{status.progressPercent.toFixed(0)}%</span>
+                <span className="text-gray-400">{status.progressPercent.toFixed(0)}%</span>
               </div>
               <div className={`h-2.5 overflow-hidden rounded-full border ${isPremiumOnly ? 'border-violet-400/12 bg-[#120d19]' : 'border-[#1a1a1a] bg-[#111]'}`}>
                 <div
@@ -671,7 +671,7 @@ function MetaPill({
       {iconSrc ? (
         <Image src={iconSrc} alt={label} width={14} height={14} className="h-3.5 w-3.5" />
       ) : Icon ? (
-        <Icon className={`h-3.5 w-3.5 ${premium ? 'text-violet-300' : 'text-gray-500'}`} />
+        <Icon className={`h-3.5 w-3.5 ${premium ? 'text-violet-300' : 'text-gray-400'}`} />
       ) : null}
       <span>{label}</span>
     </div>
@@ -681,7 +681,7 @@ function MetaPill({
 function CompactStat({ label, value, premium = false }: { label: string; value: string; premium?: boolean }) {
   return (
     <div className={`rounded-2xl p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${premium ? 'border border-violet-400/14 bg-[linear-gradient(180deg,#110c18,#09070d)]' : 'border border-[#1a1a1a] bg-[#050505]'}`}>
-      <p className={`text-[10px] font-black uppercase tracking-[0.18em] ${premium ? 'text-violet-300/70' : 'text-gray-500'}`}>{label}</p>
+      <p className={`text-[10px] font-black uppercase tracking-[0.18em] ${premium ? 'text-violet-300/70' : 'text-gray-400'}`}>{label}</p>
       <p className={`mt-2 line-clamp-1 text-sm font-bold ${premium ? 'text-violet-50' : 'text-white'}`}>{value}</p>
     </div>
   );

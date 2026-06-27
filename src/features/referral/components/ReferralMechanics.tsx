@@ -132,15 +132,15 @@ export const ReferralMechanics = () => {
               <div className="flex items-center gap-2 text-[13px] text-gray-300">
                 <span className="text-sats-orange-500 font-mono font-bold">Earned</span>
               </div>
-              <div className="text-gray-500">→</div>
+              <div className="text-gray-400">→</div>
               <div className="flex items-center gap-2 text-[13px] text-gray-300">
                 <span className="text-sats-orange-500 font-mono font-bold">Pending</span> 24h verify
               </div>
-              <div className="text-gray-500">→</div>
+              <div className="text-gray-400">→</div>
               <div className="flex items-center gap-2 text-[13px] text-gray-300">
                 <span className="text-sats-orange-500 font-mono font-bold">Maturing</span> 15-day lock
               </div>
-              <div className="text-gray-500">→</div>
+              <div className="text-gray-400">→</div>
               <div className="flex items-center gap-2 text-[13px] text-gray-300">
                 <span className="text-sats-orange-500 font-mono font-bold">Available</span> to withdraw
               </div>

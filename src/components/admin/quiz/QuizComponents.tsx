@@ -100,13 +100,13 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
           {/* Middle: Grid Stats */}
           <div className="grid grid-cols-2 gap-y-5 gap-x-4 mb-auto">
             <div>
-              <p className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
+              <p className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
                 <Calendar className="w-3.5 h-3.5" /> Date
               </p>
               <p className="text-gray-300 text-sm font-medium">{formattedDate}</p>
             </div>
             <div>
-              <p className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
+              <p className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
                 <Zap className="w-3.5 h-3.5" /> Reward
               </p>
               <p className="text-sm font-bold tracking-tight flex items-center gap-1.5 truncate">
@@ -120,13 +120,13 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
               </p>
             </div>
             <div>
-              <p className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
+              <p className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
                 <LayoutGrid className="w-3.5 h-3.5" /> Questions
               </p>
               <p className="text-gray-300 text-sm font-medium">{quiz._count?.questions || 0}</p>
             </div>
             <div>
-              <p className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">
+              <p className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">
                 <Users className="w-3.5 h-3.5" /> Plays
               </p>
               <p className="text-gray-300 text-sm font-medium">{quiz._count?.attempts || 0}</p>
@@ -138,7 +138,7 @@ export function QuizCard({ quiz, onToggle, onDelete }: QuizCardProps) {
             
             {/* Left: Active/Pause Slider */}
             <div className="flex items-center gap-3" onClick={(e) => e.preventDefault()}>
-              <span className={`text-xs font-bold transition-colors ${quiz.isActive ? 'text-green-400' : 'text-gray-500'}`}>
+              <span className={`text-xs font-bold transition-colors ${quiz.isActive ? 'text-green-400' : 'text-gray-400'}`}>
                 {isToggling ? (quiz.isActive ? 'Pausing...' : 'Going live...') : quiz.isActive ? 'Live' : 'Paused'}
               </span>
               <button
@@ -269,7 +269,7 @@ export function QuestionCard({ question, index }: QuestionCardProps) {
                 >
                   <span
                     className={`flex items-center justify-center w-6 h-6 rounded-md font-black text-xs shrink-0 ${
-                      isCorrect ? 'bg-green-500 text-black' : 'bg-[#222] text-gray-500'
+                      isCorrect ? 'bg-green-500 text-black' : 'bg-[#222] text-gray-400'
                     }`}
                   >
                     {['A', 'B', 'C', 'D'][i]}

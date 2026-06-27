@@ -65,11 +65,11 @@ export const ReferralPreviewSection = () => {
                 <span className="text-xs text-gray-300">Base 10 sats × 30% = <strong className="text-sats-orange-500 font-mono">3 sats</strong></span>
               </div>
               <div className="absolute top-1/2 left-0 right-0 h-px bg-white/10 -translate-y-1/2">
-                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-sats-black-950 px-2 text-[10px] text-gray-500 uppercase tracking-widest font-bold">vs</span>
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-sats-black-950 px-2 text-[10px] text-gray-400 uppercase tracking-widest font-bold">vs</span>
               </div>
               <div className="flex justify-between items-center mt-3">
                 <span className="text-xs font-bold text-gray-400 font-mono">Basic · 5%</span>
-                <span className="text-xs text-gray-500">Base 10 sats × 5% = <strong className="text-gray-400 font-mono">0.5 sats</strong></span>
+                <span className="text-xs text-gray-400">Base 10 sats × 5% = <strong className="text-gray-400 font-mono">0.5 sats</strong></span>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export const ReferralPreviewSection = () => {
               <p className="text-xs font-bold font-mono tracking-widest text-gray-400 uppercase">Fixed 5% · Lifetime caps apply</p>
             </div>
             
-            <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-sats-black-950 p-4 border-b border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest font-mono">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-sats-black-950 p-4 border-b border-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">
               <span>Tier</span>
               <span>Rate</span>
               <span>Max Refs</span>
@@ -111,7 +111,7 @@ export const ReferralPreviewSection = () => {
               ))}
             </div>
             
-            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-500 border-t border-white/5 text-center leading-relaxed">
+            <div className="p-4 bg-sats-black-950/50 text-[11px] text-gray-400 border-t border-white/5 text-center leading-relaxed">
               Caps are cumulative across all free tiers. Commission only paid on active referrals. Caps lift completely on any paid tier.
             </div>
           </FadeUp>
@@ -128,7 +128,7 @@ export const ReferralPreviewSection = () => {
               <p className="text-xs font-bold font-mono tracking-widest text-sats-orange-500 uppercase">Higher rates · Zero caps · Unlimited</p>
             </div>
             
-            <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-sats-black-950 p-4 border-b border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest font-mono">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-sats-black-950 p-4 border-b border-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">
               <span>Tier</span>
               <span>Rate</span>
               <span>Refs</span>

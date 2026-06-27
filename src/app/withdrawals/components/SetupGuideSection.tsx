@@ -60,7 +60,7 @@ export function SetupGuideSection() {
       </FadeUp>
       
       <FadeUp delay={0.5}>
-        <p className="text-[11px] sm:text-xs text-gray-500 italic text-center max-w-3xl mx-auto leading-relaxed">
+        <p className="text-[11px] sm:text-xs text-gray-400 italic text-center max-w-3xl mx-auto leading-relaxed">
           SatsEarn is not affiliated with any wallet provider. Wallet names are listed for convenience — always download wallets from official sources and keep your recovery phrase private.
         </p>
       </FadeUp>

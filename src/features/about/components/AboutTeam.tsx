@@ -44,7 +44,7 @@ export const AboutTeam = () => {
                 
                 <div className="text-base sm:text-lg font-bold text-white mb-1">{member.name}</div>
                 <div className="text-xs text-sats-orange-500 font-bold tracking-wide mb-1.5">{member.role}</div>
-                <div className="text-[13px] text-gray-500 leading-relaxed">{member.sub}</div>
+                <div className="text-[13px] text-gray-400 leading-relaxed">{member.sub}</div>
               </div>
             ))}
           </div>

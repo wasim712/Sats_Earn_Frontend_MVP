@@ -51,7 +51,7 @@ export function PremiumRequestCard({
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Admin Notes</label>
+        <label className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Admin Notes</label>
         <textarea
           value={note}
           onChange={(event) => onNoteChange(event.target.value)}
@@ -101,7 +101,7 @@ function InfoCard({ label, value, icon }: { label: string; value: string; icon: 
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
       <div className="flex items-center gap-2 mb-1">
         {icon}
-        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">{label}</p>
+        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">{label}</p>
       </div>
       <p className="text-sm text-white font-semibold break-all">{value}</p>
     </div>

@@ -65,7 +65,7 @@ export default function UserSubmissionsPage() {
                       )}
                     </div>
                     <h3 className="text-white font-bold text-lg">{submission.taskTitle}</h3>
-                    <p className="text-sm text-gray-500 font-medium mt-1">
+                    <p className="text-sm text-gray-400 font-medium mt-1">
                       {submission.isStandalone ? 'Standalone Task' : submission.campaignTitle}
                     </p>
                     {submission.status === 'PENDING_24H' && (
@@ -101,7 +101,7 @@ export default function UserSubmissionsPage() {
           })}
         </div>
       ) : (
-        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-10 text-center text-gray-500 text-sm font-medium">
+        <div className="bg-black border border-[#1a1a1a] rounded-[28px] p-10 text-center text-gray-400 text-sm font-medium">
           No submissions found yet.
         </div>
       )}

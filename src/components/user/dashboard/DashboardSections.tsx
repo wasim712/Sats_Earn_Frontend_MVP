@@ -85,11 +85,11 @@ export function
               <Flame className="h-5 w-5 text-sats-orange-500" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Current Streak</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Current Streak</p>
               <h3 className="mt-0.5 text-2xl font-black tracking-tight text-white">
                 {currentStreak} <span className="text-lg text-gray-400">Days</span>
               </h3>
-              <p className="mt-1 text-xs font-medium text-gray-500">
+              <p className="mt-1 text-xs font-medium text-gray-400">
                 {nextStreakMilestone
                   ? `${daysRemainingToNextMilestone} day${daysRemainingToNextMilestone === 1 ? '' : 's'} to next streak reward`
                   : 'All streak rewards already unlocked'}
@@ -99,31 +99,31 @@ export function
 
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 lg:w-auto lg:min-w-[420px]">
             <div className="rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-left">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Next Milestone</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Next Milestone</p>
               <p className="mt-1 text-sm font-black text-sats-orange-500">
                 {nextStreakMilestone ? `${nextStreakMilestone} Days • +${nextStreakRewardSats.toLocaleString()} sats` : 'All Rewards Unlocked'}
               </p>
             </div>
             <div className="rounded-xl border border-[#1a1a1a] bg-sats-black-950 px-4 py-3 text-left">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Claimed Rewards</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Claimed Rewards</p>
               <p className="mt-1 text-sm font-black text-emerald-400">{totalClaimedMilestones}/{totalStreakMilestones}</p>
             </div>
             <div className="rounded-xl border border-[#1a1a1a] bg-[#050505] px-4 py-3 text-left">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Current Run</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Current Run</p>
               <p className="mt-1 text-sm font-black text-blue-400">{currentStreak} Day{currentStreak === 1 ? '' : 's'}</p>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 mb-6">
-          <div className="mb-3 flex items-center justify-between gap-4 text-[11px] font-semibold text-gray-500">
+          <div className="mb-3 flex items-center justify-between gap-4 text-[11px] font-semibold text-gray-400">
             <span>Progress to next unclaimed reward</span>
             <span className="text-sats-orange-400">{Math.round(streakProgressPercent)}%</span>
           </div>
           <div className="h-2.5 w-full overflow-hidden rounded-full border border-[#1f1f1f] bg-[#121212]">
             <div className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-amber-400 to-yellow-300 transition-all duration-700" style={{ width: `${streakProgressPercent}%` }} />
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-400">
             <span>{lastClaimedStreakMilestone > 0 ? `${lastClaimedStreakMilestone} days last claimed` : 'Start'}</span>
             <span>{nextStreakMilestone ? `${nextStreakMilestone} days target` : 'Completed'}</span>
           </div>
@@ -180,7 +180,7 @@ export function
                     </div>
 
                     <div className="text-center">
-                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : isPremiumLocked ? 'text-yellow-300' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-sky-500' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-black transition-colors ${achieved ? 'text-emerald-400' : isPremiumLocked ? 'text-yellow-300' : reachedInCurrentRun ? 'text-blue-400' : isNext ? 'text-sky-500' : 'text-gray-400'}`}>
                         {milestone.days} Days
                       </p>
                       <p className={`mt-0.5 text-[10px] font-bold ${achieved || reachedInCurrentRun || isNext || isPremiumLocked ? 'text-gray-400' : 'text-[#333]'}`}>
@@ -205,13 +205,13 @@ export function
         <div className="mt-8 grid grid-cols-1 gap-3 border-t border-[#1a1a1a] pt-4 md:grid-cols-2">
           <div className="flex items-start gap-2">
             <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sats-orange-500/50" />
-            <p className="text-xs font-medium text-gray-500">
+            <p className="text-xs font-medium text-gray-400">
               Complete at least <strong className="text-gray-300">1 valid task or quiz</strong> each day to keep your streak moving.
             </p>
           </div>
           <div className="flex items-start gap-2">
             <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400/50" />
-            <p className="text-xs font-medium text-gray-500">
+            <p className="text-xs font-medium text-gray-400">
               Streak milestone rewards are <strong className="text-gray-300">awarded automatically once</strong>, so already claimed rewards never become claimable again.
             </p>
           </div>
@@ -283,7 +283,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
               })
             ) : (
               <div className="rounded-[16px] border border-dashed border-[#2a2a2a] bg-[#050505] px-4 py-10 text-center">
-                <p className="text-sm font-medium text-gray-500">No submissions yet. Complete tasks to see them here.</p>
+                <p className="text-sm font-medium text-gray-400">No submissions yet. Complete tasks to see them here.</p>
               </div>
             )}
           </div>
@@ -316,7 +316,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                   ? 'text-slate-300'
                   : entry.rank === 3
                     ? 'text-amber-600'
-                    : 'text-gray-500';
+                    : 'text-gray-400';
 
               const displayName = entry.fullName?.trim() || entry.username || 'Anonymous';
               const initials = displayName.substring(0, 2).toUpperCase();
@@ -325,14 +325,14 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                 <div key={entry.userId} className="flex cursor-default items-center justify-between rounded-[16px] border border-[#151515] bg-[#080808] px-3 py-3 transition-colors hover:border-[#222] hover:bg-[#0d0d0d]">
                   <div className="flex items-center gap-3">
                     <div className="flex w-6 shrink-0 items-center justify-center text-[12px] font-black">
-                      {isTopThree ? <Medal className={`h-4 w-4 ${medalTone}`} /> : <span className="text-gray-500">{entry.rank}</span>}
+                      {isTopThree ? <Medal className={`h-4 w-4 ${medalTone}`} /> : <span className="text-gray-400">{entry.rank}</span>}
                     </div>
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1d1d1d] bg-[#111] text-[10px] font-bold text-white">
                       {initials}
                     </div>
                     <div className="min-w-0">
                       <p className="max-w-[140px] truncate text-sm font-semibold leading-tight text-white">{displayName}</p>
-                      <p className="max-w-[140px] truncate font-mono text-[10px] text-gray-500">@{entry.username}</p>
+                      <p className="max-w-[140px] truncate font-mono text-[10px] text-gray-400">@{entry.username}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -341,7 +341,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                 </div>
               );
             }) : (
-              <div className="rounded-[16px] border border-dashed border-[#2a2a2a] bg-[#080808] px-4 py-8 text-center text-sm text-gray-500">
+              <div className="rounded-[16px] border border-dashed border-[#2a2a2a] bg-[#080808] px-4 py-8 text-center text-sm text-gray-400">
                 No monthly leaderboard data yet.
               </div>
             )}

@@ -132,7 +132,7 @@ const handleMarkAsRead = async (id: string) => {
             <div className="p-12 text-center">
               <Bell className="w-12 h-12 text-gray-600 mx-auto mb-4 opacity-50" />
               <p className="text-lg font-bold text-white">All caught up!</p>
-              <p className="text-sm text-gray-500 mt-1">There are no system alerts at this time.</p>
+              <p className="text-sm text-gray-400 mt-1">There are no system alerts at this time.</p>
             </div>
           ) : (
             <div className="divide-y divide-[#141414]">
@@ -161,11 +161,11 @@ const handleMarkAsRead = async (id: string) => {
                         <h3 className={`text-base truncate ${notification.isRead ? 'text-gray-300 font-semibold' : 'text-white font-black'}`}>
                           {notification.title}
                         </h3>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest shrink-0">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0">
                           {new Date(notification.createdAt).toLocaleDateString()} • {new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <p className={`text-sm leading-relaxed ${notification.isRead ? 'text-gray-500' : 'text-gray-300'}`}>
+                      <p className={`text-sm leading-relaxed ${notification.isRead ? 'text-gray-400' : 'text-gray-300'}`}>
                         {notification.message}
                       </p>
                     </div>

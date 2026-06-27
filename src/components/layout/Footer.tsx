@@ -188,7 +188,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="text-gray-500 transition-colors duration-300 transform"
+                className="text-gray-400 transition-colors duration-300 transform"
               >
                 {social.icon}
               </a>

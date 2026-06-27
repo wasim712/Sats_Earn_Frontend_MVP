@@ -345,7 +345,7 @@ export const UserSidebar = ({
           {!isCollapsed && (
             <button
               onClick={onToggleCollapse}
-              className="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-sats-black-800 hover:text-white lg:flex"
+              className="hidden rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-sats-black-800 hover:text-white lg:flex"
             >
               <PanelLeftClose className="h-5 w-5" />
             </button>
@@ -353,7 +353,7 @@ export const UserSidebar = ({
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-gray-500 transition-colors hover:bg-sats-black-900 hover:text-white lg:hidden"
+            className="rounded-full p-2 text-gray-400 transition-colors hover:bg-sats-black-900 hover:text-white lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>

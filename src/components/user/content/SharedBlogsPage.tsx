@@ -177,13 +177,13 @@ export function SharedBlogsPage({ apiPath, backHref, backLabel }: SharedBlogsPag
 
           <div className="w-full sm:max-w-md xl:max-w-sm mt-2 xl:mt-0">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search blogs, topics, or guides..."
-                className="h-14 w-full rounded-2xl border border-[#1a1a1a] bg-[#050505] pl-12 pr-4 text-sm font-semibold text-white placeholder:text-gray-500 outline-none transition hover:border-[#2a2a2a] focus:border-sats-orange-500/50 focus:bg-[#0a0a0a] shadow-sm"
+                className="h-14 w-full rounded-2xl border border-[#1a1a1a] bg-[#050505] pl-12 pr-4 text-sm font-semibold text-white placeholder:text-gray-400 outline-none transition hover:border-[#2a2a2a] focus:border-sats-orange-500/50 focus:bg-[#0a0a0a] shadow-sm"
               />
             </div>
           </div>
@@ -235,7 +235,7 @@ export function SharedBlogsPage({ apiPath, backHref, backLabel }: SharedBlogsPag
                       </div>
 
                       <div className="space-y-4 p-5">
-                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
                           <span className="inline-flex items-center gap-1.5">
                             <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                             {formatContentDate(blog.publishedAt || blog.createdAt)}
@@ -293,7 +293,7 @@ export function SharedBlogsPage({ apiPath, backHref, backLabel }: SharedBlogsPag
             <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
               {selectedBlog ? (
                 <>
-                  <div className="mb-6 flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                  <div className="mb-6 flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                       {formatContentDate(selectedBlog.publishedAt || selectedBlog.createdAt)}

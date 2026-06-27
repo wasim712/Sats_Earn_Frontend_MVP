@@ -122,23 +122,23 @@ function PremiumPriceCard({
 
       <div className="relative z-10 flex items-start justify-between gap-3 pb-2">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-500">{label}</div>
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-400">{label}</div>
           {showUnavailable ? (
             <div className="mt-2 text-xl font-black text-gray-600">Unavailable</div>
           ) : showSatsPricing ? (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newSats ? formatSats(newSats) : 'Unavailable'}</div>
-              {/* {label.toLowerCase().includes('year') && oldValue ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldValue}</div> : null} */}
+              {/* {label.toLowerCase().includes('year') && oldValue ? <div className="text-xs font-bold text-gray-400 line-through decoration-gray-500/50">{oldValue}</div> : null} */}
             </div>
           ) : (
             <div className="mt-1 flex items-baseline gap-2">
               <div className={`text-2xl font-black tracking-tight ${accentClass}`}>{newUsd}</div>
-              {/* {label.toLowerCase().includes('year') && oldUsdYearly ? <div className="text-xs font-bold text-gray-500 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null} */}
+              {/* {label.toLowerCase().includes('year') && oldUsdYearly ? <div className="text-xs font-bold text-gray-400 line-through decoration-gray-500/50">{oldUsdYearly}</div> : null} */}
             </div>
           )}
         </div>
 
-        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.2em] border ${eligible && showSatsPricing ? 'border-green-500/20 bg-green-500/10 text-green-400' : 'border-white/10 bg-black/40 text-gray-500'}`}>
+        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.2em] border ${eligible && showSatsPricing ? 'border-green-500/20 bg-green-500/10 text-green-400' : 'border-white/10 bg-black/40 text-gray-400'}`}>
           {showSatsPricing ? (eligible ? 'Ready' : 'Locked') : 'Offer'}
         </span>
       </div>

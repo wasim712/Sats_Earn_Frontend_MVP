@@ -20,7 +20,7 @@ import { validateEmailSecurity } from '@/lib/validators';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 const RuleItem = ({ met, text }: { met: boolean, text: string }) => (
-  <div className={`flex items-center space-x-2 text-[11px] transition-colors duration-300 ${met ? 'text-green-400' : 'text-gray-500'}`}>
+  <div className={`flex items-center space-x-2 text-[11px] transition-colors duration-300 ${met ? 'text-green-400' : 'text-gray-400'}`}>
     {met ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
     <span>{text}</span>
   </div>
@@ -306,7 +306,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
 
       <div className={`w-full transition-all duration-500 ease-in-out ${step === 1 ? 'max-w-[1100px]' : 'max-w-[500px]'} bg-black/90 sm:bg-black/80 border border-[#1a1a1a] rounded-3xl p-6 sm:p-10 shadow-[0_0_50px_rgba(238,139,18,0.1)] relative font-sans backdrop-blur-none sm:backdrop-blur-xl`}>
         
-        <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-sats-orange-400 transition-colors">
+        <Link href="/" className="absolute top-6 right-6 text-gray-400 hover:text-sats-orange-400 transition-colors">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -349,7 +349,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Full Name <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <User className="h-4 w-4 text-gray-500" />
+                        <User className="h-4 w-4 text-gray-400" />
                       </div>
                       <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} maxLength={20} placeholder="Enter your full name" required className="w-full bg-[#050505] border border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-1 focus:ring-sats-orange-500 rounded-xl py-3 pl-10 pr-4 outline-none transition-all text-white placeholder-gray-600" />
                     </div>
@@ -362,7 +362,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <AtSign className="h-4 w-4 text-gray-500" />
+                        <AtSign className="h-4 w-4 text-gray-400" />
                       </div>
                       <input type="text" name="username" value={formData.username} onChange={handleChange} maxLength={10} max={10} minLength={3} min={3} placeholder="Choose a username" required className={`w-full bg-sats-black-950 border ${usernameStatus === 'taken' ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500' : 'border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-sats-orange-500'} focus:ring-1 rounded-xl py-3 pl-10 pr-10 outline-none transition-all text-white placeholder-gray-600`} />
                       
@@ -378,7 +378,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Email Address <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Mail className="h-4 w-4 text-gray-500" />
+                        <Mail className="h-4 w-4 text-gray-400" />
                       </div>
                       <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={() => { void handleEmailBlur(); }} placeholder="Enter your email" required className={`w-full bg-[#050505] border ${emailError ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500' : 'border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-sats-orange-500'} focus:ring-1 rounded-xl py-3 pl-10 pr-10 outline-none transition-all text-white placeholder-gray-600`} />
                       <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -405,7 +405,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                   <div className="lg:min-h-[92px]">
                       <label className="block text-sm font-bold mb-1.5 text-gray-200">
                         Date of Birth <span className="text-red-500">*</span>
-                        <span className="text-[10px] text-gray-500 font-normal ml-1">(DD/MM/YYYY)</span>
+                        <span className="text-[10px] text-gray-400 font-normal ml-1">(DD/MM/YYYY)</span>
                       </label>
                       <DatePickerInput
                         value={formData.dateOfBirth}
@@ -422,14 +422,14 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Country <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <button type="button" onClick={() => setIsCountryOpen(!isCountryOpen)} className={`w-full bg-sats-black-950 border ${isCountryOpen ? 'border-sats-orange-500 ring-1 ring-sats-orange-500' : 'border-[#1a1a1a]'} rounded-xl py-3 pl-10 pr-10 text-left outline-none transition-all ${formData.country ? 'text-white' : 'text-gray-600'}`}>
-                        <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-500" />
+                        <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
                         {formData.country || "Select country"}
-                        <ChevronDown className={`absolute right-3.5 top-3.5 h-4 w-4 text-gray-500 transition-transform duration-200 ${isCountryOpen ? 'rotate-180 text-sats-orange-500' : ''}`} />
+                        <ChevronDown className={`absolute right-3.5 top-3.5 h-4 w-4 text-gray-400 transition-transform duration-200 ${isCountryOpen ? 'rotate-180 text-sats-orange-500' : ''}`} />
                       </button>
                       {isCountryOpen && (
                         <div className="absolute w-full mt-2 bg-sats-black-950 border border-[#1a1a1a] rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50">
                           <div className="p-2 border-b border-[#1a1a1a] flex items-center bg-black/40">
-                            <Search className="w-4 h-4 text-gray-500 ml-2" />
+                            <Search className="w-4 h-4 text-gray-400 ml-2" />
                             <input type="text" placeholder="Search countries..." value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)} className="w-full bg-transparent p-2 outline-none text-sm text-white" autoFocus />
                           </div>
                           <div className="max-h-48 overflow-y-auto custom-scrollbar">
@@ -438,7 +438,7 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                                 {c}
                               </div>
                             )) : (
-                              <div className="p-4 text-center text-sm text-gray-500">No countries found</div>
+                              <div className="p-4 text-center text-sm text-gray-400">No countries found</div>
                             )}
                           </div>
                         </div>
@@ -447,10 +447,10 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                   </div>
 
                   <div className="relative z-0">
-                    <label className="block text-sm font-bold mb-1.5 text-gray-200">Referral Code <span className="text-gray-500 font-normal ml-1">(Optional)</span></label>
+                    <label className="block text-sm font-bold mb-1.5 text-gray-200">Referral Code <span className="text-gray-400 font-normal ml-1">(Optional)</span></label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Gift className="h-4 w-4 text-gray-500" />
+                        <Gift className="h-4 w-4 text-gray-400" />
                       </div>
                       <input type="text" name="referralCode" value={formData.referralCode} onChange={handleChange} maxLength={8} placeholder="PROMO2026" className="w-full bg-sats-black-950 border border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-1 focus:ring-sats-orange-500 rounded-xl py-3 pl-10 pr-4 outline-none transition-all text-white placeholder-gray-600 uppercase" />
                     </div>
@@ -465,10 +465,10 @@ const handleStep1Submit = async (e: React.FormEvent) => {
                     <label className="block text-sm font-bold mb-1.5 text-gray-200">Password <span className="text-red-500">*</span></label>
                     <div className="relative mb-3">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Lock className="h-4 w-4 text-gray-500" />
+                        <Lock className="h-4 w-4 text-gray-400" />
                       </div>
                       <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} maxLength={20} minLength={8} min={8} placeholder="Create strong password" required className="w-full bg-sats-black-950 border border-[#1a1a1a] focus:border-sats-orange-500 focus:ring-1 focus:ring-sats-orange-500 rounded-xl py-3 pl-10 pr-12 outline-none transition-all text-white placeholder-gray-600" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white transition-colors cursor-pointer">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors cursor-pointer">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>

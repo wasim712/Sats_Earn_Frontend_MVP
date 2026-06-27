@@ -22,7 +22,7 @@ if (marqueeStart !== -1 && platformHealthStart !== -1) {
               <div onClick={(e) => scrollToForm(e, 'General Support')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
                 support@satsearn.app
               </div>
-              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: 24–48 hours</div>
+              <div className="text-xs text-gray-400 italic mt-2">⏱ Response time: 24–48 hours</div>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
               <div className="text-2xl mb-3">💳</div>
@@ -31,7 +31,7 @@ if (marqueeStart !== -1 && platformHealthStart !== -1) {
               <div onClick={(e) => scrollToForm(e, 'Billing')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
                 support@satsearn.app
               </div>
-              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: 24 hours</div>
+              <div className="text-xs text-gray-400 italic mt-2">⏱ Response time: 24 hours</div>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
               <div className="text-2xl mb-3">🔐</div>
@@ -40,7 +40,7 @@ if (marqueeStart !== -1 && platformHealthStart !== -1) {
               <div onClick={(e) => scrollToForm(e, 'Other')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
                 support@satsearn.app
               </div>
-              <div className="text-xs text-gray-500 italic mt-2">⏱ Response time: up to 30 days</div>
+              <div className="text-xs text-gray-400 italic mt-2">⏱ Response time: up to 30 days</div>
             </div>
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 hover:border-sats-orange-500/30 transition-all">
               <div className="text-2xl mb-3">🛡️</div>
@@ -49,13 +49,13 @@ if (marqueeStart !== -1 && platformHealthStart !== -1) {
               <div onClick={(e) => scrollToForm(e, 'Security')} className="text-[13px] font-bold text-sats-orange-500 hover:text-sats-orange-400 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
                 support@satsearn.app
               </div>
-              <div className="text-xs text-gray-500 italic mt-2">⏱ Critical: 24h · Non-critical: 72h</div>
+              <div className="text-xs text-gray-400 italic mt-2">⏱ Critical: 24h · Non-critical: 72h</div>
             </div>
           </div>
 `;
 
   const gridStart = marqueeAndCards.indexOf('<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">');
-  let textCenterStart = marqueeAndCards.indexOf('<div className="text-center mt-6 text-sm text-gray-500 font-medium">', gridStart);
+  let textCenterStart = marqueeAndCards.indexOf('<div className="text-center mt-6 text-sm text-gray-400 font-medium">', gridStart);
   if (textCenterStart === -1) {
     // If we can't find it, just grab up to the final closing divs
     textCenterStart = marqueeAndCards.lastIndexOf('</div>\n        </div>');

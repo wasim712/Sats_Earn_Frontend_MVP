@@ -100,7 +100,7 @@ export default function AdminWithdrawalsPage() {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
             <div className="relative w-full sm:w-96 shrink-0">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search email, ID, status..."
@@ -175,7 +175,7 @@ export default function AdminWithdrawalsPage() {
                           <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${ui.bg} ${ui.color}`}>
                             {w.status}
                           </span>
-                          <span className="text-xs text-gray-500 font-medium">{new Date(w.createdAt).toLocaleDateString()}</span>
+                          <span className="text-xs text-gray-400 font-medium">{new Date(w.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
@@ -192,7 +192,7 @@ export default function AdminWithdrawalsPage() {
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.3em] text-sats-orange-500/80 mb-2">Request Details</p>
                   <div className="flex justify-between items-start">
-                    <h2 className="text-3xl font-black text-white">{selectedWithdrawal.amountSats.toLocaleString()} <span className="text-lg text-gray-500">Sats</span></h2>
+                    <h2 className="text-3xl font-black text-white">{selectedWithdrawal.amountSats.toLocaleString()} <span className="text-lg text-gray-400">Sats</span></h2>
                     <span className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border ${getStatusUI(selectedWithdrawal.status).bg} ${getStatusUI(selectedWithdrawal.status).color}`}>
                       {selectedWithdrawal.status}
                     </span>
@@ -208,7 +208,7 @@ export default function AdminWithdrawalsPage() {
                 {/* THE INVOICE SECTION */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Lightning Invoice</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Lightning Invoice</label>
                     <button 
                       onClick={() => handleCopy(selectedWithdrawal.lightningInvoice)}
                       className="text-[10px] font-bold text-sats-orange-500 hover:text-sats-orange-400 flex items-center gap-1"
@@ -228,7 +228,7 @@ export default function AdminWithdrawalsPage() {
                 {selectedWithdrawal.status === 'PENDING' ? (
                   <div className="space-y-4 pt-4 border-t border-[#1a1a1a]">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
                         Payment Preimage (Required to mark paid)
                       </label>
                       <input
@@ -263,7 +263,7 @@ export default function AdminWithdrawalsPage() {
                   /* Display the saved proof if it was already processed */
                   selectedWithdrawal.paymentProof && (
                     <div className="space-y-2 pt-4 border-t border-[#1a1a1a]">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Saved Payment Proof</label>
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Saved Payment Proof</label>
                       <div className="w-full rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3 text-xs text-green-400 font-mono break-all">
                         {selectedWithdrawal.paymentProof}
                       </div>
@@ -295,7 +295,7 @@ function SummaryCard({ icon, label, value, glow }: { icon: React.ReactNode; labe
       <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full blur-3xl ${glow}`} />
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-gray-500">{label}</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-gray-400">{label}</p>
           <h3 className="mt-3 text-3xl font-black text-white">{value}</h3>
         </div>
         <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">{icon}</div>
@@ -307,7 +307,7 @@ function SummaryCard({ icon, label, value, glow }: { icon: React.ReactNode; labe
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3 flex justify-between items-center gap-4">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 shrink-0">{label}</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 shrink-0">{label}</p>
       <p className="text-sm font-semibold text-white truncate">{value}</p>
     </div>
   );

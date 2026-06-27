@@ -21,7 +21,7 @@ export function FaqList({
         <CircleHelp className="h-5 w-5 text-sats-orange-500" />
         <div>
           <h2 className="text-xl font-black text-white">Existing FAQs</h2>
-          <p className="mt-1 text-xs text-gray-500">Lower order numbers appear first in the user help section.</p>
+          <p className="mt-1 text-xs text-gray-400">Lower order numbers appear first in the user help section.</p>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export function FaqList({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-black text-white">{item.question}</h3>
-                  <p className="mt-1 text-xs text-gray-500">{item.category || 'General'} • Order {item.sortOrder}</p>
+                  <p className="mt-1 text-xs text-gray-400">{item.category || 'General'} • Order {item.sortOrder}</p>
                 </div>
                 <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${item.isActive ? 'bg-green-500/10 text-green-300' : 'bg-gray-500/10 text-gray-300'}`}>
                   {item.isActive ? 'Active' : 'Paused'}
@@ -46,7 +46,7 @@ export function FaqList({
               <p className="mt-3 whitespace-pre-wrap text-xs text-gray-400">{item.answer}</p>
 
               <div className="mt-3 flex items-center justify-between gap-3">
-                <span className="text-[11px] text-gray-500">{new Date(item.createdAt).toLocaleString()}</span>
+                <span className="text-[11px] text-gray-400">{new Date(item.createdAt).toLocaleString()}</span>
 
                 <div className="flex items-center gap-2">
                   <button

@@ -83,10 +83,10 @@ export const ReferralShare = () => {
                 </p>
                 <ul className="flex flex-col gap-4">
                   <li className="flex gap-3 text-sm text-gray-300"><strong className="text-green-500 font-mono text-base">✓</strong> Invite real people who use the platform themselves</li>
-                  <li className="flex gap-3 text-sm text-gray-400"><strong className="text-red-500 font-mono text-base">✕</strong> No self-referral or extra accounts for yourself</li>
                   <li className="flex gap-3 text-sm text-gray-300"><strong className="text-green-500 font-mono text-base">✓</strong> Share your link openly and honestly</li>
+                  <li className="flex gap-3 text-sm text-gray-300"><strong className="text-green-500 font-mono text-base">✓</strong> Earn on your referrals&apos; genuine activity</li>
+                  <li className="flex gap-3 text-sm text-gray-400"><strong className="text-red-500 font-mono text-base">✕</strong> No self-referral or extra accounts for yourself</li>
                   <li className="flex gap-3 text-sm text-gray-400"><strong className="text-red-500 font-mono text-base">✕</strong> No bots, fake accounts, or fake task completions</li>
-                  <li className="flex gap-3 text-sm text-gray-300"><strong className="text-green-500 font-mono text-base">✓</strong> Earn on your referrals' genuine activity</li>
                   <li className="flex gap-3 text-sm text-gray-400"><strong className="text-red-500 font-mono text-base">✕</strong> Abuse forfeits affected balances and can mean a ban</li>
                 </ul>
               </div>
@@ -106,7 +106,7 @@ export const ReferralShare = () => {
               Grab a message and go
             </h2>
             <p className="text-base text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Find a ready-made message to get started. Genuine and personal always beats copy-paste — tweak these to sound like you when you're logged in.
+              Find a ready-made message to get started. Genuine and personal always beats copy-paste — tweak these to sound like you when you&apos;re logged in.
             </p>
           </FadeUp>
 
@@ -157,8 +157,8 @@ export const ReferralShare = () => {
               })}
             </div>
             
-            <p className="text-xs text-gray-500 italic text-center max-w-3xl mx-auto leading-relaxed">
-              <strong className="text-gray-400 font-mono font-bold">satsearn.app/?ref=YOURCODE</strong> is a placeholder — once you log in, your dashboard fills in your real 8-character code automatically. Keep it honest — no income promises or "get rich" claims (those break the fair-play rules and can forfeit your commission).
+            <p className="text-xs text-gray-400 italic text-center max-w-3xl mx-auto leading-relaxed">
+              <strong className="text-gray-400 font-mono font-bold">satsearn.app/?ref=YOURCODE</strong> is a placeholder — once you log in, your dashboard fills in your real 8-character code automatically. Keep it honest — no income promises or &quot;get rich&quot; claims (those break the fair-play rules and can forfeit your commission).
             </p>
           </FadeUp>
         </div>

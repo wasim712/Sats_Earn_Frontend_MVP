@@ -156,10 +156,10 @@ export default function FAQPage() {
                 }}
                 className="w-full pl-12 pr-28 py-4 bg-sats-black-900/60 backdrop-blur-md border border-white/[0.04] rounded-2xl font-sans text-sm sm:text-base text-white placeholder-gray-500 outline-none focus:border-sats-orange-500/35 focus:shadow-[0_0_20px_rgba(238,139,18,0.1)] transition-all duration-300"
               />
-              <span className="absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-500 text-base pointer-events-none">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span className="absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </span>
-              <span className="absolute right-4.5 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-500 pointer-events-none">
+              <span className="absolute right-4.5 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-400 pointer-events-none">
                 {searchQuery ? `${totalMatches} ${totalMatches === 1 ? 'match' : 'matches'}` : `${totalQuestions} FAQs`}
               </span>
             </div>
@@ -207,7 +207,7 @@ export default function FAQPage() {
 
           {/* DESKTOP SIDEBAR */}
           <aside className="w-64 flex-shrink-0 sticky top-32 self-start hidden md:flex flex-col gap-1.5 pr-6 z-10">
-            <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 px-3">
+            <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 px-3">
               Categories
             </div>
             <button
@@ -219,7 +219,7 @@ export default function FAQPage() {
               }`}
             >
               <span>All Questions</span>
-              <span className="font-mono text-xs text-gray-500">{totalQuestions}</span>
+              <span className="font-mono text-xs text-gray-400">{totalQuestions}</span>
             </button>
             {faqData.map((cat) => (
               <button
@@ -232,7 +232,7 @@ export default function FAQPage() {
               }`}
             >
               <span>{cat.title}</span>
-              <span className="font-mono text-xs text-gray-500">{cat.questions.length}</span>
+              <span className="font-mono text-xs text-gray-400">{cat.questions.length}</span>
             </button>
           ))}
           </aside>
@@ -263,7 +263,7 @@ export default function FAQPage() {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-white tracking-tight">{cat.title}</h2>
-                      <p className="text-xs sm:text-sm text-gray-500 mt-0.5">{cat.sub}</p>
+                      <p className="text-xs sm:text-sm text-gray-400 mt-0.5">{cat.sub}</p>
                     </div>
                   </div>
 

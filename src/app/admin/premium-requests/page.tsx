@@ -67,13 +67,13 @@ export default function AdminPremiumRequestsPage() {
           <div className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-12 text-center">
             <BellRing className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-lg font-bold text-white">No premium requests yet</p>
-            <p className="text-sm text-gray-500 mt-1">Notify-me and upgrade requests will appear here.</p>
+            <p className="text-sm text-gray-400 mt-1">Notify-me and upgrade requests will appear here.</p>
           </div>
         ) : filteredRequests.length === 0 ? (
           <div className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-12 text-center">
             <BellRing className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-lg font-bold text-white">No requests in this section</p>
-            <p className="text-sm text-gray-500 mt-1">Try another premium request filter.</p>
+            <p className="text-sm text-gray-400 mt-1">Try another premium request filter.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">

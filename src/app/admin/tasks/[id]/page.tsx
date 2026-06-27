@@ -323,14 +323,14 @@ export default function AdminTaskDetailPage() {
                     <select value={formData.category} onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
                       {CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-400" />
                   </InputWrap>
 
                   <InputWrap label="Proof Type">
                     <select value={formData.proofType} onChange={(e) => setFormData((prev) => ({ ...prev, proofType: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
                       {PROOF_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-400" />
                   </InputWrap>
 
                   <div className="md:col-span-2">
@@ -363,14 +363,14 @@ export default function AdminTaskDetailPage() {
                     <select value={formData.requiredFreeTier} onChange={(e) => setFormData((prev) => ({ ...prev, requiredFreeTier: e.target.value }))} disabled={formData.isPremiumOnly} className={`${inputCls} appearance-none cursor-pointer disabled:opacity-50`}>
                       {FREE_TIERS.map((item) => <option key={item} value={item}>{item}</option>)}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-400" />
                   </InputWrap>
 
                   <InputWrap label="Platform Targeting">
                     <select value={formData.requiredPlatform} onChange={(e) => setFormData((prev) => ({ ...prev, requiredPlatform: e.target.value }))} className={`${inputCls} appearance-none cursor-pointer`}>
                       {PLATFORMS.map((item) => <option key={item} value={item}>{PLATFORM_LABELS[item] || item}</option>)}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-400" />
                   </InputWrap>
 
                   <InputWrap label="New User Audience" hint="Optional onboarding-only gate">
@@ -382,7 +382,7 @@ export default function AdminTaskDetailPage() {
                       <option value="ALL_USERS">All Users</option>
                       <option value="NEW_USERS_ONLY">New Users Only</option>
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-[42px] h-4 w-4 text-gray-400" />
                   </InputWrap>
 
                   {formData.isNewUserOnly ? (
@@ -426,7 +426,7 @@ export default function AdminTaskDetailPage() {
                   <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 max-w-sm">
                     <div>
                       <p className="flex items-center gap-1.5 text-sm font-bold text-white"><Crown className="h-4 w-4 text-yellow-500" /> Premium Exclusive</p>
-                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-gray-500">Restrict to paid users</p>
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-gray-400">Restrict to paid users</p>
                     </div>
                     <button type="button" onClick={() => updatePremiumOnly(!formData.isPremiumOnly)} className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${formData.isPremiumOnly ? 'bg-sats-orange-500' : 'bg-[#1a1a1a]'}`}>
                       <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${formData.isPremiumOnly ? 'translate-x-8' : 'translate-x-1'}`} />
@@ -436,7 +436,7 @@ export default function AdminTaskDetailPage() {
                   <div className="flex items-center justify-between rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 max-w-sm">
                     <div>
                       <p className="flex items-center gap-1.5 text-sm font-bold text-white"><CheckSquare className="h-4 w-4 text-sats-orange-400" /> Task Visibility</p>
-                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-gray-500">Show or hide this standalone task</p>
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-gray-400">Show or hide this standalone task</p>
                     </div>
                     <button type="button" onClick={() => setFormData((prev) => ({ ...prev, isActive: !prev.isActive }))} className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${formData.isActive ? 'bg-emerald-500' : 'bg-[#1a1a1a]'}`}>
                       <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${formData.isActive ? 'translate-x-8' : 'translate-x-1'}`} />

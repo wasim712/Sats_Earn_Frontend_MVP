@@ -63,27 +63,17 @@ export const HeroSection = () => {
             </div>
 
             {/* Call to Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-8 w-full sm:w-auto">
+            <div className="flex flex-wrap  items-center justify-center lg:justify-start gap-4 mb-8 w-full sm:w-auto">
               <Button 
                 size="lg" 
                 onClick={() => router.push('/signup')} 
-                className="group w-full sm:w-auto text-[15px] font-extrabold tracking-wide rounded-xl bg-sats-orange-500 text-black hover:bg-sats-orange-400 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_8px_32px_rgba(249,115,22,0.3)] border-none"
+                className="group w-full shrink-0 sm:w-auto text-[15px] font-extrabold tracking-wide rounded-xl bg-sats-orange-500 text-black hover:bg-sats-orange-400 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_8px_32px_rgba(249,115,22,0.3)] border-none"
               >
                 Start Stacking Sats
                 <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button 
-                size="lg" 
-                variant="ghost"
-                onClick={() => scrollToSection('how-it-works')} 
-                className="w-full sm:w-auto text-[15px] font-extrabold tracking-wide rounded-xl border-white/15 text-white hover:border-sats-orange-500 hover:text-sats-orange-500 hover:bg-sats-orange-500/10 transition-all bg-transparent"
-              >
-                See How It Works
-              </Button>
-            </div>
-
+              
             {/* Product Hunt Badge */}
-            <FadeUp delay={0.15} className="mb-8 w-full flex justify-center lg:justify-start">
               <a 
                 href="https://www.producthunt.com/products/satsearn-stack-sats-not-excuses?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-satsearn-stack-sats-not-excuses" 
                 target="_blank" 
@@ -98,7 +88,8 @@ export const HeroSection = () => {
                   height="54" 
                 />
               </a>
-            </FadeUp>
+            </div>
+
 
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-3 text-[13px] text-gray-400 font-medium mb-6">
@@ -113,7 +104,7 @@ export const HeroSection = () => {
               </span>
             </div>
 
-            <div className="text-xs text-gray-500 tracking-wide leading-relaxed text-center lg:text-left max-w-md">
+            <div className="text-xs text-gray-400 tracking-wide leading-relaxed text-center lg:text-left max-w-md">
               Earnings depend on task availability and tier. All sats go through a 15-day maturity period before withdrawal.
             </div>
           </FadeUp>
@@ -141,7 +132,7 @@ export const HeroSection = () => {
               <svg viewBox="0 0 32 32" width="39" height="39" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="15" fill="#f7931a"/><path d="M21.6 14.1c.27-1.8-1.1-2.77-2.98-3.42l.61-2.44-1.49-.37-.59 2.38c-.39-.1-.79-.19-1.19-.27l.6-2.39-1.48-.37-.61 2.44c-.32-.07-.63-.14-.94-.22v-.01l-2.05-.51-.4 1.59s1.1.25 1.08.27c.6.15.71.55.69.86l-.69 2.78c.04.01.1.03.16.05l-.16-.04-.97 3.9c-.07.18-.26.46-.69.35.02.02-1.08-.27-1.08-.27l-.74 1.7 1.93.48c.36.09.71.18 1.06.27l-.62 2.47 1.48.37.61-2.44c.4.11.8.21 1.18.3l-.61 2.43 1.49.37.62-2.46c2.53.48 4.44.29 5.24-2 .65-1.84-.03-2.9-1.36-3.59.97-.22 1.7-.86 1.89-2.17zm-3.39 4.75c-.46 1.84-3.56.84-4.56.59l.82-3.28c1 .25 4.22.74 3.74 2.69zm.46-4.78c-.42 1.67-3 .82-3.84.61l.74-2.98c.84.21 3.54.6 3.1 2.37z" fill="#fff"/></svg>
             </div>
             <div className="text-2xl font-black text-sats-orange-500 font-mono tracking-tight">Real</div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase mt-1 font-bold text-center">
+            <div className="text-xs text-gray-400 tracking-wider uppercase mt-1 font-bold text-center">
               <span className="text-sats-orange-500">Bitcoin</span> Sats
             </div>
           </div>
@@ -151,7 +142,7 @@ export const HeroSection = () => {
               <svg viewBox="0 0 56 72" width="24" height="24" fill="#f7931a" xmlns="http://www.w3.org/2000/svg"><path d="M30.6 2.2c1.1-2 4.2-1 3.9 1.3l-3.1 22.3 18.4.2c2.4 0 3.5 3 1.6 4.5L19.2 69.4c-1.4 1.7-4.2.3-3.7-1.9l5.4-23.8-15.5-.2c-2.3 0-3.4-2.8-1.7-4.4z"/></svg>
             </div>
             <div className="text-2xl font-black text-sats-orange-500 font-mono tracking-tight">Fast</div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase mt-1 font-bold text-center">
+            <div className="text-xs text-gray-400 tracking-wider uppercase mt-1 font-bold text-center">
               Lightning Network
             </div>
           </div>
@@ -161,7 +152,7 @@ export const HeroSection = () => {
               <ShieldCheck className="w-6 h-6 drop-shadow-[0_0_8px_rgba(249,115,22,0.35)]" />
             </div>
             <div className="text-2xl font-black text-sats-orange-500 font-mono tracking-tight">Zero</div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase mt-1 font-bold text-center">
+            <div className="text-xs text-gray-400 tracking-wider uppercase mt-1 font-bold text-center">
               Bots. Ever.
             </div>
           </div>
@@ -171,7 +162,7 @@ export const HeroSection = () => {
               <Globe className="w-6 h-6 drop-shadow-[0_0_8px_rgba(249,115,22,0.35)]" />
             </div>
             <div className="text-2xl font-black text-sats-orange-500 font-mono tracking-tight">180+</div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase mt-1 font-bold text-center">
+            <div className="text-xs text-gray-400 tracking-wider uppercase mt-1 font-bold text-center">
               Countries
             </div>
           </div>
@@ -181,7 +172,7 @@ export const HeroSection = () => {
               <Gift className="w-6 h-6 drop-shadow-[0_0_8px_rgba(249,115,22,0.35)]" />
             </div>
             <div className="text-2xl font-black text-sats-orange-500 font-mono tracking-tight">Free</div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase mt-1 font-bold text-center">
+            <div className="text-xs text-gray-400 tracking-wider uppercase mt-1 font-bold text-center">
               Forever Tier
             </div>
           </div>

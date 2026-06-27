@@ -108,7 +108,7 @@ export const ReferralChallenge = () => {
                       className="w-full max-w-[40px] bg-gradient-to-t from-sats-orange-500 to-[#ffcc00] rounded-t-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
                       style={{ height: `${bar.heightPercent}%`, minHeight: '4px' }}
                     ></div>
-                    <div className="font-mono text-[10px] text-gray-500">Y{bar.year}</div>
+                    <div className="font-mono text-[10px] text-gray-400">Y{bar.year}</div>
                   </div>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export const ReferralChallenge = () => {
 
             </div>
             
-            <div className="px-6 sm:px-8 py-4 border-t border-white/10 bg-sats-black-900/50 text-xs text-gray-500 italic">
+            <div className="px-6 sm:px-8 py-4 border-t border-white/10 bg-sats-black-900/50 text-xs text-gray-400 italic">
               Estimate only — not a forecast of future value. Based purely on mathematical accumulation.
             </div>
           </div>

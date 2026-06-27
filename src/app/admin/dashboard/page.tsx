@@ -202,7 +202,7 @@ function MetricCard({ title, value, subtitle, icon, bg, borderColor, textColor =
         </div>
         <p className="text-gray-400 text-sm font-medium">{title}</p>
         <h3 className={`text-4xl font-extrabold mt-1 tracking-tight ${textColor}`}>{value}</h3>
-        {subtitle && <p className="text-xs text-gray-500 mt-3 font-medium">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-gray-400 mt-3 font-medium">{subtitle}</p>}
       </div>
     </div>
   );
@@ -217,7 +217,7 @@ function MiniChartCard({ title, data, color }: { title: string; data: Array<{ la
       <div className="flex items-end gap-3 h-44">
         {data.map((item) => (
           <div key={item.label} className="flex-1 flex flex-col items-center justify-end gap-2">
-            <span className="text-[10px] text-gray-500 font-bold">{item.value}</span>
+            <span className="text-[10px] text-gray-400 font-bold">{item.value}</span>
             <div className="w-full bg-sats-black-900 rounded-t-lg overflow-hidden h-32 flex items-end">
               <div className={`${color} w-full rounded-t-lg transition-all`} style={{ height: `${(item.value / maxValue) * 100}%` }}></div>
             </div>

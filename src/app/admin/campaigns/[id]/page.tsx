@@ -590,7 +590,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       <input type="text" value={editForm.title} required minLength={5} onChange={e => setEditForm({...editForm, title: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-white text-xl font-bold px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 transition-all" placeholder="Campaign Title (Min 5 chars)" />
                       <textarea value={editForm.description} required minLength={10} onChange={e => setEditForm({...editForm, description: e.target.value})} className="w-full bg-[#111] border border-[#2a2a2a] text-gray-300 px-4 py-3 rounded-xl outline-none focus:border-sats-orange-500 min-h-30 transition-all" placeholder="Description (Min 10 chars)" />
                       <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4 space-y-3">
-                        <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest">Campaign Cover Image</label>
+                        <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest">Campaign Cover Image</label>
                         <input
                           type="file"
                           accept="image/*"
@@ -625,15 +625,15 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
               <div className="bg-linear-to-b from-sats-black-900 to-sats-black-950 rounded-2xl p-6 border border-[#1a1a1a] mb-8">
                 <div className="flex justify-between items-end mb-5">
                   <div>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Completions Limit</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Completions Limit</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-black text-white">{safeTotal.toLocaleString()}</span>
-                      <span className="text-gray-500 font-medium">/ {safeMax.toLocaleString()}</span>
+                      <span className="text-gray-400 font-medium">/ {safeMax.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Top Tier Reward</p>
-                    <span className="text-sats-orange-500 font-black text-3xl">~ {topTierReward.toLocaleString()} <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Sats</span></span>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-end gap-1.5"><Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Top Tier Reward</p>
+                    <span className="text-sats-orange-500 font-black text-3xl">~ {topTierReward.toLocaleString()} <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Sats</span></span>
                   </div>
                 </div>
                 <div className="w-full bg-[#111] border border-[#2a2a2a] rounded-full h-3 overflow-hidden shadow-inner">
@@ -680,7 +680,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           <select value={editForm.requiredFreeTier} onChange={e => setEditForm({...editForm, requiredFreeTier: e.target.value})} disabled={editForm.isPremiumOnly} className={`${inputCls} disabled:opacity-50`}>
                             {FREE_TIERS.map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
-                          <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}>
+                          <button type="button" onClick={() => setEditForm((prev) => ({ ...prev, isPremiumOnly: !prev.isPremiumOnly }))} className={`shrink-0 px-4 rounded-xl border text-xs font-bold transition-all ${editForm.isPremiumOnly ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-[#111] border-[#2a2a2a] text-gray-400'}`}>
                           <Crown className="w-4 h-4 mx-auto mb-0.5" /> Premium
                         </button>
                       </div>
@@ -689,7 +689,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         <div className="flex items-center justify-between gap-3">
                           <div>
                             <p className="text-sm font-black text-white">New User Audience</p>
-                            <p className="text-xs text-gray-500">Only show this campaign to newly created accounts.</p>
+                            <p className="text-xs text-gray-400">Only show this campaign to newly created accounts.</p>
                           </div>
                           <button
                             type="button"
@@ -698,7 +698,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                               isNewUserOnly: !prev.isNewUserOnly,
                               newUserMaxAccountAgeDays: !prev.isNewUserOnly ? Number(prev.newUserMaxAccountAgeDays || 7) : prev.newUserMaxAccountAgeDays,
                             }))}
-                            className={`shrink-0 px-4 py-2 rounded-xl border text-xs font-bold transition-all ${editForm.isNewUserOnly ? 'bg-sats-orange-500/10 border-sats-orange-500/30 text-sats-orange-400' : 'bg-[#111] border-[#2a2a2a] text-gray-500'}`}
+                            className={`shrink-0 px-4 py-2 rounded-xl border text-xs font-bold transition-all ${editForm.isNewUserOnly ? 'bg-sats-orange-500/10 border-sats-orange-500/30 text-sats-orange-400' : 'bg-[#111] border-[#2a2a2a] text-gray-400'}`}
                           >
                             {editForm.isNewUserOnly ? 'Enabled' : 'Disabled'}
                           </button>
@@ -706,7 +706,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                         {editForm.isNewUserOnly ? (
                           <div className="max-w-[220px]">
-                            <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500">New User Window (Days)</label>
+                            <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-gray-400">New User Window (Days)</label>
                             <input
                               type="number"
                               min={1}
@@ -750,7 +750,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           <span key={country} className="px-2 py-1 rounded-lg bg-[#111] border border-[#1a1a1a] text-xs font-bold text-gray-300">
                             {country}
                           </span>
-                        )) : <span className="text-gray-500 text-sm">All countries</span>}
+                        )) : <span className="text-gray-400 text-sm">All countries</span>}
                       </div>
                       ) : (
                         <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-4 space-y-4 col-span-2 w-full">
@@ -802,7 +802,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                           })}
                           </div>
                           {filteredCountries.length === 0 && (
-                            <p className="text-sm text-gray-500 py-4 text-center">No countries found.</p>
+                            <p className="text-sm text-gray-400 py-4 text-center">No countries found.</p>
                           )}
                         </div>
                       </div>
@@ -814,8 +814,8 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                 <Field title="Campaign Economics">
                   {!isEditing ? (
                     <div className="space-y-1">
-                      <span className="text-white font-bold">{Number(campaign.maxCompletions || editForm.maxCompletions || 0).toLocaleString()} Max <span className="text-gray-500 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
-                      <p className="text-[10px] text-gray-500 font-mono">Campaign ID: {campaign.id}</p>
+                      <span className="text-white font-bold">{Number(campaign.maxCompletions || editForm.maxCompletions || 0).toLocaleString()} Max <span className="text-gray-400 mx-2">|</span> Up to {topTierReward.toLocaleString()} Sats</span>
+                      <p className="text-[10px] text-gray-400 font-mono">Campaign ID: {campaign.id}</p>
                       <p className="text-[10px] text-cyan-400 font-mono">Debug → input: {maxDebug.input ?? '-'} | payload: {maxDebug.payload ?? '-'} | response: {maxDebug.response ?? '-'} | state: {maxDebug.campaignState ?? Number(campaign.maxCompletions || 0)}</p>
                       {campaign.doubleRewardsStartAt && campaign.doubleRewardsEndAt && (
                         <p className="text-xs text-yellow-400 font-medium">2x Window: {formatDate(campaign.doubleRewardsStartAt)} - {formatDate(campaign.doubleRewardsEndAt)}</p>
@@ -826,7 +826,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-5 items-start">
                         {/* Max Users */}
                         <div>
-                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                          <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                             Max Completions (Users)
                           </label>
                           <input 
@@ -845,13 +845,13 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                          <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                             2x Rewards Toggle
                           </label>
                           <div className="flex items-center justify-between p-4 bg-linear-to-r from-yellow-500/10 via-[#0a0a0a] to-[#0a0a0a] border border-yellow-500/20 rounded-2xl shadow-[0_0_0_1px_rgba(234,179,8,0.05)]">
                             <div>
                               <p className="text-sm font-bold text-white flex items-center gap-1.5"><Zap className="w-4 h-4 text-yellow-500" /> Schedule 2x Task Rewards</p>
-                              <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Applies at runtime to every task reward matrix</p>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">Applies at runtime to every task reward matrix</p>
                             </div>
                             <button
                               type="button"
@@ -879,7 +879,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-5 items-start">
                             <div>
-                              <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                 Double Rewards Start Date
                               </label>
                               <DateTimePickerInput
@@ -891,7 +891,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                             {/* Double Rewards End */}
                             <div>
-                              <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">
+                              <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                 Double Rewards End Date
                               </label>
                               <DateTimePickerInput
@@ -929,33 +929,33 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2"><Plus className="w-4 h-4 text-sats-orange-500" /> Create New Task</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Task Title</label>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Task Title</label>
                       <input required type="text" value={taskForm.title} onChange={e => setTaskForm({...taskForm, title: e.target.value})} placeholder="e.g. Subscribe to YouTube Channel" className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Detailed Instructions</label>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Detailed Instructions</label>
                       <textarea required value={taskForm.description} onChange={e => setTaskForm({...taskForm, description: e.target.value})} placeholder="e.g. Click the link, hit subscribe..." className={`${inputCls} min-h-[100px]`} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Required Platform</label>
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Required Platform</label>
                         <select value={taskForm.requiredPlatform} onChange={e => setTaskForm({...taskForm, requiredPlatform: e.target.value})} className={inputCls}>
                           {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Proof Type</label>
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Proof Type</label>
                         <select value={taskForm.proofType} onChange={e => setTaskForm({...taskForm, proofType: e.target.value})} className={inputCls}>
                           {PROOF_TYPES.map(p => <option key={p} value={p}>{p.replace('_', ' ')}</option>)}
                         </select>
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
                       <input required type="text" inputMode="numeric" pattern="[0-9]*" value={taskForm.xpRewardOverride || ''} onChange={e => setTaskForm({ ...taskForm, xpRewardOverride: parseWholeNumber(e.target.value) })} placeholder="0" className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">
                         Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
                       </label>
                       <div className="relative">
@@ -984,7 +984,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                       <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className="text-sm font-bold text-white flex items-center gap-1.5"><Medal className="w-4 h-4 text-yellow-500" /> Task Reward Table</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Set the sats reward for each tier on this task.</p>
+                          <p className="text-xs text-gray-400 mt-0.5">Set the sats reward for each tier on this task.</p>
                         </div>
                       </div>
 
@@ -992,11 +992,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="space-y-3">
-                              <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                              <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">Free Tiers</div>
                               <div className="grid grid-cols-1 gap-3">
                                 {FREE_TIERS.map((tier) => (
                                   <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider truncate mr-2">{tier}</label>
                                     <input
                                       type="text"
                                       inputMode="numeric"
@@ -1059,7 +1059,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <textarea required value={editingTaskForm.description || ''} onChange={e => setEditingTaskForm({...editingTaskForm, description: e.target.value})} className={`${inputCls} min-h-[80px]`} />
                           </div>
                           <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Task XP Reward</label>
                             <input required type="text" inputMode="numeric" pattern="[0-9]*" value={editingTaskForm.xpRewardOverride || ''} onChange={e => setEditingTaskForm({ ...editingTaskForm, xpRewardOverride: parseWholeNumber(e.target.value) })} placeholder="0" className={inputCls} />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1078,7 +1078,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             </select>
                           </div>
                           <div>
-                          <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
+                          <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">
                             Target URL <span className="text-white/20 normal-case font-normal tracking-normal ml-1">(optional)</span>
                           </label>
                           <div className="relative">
@@ -1107,7 +1107,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                             <div className="flex items-center justify-between gap-4">
                               <div>
                                 <p className="text-sm font-bold text-white flex items-center gap-1.5"><Medal className="w-4 h-4 text-yellow-500" /> Task Reward Table</p>
-                                <p className="text-xs text-gray-500 mt-0.5">Edit the sats reward for each tier on this task.</p>
+                                <p className="text-xs text-gray-400 mt-0.5">Edit the sats reward for each tier on this task.</p>
                               </div>
                             </div>
 
@@ -1115,11 +1115,11 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
 
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                   <div className="space-y-3">
-                                    <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-500">Free Tiers</div>
+                                    <div className="px-1 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">Free Tiers</div>
                                     <div className="grid grid-cols-1 gap-3">
                                       {FREE_TIERS.map((tier) => (
                                         <div key={tier} className="rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-2.5 flex items-center justify-between">
-                                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-wider truncate mr-2">{tier}</label>
+                                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider truncate mr-2">{tier}</label>
                                           <input
                                             type="text"
                                             inputMode="numeric"
@@ -1232,7 +1232,7 @@ export default function SingleCampaignPage({ params }: { params: Promise<{ id: s
                   <div className="flex flex-col items-center justify-center py-10 text-center bg-[#0a0a0a] rounded-2xl border border-dashed border-[#2a2a2a]">
                     <Target className="w-10 h-10 text-gray-600 mb-3" />
                     <p className="text-white font-bold mb-1">No Tasks Created Yet</p>
-                    <p className="text-xs text-gray-500">Users cannot complete this campaign until you add at least one task.</p>
+                    <p className="text-xs text-gray-400">Users cannot complete this campaign until you add at least one task.</p>
                   </div>
                 )
               )}

@@ -222,7 +222,7 @@ export default function UserNotificationsPage() {
           <div className="p-16 text-center">
             <Bell className="w-12 h-12 text-gray-600 mx-auto mb-4 opacity-50" />
             <p className="text-lg font-bold text-white">No notifications yet</p>
-            <p className="text-sm text-gray-500 mt-1">Complete tasks to start receiving updates on your earnings.</p>
+            <p className="text-sm text-gray-400 mt-1">Complete tasks to start receiving updates on your earnings.</p>
           </div>
         ) : (
           <div className="divide-y divide-[#141414]">
@@ -258,14 +258,14 @@ export default function UserNotificationsPage() {
                           {new Date(notification.createdAt).toLocaleDateString()} • {new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <p className={`text-sm leading-relaxed ${notification.isRead ? 'text-gray-500' : 'text-gray-300'}`}>
+                      <p className={`text-sm leading-relaxed ${notification.isRead ? 'text-gray-400' : 'text-gray-300'}`}>
                         {notification.message}
                       </p>
                     </div>
 
                     {/* Action Arrow */}
                     <div className="shrink-0 flex items-center self-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowRight className="w-5 h-5 text-gray-500" />
+                      <ArrowRight className="w-5 h-5 text-gray-400" />
                     </div>
 
                   </div>

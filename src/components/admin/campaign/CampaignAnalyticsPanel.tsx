@@ -56,7 +56,7 @@ export function CampaignAnalyticsPanel({
 
             <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-4">
               <div className="flex items-center justify-between gap-3 mb-3">
-                <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Sats By Tier</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sats By Tier</span>
                 <span className="text-[10px] font-bold text-sats-orange-400 uppercase tracking-widest">Historical Paid Value</span>
               </div>
 

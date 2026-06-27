@@ -94,7 +94,7 @@ export default function PublicBlogDetailsPage() {
                   ) : null}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                     {formatContentDate(blog.publishedAt || blog.createdAt)}

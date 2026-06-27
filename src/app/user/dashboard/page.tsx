@@ -556,7 +556,7 @@ export default function UserDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
               <Clock4 className="w-5 h-5 text-purple-500" />
             </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Pending sats</p>
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Pending sats</p>
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{formatPendingSats(data.balances?.pending, data.balances?.pendingMsats)} <span className='text-2xl'>sats</span></h3>
@@ -570,7 +570,7 @@ export default function UserDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
               <LockKeyhole className="w-5 h-5 text-yellow-500" />
             </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Locked Balance</p>
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Locked Balance</p>
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
@@ -583,7 +583,7 @@ export default function UserDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Total Earned</p>
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Earned</p>
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{totalLifetimeEarned.toLocaleString()}

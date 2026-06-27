@@ -94,7 +94,7 @@ export default function AdminAnnouncementsPage() {
             <div className="col-span-full py-20 text-center border border-dashed border-sats-black-800 rounded-3xl bg-sats-black-900/50">
               <Megaphone className="w-10 h-10 text-gray-600 mx-auto mb-4" />
               <p className="text-gray-400 font-medium text-lg">No announcements found.</p>
-              <p className="text-gray-500 text-sm mt-1">Create one to notify your users!</p>
+              <p className="text-gray-400 text-sm mt-1">Create one to notify your users!</p>
             </div>
           )}
         </div>

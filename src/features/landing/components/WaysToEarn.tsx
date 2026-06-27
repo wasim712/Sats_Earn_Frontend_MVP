@@ -27,7 +27,7 @@ export const WaysToEarn = () => {
       statusColor: 'text-green-400 bg-green-500/10 border-green-500/20',
       icon: <Gamepad2 className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" />,
       title: 'Mini Games',
-      description: 'Browser-based games built for SatsEarn. Free tier earns XP. Paid tier exclusive games earn real sats.',
+      description: 'Browser games built for SatsEarn, with XP rewards for free users and exclusive games for paid members.',
       reward: 'XP reward per game'
     },
     {
@@ -82,7 +82,7 @@ export const WaysToEarn = () => {
             Stack Sats
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Every action on SatsEarn is a chance to earn real sats — and we're adding more all the time. Pick the earning methods that fit your time and interest.
+            Every action on SatsEarn is a chance to earn real sats — and we&apos;re adding more all the time. Pick the earning methods that fit your time and interest.
           </p>
         </FadeUp>
 

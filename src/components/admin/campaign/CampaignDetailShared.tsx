@@ -8,7 +8,7 @@ export const inputCls = "w-full bg-[#111] border border-[#2a2a2a] text-white tex
 export function Field({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{title}</span>
+      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{title}</span>
       <div>{children}</div>
     </div>
   );
@@ -158,7 +158,7 @@ export function DateTimePickerInput({
           </select>
         </div>
 
-        <p className="text-[10px] text-gray-500 font-medium px-1">
+        <p className="text-[10px] text-gray-400 font-medium px-1">
           Choose the date first, then set the exact time for the 2x rewards window.
         </p>
 

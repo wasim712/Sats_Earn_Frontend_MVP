@@ -24,7 +24,7 @@ export function SettingsHeader({
         </div>
         <div>
           <h1 className="text-xl font-black text-white tracking-tight">Global Platform Settings</h1>
-          <p className="text-xs text-gray-500 mt-0.5">Control core economics and gamification limits.</p>
+          <p className="text-xs text-gray-400 mt-0.5">Control core economics and gamification limits.</p>
         </div>
       </div>
 

@@ -224,7 +224,7 @@ export default function UserDailyQuizPage() {
                 <p className="text-sm md:text-base text-gray-400 font-medium leading-7 max-w-3xl mb-3">
                   {result.quizDescription || normalizedQuiz.description || 'Your quiz progress has been saved.'}
                 </p>
-                <p className="text-sm text-gray-500 font-medium">{result.message}</p>
+                <p className="text-sm text-gray-400 font-medium">{result.message}</p>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:min-w-55">
@@ -248,7 +248,7 @@ export default function UserDailyQuizPage() {
           {!isReviewMode && (
             <div className="flex items-center justify-between gap-3 px-1">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-gray-500 mb-1">Question Section</p>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-gray-400 mb-1">Question Section</p>
                 <h3 className="text-lg md:text-xl font-black text-white">Keep guessing until each answer is right</h3>
               </div>
               <div className="hidden md:flex items-center gap-2 rounded-full border border-[#1a1a1a] bg-[#080808] px-4 py-2 text-xs font-bold text-gray-400">
@@ -270,7 +270,7 @@ export default function UserDailyQuizPage() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-2">Question {index + 1}</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Question {index + 1}</p>
                     <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed">{question.questionText}</h3>
                   </div>
                 </div>
@@ -381,7 +381,7 @@ export default function UserDailyQuizPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3 mb-3">
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-500">Progress</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gray-400">Progress</p>
                         <p className="text-sm md:text-base text-white/70 font-semibold mt-1">{answeredCount} / {totalQuestions} solved</p>
                       </div>
                       <div className="sm:hidden flex items-center gap-1.5">
@@ -560,7 +560,7 @@ function InfoCard({
   return (
     <div className={`rounded-[24px] border ${accentBorder} bg-[#080808] p-5`}>
       <div className="flex items-center justify-between gap-3 mb-3">
-        <p className="text-[10px] font-black uppercase sm:tracking-widest text-gray-500">{label}</p>
+        <p className="text-[10px] font-black uppercase sm:tracking-widest text-gray-400">{label}</p>
         {icon}
       </div>
       <p className="text-xl sm:text-xl md:text-2xl font-black text-white">{value}</p>
@@ -573,7 +573,7 @@ function ResultStatCard({ icon, label, value }: { icon: React.ReactNode; label: 
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#050505] px-4 py-4">
       <div className="flex items-center gap-3 mb-2">
         {icon}
-        <p className="text-[11px] font-black uppercase tracking-widest text-gray-500">{label}</p>
+        <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">{label}</p>
       </div>
       <p className="text-xl font-black text-white">{value}</p>
     </div>

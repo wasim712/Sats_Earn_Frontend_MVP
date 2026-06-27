@@ -118,7 +118,7 @@ export const ReferralCalculator = () => {
                   {/* Base Reward */}
                   <div>
                     <label className="block font-mono text-xs text-gray-400 font-bold tracking-wider uppercase mb-2">
-                      Base reward per action <span className="text-gray-500 normal-case tracking-normal">(average sats)</span>
+                      Base reward per action <span className="text-gray-400 normal-case tracking-normal">(average sats)</span>
                     </label>
                     <div className="flex relative">
                       <input 
@@ -128,17 +128,17 @@ export const ReferralCalculator = () => {
                         onChange={(e) => setBase(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-sats-black-900 border border-white/10 rounded-xl px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-sats-orange-500 transition-colors"
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-500">sats/action</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-400">sats/action</div>
                     </div>
                   </div>
 
                   {/* BTC Price */}
                   <div>
                     <label className="block font-mono text-xs text-gray-400 font-bold tracking-wider uppercase mb-2">
-                      BTC price <span className="text-gray-500 normal-case tracking-normal">(for fiat estimate)</span>
+                      BTC price <span className="text-gray-400 normal-case tracking-normal">(for fiat estimate)</span>
                     </label>
                     <div className="flex relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-gray-500">$</div>
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-gray-400">$</div>
                       <input 
                         type="number" 
                         min="0"
@@ -147,7 +147,7 @@ export const ReferralCalculator = () => {
                         onChange={(e) => setBtc(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-sats-black-900 border border-white/10 rounded-xl pl-8 pr-12 py-3 font-mono text-sm text-white focus:outline-none focus:border-sats-orange-500 transition-colors"
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-500">USD</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs text-gray-400">USD</div>
                     </div>
                   </div>
 
@@ -234,11 +234,11 @@ export const ReferralCalculator = () => {
               <div className="flex flex-col gap-3 mb-6 relative z-10">
                 <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
                   <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">1</div>
-                  <div><strong className="text-white">10 friends</strong> sign up through Maya's link and start using SatsEarn <span className="text-gray-500">(this is the ×10)</span>.</div>
+                  <div><strong className="text-white">10 friends</strong> sign up through Maya's link and start using SatsEarn <span className="text-gray-400">(this is the ×10)</span>.</div>
                 </div>
                 <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
                   <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">2</div>
-                  <div>Each friend completes about <strong className="text-white">30 commissionable actions</strong> a month <span className="text-gray-500">(this is the ×30)</span>.</div>
+                  <div>Each friend completes about <strong className="text-white">30 commissionable actions</strong> a month <span className="text-gray-400">(this is the ×30)</span>.</div>
                 </div>
                 <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
                   <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">3</div>
@@ -251,7 +251,7 @@ export const ReferralCalculator = () => {
                 <div className="font-mono text-2xl font-black text-sats-orange-500">600 sats</div>
               </div>
 
-              <p className="text-xs text-gray-500 italic mt-4 relative z-10">
+              <p className="text-xs text-gray-400 italic mt-4 relative z-10">
                 Illustration using the calculator's logic — actual numbers depend on the real base reward and how active her referrals stay. If Maya upgrades to Founders (30%), the same network earns her 900 sats/month.
               </p>
 

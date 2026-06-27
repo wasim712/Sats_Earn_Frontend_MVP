@@ -113,7 +113,7 @@ export const AboutBitcoinLoop = () => {
 
         {/* Disclaimer */}
         <FadeUp delay={0.5}>
-          <p className="max-w-2xl mx-auto mt-10 text-center text-xs text-gray-500 italic leading-relaxed">
+          <p className="max-w-2xl mx-auto mt-10 text-center text-xs text-gray-400 italic leading-relaxed">
             This describes how the platform works, not a promise of specific earnings or advertiser results{' '}
             <br />
             <Link href="/brands" className="text-sats-orange-500 hover:text-sats-orange-400 not-italic font-semibold transition-colors">

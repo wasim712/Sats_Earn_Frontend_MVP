@@ -61,7 +61,7 @@ export const StreakMilestonesSection = () => {
                   <div className={`text-4xl font-black font-mono tracking-tighter ${milestone.type === 'premium' ? 'text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'text-white'}`}>
                     {milestone.reward.toLocaleString()}
                   </div>
-                  <div className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">
+                  <div className="text-xs text-gray-400 font-bold tracking-widest uppercase mb-1">
                     Sats
                   </div>
                 </div>

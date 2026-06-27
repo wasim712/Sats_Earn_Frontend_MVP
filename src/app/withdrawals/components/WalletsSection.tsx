@@ -27,7 +27,7 @@ export function WalletsSection() {
           <FadeUp key={i} delay={0.1 + i * 0.05}>
             <div className="bg-sats-black-900/60 backdrop-blur-sm border border-white/[0.04] rounded-xl p-4 sm:p-5 text-center transition-all hover:border-sats-orange-500/30 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(247,147,26,0.05)] group">
               <div className="font-bold text-sm sm:text-base text-white mb-1.5 group-hover:text-sats-orange-400 transition-colors">{wallet.name}</div>
-              <div className="font-mono text-[11px] sm:text-xs text-gray-500 tracking-wide uppercase">{wallet.tag}</div>
+              <div className="font-mono text-[11px] sm:text-xs text-gray-400 tracking-wide uppercase">{wallet.tag}</div>
             </div>
           </FadeUp>
         ))}

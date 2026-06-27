@@ -293,7 +293,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
           {/* Open Menu Button */}
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-gray-500 transition-all hover:bg-white/5 hover:text-white"
+            className="flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-gray-400 transition-all hover:bg-white/5 hover:text-white"
             title="Open Menu"
           >
             <Menu className="h-5 w-5 shrink-0" />
@@ -317,14 +317,14 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
                 className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 transition-all duration-300 ${
                   isActive
                     ? 'bg-sats-orange-500/10 text-sats-orange-500'
-                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <div className={`relative transition-transform duration-300 ${isActive ? 'scale-110' : 'scale-100'}`}>
                   <item.icon className="h-5 w-5 shrink-0" />
                 </div>
                 {/* Text explicitly placed under the icon, tiny and highly readable */}
-                <span className={`truncate text-[9px] font-bold leading-none tracking-[0.02em] sm:text-[10px] ${isActive ? 'text-sats-orange-500' : 'text-gray-500'}`}>
+                <span className={`truncate text-[9px] font-bold leading-none tracking-[0.02em] sm:text-[10px] ${isActive ? 'text-sats-orange-500' : 'text-gray-400'}`}>
                   {item.label}
                 </span>
               </Link>

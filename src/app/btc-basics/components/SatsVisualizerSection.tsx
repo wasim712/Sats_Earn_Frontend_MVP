@@ -83,21 +83,21 @@ export function SatsVisualizerSection() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-500 tracking-widest uppercase mb-2">As a fraction of 1 BTC</div>
+                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">As a fraction of 1 BTC</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-white break-all">{btcFraction}</div>
               </div>
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-500 tracking-widest uppercase mb-2">Approx. value @ ${Math.round(btcPrice / 1000)}k</div>
+                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ${Math.round(btcPrice / 1000)}k</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-sats-orange-500 break-all">≈ ${formatNumber(usdValue)}</div>
               </div>
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-500 tracking-widest uppercase mb-2">Approx. value @ ₹{Math.round(inrPrice / 100000)}L</div>
+                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ₹{Math.round(inrPrice / 100000)}L</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-sats-orange-500 break-all">≈ ₹{formatNumber(inrValue)}</div>
               </div>
             </div>
 
             <div className="mb-8">
-              <div className="flex justify-between font-mono text-[10px] sm:text-[11px] text-gray-500 mb-2">
+              <div className="flex justify-between font-mono text-[10px] sm:text-[11px] text-gray-400 mb-2">
                 <span>0</span>
                 <span>1 BTC = 100,000,000 sats</span>
               </div>
@@ -134,7 +134,7 @@ export function SatsVisualizerSection() {
         </FadeUp>
 
         <FadeUp delay={0.4}>
-          <div className="mt-6 text-center text-xs text-gray-500 italic leading-relaxed px-4">
+          <div className="mt-6 text-center text-xs text-gray-400 italic leading-relaxed px-4">
             USD and INR figures are illustrations at the prices you enter — edit either field to match the live rate. Bitcoin's price changes constantly and past prices never predict future ones. This is educational, not financial advice.
           </div>
         </FadeUp>

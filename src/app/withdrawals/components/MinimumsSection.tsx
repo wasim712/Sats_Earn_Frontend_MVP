@@ -25,9 +25,9 @@ export function MinimumsSection() {
       <FadeUp delay={0.2}>
         <div className="bg-sats-black-900/60 backdrop-blur-sm border border-white/[0.04] rounded-2xl overflow-hidden shadow-lg mb-8">
           <div className="grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-[2fr_1fr_1fr] gap-4 px-5 py-4 bg-sats-black-800/40 border-b border-white/[0.04]">
-            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-500">Tier</div>
-            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-500 text-right">Minimum</div>
-            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-500 text-right hidden sm:block">Fees</div>
+            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-400">Tier</div>
+            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-400 text-right">Minimum</div>
+            <div className="font-mono text-[11px] tracking-[1px] uppercase text-gray-400 text-right hidden sm:block">Fees</div>
           </div>
           
           <div className="flex flex-col">

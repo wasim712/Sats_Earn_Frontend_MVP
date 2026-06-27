@@ -25,7 +25,7 @@ export const ReferralContactFab = () => {
   return (
     <div 
       ref={containerRef}
-      className="fixed bottom-4 right-4 sm:bottom-7 sm:right-7 z-[1500] flex flex-col items-end gap-3"
+      className="fixed bottom-4 right-4 sm:bottom-7 sm:right-7 z-1500 flex flex-col items-end gap-3"
     >
       {/* Tray */}
       <div 
@@ -49,7 +49,7 @@ export const ReferralContactFab = () => {
           Telegram — Fastest
         </a>
         <a 
-          href="https://discord.gg/satsearn" 
+          href="https://discord.gg/VX4cB2xTnZ" 
           target="_blank" 
           rel="noopener noreferrer"
           className="flex items-center gap-2.5 bg-sats-black-800 border border-white/10 hover:border-sats-orange-500 hover:text-sats-orange-500 text-white rounded-xl px-4 py-2.5 text-[13px] font-bold shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-colors whitespace-nowrap"

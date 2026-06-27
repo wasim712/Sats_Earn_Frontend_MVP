@@ -44,7 +44,7 @@ export function GlossarySection() {
       <FadeUp delay={0.2}>
         <div className="relative mb-10 max-w-lg">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-            <Search className="h-5 w-5 text-gray-500" />
+            <Search className="h-5 w-5 text-gray-400" />
           </div>
           <input
             type="text"
@@ -59,7 +59,7 @@ export function GlossarySection() {
       <div className="flex flex-col gap-3">
         {filteredGlossary.length === 0 ? (
           <FadeUp delay={0.3}>
-            <div className="text-gray-500 italic py-4">No terms match that search. Try another word.</div>
+            <div className="text-gray-400 italic py-4">No terms match that search. Try another word.</div>
           </FadeUp>
         ) : (
           filteredGlossary.map((item, idx) => {

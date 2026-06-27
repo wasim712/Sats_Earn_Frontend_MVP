@@ -129,7 +129,7 @@ function Pagination({
   if (totalItems <= PAGE_SIZE) {
     return (
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#1a1a1a] pt-4">
-        <p className="text-xs sm:text-sm text-gray-500 font-medium">
+        <p className="text-xs sm:text-sm text-gray-400 font-medium">
           Showing {start}-{end} of {totalItems}
         </p>
       </div>
@@ -140,7 +140,7 @@ function Pagination({
 
   return (
     <div className="mt-4 flex flex-col gap-3 border-t border-[#1a1a1a] pt-4 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs sm:text-sm text-gray-500 font-medium">
+      <p className="text-xs sm:text-sm text-gray-400 font-medium">
         Showing {start}-{end} of {totalItems}
       </p>
 
@@ -234,7 +234,7 @@ function EmptyState() {
   return (
     <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[22px] border border-dashed border-[#232323] bg-[#0b0b0b] px-4 py-10 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#232323] bg-[#111111]">
-        <Users className="w-6 h-6 text-gray-500" />
+        <Users className="w-6 h-6 text-gray-400" />
       </div>
       <h3 className="mt-4 text-lg font-black text-white">No referrals yet</h3>
       <p className="mt-2 max-w-sm text-sm font-medium text-gray-400">

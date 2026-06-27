@@ -138,7 +138,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                       </div>
                       <div>
                         <p className="text-sm font-bold text-white line-clamp-1">{getDisplayDescription(activity)}</p>
-                        <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" /> {formatDate(activity.createdAt)}
                         </p>
                       </div>
@@ -163,7 +163,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center py-8">
               <div className="w-12 h-12 bg-sats-black-950 border border-[#1a1a1a] rounded-full flex items-center justify-center mb-4 shadow-inner">
-                 <Activity className="w-5 h-5 text-gray-500" />
+                 <Activity className="w-5 h-5 text-gray-400" />
               </div>
               <p className="text-gray-400 font-medium text-sm mb-6">
                 No recent activity found. Start a task to begin earning!
@@ -183,7 +183,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
             <div className="flex items-center justify-between p-6 border-b border-[#1a1a1a] bg-sats-black-950">
               <div>
                 <h3 className="text-xl font-black text-white">Transaction History</h3>
-                <p className="text-xs text-gray-500 mt-1">Your recent earnings and payouts.</p>
+                <p className="text-xs text-gray-400 mt-1">Your recent earnings and payouts.</p>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-2 bg-[#111] hover:bg-[#1a1a1a] border border-[#2a2a2a] rounded-full text-gray-400 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
@@ -202,10 +202,10 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
                       <div>
                         <p className="text-sm font-bold text-white leading-tight">{getDisplayDescription(activity)}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 bg-sats-black-950 px-2 py-0.5 rounded border border-[#2a2a2a]">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-sats-black-950 px-2 py-0.5 rounded border border-[#2a2a2a]">
                             {getActivityTypeLabel(activity)}
                           </span>
-                          <span className="text-[10px] text-gray-500 font-medium">{formatDate(activity.createdAt)}</span>
+                          <span className="text-[10px] text-gray-400 font-medium">{formatDate(activity.createdAt)}</span>
                         </div>
                       </div>
                     </div>
@@ -228,7 +228,7 @@ export default function RecentActivityPanel({ activities }: RecentActivityPanelP
             </div>
 
             <div className="p-4 border-t border-[#1a1a1a] bg-sats-black-950 text-center">
-              <p className="text-xs text-gray-500 font-medium">Showing your {activities.length} most recent transactions.</p>
+              <p className="text-xs text-gray-400 font-medium">Showing your {activities.length} most recent transactions.</p>
             </div>
           </div>
         </div>

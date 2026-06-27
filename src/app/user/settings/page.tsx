@@ -117,7 +117,7 @@ export default function UserSettingsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-4 md:mt-6">
           <div>
-            <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-white transition-colors mb-4">
+            <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors mb-4">
               <ArrowLeft className="w-4 h-4" /> Back to Profile
             </button>
             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight flex items-center gap-3">
@@ -141,7 +141,7 @@ export default function UserSettingsPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InputWrapper label="Full Name" required>
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="text" 
                       value={form.fullName}
@@ -153,7 +153,7 @@ export default function UserSettingsPage() {
                   </InputWrapper>
 
                   <InputWrapper label="Phone Number (Optional)">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="text" 
                       value={form.phone}
@@ -176,7 +176,7 @@ export default function UserSettingsPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InputWrapper label="Twitter/X Handle">
-                    <TwitterIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <TwitterIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="text" 
                       value={form.twitterHandle}
@@ -206,7 +206,7 @@ export default function UserSettingsPage() {
                         />
                       </InputWrapper>
                   <InputWrapper label="Telegram Handle">
-                    <Send className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Send className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="text" 
                       value={form.telegramHandle}
@@ -217,7 +217,7 @@ export default function UserSettingsPage() {
                   </InputWrapper>
 
                   <InputWrapper label="Instagram Handle">
-                    <InstagramIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <InstagramIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="text" 
                       value={form.instagramHandle}
@@ -282,7 +282,7 @@ export default function UserSettingsPage() {
 function InputWrapper({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider pl-1">
+      <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
         {label} {required && <span className="text-sats-orange-500">*</span>}
       </label>
       <div className="relative">

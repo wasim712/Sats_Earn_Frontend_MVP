@@ -137,7 +137,7 @@ export function HelpContentSection({
                 value={faqQuery}
                 onChange={(event) => setFaqQuery(event.target.value)}
                 placeholder="Search answers..."
-                className="h-12 w-full rounded-2xl border border-white/10 bg-black/40 pl-11 pr-4 text-sm text-white placeholder:text-gray-500 outline-none transition focus:border-sats-orange-500/40"
+                className="h-12 w-full rounded-2xl border border-white/10 bg-black/40 pl-11 pr-4 text-sm text-white placeholder:text-gray-400 outline-none transition focus:border-sats-orange-500/40"
               />
             </div>
           </div>
@@ -255,7 +255,7 @@ export function HelpContentSection({
                   value={blogQuery}
                   onChange={(event) => setBlogQuery(event.target.value)}
                   placeholder="Search blogs..."
-                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/40 pl-11 pr-4 text-sm text-white placeholder:text-gray-500 outline-none transition focus:border-sats-orange-500/40"
+                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/40 pl-11 pr-4 text-sm text-white placeholder:text-gray-400 outline-none transition focus:border-sats-orange-500/40"
                 />
               </div>
             </div>
@@ -310,7 +310,7 @@ export function HelpContentSection({
                       </div>
 
                       <div className="space-y-4 p-5">
-                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
                           <span>{formatContentDate(blog.publishedAt || blog.createdAt)}</span>
                           <span className="h-1 w-1 rounded-full bg-sats-orange-500/60" />
                           <span>{getReadTime(blog.content)} min read</span>
