@@ -220,17 +220,17 @@ export default function AdminBlogsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <input value={title} maxLength={BLOG_TITLE_MAX} onChange={(e) => setTitle(e.target.value)} placeholder="Blog title" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
-                <p className="text-[11px] text-gray-500">{title.trim().length}/{BLOG_TITLE_MAX} characters</p>
+                <p className="text-[11px] text-gray-400">{title.trim().length}/{BLOG_TITLE_MAX} characters</p>
               </div>
               <div className="space-y-2">
                 <input value={slug} maxLength={BLOG_SLUG_MAX} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full lowercase" />
-                <p className="text-[11px] text-gray-500">Use lowercase letters, numbers, and hyphens only.</p>
+                <p className="text-[11px] text-gray-400">Use lowercase letters, numbers, and hyphens only.</p>
               </div>
             </div>
 
             <div className="space-y-2">
               <textarea value={excerpt} maxLength={BLOG_EXCERPT_MAX} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short excerpt" className="w-full min-h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
-              <p className="text-[11px] text-gray-500">Optional excerpt · {excerpt.trim().length}/{BLOG_EXCERPT_MAX} characters</p>
+              <p className="text-[11px] text-gray-400">Optional excerpt · {excerpt.trim().length}/{BLOG_EXCERPT_MAX} characters</p>
             </div>
             <input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="Cover image URL" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
 

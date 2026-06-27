@@ -215,7 +215,7 @@ export default function AdminCampaignsPage() {
             <div className="col-span-full py-24 flex flex-col items-center justify-center text-center border border-dashed border-sats-black-800 rounded-3xl bg-sats-black-900">
               <Target className="w-12 h-12 text-gray-600 mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No Active Campaigns</h3>
-              <p className="text-gray-500 text-sm max-w-md">You haven&apos;t created any earning campaigns yet. Click the button above to deploy your first set of tasks.</p>
+              <p className="text-gray-400 text-sm max-w-md">You haven&apos;t created any earning campaigns yet. Click the button above to deploy your first set of tasks.</p>
             </div>
           )}
         </div>
@@ -303,14 +303,14 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
         {/* Header: Category & Status */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
               {campaign.category.replace('_', ' ')}
             </span>
             <ArrowUpRight className="w-3.5 h-3.5 text-gray-600 opacity-0 group-hover:opacity-100 group-hover:text-sats-orange-400 transition-all duration-300 -translate-x-2 group-hover:translate-x-0" />
           </div>
 
           <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
-            campaign.isActive ? 'bg-green-500/10 text-green-400' : 'bg-sats-black-800 text-gray-500'
+            campaign.isActive ? 'bg-green-500/10 text-green-400' : 'bg-sats-black-800 text-gray-400'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${campaign.isActive ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`} />
             {campaign.isActive ? 'Live' : 'Draft'}
@@ -325,7 +325,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
         {/* Economics & Access (Minimal Grid without borders) */}
         <div className="grid grid-cols-2 gap-3 mb-8">
           <div className="bg-sats-black-950 rounded-xl p-3.5 flex flex-col gap-1 transition-colors group-hover:bg-sats-black-950/50">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-sats-orange-500" /> Reward
             </span>
             <span className="text-sm font-black text-sats-orange-400 truncate mt-0.5">
@@ -334,7 +334,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
           </div>
 
           <div className="bg-sats-black-950 rounded-xl p-3.5 flex flex-col gap-1 transition-colors group-hover:bg-sats-black-950/50">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-gray-400" /> Access
             </span>
             <div className="mt-0.5">
@@ -354,7 +354,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
         {/* Sleek Progress Bar */}
         <div className="mb-auto">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Global Limit</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global Limit</span>
             <span className="text-xs font-bold text-gray-300">
               <span className="text-white">{(campaign.totalCompletions || 0).toLocaleString()}</span> / {(campaign.maxCompletions || 0).toLocaleString()}
             </span>
@@ -384,7 +384,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
 
         {/* 4. TOP LAYER: Footer Actions (z-20) - Placed above the Link so buttons remain clickable */}
         <div className="relative z-20 flex items-center justify-between mt-8 pt-4 border-t border-sats-black-800/50">
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
             <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" /> {formattedDate}
           </div>
           

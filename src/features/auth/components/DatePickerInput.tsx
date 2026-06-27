@@ -209,7 +209,7 @@ export default function DatePickerInput({
       {/* ── Text input ── */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-          <Calendar className="h-4 w-4 text-gray-500" />
+          <Calendar className="h-4 w-4 text-gray-400" />
         </div>
         <input
           type="text"
@@ -230,7 +230,7 @@ export default function DatePickerInput({
         <button
           type="button"
           onClick={() => { setIsOpen(o => !o); setShowYearPicker(false); }}
-          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 hover:text-sats-orange-500 transition-colors"
+          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-sats-orange-500 transition-colors"
           tabIndex={-1}
         >
           <ChevronDown

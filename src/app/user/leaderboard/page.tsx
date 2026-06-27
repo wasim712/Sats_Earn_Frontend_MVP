@@ -100,7 +100,7 @@ function FilterPill({ active, onClick, label }: { active: boolean; onClick: () =
       className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-colors sm:text-sm ${
         active
           ? 'border-sats-orange-500/30 bg-sats-orange-500/12 text-sats-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.12)]'
-          : 'border-[#222] bg-[#080808] text-gray-500 hover:border-[#333] hover:bg-[#0f0f0f] hover:text-white'
+          : 'border-[#222] bg-[#080808] text-gray-400 hover:border-[#333] hover:bg-[#0f0f0f] hover:text-white'
       }`}
     >
       {label}
@@ -145,7 +145,7 @@ function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: L
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-lg font-black text-white tracking-tight">{entry.fullName}</p>
-                <p className="truncate text-sm font-medium text-gray-500 transition-colors duration-300 group-hover:text-gray-400">
+                <p className="truncate text-sm font-medium text-gray-400 transition-colors duration-300 group-hover:text-gray-400">
                   @{entry.username}
                 </p>
               </div>
@@ -154,7 +154,7 @@ function TopThreeCards({ entries, mode }: { entries: LeaderboardEntry[]; mode: L
             {/* Primary Metric Plaque */}
             <div className="relative z-10 mt-auto pt-6 w-full">
               <div className="flex w-full flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.02] p-4 shadow-inner backdrop-blur-sm transition-colors duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04]">
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
                   {metricLabel}
                 </p>
                 <div className="mt-1.5 flex items-baseline gap-1.5">
@@ -198,7 +198,7 @@ function LeaderboardRows({ entries, mode }: { entries: LeaderboardEntry[]; mode:
 
   if (restEntries.length === 0) {
     return (
-      <div className="rounded-[24px] border border-dashed border-[#252525] bg-[#070707] px-4 py-10 text-center text-sm text-gray-500">
+      <div className="rounded-[24px] border border-dashed border-[#252525] bg-[#070707] px-4 py-10 text-center text-sm text-gray-400">
         More leaderboard entries will appear here soon.
       </div>
     );
@@ -276,7 +276,7 @@ function LeaderboardEmptyState() {
         <Trophy className="h-8 w-8 text-white/10" />
       </div>
       <h3 className="mt-5 text-xl font-black text-white">No leaderboard data yet</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">Once users start earning and building streaks, the leaderboard will appear here.</p>
+      <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">Once users start earning and building streaks, the leaderboard will appear here.</p>
     </div>
   );
 }
@@ -405,7 +405,7 @@ export default function UserLeaderboardPage() {
                     <h2 className="text-xl font-black text-white">
                       {activeTab === 'streaks' ? 'Top Streak Champions' : `${earnersFilterOptions.find((filter) => filter.key === activeEarnersFilter)?.label} Top Earners`}
                     </h2>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-400">
                       {activeTab === 'streaks'
                         ? 'Users with the strongest consistency and longest active streak runs.'
                         : 'Users earning the most sats in the selected period.'}

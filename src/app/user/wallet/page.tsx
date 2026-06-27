@@ -291,7 +291,7 @@ export default function UserWithdrawalsPage() {
         <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-yellow-500" />
-            <p className="text-xs font-black uppercase tracking-widest text-gray-500">Pending AI Review</p>
+            <p className="text-xs font-black uppercase tracking-widest text-gray-400">Pending AI Review</p>
           </div>
           <h3 className="text-3xl font-black text-white">{balances?.pending.toLocaleString() || 0} <span>sats</span></h3>
         </div>
@@ -299,7 +299,7 @@ export default function UserWithdrawalsPage() {
         <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6">
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-4 h-4 text-blue-500" />
-            <p className="text-xs font-black uppercase tracking-widest text-gray-500">Security Lock (15D)</p>
+            <p className="text-xs font-black uppercase tracking-widest text-gray-400">Security Lock (15D)</p>
           </div>
           <h3 className="text-3xl font-black text-white">{balances?.locked.toLocaleString() || 0} <span>sats</span></h3>
         </div>
@@ -334,11 +334,11 @@ export default function UserWithdrawalsPage() {
 
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Amount (Sats)</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Amount (Sats)</label>
                 <button type="button" onClick={() => setAmount(String(balances?.available || 0))} className="text-xs font-bold text-sats-orange-500 hover:underline">MAX</button>
               </div>
               <div className="relative">
-                <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="text"
                   inputMode='numeric' 
@@ -357,7 +357,7 @@ export default function UserWithdrawalsPage() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Lightning Invoice</label>
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">Lightning Invoice</label>
               <textarea 
                 value={invoice}
                 onChange={(e) => setInvoice(e.target.value)}
@@ -367,7 +367,7 @@ export default function UserWithdrawalsPage() {
                 disabled={!isWithdrawalConfigured}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] text-white text-sm font-mono px-4 py-4 rounded-xl outline-none focus:border-sats-orange-500/50 focus:bg-[#111] transition-all resize-none"
               />
-              <p className="text-[10px] text-gray-500 mt-2 font-medium">
+              <p className="text-[10px] text-gray-400 mt-2 font-medium">
                 Ensure your invoice amount matches the requested withdrawal amount to prevent payout failures.
               </p>
             </div>
@@ -408,7 +408,7 @@ export default function UserWithdrawalsPage() {
                             <p className={`text-xs font-black uppercase tracking-wider ${ui.color}`}>
                               {item.status}
                             </p>
-                            <p className="text-[10px] text-gray-500 font-medium">
+                            <p className="text-[10px] text-gray-400 font-medium">
                               {new Date(item.createdAt).toLocaleDateString()} at {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -418,7 +418,7 @@ export default function UserWithdrawalsPage() {
                       
                       {item.paymentProof && (
                         <div className="mt-3 pt-3 border-t border-[#1a1a1a]">
-                          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Payment Preimage / Hash</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Payment Preimage / Hash</p>
                           <p className="text-xs text-green-400 font-mono break-all bg-[#0a0a0a] p-2 rounded-lg border border-[#1a1a1a]">
                             {item.paymentProof}
                           </p>

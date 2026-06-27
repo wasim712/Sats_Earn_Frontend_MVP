@@ -73,7 +73,7 @@ export default function LoginForm() {
     <div className="w-full max-w-md bg-sats-black-950/80 border border-sats-black-800 rounded-3xl p-8 shadow-[0_0_50px_rgba(249,115,22,0.1)] relative font-sans backdrop-blur-xl mx-auto mt-10">
       
       {/* Close Button -> Routes back to landing page */}
-      <Link href="/" className="absolute top-6 right-6 text-gray-500 hover:text-sats-orange-400 transition-colors">
+      <Link href="/" className="absolute top-6 right-6 text-gray-400 hover:text-sats-orange-400 transition-colors">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -111,7 +111,7 @@ export default function LoginForm() {
           <label className="block text-sm font-bold mb-1.5 text-gray-200">Email Address</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Mail className="h-4 w-4 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
+              <Mail className="h-4 w-4 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
             </div>
             <input 
               type="email" 
@@ -135,7 +135,7 @@ export default function LoginForm() {
           </div>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Lock className="h-4 w-4 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
+              <Lock className="h-4 w-4 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
             </div>
             <input 
               type={showPassword ? "text" : "password"} 
@@ -150,7 +150,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white transition-colors cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors cursor-pointer"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>

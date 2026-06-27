@@ -18,21 +18,21 @@ export function Panel({ title, icon, children }: { title: string; icon: React.Re
 export function InfoRow({ label, value, mono = false, accent = 'text-white' }: { label: string; value: string; mono?: boolean; accent?: string }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-      <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">{label}</p>
+      <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">{label}</p>
       <p className={`${accent} ${mono ? 'break-all font-mono text-xs' : 'text-sm font-semibold'}`}>{value}</p>
     </div>
   );
 }
 
 export function EmptyBlock({ message }: { message: string }) {
-  return <div className="rounded-2xl border border-dashed border-[#1a1a1a] p-6 text-center text-sm text-gray-500">{message}</div>;
+  return <div className="rounded-2xl border border-dashed border-[#1a1a1a] p-6 text-center text-sm text-gray-400">{message}</div>;
 }
 
 export function SectionCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-4 space-y-3">
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{title}</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{title}</p>
         {subtitle ? <p className="mt-1 text-xs text-gray-400">{subtitle}</p> : null}
       </div>
       {children}
@@ -63,7 +63,7 @@ export function TransactionTable({ transactions }: { transactions: AdminUserTran
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-500">
+        <thead className="text-[11px] uppercase tracking-widest text-gray-400">
           <tr>
             <th className="py-3 pr-4 text-left">Date</th>
             <th className="py-3 pr-4 text-left">Amount</th>
@@ -96,7 +96,7 @@ export function SubmissionTable({ detail }: { detail: AdminUserDetail }) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
-        <thead className="text-[11px] uppercase tracking-widest text-gray-500">
+        <thead className="text-[11px] uppercase tracking-widest text-gray-400">
           <tr>
             <th className="py-3 pr-4 text-left">Submitted</th>
             <th className="py-3 pr-4 text-left">Campaign</th>

@@ -39,7 +39,7 @@ export function UserSidebarVisibilitySection({ values, onToggle }: UserSidebarVi
               className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] border transition-all duration-300 ${
                 value
                   ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400 shadow-[inset_0_0_12px_rgba(16,185,129,0.2)]'
-                  : 'border-[#222] bg-[#111] text-gray-500 group-hover:text-gray-400'
+                  : 'border-[#222] bg-[#111] text-gray-400 group-hover:text-gray-400'
               }`}
             >
               <LayoutGrid className="h-5 w-5" />
@@ -50,7 +50,7 @@ export function UserSidebarVisibilitySection({ values, onToggle }: UserSidebarVi
               <p className={`truncate text-sm font-bold transition-colors duration-300 ${value ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
                 {formatSidebarLabel(key)}
               </p>
-              <p className="mt-0.5 truncate text-[11px] font-medium text-gray-500">
+              <p className="mt-0.5 truncate text-[11px] font-medium text-gray-400">
                 {value ? 'Visible to users' : 'Hidden from users'}
               </p>
             </div>

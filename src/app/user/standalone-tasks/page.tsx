@@ -210,7 +210,7 @@ export default function StandaloneTasksPage() {
             </p>
           </div>
           <div className="relative max-w-2xl">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
@@ -363,7 +363,7 @@ export default function StandaloneTasksPage() {
           <div className="col-span-full rounded-[30px] border border-dashed border-[#2a2a2a] bg-[#050505] p-12 text-center shadow-[0_18px_48px_rgba(0,0,0,0.22)]">
             <AlertTriangle className="mx-auto h-10 w-10 text-gray-600" />
             <h3 className="mt-4 text-2xl font-black text-white">No standalone tasks found</h3>
-            <p className="mt-2 text-sm text-gray-500">Try a different search term or check back later.</p>
+            <p className="mt-2 text-sm text-gray-400">Try a different search term or check back later.</p>
           </div>
         )}
       </section>

@@ -214,7 +214,7 @@ export default function BugBountyPage() {
         <section className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-6 md:p-7">
           <div className="mb-5">
             <h2 className="text-xl font-black text-white">Reward Tiers</h2>
-            <p className="mt-1 text-sm text-gray-500">We review bug severity carefully and reward based on actual impact.</p>
+            <p className="mt-1 text-sm text-gray-400">We review bug severity carefully and reward based on actual impact.</p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -231,7 +231,7 @@ export default function BugBountyPage() {
         <form onSubmit={handleSubmit} className="rounded-3xl border border-[#1a1a1a] bg-[#050505] p-6 md:p-7 space-y-5">
           <div>
             <h2 className="text-xl font-black text-white">Submit a Bug Report</h2>
-            <p className="mt-1 text-sm text-gray-500">Give us enough detail to reproduce the issue accurately.</p>
+            <p className="mt-1 text-sm text-gray-400">Give us enough detail to reproduce the issue accurately.</p>
           </div>
 
           <div>
@@ -244,7 +244,7 @@ export default function BugBountyPage() {
               minLength={TITLE_MIN}
               maxLength={TITLE_MAX}
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">{title.trim().length}/{TITLE_MAX}</p>
+            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">{title.trim().length}/{TITLE_MAX}</p>
           </div>
 
           <div>
@@ -257,7 +257,7 @@ export default function BugBountyPage() {
               minLength={DESCRIPTION_MIN}
               maxLength={DESCRIPTION_MAX}
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">{description.trim().length}/{DESCRIPTION_MAX}</p>
+            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">{description.trim().length}/{DESCRIPTION_MAX}</p>
           </div>
 
           <div>
@@ -268,7 +268,7 @@ export default function BugBountyPage() {
               onChange={(event) => setFile(event.target.files?.[0] || null)}
               className="w-full bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white"
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-500">Max {SCREENSHOT_MAX_MB} MB image file</p>
+            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">Max {SCREENSHOT_MAX_MB} MB image file</p>
           </div>
 
           {error ? (
@@ -294,7 +294,7 @@ export default function BugBountyPage() {
           <h2 className="text-xl font-black text-white mb-4">My Bug Reports</h2>
           <div className="space-y-3">
             {isLoading ? (
-              <div className="flex items-center justify-center py-16 text-gray-500">
+              <div className="flex items-center justify-center py-16 text-gray-400">
                 <Loader2 className="w-6 h-6 animate-spin text-sats-orange-500" />
               </div>
             ) : history.length === 0 ? (
@@ -313,7 +313,7 @@ export default function BugBountyPage() {
                       <span className={`px-2.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${statusUi.badge}`}>{statusUi.label}</span>
                     </div>
                     <p className="text-sm text-gray-400 mt-2 leading-6">{item.description}</p>
-                    <div className="mt-4 flex items-center justify-between gap-3 text-xs text-gray-500">
+                    <div className="mt-4 flex items-center justify-between gap-3 text-xs text-gray-400">
                       <span>{new Date(item.createdAt).toLocaleString()}</span>
                       {item.rewardSats > 0 ? (
                         <div className="inline-flex items-baseline gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10">
@@ -339,7 +339,7 @@ export default function BugBountyPage() {
 function StatsCard({ label, value, icon, isLoading }: { label: string; value: string | number; icon: React.ReactNode; isLoading: boolean }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4">
-      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500">
+      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-400">
         {icon}
         <span>{label}</span>
       </div>

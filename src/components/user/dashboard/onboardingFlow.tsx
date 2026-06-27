@@ -462,7 +462,7 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
                 <span>Back</span>
               </button>
 
-              <p className="hidden items-center gap-2 text-sm text-gray-500 md:flex">
+              <p className="hidden items-center gap-2 text-sm text-gray-400 md:flex">
                 <HelpCircle className="h-4 w-4" />
                 <span>You can replay this guide anytime from Dashboard</span>
               </p>
@@ -721,7 +721,7 @@ function DashboardPreview({ tone }: { tone: ToneStyle }) {
           <div key={label} className="rounded-2xl border border-[#1d1d1d] bg-[#111] p-3">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">{label}</p>
             <p className={`mt-2 text-2xl font-black ${label === 'Available' ? tone.icon : 'text-white'}`}>{value}</p>
-            <p className="text-[11px] text-gray-500">sats</p>
+            <p className="text-[11px] text-gray-400">sats</p>
           </div>
         ))}
       </div>
@@ -736,7 +736,7 @@ function DashboardPreview({ tone }: { tone: ToneStyle }) {
               <div className="relative h-16 w-full flex justify-center align-middle">
                 <div className={`absolute bottom-0 w-[60%] rounded-xl bg-gradient-to-t ${tone.progress}`} style={{ height: `${height}%` }} />
               </div>
-              <span className="text-[10px] text-gray-500">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}</span>
+              <span className="text-[10px] text-gray-400">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}</span>
             </div>
           ))}
         </div>
@@ -796,7 +796,7 @@ function WalletPreview({ tone }: { tone: ToneStyle }) {
           <div key={label} className="rounded-2xl border border-[#1d1d1d] bg-[#111] p-3">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">{label}</p>
             <p className={`mt-2 text-2xl font-black ${label !== 'Locked' ? tone.icon : 'text-white'}`}>{value}</p>
-            <p className="text-[11px] text-gray-500">sats</p>
+            <p className="text-[11px] text-gray-400">sats</p>
           </div>
         ))}
       </div>
@@ -903,7 +903,7 @@ function ReferralPreview({ tone, referralCode }: { tone: ToneStyle; referralCode
             );
           })}
         </div>
-        <p className="mt-4 text-xs leading-5 text-gray-500">
+        <p className="mt-4 text-xs leading-5 text-gray-400">
           Preview numbers here are sample data to explain how referred users, activity, and commission can appear.
         </p>
       </div>

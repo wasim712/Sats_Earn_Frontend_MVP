@@ -205,13 +205,13 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
             <button 
               onClick={onToggleCollapse} 
               title="Collapse Sidebar"
-              className="hidden lg:flex p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-sats-black-800 transition-colors"
+              className="hidden lg:flex p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-sats-black-800 transition-colors"
             >
               <PanelLeftClose className="w-5 h-5" />
             </button>
           )}
 
-          <button onClick={onClose} className="lg:hidden p-2 text-gray-500 hover:text-white rounded-full hover:bg-sats-black-900 transition-colors">
+          <button onClick={onClose} className="lg:hidden p-2 text-gray-400 hover:text-white rounded-full hover:bg-sats-black-900 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -244,7 +244,7 @@ export const AdminSidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse, o
               >
                 {/* Icon Container (Used for absolute positioning the badge when collapsed) */}
                 <div className="relative flex items-center justify-center">
-                  <Icon className={`w-5 h-5 min-w-5 transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-500 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
+                  <Icon className={`w-5 h-5 min-w-5 transition-transform duration-300 ${isActive ? 'text-sats-orange-500' : 'text-gray-400 group-hover:text-sats-orange-400'} ${!isActive && !isCollapsed && 'group-hover:scale-110'}`} />
                   
                   {/* Badge for Collapsed State */}
                   {isCollapsed && link.count !== undefined && link.count > 0 && (

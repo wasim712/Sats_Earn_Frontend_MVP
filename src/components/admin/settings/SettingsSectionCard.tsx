@@ -19,7 +19,7 @@ export function SettingsSectionCard({
         <div className="p-2.5 bg-[#111] border border-[#2a2a2a] rounded-xl">{icon}</div>
         <div>
           <h2 className="text-lg font-black text-white">{title}</h2>
-          <p className="text-xs text-gray-500">{description}</p>
+          <p className="text-xs text-gray-400">{description}</p>
         </div>
       </div>
       {children}

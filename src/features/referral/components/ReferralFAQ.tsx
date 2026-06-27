@@ -93,7 +93,7 @@ export const ReferralFAQ = () => {
                       <span className={`text-[15px] sm:text-base font-bold transition-colors ${isOpen ? 'text-white' : 'text-gray-300'}`}>
                         {faq.q}
                       </span>
-                      <span className={`font-mono text-xl transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-45 text-sats-orange-500' : 'text-gray-500'}`}>
+                      <span className={`font-mono text-xl transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-45 text-sats-orange-500' : 'text-gray-400'}`}>
                         +
                       </span>
                     </button>

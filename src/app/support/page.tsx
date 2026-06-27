@@ -207,7 +207,7 @@ export default function SupportPage() {
               <FadeUp key={i} delay={comm.delay}>
                 <a href={comm.href} className={`group flex flex-col items-center gap-3 bg-sats-black-900 border border-white/[0.04] rounded-2xl p-6 sm:p-8 no-underline transition-all duration-300 hover:-translate-y-2 relative overflow-hidden ${comm.hoverCardStyle}`}>
                   <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                  <div className={`text-gray-500 transition-all duration-300 ${comm.hoverIconColor} group-hover:scale-110 transform`}>
+                  <div className={`text-gray-400 transition-all duration-300 ${comm.hoverIconColor} group-hover:scale-110 transform`}>
                     {comm.icon}
                   </div>
                   <div className="flex flex-col items-center">

@@ -38,7 +38,7 @@ export function PriceHistorySection() {
         {data.map((row, i) => (
           <div key={i} className={`grid grid-cols-2 gap-4 px-5 py-3.5 border-b border-white/[0.02] last:border-0 hover:bg-white/[0.02] transition-colors`}>
             <div className="font-mono text-sm text-gray-400">{row.year}</div>
-            <div className={`font-mono font-bold text-sm text-right ${row.val === 'in progress' ? 'text-gray-500 italic' : 'text-sats-orange-500'}`}>{row.val}</div>
+            <div className={`font-mono font-bold text-sm text-right ${row.val === 'in progress' ? 'text-gray-400 italic' : 'text-sats-orange-500'}`}>{row.val}</div>
           </div>
         ))}
       </div>
@@ -66,7 +66,7 @@ export function PriceHistorySection() {
       </div>
 
       <FadeUp delay={0.4}>
-        <p className="text-xs sm:text-sm text-gray-500 italic max-w-3xl mx-auto">
+        <p className="text-xs sm:text-sm text-gray-400 italic max-w-3xl mx-auto">
           Historical yearly highs, rounded. * 2026 is ongoing. This is educational data, not financial advice — past prices never guarantee future ones.
         </p>
       </FadeUp>

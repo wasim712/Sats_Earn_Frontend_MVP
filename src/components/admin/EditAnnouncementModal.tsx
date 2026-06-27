@@ -109,7 +109,7 @@ export const EditAnnouncementModal = ({ announcement, isOpen, onClose }: EditMod
           </div>
           <button 
             onClick={handleSafeClose} 
-            className="p-2 text-gray-500 hover:text-white hover:bg-sats-black-800 rounded-full transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-sats-black-800 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

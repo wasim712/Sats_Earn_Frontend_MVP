@@ -42,7 +42,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       {/* Breadcrumbs */}
       {activePolicy && (
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-4">
-          <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-gray-500 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
+          <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-gray-400 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
             <Link href="/" className="text-gray-400 hover:text-sats-orange-500 transition-colors">Home</Link>
             <span className="text-gray-600">/</span>
             <Link href="/legal" className="text-gray-400 hover:text-sats-orange-500 transition-colors">Legal</Link>
@@ -62,7 +62,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight mb-4 text-white">
               {activePolicy.title}
             </h1>
-            <div className="font-mono text-xs text-gray-500 flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3">
+            <div className="font-mono text-xs text-gray-400 flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3">
               <span>Effective Date: <strong className="text-sats-orange-500">March 1, 2026</strong></span>
               <span className="hidden sm:inline">•</span>
               <span>Contact: <a href="mailto:support@satsearn.app" className="text-sats-orange-500 hover:underline">support@satsearn.app</a></span>
@@ -75,7 +75,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         
         {/* Sidebar */}
         <aside className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-24 lg:border-r lg:border-sats-orange-500/10 lg:pr-8">
-          <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-2">
+          <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 px-2">
             All Policies
           </div>
           <nav className="flex flex-col gap-1.5">
@@ -91,7 +91,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
                       : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-white/[0.02]'
                   }`}
                 >
-                  <span className={`font-mono text-xs ${isActive ? 'text-sats-orange-500' : 'text-gray-500'}`}>
+                  <span className={`font-mono text-xs ${isActive ? 'text-sats-orange-500' : 'text-gray-400'}`}>
                     {policy.id}
                   </span>
                   <span>{policy.title}</span>
@@ -101,7 +101,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="mt-8 p-5 bg-gradient-to-br from-sats-orange-500/5 to-transparent backdrop-blur-sm border border-sats-orange-500/20 rounded-2xl group hover:border-sats-orange-500/40 transition-all duration-300">
-            <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center gap-2">
+            <div className="font-mono text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
               <span className="text-sats-orange-500">📧</span> Legal Contact
             </div>
             <a href="mailto:support@satsearn.app" className="inline-flex items-center gap-2 text-sats-orange-500 text-sm hover:text-white font-medium break-all transition-colors">

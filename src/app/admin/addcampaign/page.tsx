@@ -215,7 +215,7 @@ export default function AddCampaignPage() {
             
             <div className="text-center sm:text-left">
               <h1 className="text-xl font-black text-white tracking-tight">Campaign Master Setup</h1>
-              <p className="text-xs text-gray-500 mt-0.5">Define global rules and access gates. Task-level sats rewards are configured after campaign creation.</p>
+              <p className="text-xs text-gray-400 mt-0.5">Define global rules and access gates. Task-level sats rewards are configured after campaign creation.</p>
             </div>
             
             <button 
@@ -284,26 +284,26 @@ export default function AddCampaignPage() {
                     <select name="category" value={formData.category} onChange={handleChange} className={`${inputCls} appearance-none cursor-pointer`}>
                       {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </InputWrapper>
 
                   <InputWrapper label="Required Free Tier">
                       <select name="requiredFreeTier" value={formData.requiredFreeTier} onChange={handleChange} disabled={formData.isPremiumOnly} className={`${inputCls} appearance-none cursor-pointer disabled:opacity-50`}>
                         {FREE_TIERS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
                       </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </InputWrapper>
 
                     <InputWrapper label="Device Targeting">
                       <select name="requiredPlatform" value={formData.requiredPlatform} onChange={handleChange} className={`${inputCls} appearance-none cursor-pointer`}>
                         {DEVICE_OPTIONS.map(device => <option key={device} value={device}>{device === 'NONE' ? 'All Devices' : device === 'DESKTOP' ? 'Desktop Only' : device === 'ANDROID' ? 'Android Only' : 'iOS Only'}</option>)}
                       </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </InputWrapper>
                   </div>
 
                   <div className="mb-8">
-                    <InputWrapper label="Target Countries"> <span className='text-sm text-gray-500'>&nbsp; Leave selection empty to select all countries</span>
+                    <InputWrapper label="Target Countries"> <span className='text-sm text-gray-400'>&nbsp; Leave selection empty to select all countries</span>
                       <div className="mb-3 flex items-center justify-end">
                         <span className="inline-flex items-center rounded-full border border-sats-orange-500/40 bg-sats-orange-500 px-3 py-1 text-xs font-bold tracking-wide text-sats-orange-300">
                           Selected Countries [{formData.targetCountries.length}/{countries.length || 196}]
@@ -350,7 +350,7 @@ export default function AddCampaignPage() {
                             );
                           })}
                           {filteredCountries.length === 0 && (
-                            <div className="col-span-full rounded-xl border border-dashed border-[#1a1a1a] bg-black/40 px-4 py-6 text-center text-sm text-gray-500">
+                            <div className="col-span-full rounded-xl border border-dashed border-[#1a1a1a] bg-black/40 px-4 py-6 text-center text-sm text-gray-400">
                               No countries match your search.
                             </div>
                           )}
@@ -364,7 +364,7 @@ export default function AddCampaignPage() {
                   <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl max-w-sm">
                     <div>
                       <p className="text-sm font-bold text-white flex items-center gap-1.5"><Crown className="w-4 h-4 text-yellow-500" /> Premium Exclusive</p>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Restrict to paid users</p>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">Restrict to paid users</p>
                     </div>
                     <button
                       type="button"
@@ -379,7 +379,7 @@ export default function AddCampaignPage() {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-sm font-bold text-white flex items-center gap-1.5"><Shield className="w-4 h-4 text-sats-orange-400" /> New Users Only</p>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Restrict by account age</p>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">Restrict by account age</p>
                       </div>
                       <button
                         type="button"
@@ -413,7 +413,7 @@ export default function AddCampaignPage() {
                 <div className="grid grid-cols-1 gap-6 mb-8 border-b border-[#1a1a1a] pb-8">
                   <InputWrapper label="Max Completions (Budget Cap)" required>
                     <input type="text" inputMode="numeric" pattern="[0-9]*" name="maxCompletions" value={formData.maxCompletions || ''} onChange={handleNumberChange} required placeholder="0" className={inputCls} />
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2 px-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 px-1">
                       Use this as the campaign completion cap. Sats rewards are set later on each task per tier.
                     </p>
                   </InputWrapper>
@@ -442,7 +442,7 @@ export default function AddCampaignPage() {
 function InputWrapper({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">
+      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">
         {label} {required && <span className="text-sats-orange-500">*</span>}
       </label>
       <div className="relative">

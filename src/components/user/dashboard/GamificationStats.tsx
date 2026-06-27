@@ -62,7 +62,7 @@ export default function GamificationStats({ gamification, tasksCompleted, active
             <h4 className="text-3xl font-black text-white capitalize">
               {gamification?.activeTier?.toLowerCase() || 'Basic'}
             </h4>
-            <p className="text-xs text-gray-500 font-bold mt-1 tracking-wider uppercase">
+            <p className="text-xs text-gray-400 font-bold mt-1 tracking-wider uppercase">
               Level {gamification?.level || 1}
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function GamificationStats({ gamification, tasksCompleted, active
               {Math.floor(gamification?.progressPercent || 0)}%
             </p>
           </div>
-          <p className="text-[11px] text-gray-500 font-semibold mt-2">
+          <p className="text-[11px] text-gray-400 font-semibold mt-2">
             {gamification?.nextTier
               ? `${gamification?.xpToNextTier || 0} XP to reach ${gamification.nextTier}`
               : 'You are at the top free tier.'}
@@ -120,7 +120,7 @@ function StatCard({ value, title, subtitle, icon, iconBg, hasAlert = false }: { 
       </div>
       <div>
         <p className="text-sm font-bold text-gray-200">{title}</p>
-        <p className="text-xs text-gray-500 font-semibold mt-1">{subtitle}</p>
+        <p className="text-xs text-gray-400 font-semibold mt-1">{subtitle}</p>
       </div>
     </div>
   );

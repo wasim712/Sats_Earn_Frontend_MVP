@@ -83,7 +83,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
                     {item.commission}
                   </p>
                   
-                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-500'}`}>
+                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
                     Base referral reward
                   </p>
                   
@@ -139,7 +139,7 @@ export default function ReferralTierCommission({ activeTier }: ReferralTierCommi
                     {item.commission}
                   </p>
                   
-                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-500'}`}>
+                  <p className={`text-[11px] font-medium mt-1 ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
                     Premium referral reward
                   </p>
                   

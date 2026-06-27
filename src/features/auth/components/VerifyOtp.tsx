@@ -119,7 +119,7 @@ export default function VerifyOtp({ email, isLoading, error, onSubmit, onBack }:
           {isLoading ? 'Verifying...' : 'Verify & Enter Dashboard'}
         </button>
 
-        <button type="button" onClick={onBack} className="w-full text-xs sm:text-sm font-bold text-gray-500 hover:text-white transition-colors flex items-center justify-center group py-2">
+        <button type="button" onClick={onBack} className="w-full text-xs sm:text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center justify-center group py-2">
           <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2 rotate-180 transition-transform group-hover:-translate-x-1" /> 
           Use a different email address
         </button>

@@ -134,22 +134,22 @@ export default function AdminUsersPage() {
         <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-3xl overflow-hidden">
           <div className="p-5 border-b border-[#1a1a1a] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="relative w-full md:max-w-md">
-              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search by name, email, or referral code"
-                className="w-full bg-[#0b0b0b] border border-[#1a1a1a] rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-sats-orange-500/40"
+                className="w-full bg-[#0b0b0b] border border-[#1a1a1a] rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:border-sats-orange-500/40"
               />
             </div>
-            <div className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
+            <div className="text-xs uppercase tracking-widest text-gray-400 font-semibold">
               {filteredUsers.length} account{filteredUsers.length === 1 ? '' : 's'}
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-[#0b0b0b] text-gray-500 uppercase tracking-widest text-[11px]">
+              <thead className="bg-[#0b0b0b] text-gray-400 uppercase tracking-widest text-[11px]">
                 <tr>
                   <th className="text-left px-6 py-4">User</th>
                   <th className="text-left px-6 py-4">Status</th>
@@ -169,7 +169,7 @@ export default function AdminUsersPage() {
                         </div>
                         <div>
                           <p className="font-bold text-white">{user.fullName || 'Anonymous User'}</p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <p className="text-xs text-gray-400">{user.email}</p>
                         </div>
                       </div>
                     </td>
@@ -191,7 +191,7 @@ export default function AdminUsersPage() {
                         <p>{user.totalXp.toLocaleString()} XP</p>
                         <p>{user._count?.submissions || 0} submissions</p>
                         <p>{user._count?.referrals || 0} referrals</p>
-                        <p className={user.isRecentlyActive ? 'text-green-400' : 'text-gray-500'}>
+                        <p className={user.isRecentlyActive ? 'text-green-400' : 'text-gray-400'}>
                           {user.isRecentlyActive ? 'Active in last 24h' : 'No activity in last 24h'}
                         </p>
                       </div>

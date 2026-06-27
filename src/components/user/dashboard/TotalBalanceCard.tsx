@@ -87,7 +87,7 @@ function MiniBalanceBox({ title, amount, icon }: { title: string, amount: number
       </div>
       <div className="flex items-baseline gap-1.5">
         <span className="text-2xl font-black text-white">{formattedAmount}</span>
-        <span className="text-xs font-bold text-gray-500">sats</span>
+        <span className="text-xs font-bold text-gray-400">sats</span>
       </div>
     </div>
   );

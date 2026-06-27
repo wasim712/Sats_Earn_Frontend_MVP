@@ -59,7 +59,7 @@ export const CTASection = () => {
             </Button>
           </div>
 
-          <p className="mt-10 text-xs sm:text-sm text-gray-500 tracking-wide">
+          <p className="mt-10 text-xs sm:text-sm text-gray-400 tracking-wide">
             Earnings depend on task availability and tier. All sats subject to 15-day maturity period.
           </p>
         </FadeUp>

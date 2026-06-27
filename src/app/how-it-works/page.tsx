@@ -134,7 +134,7 @@ export default function HowItWorksPage() {
             </div>
           </div>
           <FadeUp delay={0.5}>
-            <p className="text-center text-xs text-gray-500 mt-12 max-w-2xl mx-auto italic">
+            <p className="text-center text-xs text-gray-400 mt-12 max-w-2xl mx-auto italic">
               A realistic picture of getting started — not a promise of specific amounts. How much you earn depends on task availability and your tier.
             </p>
           </FadeUp>
@@ -221,7 +221,7 @@ export default function HowItWorksPage() {
             </div>
           </div>
           <FadeUp delay={0.5}>
-            <p className="text-center text-xs text-gray-500 mt-8 max-w-2xl mx-auto italic">
+            <p className="text-center text-xs text-gray-400 mt-8 max-w-2xl mx-auto italic">
               Every sat follows the same path, on the same 15-day timeline, for every tier — no shortcuts, no exceptions. Paid tiers earn more per task and have lower withdrawal minimums, so they reach payout sooner.
             </p>
           </FadeUp>
@@ -400,15 +400,15 @@ export default function HowItWorksPage() {
           <FadeUp delay={0.4}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-3xl mx-auto mb-16">
               <div className="bg-sats-black-900 border border-white/[0.08] rounded-xl p-4 text-center w-full sm:w-auto flex-1">
-                <div className="font-mono text-xs text-gray-500 uppercase tracking-widest mb-1">Money in</div>
+                <div className="font-mono text-xs text-gray-400 uppercase tracking-widest mb-1">Money in</div>
                 <div className="font-bold text-white">Subscriptions + Sponsors</div>
               </div>
-              <div className="text-gray-500 rotate-90 sm:rotate-0"><ArrowRight className="w-5 h-5" /></div>
+              <div className="text-gray-400 rotate-90 sm:rotate-0"><ArrowRight className="w-5 h-5" /></div>
               <div className="bg-sats-orange-500/10 border border-sats-orange-500/30 rounded-xl p-4 text-center w-full sm:w-auto flex-1 shadow-[0_0_20px_rgba(247,147,26,0.15)]">
                 <div className="font-mono text-xs text-sats-orange-500 uppercase tracking-widest mb-1">Reward pool</div>
                 <div className="font-bold text-sats-orange-500">Funded sat reserve</div>
               </div>
-              <div className="text-gray-500 rotate-90 sm:rotate-0"><ArrowRight className="w-5 h-5" /></div>
+              <div className="text-gray-400 rotate-90 sm:rotate-0"><ArrowRight className="w-5 h-5" /></div>
               <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center w-full sm:w-auto flex-1 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
                 <div className="font-mono text-xs text-green-500 uppercase tracking-widest mb-1">Money out</div>
                 <div className="font-bold text-green-500">Sats to your wallet</div>
@@ -457,7 +457,7 @@ export default function HowItWorksPage() {
                 ].map((col, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center">
                     <div className={`font-mono text-[9px] sm:text-[11px] font-bold ${col.now ? 'text-green-500' : 'text-gray-300'}`}>{col.price}</div>
-                    <div className={`font-mono text-[8px] sm:text-[9px] uppercase tracking-wider ${col.now ? 'text-green-500' : 'text-gray-500'}`}>{col.label}</div>
+                    <div className={`font-mono text-[8px] sm:text-[9px] uppercase tracking-wider ${col.now ? 'text-green-500' : 'text-gray-400'}`}>{col.label}</div>
                   </div>
                 ))}
               </div>
@@ -470,7 +470,7 @@ export default function HowItWorksPage() {
               <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-5 text-sm text-gray-300 leading-relaxed mb-4">
                 <strong className="text-green-500">This is why starting early matters.</strong> The sats you earn per task are highest while Bitcoin&apos;s price is lower. As (and if) the price climbs, we reduce sat-denominated rewards to keep payouts sustainable — so the per-task sat rates available today are higher than what later phases will offer. That&apos;s a feature of the model, not a promise about how much you&apos;ll earn or where Bitcoin&apos;s price will go.
               </div>
-              <p className="text-center text-[11px] text-gray-500 italic max-w-2xl mx-auto">
+              <p className="text-center text-[11px] text-gray-400 italic max-w-2xl mx-auto">
                 The price levels shown are illustrative scenarios for explaining the reward model — they are not forecasts, targets, or financial advice. Bitcoin&apos;s price can fall as well as rise. Exact sat rewards vary by task, tier, and campaign, and are always set by the platform.
               </p>
             </div>
@@ -524,7 +524,7 @@ export default function HowItWorksPage() {
               <Bitcoin className="w-5 h-5" />
               Start Earning Free
             </Link>
-            <div className="mt-8 pt-6 border-t border-white/[0.06] text-xs text-gray-500 max-w-lg mx-auto">
+            <div className="mt-8 pt-6 border-t border-white/[0.06] text-xs text-gray-400 max-w-lg mx-auto">
               Earnings depend on task availability and tier. All sats subject to 15-day maturity period.
             </div>
           </div>

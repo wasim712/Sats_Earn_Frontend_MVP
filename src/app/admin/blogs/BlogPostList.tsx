@@ -32,7 +32,7 @@ export function BlogPostList({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-black text-white">{post.title}</h3>
-                  <p className="text-xs text-gray-500 mt-1">/{post.slug}</p>
+                  <p className="text-xs text-gray-400 mt-1">/{post.slug}</p>
                 </div>
                 <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${post.isPublished ? 'bg-green-500/10 text-green-300' : 'bg-yellow-500/10 text-yellow-300'}`}>
                   {post.isPublished ? 'Published' : 'Draft'}
@@ -40,7 +40,7 @@ export function BlogPostList({
               </div>
               {post.excerpt && <p className="text-xs text-gray-400 mt-3">{post.excerpt}</p>}
               <div className="mt-3 flex items-center justify-between gap-2">
-                <span className="text-[11px] text-gray-500">{new Date(post.createdAt).toLocaleString()}</span>
+                <span className="text-[11px] text-gray-400">{new Date(post.createdAt).toLocaleString()}</span>
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={() => onEdit(post)} className="inline-flex items-center gap-2 rounded-lg border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs font-bold text-sats-orange-300 hover:bg-sats-orange-500/20">
                     <Pencil className="w-4 h-4" />

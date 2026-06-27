@@ -125,9 +125,9 @@ export default function ForgetPasswordPage() {
 
               <form onSubmit={handleRequestOtp} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                  <label htmlFor="email" className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
                   <div className="relative group">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                     <input
                       id="email"
                       type="email"
@@ -147,7 +147,7 @@ export default function ForgetPasswordPage() {
               </form>
 
               <div className="mt-8 pt-6 border-t border-white/5 text-center">
-                <Link href="/login" className="text-sm font-bold text-gray-500 hover:text-white transition-colors flex items-center justify-center gap-2 group">
+                <Link href="/login" className="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2 group">
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Login
                 </Link>
               </div>
@@ -175,7 +175,7 @@ export default function ForgetPasswordPage() {
                 <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-sats-orange-500/5 blur-2xl rounded-full pointer-events-none" />
                   
-                  <label className="flex items-center justify-center gap-2 text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">
+                  <label className="flex items-center justify-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">
                     <KeyRound className="w-3.5 h-3.5" /> Recovery Code
                   </label>
                   
@@ -194,9 +194,9 @@ export default function ForgetPasswordPage() {
                 {/* Visual Block 2: New Password */}
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">New Password</label>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Password</label>
                     <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                       <input
                         type={showPassword ? "text" : "password"}
                         required
@@ -206,7 +206,7 @@ export default function ForgetPasswordPage() {
                         className={inputClasses}
                         placeholder="••••••••"
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors outline-none">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors outline-none">
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
@@ -222,9 +222,9 @@ export default function ForgetPasswordPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
+                    <label className="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
                     <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-sats-orange-500 transition-colors" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-sats-orange-500 transition-colors" />
                       <input
                         type={showPassword ? "text" : "password"}
                         required

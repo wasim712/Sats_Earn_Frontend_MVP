@@ -295,7 +295,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                 {isEditMode ? 'Update the metadata for this campaign.' : 'Configure the metadata and questions.'}
               </p>
             </div>
-            <button onClick={handleRequestClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={handleRequestClose} className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -365,7 +365,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                   >
                     <div>
                       <p className="text-white font-medium">{selectedQuizDate ? selectedQuizDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : 'Select a date'}</p>
-                      <p className="mt-1 text-xs text-gray-500">Only today or future dates are allowed</p>
+                      <p className="mt-1 text-xs text-gray-400">Only today or future dates are allowed</p>
                     </div>
                     <CalendarDays className="h-5 w-5 text-sats-orange-400 shrink-0" />
                   </button>
@@ -410,7 +410,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-7 gap-2 text-center text-[11px] font-bold uppercase tracking-wide text-gray-500">
+                      <div className="grid grid-cols-7 gap-2 text-center text-[11px] font-bold uppercase tracking-wide text-gray-400">
                         {CALENDAR_DAYS.map((day) => (
                           <div key={day} className="py-1">{day}</div>
                         ))}
@@ -457,7 +457,7 @@ export default function CreateEditQuizModal({ isOpen, onClose, quiz }: Props) {
               <div className="mt-2 p-4 rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between">
                 <div>
                   <p className="text-sm font-bold text-white mb-0.5">Active Status</p>
-                  <p className="text-xs text-gray-500">Allow users to play this quiz.</p>
+                  <p className="text-xs text-gray-400">Allow users to play this quiz.</p>
                 </div>
                 <button
                   type="button"
@@ -604,7 +604,7 @@ const inputCls =
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode; }) {
   return (
     <div>
-      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">
         {label}
         {required && <span className="text-sats-orange-500 ml-1">*</span>}
       </label>

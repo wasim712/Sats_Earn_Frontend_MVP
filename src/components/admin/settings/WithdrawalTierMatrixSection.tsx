@@ -21,15 +21,15 @@ export function WithdrawalTierMatrixSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <TierColumn
           title="Free XP Tiers"
-          titleClassName="text-gray-500"
+          titleClassName="text-gray-400"
           icon={<Shield className="w-4 h-4" />}
           tiers={FREE_TIERS}
           values={values}
           suffix="Sats"
           cardClassName="bg-[#0a0a0a] border border-green-500/10"
           inputClassName="w-full bg-[#111] text-white font-bold text-sm border border-green-500/20 rounded-lg px-3 py-1.5 outline-none focus:border-green-500"
-          suffixClassName="text-gray-500"
-          labelClassName="text-gray-500"
+          suffixClassName="text-gray-400"
+          labelClassName="text-gray-400"
           onChange={onChange}
         />
 

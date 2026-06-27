@@ -157,7 +157,7 @@ export const ReferralShare = () => {
               })}
             </div>
             
-            <p className="text-xs text-gray-500 italic text-center max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xs text-gray-400 italic text-center max-w-3xl mx-auto leading-relaxed">
               <strong className="text-gray-400 font-mono font-bold">satsearn.app/?ref=YOURCODE</strong> is a placeholder — once you log in, your dashboard fills in your real 8-character code automatically. Keep it honest — no income promises or "get rich" claims (those break the fair-play rules and can forfeit your commission).
             </p>
           </FadeUp>

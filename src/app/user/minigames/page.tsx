@@ -86,7 +86,7 @@ export default function UserMiniGamesPage() {
           </div>
 
           <div className="rounded-[24px] border border-white/[0.06] bg-black/40 px-6 py-5 min-w-[240px] md:block hidden backdrop-blur-md shadow-inner">
-            <div className="flex items-center gap-2 text-gray-500 text-[10px] font-black uppercase tracking-[0.22em] mb-2">
+            <div className="flex items-center gap-2 text-gray-400 text-[10px] font-black uppercase tracking-[0.22em] mb-2">
               <Clock3 className="h-3.5 w-3.5 text-sats-orange-500" />
               Status
             </div>

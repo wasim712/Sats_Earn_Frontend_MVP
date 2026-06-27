@@ -122,7 +122,7 @@ export const PricingSection = () => {
                   <div className="flex items-start text-white mb-2">
                     <span className="text-xl font-bold mt-1">$</span>
                     <span className="text-5xl font-black tracking-tighter">{tier.monthly}</span>
-                    <span className="text-gray-500 ml-1 mt-auto mb-1">/mo</span>
+                    <span className="text-gray-400 ml-1 mt-auto mb-1">/mo</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <span>or <strong className="text-white">${tier.yearly}/yr</strong></span>
@@ -133,11 +133,11 @@ export const PricingSection = () => {
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div>
                     <div className={`text-xl font-black ${tier.color} font-mono`}>{tier.refRate}</div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Referral Rate</div>
+                    <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Referral Rate</div>
                   </div>
                   <div>
                     <div className="text-xl font-black text-white font-mono">{tier.withdrawMin}</div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Withdraw Min</div>
+                    <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Withdraw Min</div>
                   </div>
                 </div>
 
@@ -159,7 +159,7 @@ export const PricingSection = () => {
                 >
                   Get {tier.name}
                 </Button>
-                <div className="text-center mt-3 text-xs text-gray-500">Pay with sats or card</div>
+                <div className="text-center mt-3 text-xs text-gray-400">Pay with sats or card</div>
               </div>
             </FadeUp>
           ))}
@@ -180,7 +180,7 @@ export const PricingSection = () => {
                 <div className="flex items-start justify-center md:justify-start text-white mb-2">
                   <span className="text-2xl font-bold mt-1">$</span>
                   <span className="text-6xl font-black tracking-tighter">249</span>
-                  <span className="text-gray-500 ml-2 mt-auto mb-2 text-xl">/yr</span>
+                  <span className="text-gray-400 ml-2 mt-auto mb-2 text-xl">/yr</span>
                 </div>
                 <div className="text-sm text-gray-400 mb-8">One founding term · <strong className="text-white">yearly only</strong></div>
                 
@@ -190,7 +190,7 @@ export const PricingSection = () => {
                 >
                   Claim Founders Spot
                 </Button>
-                <div className="text-center md:text-left mt-3 text-xs text-gray-500">Yearly only · Limited to 1,000 users</div>
+                <div className="text-center md:text-left mt-3 text-xs text-gray-400">Yearly only · Limited to 1,000 users</div>
               </div>
 
               <div className="flex-1 w-full flex flex-col sm:flex-row md:flex-col gap-6 md:gap-4 md:pl-8 md:border-l md:border-yellow-500/20">
@@ -198,11 +198,11 @@ export const PricingSection = () => {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                       <div className="text-2xl font-black text-yellow-500 font-mono">30%</div>
-                      <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Referral Rate</div>
+                      <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Referral Rate</div>
                     </div>
                     <div>
                       <div className="text-2xl font-black text-yellow-500 font-mono">10k sats</div>
-                      <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Withdraw Min</div>
+                      <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Withdraw Min</div>
                     </div>
                   </div>
                 </div>

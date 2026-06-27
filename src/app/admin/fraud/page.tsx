@@ -67,7 +67,7 @@ export default function AdminFraudPage() {
           </div>
           
           <div className="relative w-full md:w-80 shrink-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search by Email or User ID..."
@@ -91,11 +91,11 @@ export default function AdminFraudPage() {
               
               <thead>
                 <tr className="border-b border-[#1a1a1a] bg-[#0a0a0a]/50">
-                  <th className="px-6 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest">Target Account</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Risk Level</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Threat Score</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Flags Triggered</th>
-                  <th className="px-6 py-5 text-[10px] font-black text-gray-500 uppercase tracking-widest text-right">Action</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Target Account</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Risk Level</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Threat Score</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Flags Triggered</th>
+                  <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Action</th>
                 </tr>
               </thead>
               
@@ -103,7 +103,7 @@ export default function AdminFraudPage() {
                 {filteredQueue.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-24 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-500">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
                         <ShieldCheck className="w-12 h-12 mb-4 text-green-500/50" />
                         <p className="font-bold text-lg text-white">System is Secure</p>
                         <p className="text-sm mt-1">No high-risk users are currently in the queue.</p>
@@ -117,11 +117,11 @@ export default function AdminFraudPage() {
                       <td className="px-6 py-5 align-middle">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-[#111] border border-[#2a2a2a] flex items-center justify-center shrink-0">
-                            <UserX className="w-4 h-4 text-gray-500" />
+                            <UserX className="w-4 h-4 text-gray-400" />
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-bold text-white truncate">{report.email}</p>
-                            <p className="text-[10px] font-mono text-gray-500 truncate mt-0.5">{report.userId}</p>
+                            <p className="text-[10px] font-mono text-gray-400 truncate mt-0.5">{report.userId}</p>
                           </div>
                         </div>
                       </td>
@@ -196,7 +196,7 @@ export default function AdminFraudPage() {
 
               {/* The Flags */}
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-3">Security Triggers Detected</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Security Triggers Detected</h3>
                 {isReportLoading ? (
                   <div className="h-20 bg-[#111] rounded-xl animate-pulse" />
                 ) : (

@@ -149,7 +149,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
             
             <div className="space-y-3">
               <div className="flex justify-between items-end">
-                <span className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-red-400' : 'text-gray-500'}`}>
+                <span className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-red-400' : 'text-gray-400'}`}>
                   {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Users className="w-4 h-4" />}
                   {isCompleted ? 'All steps completed' : `${spotsLeft.toLocaleString()} spots left`}
                 </span>

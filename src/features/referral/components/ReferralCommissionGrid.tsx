@@ -50,7 +50,7 @@ export const ReferralCommissionGrid = () => {
                   <div className="inline-block bg-sats-black-900 border border-white/10 text-xs font-mono font-bold text-green-500 uppercase px-3 py-1.5 rounded-md mb-4">
                     {tier.cap}
                   </div>
-                  <div className="text-[11px] text-gray-500 font-mono tracking-wider uppercase group-hover:text-sats-orange-500 transition-colors">
+                  <div className="text-[11px] text-gray-400 font-mono tracking-wider uppercase group-hover:text-sats-orange-500 transition-colors">
                     tap to preview →
                   </div>
                 </div>

@@ -128,7 +128,7 @@ export default function AdminSubmissionsPage() {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
             <div className="relative w-full sm:w-96 shrink-0">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search user, campaign, task, tier..."
@@ -226,7 +226,7 @@ export default function AdminSubmissionsPage() {
                         </div>
 
                         <div className="flex flex-col items-start xl:items-end gap-3 shrink-0">
-                          <p className="text-xs text-gray-500">Submitted {formatDateTime(submission.submittedAt)}</p>
+                          <p className="text-xs text-gray-400">Submitted {formatDateTime(submission.submittedAt)}</p>
                           <div className="flex flex-wrap gap-2">
                             <ActionButton
                               onClick={(event) => {
@@ -333,7 +333,7 @@ export default function AdminSubmissionsPage() {
 
                   {/* Fallback for missing proof entirely */}
                   {!selectedSubmission.screenshotUrl && !(selectedSubmission as any).proofText && (
-                     <div className="w-full rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-4 text-sm text-gray-500 text-center italic">
+                     <div className="w-full rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-4 text-sm text-gray-400 text-center italic">
                        No proof attached (Possible API Verification)
                      </div>
                   )}
@@ -392,7 +392,7 @@ function SummaryCard({ icon, label, value, glow }: { icon: React.ReactNode; labe
       <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full blur-3xl ${glow}`} />
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-gray-500">{label}</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-gray-400">{label}</p>
           <h3 className="mt-3 text-3xl font-black text-white">{value}</h3>
         </div>
         <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">{icon}</div>
@@ -404,7 +404,7 @@ function SummaryCard({ icon, label, value, glow }: { icon: React.ReactNode; labe
 function InfoPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{label}</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{label}</p>
       <p className="mt-1 text-sm font-semibold text-white break-words">{value}</p>
     </div>
   );
@@ -413,7 +413,7 @@ function InfoPill({ label, value }: { label: string; value: string }) {
 function DetailRow({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{label}</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{label}</p>
       <p className={`mt-1 text-sm text-white break-all ${mono ? 'font-mono' : 'font-semibold'}`}>{value}</p>
     </div>
   );

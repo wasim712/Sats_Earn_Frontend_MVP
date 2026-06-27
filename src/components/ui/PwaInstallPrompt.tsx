@@ -50,7 +50,7 @@ export function PwaInstallPrompt() {
             </button>
           </div>
         </div>
-        <button onClick={() => setDismissed(true)} className="text-gray-500 hover:text-white">
+        <button onClick={() => setDismissed(true)} className="text-gray-400 hover:text-white">
           <X className="w-4 h-4" />
         </button>
       </div>

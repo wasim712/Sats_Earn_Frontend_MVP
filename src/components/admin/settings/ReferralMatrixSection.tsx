@@ -21,15 +21,15 @@ export function ReferralMatrixSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ReferralTierColumn
           title="Free XP Tiers"
-          titleClassName="text-gray-500"
+          titleClassName="text-gray-400"
           icon={<Shield className="w-4 h-4" />}
           tiers={FREE_TIERS}
           values={values}
           onChange={onChange}
           cardClassName="bg-[#0a0a0a] border border-[#1a1a1a]"
-          labelClassName="text-gray-500"
+          labelClassName="text-gray-400"
           inputClassName="w-full bg-[#111] text-white font-bold text-sm border border-[#2a2a2a] rounded-lg px-3 py-1.5 outline-none focus:border-sats-orange-500"
-          suffixClassName="text-gray-500"
+          suffixClassName="text-gray-400"
         />
 
         <ReferralTierColumn

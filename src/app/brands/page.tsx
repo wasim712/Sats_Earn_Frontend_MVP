@@ -21,7 +21,7 @@ export default function BrandsPage() {
         {/* Breadcrumb */}
         <FadeUp delay={0.05}>
           <div className="flex justify-start mb-10">
-            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-xs text-gray-500 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
+            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-xs text-gray-400 bg-sats-black-900/40 backdrop-blur-md border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
               <Link href="/" className="text-gray-400 hover:text-sats-orange-500 transition-colors">Home</Link>
               <span className="text-gray-600">/</span>
               <span className="text-sats-orange-500 font-bold">For Brands</span>
@@ -232,46 +232,46 @@ chance to get in early.{' '}
               <table className="w-full text-left min-w-[600px] border-collapse">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-white/[0.08]">
-                    <th className="p-5 font-mono text-xs uppercase tracking-wider text-gray-500">Feature</th>
-                    <th className="p-5 font-mono text-xs uppercase tracking-wider text-gray-500">Traditional Ads</th>
+                    <th className="p-5 font-mono text-xs uppercase tracking-wider text-gray-400">Feature</th>
+                    <th className="p-5 font-mono text-xs uppercase tracking-wider text-gray-400">Traditional Ads</th>
                     <th className="p-5 font-mono text-xs uppercase tracking-wider text-sats-orange-500">SatsEarn (Bitcoin-Native)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.04]">
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">How you pay</td>
-                    <td className="p-5 text-sm text-gray-500">Fiat (cards / invoicing)</td>
+                    <td className="p-5 text-sm text-gray-400">Fiat (cards / invoicing)</td>
                     <td className="p-5 text-sm text-white font-bold">USD, USDT, or INR</td>
                   </tr>
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">How users are rewarded</td>
-                    <td className="p-5 text-sm text-gray-500">Points or gift cards</td>
+                    <td className="p-5 text-sm text-gray-400">Points or gift cards</td>
                     <td className="p-5 text-sm text-white font-bold">Real Bitcoin via Lightning</td>
                   </tr>
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">Reward settlement speed</td>
-                    <td className="p-5 text-sm text-gray-500">Delayed / batched</td>
+                    <td className="p-5 text-sm text-gray-400">Delayed / batched</td>
                     <td className="p-5 text-sm text-white font-bold">Instant — Lightning Network</td>
                   </tr>
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">Audience</td>
-                    <td className="p-5 text-sm text-gray-500">Broad, mixed intent</td>
+                    <td className="p-5 text-sm text-gray-400">Broad, mixed intent</td>
                     <td className="p-5 text-sm text-white font-bold">Bitcoin-native, engaged</td>
                   </tr>
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">Global coverage</td>
-                    <td className="p-5 text-sm text-gray-500">Limited by banking rails</td>
+                    <td className="p-5 text-sm text-gray-400">Limited by banking rails</td>
                     <td className="p-5 text-sm text-white font-bold">180+ countries</td>
                   </tr>
                   <tr className="hover:bg-white/[0.01] transition-colors">
                     <td className="p-5 text-sm text-gray-300 font-medium">Fraud protection</td>
-                    <td className="p-5 text-sm text-gray-500">Varies by network</td>
+                    <td className="p-5 text-sm text-gray-400">Varies by network</td>
                     <td className="p-5 text-sm text-white font-bold">Verification + 15-day maturity</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p className="text-center text-xs text-gray-500 mt-4 italic max-w-2xl mx-auto leading-relaxed">
+            <p className="text-center text-xs text-gray-400 mt-4 italic max-w-2xl mx-auto leading-relaxed">
               Comparison reflects the SatsEarn model versus typical traditional ad networks. Exact fees and timing depend on your campaign and network conditions.
             </p>
           </FadeUp>

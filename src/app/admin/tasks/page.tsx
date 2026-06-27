@@ -77,7 +77,7 @@ export default function AdminStandaloneTasksPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
               <div className="relative min-w-[280px]">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
@@ -130,7 +130,7 @@ export default function AdminStandaloneTasksPage() {
           </div>
 
           <div className="shrink-0 rounded-[20px] border border-white/5 bg-white/[0.02] px-4 py-3 text-right backdrop-blur-sm transition-colors duration-300 group-hover:border-sats-orange-500/20 group-hover:bg-sats-orange-500/5">
-            <div className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Top Reward</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Top Reward</div>
             <div className="mt-1 flex items-baseline justify-end gap-1">
               <span className="text-xl font-black tracking-tight text-sats-orange-400">{highestReward}</span>
               <span className="text-xs font-bold text-sats-orange-500/70">sats</span>
@@ -183,7 +183,7 @@ export default function AdminStandaloneTasksPage() {
             <div className="col-span-full py-24 flex flex-col items-center justify-center text-center border border-dashed border-sats-black-800 rounded-3xl bg-sats-black-900">
               <ShieldAlert className="w-12 h-12 text-gray-600 mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No Standalone Tasks Found</h3>
-              <p className="text-gray-500 text-sm max-w-md">Create a task or try a different search query.</p>
+              <p className="text-gray-400 text-sm max-w-md">Create a task or try a different search query.</p>
             </div>
           )}
         </section>

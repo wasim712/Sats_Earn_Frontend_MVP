@@ -346,7 +346,7 @@ export default function UserProfilePage() {
             <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 md:p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-gray-500" /> Connected Accounts
+                  <Share2 className="w-5 h-5 text-gray-400" /> Connected Accounts
                 </h3>
               </div>
               
@@ -429,11 +429,11 @@ export default function UserProfilePage() {
 
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                           <div className="rounded-xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Starts</div>
+                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">Starts</div>
                             <div className="mt-2 font-semibold text-white">{item.premiumStartsAt ? new Date(item.premiumStartsAt).toLocaleString() : 'Unknown'}</div>
                           </div>
                           <div className="rounded-xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Ends</div>
+                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">Ends</div>
                             <div className="mt-2 font-semibold text-white">{item.premiumExpiresAt ? new Date(item.premiumExpiresAt).toLocaleString() : 'Unknown'}</div>
                           </div>
                         </div>
@@ -465,7 +465,7 @@ export default function UserProfilePage() {
               </p>
 
               <div className="mt-auto">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.15em] mb-3">Your Unique Code</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-3">Your Unique Code</p>
                 <div className="flex items-stretch gap-2">
                   <div className="flex-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-4 flex items-center justify-center">
                     <span className="text-xl md:text-2xl font-mono font-black text-white tracking-[0.2em] select-all">
@@ -520,11 +520,11 @@ export default function UserProfilePage() {
 
                     <div className="mt-5 grid grid-cols-2 gap-3">
                       <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Source</div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">Source</div>
                         <div className="mt-2 text-sm font-semibold text-white">{sourceLabel}</div>
                       </div>
                       <div className="rounded-2xl border border-[#1a1a1a] bg-[#0b0b0b] p-3">
-                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">Amount</div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">Amount</div>
                         <div className="mt-2 text-sm font-semibold text-sats-orange-300">{amountLabel}</div>
                       </div>
                     </div>
@@ -550,7 +550,7 @@ export default function UserProfilePage() {
               })}
             </div>
           ) : (
-            <div className="rounded-3xl border border-dashed border-[#2a2a2a] bg-[#050505] p-6 text-sm text-gray-500">
+            <div className="rounded-3xl border border-dashed border-[#2a2a2a] bg-[#050505] p-6 text-sm text-gray-400">
               No billing records yet. Your upgrades and manual billing changes will appear here.
             </div>
           )}
@@ -569,10 +569,10 @@ function InfoRow({ icon: Icon, label, value, fallback }: { icon: LucideIcon, lab
   return (
     <div className="flex items-start gap-4 group">
       <div className="w-10 h-10 rounded-xl bg-[#0a0a0a] border border-[#1a1a1a] flex items-center justify-center shrink-0 group-hover:border-[#333] transition-colors">
-        <Icon className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+        <Icon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
       </div>
       <div className="min-w-0 flex-1 pt-0.5">
-        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{label}</p>
         <p className={`text-sm md:text-base font-semibold truncate ${isFallback ? 'text-gray-600 italic font-medium' : 'text-gray-200'}`}>
           {displayValue}
         </p>
@@ -603,7 +603,7 @@ function SocialBox({ iconSrc, platform, handle, hoverAccent }: { iconSrc: string
         />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{platform}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{platform}</p>
         <p className={`text-sm font-bold truncate ${isConnected ? 'text-gray-200' : 'text-gray-600'}`}>
           {isConnected ? `@${handle}` : 'Not Linked'}
         </p>
@@ -630,7 +630,7 @@ function ProfileStatCard({
           <Icon className={`h-4 w-4 ${accent}`} />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">{label}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">{label}</p>
           <p className="mt-1 text-base md:text-lg font-black text-white truncate">{value}</p>
         </div>
       </div>
@@ -656,7 +656,7 @@ function DetailCard({
           <Icon className={`h-4 w-4 ${accent}`} />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">{label}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">{label}</p>
           <p className="mt-1 text-sm font-semibold text-white break-words">{value}</p>
         </div>
       </div>

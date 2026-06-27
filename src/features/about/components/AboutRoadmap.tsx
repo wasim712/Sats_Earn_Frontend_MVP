@@ -109,7 +109,7 @@ export const AboutRoadmap = () => {
                       {item.status === 'Live' && '● '}
                       {item.status}
                     </span>
-                    <span className="text-xs text-gray-500 font-mono">
+                    <span className="text-xs text-gray-400 font-mono">
                       {item.date}
                     </span>
                     <span className="text-[15px] sm:text-base font-bold text-white flex-1 min-w-full sm:min-w-[180px] order-4 sm:order-none mt-2 sm:mt-0">

@@ -434,7 +434,7 @@ export default function RewardsPage() {
                   <div key={idx} className={`relative p-6 rounded-[28px] overflow-hidden border transition-all duration-300 hover:-translate-y-1 ${milestone.type === 'premium' ? 'bg-gradient-to-b from-sats-orange-500/10 to-sats-black-900 border-sats-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.1)]' : 'bg-sats-black-900 border-white/5 hover:border-white/20'}`}>
                     
                     <div className="absolute top-4 right-4 flex items-center gap-2">
-                      <span className={`flex items-center rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] border ${unlocked ? 'border-green-500/20 bg-green-500/10 text-green-400' : 'border-white/10 bg-black/40 text-gray-500'}`}>
+                      <span className={`flex items-center rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] border ${unlocked ? 'border-green-500/20 bg-green-500/10 text-green-400' : 'border-white/10 bg-black/40 text-gray-400'}`}>
                         {unlocked ? 'Unlocked' : <><Lock className="w-2.5 h-2.5 mr-1 inline-block -mt-0.5" /> Premium</>}
                       </span>
                       {milestone.type === 'free' ? (
@@ -455,7 +455,7 @@ export default function RewardsPage() {
                       <div className={`text-4xl font-black font-mono tracking-tighter ${milestone.type === 'premium' ? 'text-sats-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'text-white'}`}>
                         {milestone.reward.toLocaleString()}
                       </div>
-                      <div className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">
+                      <div className="text-xs text-gray-400 font-bold tracking-widest uppercase mb-1">
                         Sats
                       </div>
                     </div>
@@ -499,7 +499,7 @@ export default function RewardsPage() {
                         <div className={`text-xl font-black tracking-wide ${tier.color}`}>
                           {tier.name}
                         </div>
-                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-0.5">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">
                           {tier.xp}
                         </div>
                       </div>

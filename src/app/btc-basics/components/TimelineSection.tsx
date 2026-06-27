@@ -46,7 +46,7 @@ export function TimelineSection() {
                 {/* Timeline Dot */}
                 <div className={`absolute left-0 top-1 w-4 h-4 rounded-full border-2 ${ev.future ? 'bg-sats-black-950 border-gray-600 shadow-[0_0_0_4px_rgba(6,6,8,1)]' : 'bg-sats-black-950 border-sats-orange-500 shadow-[0_0_0_4px_rgba(6,6,8,1),0_0_12px_rgba(247,147,26,0.3)]'} z-10 transition-colors group-hover:border-sats-orange-400`}></div>
                 
-                <div className={`font-mono text-[11px] sm:text-xs font-bold tracking-[1px] mb-1.5 ${ev.future ? 'text-gray-500' : 'text-sats-orange-500'}`}>
+                <div className={`font-mono text-[11px] sm:text-xs font-bold tracking-[1px] mb-1.5 ${ev.future ? 'text-gray-400' : 'text-sats-orange-500'}`}>
                   {ev.date}
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-2">{ev.title}</h3>

@@ -181,7 +181,7 @@ function Panel({ title, description, children }: { title: string; description: s
     <div className="bg-[#050505] border border-[#1a1a1a] rounded-3xl p-6 space-y-4">
       <div>
         <h2 className="text-lg font-black text-white">{title}</h2>
-        <p className="text-xs text-gray-500 mt-1">{description}</p>
+        <p className="text-xs text-gray-400 mt-1">{description}</p>
       </div>
       <div className="space-y-4">{children}</div>
     </div>
@@ -189,7 +189,7 @@ function Panel({ title, description, children }: { title: string; description: s
 }
 
 function FieldLabel({ label, icon }: { label: string; icon: React.ReactNode }) {
-  return <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500"><span>{icon}</span>{label}</div>;
+  return <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400"><span>{icon}</span>{label}</div>;
 }
 
 function NumberField({ label, name, value, onChange, icon }: { label: string; name: string; value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; icon: React.ReactNode }) {
@@ -204,12 +204,12 @@ function NumberField({ label, name, value, onChange, icon }: { label: string; na
 function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] px-4 py-3">
-      <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-500 font-black">{icon}{label}</div>
+      <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 font-black">{icon}{label}</div>
       <div className="text-white font-black mt-2">{value}</div>
     </div>
   );
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
-  return <div className="flex items-center justify-between gap-4 border-b border-[#111] pb-2"><span className="text-gray-500">{label}</span><span className="text-white font-semibold text-right">{value}</span></div>;
+  return <div className="flex items-center justify-between gap-4 border-b border-[#111] pb-2"><span className="text-gray-400">{label}</span><span className="text-white font-semibold text-right">{value}</span></div>;
 }

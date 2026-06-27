@@ -100,7 +100,7 @@ export const BlogPreviewSection = () => {
                 <ArrowRight className="h-4.5 w-4.5" />
               </Link>
 
-              <div className="rounded-2xl border border-white/8 bg-[#050505] px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              <div className="rounded-2xl border border-white/8 bg-[#050505] px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-gray-400">
                 Route: <span className="text-sats-orange-400">/blogs</span>
               </div>
             </div>

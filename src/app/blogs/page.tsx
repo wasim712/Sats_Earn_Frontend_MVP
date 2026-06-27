@@ -88,7 +88,7 @@ export default function PublicBlogsPage() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search blogs, topics, or guides..."
-                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/50 pl-11 pr-4 text-sm text-white placeholder:text-gray-500 outline-none transition focus:border-sats-orange-500/40"
+                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/50 pl-11 pr-4 text-sm text-white placeholder:text-gray-400 outline-none transition focus:border-sats-orange-500/40"
                 />
               </div>
             </div>
@@ -159,7 +159,7 @@ export default function PublicBlogsPage() {
                 </div>
 
                 <div className="space-y-4 p-5">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                       {formatContentDate(blog.publishedAt || blog.createdAt)}

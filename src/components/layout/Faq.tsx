@@ -84,7 +84,7 @@ export const FAQ = () => {
                 </span>
                 <ChevronDown 
                   className={`w-5 h-5 shrink-0 transition-transform duration-300 ${
-                    openIndex === index ? 'text-sats-orange-500 rotate-180' : 'text-gray-500'
+                    openIndex === index ? 'text-sats-orange-500 rotate-180' : 'text-gray-400'
                   }`} 
                 />
               </button>
