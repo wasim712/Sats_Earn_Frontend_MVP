@@ -109,10 +109,8 @@ export default function AdminBlogsPage() {
   }, [content]);
 
   useEffect(() => {
-    if (!slug && title) {
-      setSlug(slugify(title));
-    }
-  }, [title, slug]);
+    setSlug(slugify(title));
+  }, [title]);
 
   const exec = (command: string, value?: string) => {
     editorRef.current?.focus();
@@ -177,7 +175,7 @@ export default function AdminBlogsPage() {
   const handleEdit = (post: BlogPost) => {
     setEditingId(post.id);
     setTitle(post.title);
-    setSlug(post.slug);
+    setSlug(slugify(post.title));
     setExcerpt(post.excerpt || '');
     setCoverImageUrl(post.coverImageUrl || '');
     setContent(post.content);
@@ -223,8 +221,8 @@ export default function AdminBlogsPage() {
                 <p className="text-[12px] text-gray-400">{title.trim().length}/{BLOG_TITLE_MAX} characters</p>
               </div>
               <div className="space-y-2">
-                <input value={slug} maxLength={BLOG_SLUG_MAX} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full lowercase" />
-                <p className="text-[12px] text-gray-400">Use lowercase letters, numbers, and hyphens only.</p>
+                <input value={slug} maxLength={BLOG_SLUG_MAX} readOnly placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full lowercase cursor-not-allowed opacity-80" />
+                <p className="text-[12px] text-gray-400">Slug is generated automatically from the title.</p>
               </div>
             </div>
 
