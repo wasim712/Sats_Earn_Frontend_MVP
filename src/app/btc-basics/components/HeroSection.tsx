@@ -76,7 +76,7 @@ export function HeroSection() {
                 {/* Top highlight line */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-sats-orange-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
-                <div className="font-mono text-[11px] tracking-[1.5px] uppercase text-gray-400 mb-3">{ess.key}</div>
+                <div className="font-mono text-[12px] tracking-[1.5px] uppercase text-gray-400 mb-3">{ess.key}</div>
                 <div className="font-mono font-bold text-xl sm:text-2xl text-sats-orange-500 leading-[1.05] mb-3">{ess.val}</div>
                 <div className="text-sm text-gray-400 leading-relaxed">{ess.desc}</div>
               </div>

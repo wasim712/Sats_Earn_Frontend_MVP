@@ -62,7 +62,7 @@ export const WithdrawalsSection = () => {
               </div>
             </div>
 
-            <div className="text-[11px] text-gray-400 leading-relaxed border-t border-white/10 pt-4">
+            <div className="text-[12px] text-gray-400 leading-relaxed border-t border-white/10 pt-4">
               Paid tier users reach withdrawal threshold faster — both from lower minimums and higher per-task earnings. A Founders user can withdraw up to 2.5x sooner than a Basic user completing the same tasks.
             </div>
           </FadeUp>

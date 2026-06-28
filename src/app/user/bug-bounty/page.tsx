@@ -244,7 +244,7 @@ export default function BugBountyPage() {
               minLength={TITLE_MIN}
               maxLength={TITLE_MAX}
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">{title.trim().length}/{TITLE_MAX}</p>
+            <p className="mt-2 text-[12px] font-bold uppercase tracking-widest text-gray-400">{title.trim().length}/{TITLE_MAX}</p>
           </div>
 
           <div>
@@ -257,7 +257,7 @@ export default function BugBountyPage() {
               minLength={DESCRIPTION_MIN}
               maxLength={DESCRIPTION_MAX}
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">{description.trim().length}/{DESCRIPTION_MAX}</p>
+            <p className="mt-2 text-[12px] font-bold uppercase tracking-widest text-gray-400">{description.trim().length}/{DESCRIPTION_MAX}</p>
           </div>
 
           <div>
@@ -268,7 +268,7 @@ export default function BugBountyPage() {
               onChange={(event) => setFile(event.target.files?.[0] || null)}
               className="w-full bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white"
             />
-            <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-gray-400">Max {SCREENSHOT_MAX_MB} MB image file</p>
+            <p className="mt-2 text-[12px] font-bold uppercase tracking-widest text-gray-400">Max {SCREENSHOT_MAX_MB} MB image file</p>
           </div>
 
           {error ? (
@@ -318,7 +318,7 @@ export default function BugBountyPage() {
                       {item.rewardSats > 0 ? (
                         <div className="inline-flex items-baseline gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                           <span className="text-[13px] font-black text-sats-orange-500">+{item.rewardSats.toLocaleString()}</span>
-                          <span className="text-[11px] font-bold text-gray-400 tracking-wide">sats</span>
+                          <span className="text-[12px] font-bold text-gray-400 tracking-wide">sats</span>
                         </div>
                       ) : (
                         <span>{item.status === 'OPEN' ? 'Pending review' : 'No reward'}</span>
@@ -339,7 +339,7 @@ export default function BugBountyPage() {
 function StatsCard({ label, value, icon, isLoading }: { label: string; value: string | number; icon: React.ReactNode; isLoading: boolean }) {
   return (
     <div className="rounded-2xl border border-[#1a1a1a] bg-[#0a0a0a] p-4">
-      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-400">
+      <div className="flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">
         {icon}
         <span>{label}</span>
       </div>

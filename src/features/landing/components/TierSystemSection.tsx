@@ -90,13 +90,13 @@ export const TierSystemSection = () => {
                       <span className="font-bold text-white text-sm">{tier.name}</span>
                       <span className="px-2 py-0.5 rounded border border-green-500/30 bg-green-500/10 text-green-500 text-[9px] font-bold tracking-wider">{tier.tag}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400 font-mono">{tier.req}</div>
+                    <div className="text-[12px] text-gray-400 font-mono">{tier.req}</div>
                   </div>
                   <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 sm:gap-1 w-full sm:w-auto">
                     <div className="text-[13px] font-bold text-sats-orange-500 font-mono">{tier.rate}</div>
                     <div className="flex items-center gap-3 sm:gap-0 sm:flex-col sm:items-end">
-                      <div className="text-[11px] text-gray-400 font-mono">{tier.ref}</div>
-                      <div className="text-[11px] text-gray-400 font-mono hidden sm:block">{tier.min}</div>
+                      <div className="text-[12px] text-gray-400 font-mono">{tier.ref}</div>
+                      <div className="text-[12px] text-gray-400 font-mono hidden sm:block">{tier.min}</div>
                     </div>
                   </div>
                 </FadeUp>
@@ -119,13 +119,13 @@ export const TierSystemSection = () => {
                       <span className="font-bold text-white text-sm">{tier.name}</span>
                       <span className={`px-2 py-0.5 rounded border text-[9px] font-bold tracking-wider ${tier.isFounders ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500' : 'border-sats-orange-500/30 bg-sats-orange-500/10 text-sats-orange-500'}`}>{tier.tag}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400 font-mono">{tier.req}</div>
+                    <div className="text-[12px] text-gray-400 font-mono">{tier.req}</div>
                   </div>
                   <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 sm:gap-1 w-full sm:w-auto">
                     <div className="text-[13px] font-bold text-sats-orange-500 font-mono">{tier.rate}</div>
                     <div className="flex items-center gap-3 sm:gap-0 sm:flex-col sm:items-end">
-                      <div className="text-[11px] text-gray-400 font-mono">{tier.ref}</div>
-                      <div className="text-[11px] text-gray-400 font-mono hidden sm:block">{tier.min}</div>
+                      <div className="text-[12px] text-gray-400 font-mono">{tier.ref}</div>
+                      <div className="text-[12px] text-gray-400 font-mono hidden sm:block">{tier.min}</div>
                     </div>
                   </div>
                 </FadeUp>
@@ -138,9 +138,9 @@ export const TierSystemSection = () => {
         {/* Comparison Table */}
         <FadeUp delay={0.5} className="bg-sats-black-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
           <div className="grid grid-cols-[2fr_1fr_1fr] bg-sats-black-800/80 p-4 sm:px-6 border-b border-white/10">
-            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase font-mono">Feature</span>
-            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase font-mono text-center">Free Tiers</span>
-            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase font-mono text-center">Paid Tiers</span>
+            <span className="text-[12px] font-bold tracking-widest text-gray-400 uppercase font-mono">Feature</span>
+            <span className="text-[12px] font-bold tracking-widest text-gray-400 uppercase font-mono text-center">Free Tiers</span>
+            <span className="text-[12px] font-bold tracking-widest text-gray-400 uppercase font-mono text-center">Paid Tiers</span>
           </div>
           
           <div className="flex flex-col">

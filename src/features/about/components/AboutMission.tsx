@@ -22,7 +22,7 @@ export const AboutMission = () => {
               { icon: "🤝", text: "Free Forever Tier" },
               { icon: "📊", text: "Fully Transparent" }
             ].map((pillar, i) => (
-              <div key={i} className="flex items-center gap-2 bg-sats-black-800 border border-white/10 rounded-full px-5 py-2.5 text-sm font-semibold text-white">
+              <div key={i} className="flex items-center gap-1 bg-sats-black-800 border border-white/10 rounded-full px-3 py-2 sm:text-sm text-[13px] font-semibold text-white">
                 <span className="text-base">{pillar.icon}</span> {pillar.text}
               </div>
             ))}

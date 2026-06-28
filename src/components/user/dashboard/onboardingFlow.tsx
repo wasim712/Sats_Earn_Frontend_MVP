@@ -381,7 +381,7 @@ export function OnboardingTour({ isOpen, onClose, referralCode = '', hideSkip = 
         <div className="relative z-10 flex-1 overflow-y-auto px-3 py-3 sm:px-5 sm:py-4 lg:px-6">
           <div className="grid gap-4 lg:grid-cols-[1.06fr_0.94fr]">
             <div className="rounded-[28px] border border-[#1b1b1b] bg-[#0b0b0b] p-4 sm:p-5 lg:p-6">
-              <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${tone.chip}`}>
+              <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12px] font-black uppercase tracking-[0.18em] ${tone.chip}`}>
                 <span className={`flex h-5 w-5 items-center justify-center rounded-full ${tone.soft} ${tone.icon}`}>{step.number}</span>
                 <span>{step.eyebrow}</span>
               </div>
@@ -721,7 +721,7 @@ function DashboardPreview({ tone }: { tone: ToneStyle }) {
           <div key={label} className="rounded-2xl border border-[#1d1d1d] bg-[#111] p-3">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">{label}</p>
             <p className={`mt-2 text-2xl font-black ${label === 'Available' ? tone.icon : 'text-white'}`}>{value}</p>
-            <p className="text-[11px] text-gray-400">sats</p>
+            <p className="text-[12px] text-gray-400">sats</p>
           </div>
         ))}
       </div>
@@ -751,7 +751,7 @@ function DashboardPreview({ tone }: { tone: ToneStyle }) {
 function TasksPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
-      <p className={`text-[11px] font-black uppercase tracking-[0.2em] ${tone.icon}`}>How tasks work</p>
+      <p className={`text-[12px] font-black uppercase tracking-[0.2em] ${tone.icon}`}>How tasks work</p>
       <div className="grid grid-cols-4 gap-2 text-center">
         {[
           { label: 'Choose', icon: Trophy },
@@ -786,7 +786,7 @@ function TasksPreview({ tone }: { tone: ToneStyle }) {
 function WalletPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
-      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Wallet Overview</p>
+      <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/30">Wallet Overview</p>
       <div className="grid grid-cols-3 gap-3">
         {[
           ['Available', '24,500'],
@@ -796,12 +796,12 @@ function WalletPreview({ tone }: { tone: ToneStyle }) {
           <div key={label} className="rounded-2xl border border-[#1d1d1d] bg-[#111] p-3">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">{label}</p>
             <p className={`mt-2 text-2xl font-black ${label !== 'Locked' ? tone.icon : 'text-white'}`}>{value}</p>
-            <p className="text-[11px] text-gray-400">sats</p>
+            <p className="text-[12px] text-gray-400">sats</p>
           </div>
         ))}
       </div>
       <div className="rounded-2xl border border-[#1d1d1d] bg-[#101010] p-4">
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/30">Your Balance Status</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/30">Your Balance Status</p>
         <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#1b1b1b]">
           <div className="flex h-full w-full overflow-hidden rounded-full">
             <div className="h-full bg-yellow-400" style={{ width: '67%' }} />
@@ -825,7 +825,7 @@ function WalletPreview({ tone }: { tone: ToneStyle }) {
 function StreakPreview({ tone }: { tone: ToneStyle }) {
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
-      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Your Streak Progress</p>
+      <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/30">Your Streak Progress</p>
       <div className="grid grid-cols-5 gap-2">
         {['D1', 'D2', 'D3', 'D4', 'D5'].map((day, index) => (
           <div key={day} className="text-center">
@@ -837,7 +837,7 @@ function StreakPreview({ tone }: { tone: ToneStyle }) {
         ))}
       </div>
       <div className="rounded-2xl border border-[#1d1d1d] bg-[#101010] p-4">
-        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Best Streak Rewards</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/30">Best Streak Rewards</p>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {[
             ['7 Days', '+ 500 sats'],
@@ -865,7 +865,7 @@ function ReferralPreview({ tone, referralCode }: { tone: ToneStyle; referralCode
   return (
     <div className="space-y-3 rounded-[24px] border border-[#1d1d1d] bg-[#0f0f0f] p-4">
       <div className="rounded-2xl border border-[#2a2050] bg-[#131020] px-4 py-4">
-        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">Your Referral Code</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-white/30">Your Referral Code</p>
         <div className="mt-3 flex items-center justify-between rounded-2xl border border-violet-500/20 bg-[#171129] px-4 py-3">
           <span className={`text-3xl font-black tracking-[0.2em] ${tone.icon}`}>{displayCode}</span>
           <div className={`flex h-10 w-10 items-center justify-center rounded-xl border ${tone.border} ${tone.soft}`}>
@@ -886,7 +886,7 @@ function ReferralPreview({ tone, referralCode }: { tone: ToneStyle; referralCode
         </div>
       </div>
       <div className="rounded-2xl border border-[#1d1d1d] bg-[#101010] p-4">
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/30">Referral Impact</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/30">Referral Impact</p>
         <div className="mt-4 grid grid-cols-3 gap-3 text-center">
           {[
             { label: 'Invite Friends', icon: Users },
@@ -935,7 +935,7 @@ function SecurityPreview({ tone }: { tone: ToneStyle }) {
         ))}
       </div>
       <div className="rounded-2xl border border-[#1d1d1d] bg-[#101010] p-4">
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/30">Your Progress</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/30">Your Progress</p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { label: 'Tasks Done', value: '28', icon: Users },

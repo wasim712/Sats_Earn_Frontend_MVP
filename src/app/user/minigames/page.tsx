@@ -216,7 +216,7 @@ export default function UserMiniGamesPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_rgba(52,211,153,0.9)]"></span>
                 </span>
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
+                <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
                   LIVE NOW
                 </span>
               </div>

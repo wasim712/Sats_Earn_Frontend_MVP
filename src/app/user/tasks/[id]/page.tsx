@@ -676,7 +676,7 @@ export default function CampaignDetailsPage() {
                 <div className="h-1 bg-[#141414] rounded-full overflow-hidden mb-3">
                   <div className="h-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)] rounded-full" style={{ width: `${completionPct}%` }} />
                 </div>
-                <p className="text-[11px] text-white/30">
+                <p className="text-[12px] text-white/30">
                   {completionPct < 20 ? "You're among the first." : completionPct > 80 ? "Hurry, slots filling up fast!" : "Complete it before slots run out."}
                 </p>
               </div>

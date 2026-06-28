@@ -34,7 +34,7 @@ export const ReferralDashboard = () => {
               <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
               <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
               <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-              <div className="ml-3 font-mono text-[11px] sm:text-xs text-gray-400 font-bold tracking-wide">
+              <div className="ml-3 font-mono text-[12px] sm:text-xs text-gray-400 font-bold tracking-wide">
                 satsearn.app / user / referrals
               </div>
             </div>
@@ -57,7 +57,7 @@ export const ReferralDashboard = () => {
                   
                   {/* Internal Hover message for desktop */}
                   <div className={`absolute inset-0 bg-sats-black-800/95 backdrop-blur-sm border border-sats-orange-500/50 rounded-xl flex items-center justify-center transition-all duration-300 z-20 ${showTooltip ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                    <span className="text-[11px] sm:text-xs font-mono text-white text-center px-2">
+                    <span className="text-[12px] sm:text-xs font-mono text-white text-center px-2">
                       Please login/signup to get your referral link.<br/>This one is dummy.
                     </span>
                   </div>
@@ -75,15 +75,15 @@ export const ReferralDashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-sats-black-900 border border-white/10 rounded-2xl p-5">
                   <div className="font-mono text-3xl font-black text-sats-orange-500 leading-none mb-2">0</div>
-                  <div className="text-[11px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Active referrals</div>
+                  <div className="text-[12px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Active referrals</div>
                 </div>
                 <div className="bg-sats-black-900 border border-white/10 rounded-2xl p-5">
                   <div className="font-mono text-3xl font-black text-[#ffbd2e] leading-none mb-2">0</div>
-                  <div className="text-[11px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Maturing sats <span className="opacity-70 normal-case font-normal text-[10px]">(in 15-day lock)</span></div>
+                  <div className="text-[12px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Maturing sats <span className="opacity-70 normal-case font-normal text-[10px]">(in 15-day lock)</span></div>
                 </div>
                 <div className="bg-sats-black-900 border border-white/10 rounded-2xl p-5">
                   <div className="font-mono text-3xl font-black text-green-500 leading-none mb-2">0</div>
-                  <div className="text-[11px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Available to withdraw</div>
+                  <div className="text-[12px] sm:text-xs text-gray-400 font-bold uppercase tracking-wide">Available to withdraw</div>
                 </div>
               </div>
 

@@ -16,7 +16,9 @@ import {
   Sparkles,
   Star,
   Trophy,
+  Zap,
 } from 'lucide-react';
+import Link from 'next/link';
 import { PremiumRewardCard } from './PremiumRewardsCard';
 import { FadeUp } from '@/components/animations/FadeUp';
 
@@ -316,7 +318,7 @@ export default function RewardsPage() {
           <section>
             <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-violet-300">
+                <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-[12px] font-black uppercase tracking-[0.22em] text-violet-300">
                   <Sparkles className="h-4 w-4" /> Premium Access
                 </div>
                 <h2 className="mt-4 text-3xl md:text-4xl font-black tracking-tight text-white">Premium Membership</h2>
@@ -395,6 +397,41 @@ export default function RewardsPage() {
             </div>
           </section>
         </FadeUp>
+
+        {/* Call to Action Section */}
+        <FadeUp delay={0.7}>
+          <section className="relativeborder-t border-white/5 pt-20 pb-10 flex flex-col items-center justify-center text-center">
+            
+            <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 px-4 py-1.5 text-[12px] font-black uppercase tracking-[0.25em] text-sats-orange-500 mb-6">
+              Ready to Stack?
+            </div>
+            
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white max-w-2xl leading-tight mb-5">
+              Start Earning Sats Today. <br className="hidden sm:block" /> For Free.
+            </h2>
+            
+            <p className="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-8">
+              Create your free account and start stacking real Bitcoin — no buying required. Already have one? Log in and pick up where you left off.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-8 relative z-10">
+              <Link href="/signup" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-sats-orange-500 hover:bg-sats-orange-400 text-black font-black px-8 py-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)] inline-flex justify-center items-center gap-2">
+                  <Zap className="w-4 h-4 fill-current" /> Create Free Account
+                </button>
+              </Link>
+              <Link href="/login" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#111] text-white font-bold px-8 py-3.5 rounded-xl transition-all border border-white/10 hover:border-white/20 inline-flex justify-center items-center">
+                  Log In
+                </button>
+              </Link>
+            </div>
+            
+            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider relative z-10">
+              No credit card to start. All sats subject to a 15-day maturity period.
+            </p>
+          </section>
+        </FadeUp>
       </div>
     </main>
   );
@@ -408,5 +445,5 @@ function StatusBanner({ tone, message }: { tone: 'green' | 'orange' | 'violet' |
     blue: 'border-blue-500/20 bg-blue-500/10 text-blue-300',
   };
 
-  return <div className={`rounded-xl border px-3 py-2.5 text-[11px] sm:text-xs font-bold leading-relaxed ${styles[tone]}`}>{message}</div>;
+  return <div className={`rounded-xl border px-3 py-2.5 text-[12px] sm:text-xs font-bold leading-relaxed ${styles[tone]}`}>{message}</div>;
 }

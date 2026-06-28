@@ -95,7 +95,7 @@ export default function GamificationStats({ gamification, tasksCompleted, active
               {Math.floor(gamification?.progressPercent || 0)}%
             </p>
           </div>
-          <p className="text-[11px] text-gray-400 font-semibold mt-2">
+          <p className="text-[12px] text-gray-400 font-semibold mt-2">
             {gamification?.nextTier
               ? `${gamification?.xpToNextTier || 0} XP to reach ${gamification.nextTier}`
               : 'You are at the top free tier.'}

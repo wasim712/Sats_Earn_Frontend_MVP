@@ -43,7 +43,7 @@ export const CTASection = () => {
             <Button 
               size="lg" 
               onClick={() => router.push('/signup')} 
-              className="w-full sm:w-auto gap-2 group text-base font-bold bg-sats-orange-500 text-black hover:bg-sats-orange-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(249,115,22,0.3)] border-none rounded-xl px-8 py-6"
+              className="w-full sm:w-auto gap-2 group text-base font-bold bg-sats-orange-500 text-black hover:bg-sats-orange-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(249,115,22,0.3)] border-none rounded-xl px-8 py-4"
             >
               Create Free Account
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -53,7 +53,7 @@ export const CTASection = () => {
               variant="outline" 
               size="lg" 
               onClick={() => scrollToSection('tiers')}
-              className="w-full sm:w-auto gap-2 text-base font-bold border-white/20 text-white hover:text-sats-orange-500 hover:border-sats-orange-500 hover:bg-sats-orange-500/10 transition-all rounded-xl px-8 py-6"
+              className="w-full sm:w-auto gap-2 text-base font-bold border-white/20 text-white hover:text-sats-orange-500 hover:border-sats-orange-500 hover:bg-sats-orange-500/10 transition-all rounded-xl px-8 py-4z"
             >
               View All Tiers
             </Button>

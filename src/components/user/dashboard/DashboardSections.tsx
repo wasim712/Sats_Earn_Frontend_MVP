@@ -116,14 +116,14 @@ export function
         </div>
 
         <div className="relative z-10 mb-6">
-          <div className="mb-3 flex items-center justify-between gap-4 text-[11px] font-semibold text-gray-400">
+          <div className="mb-3 flex items-center justify-between gap-4 text-[12px] font-semibold text-gray-400">
             <span>Progress to next unclaimed reward</span>
             <span className="text-sats-orange-400">{Math.round(streakProgressPercent)}%</span>
           </div>
           <div className="h-2.5 w-full overflow-hidden rounded-full border border-[#1f1f1f] bg-[#121212]">
             <div className="h-full rounded-full bg-gradient-to-r from-sats-orange-500 via-amber-400 to-yellow-300 transition-all duration-700" style={{ width: `${streakProgressPercent}%` }} />
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-400">
+          <div className="mt-2 flex items-center justify-between text-[12px] text-gray-400">
             <span>{lastClaimedStreakMilestone > 0 ? `${lastClaimedStreakMilestone} days last claimed` : 'Start'}</span>
             <span>{nextStreakMilestone ? `${nextStreakMilestone} days target` : 'Completed'}</span>
           </div>
@@ -263,7 +263,7 @@ export function DashboardLowerGrid({ dashboard, monthlyTopEarners }: DashboardLo
                           {submission.taskTitle || 'Unknown Task'}
                         </p>
                         {dateString && (
-                          <p className={`text-[11px] font-semibold uppercase tracking-wide ${isPending ? 'text-blue-400' : 'text-yellow-400'}`}>
+                          <p className={`text-[12px] font-semibold uppercase tracking-wide ${isPending ? 'text-blue-400' : 'text-yellow-400'}`}>
                             {dateString}
                           </p>
                         )}

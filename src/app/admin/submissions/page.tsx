@@ -201,13 +201,13 @@ export default function AdminSubmissionsPage() {
                       <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
                         <div className="space-y-3 min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-sats-orange-300">
+                            <span className="inline-flex items-center rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-wider text-sats-orange-300">
                               {submission.status.replaceAll('_', ' ')}
                             </span>
-                            <span className="inline-flex items-center rounded-full border border-[#232323] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-gray-300">
+                            <span className="inline-flex items-center rounded-full border border-[#232323] px-3 py-1 text-[12px] font-bold uppercase tracking-wider text-gray-300">
                               {submission.user.activeTier || 'Unknown Tier'}
                             </span>
-                            <span className="inline-flex items-center rounded-full border border-[#232323] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-gray-300">
+                            <span className="inline-flex items-center rounded-full border border-[#232323] px-3 py-1 text-[12px] font-bold uppercase tracking-wider text-gray-300">
                               {submission.user.isPremium ? 'Premium' : 'Free'}
                             </span>
                           </div>

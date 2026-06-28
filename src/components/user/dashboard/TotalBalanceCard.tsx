@@ -80,7 +80,7 @@ function MiniBalanceBox({ title, amount, icon }: { title: string, amount: number
   return (
     <div className="bg-sats-black-950 border border-[#1a1a1a] rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 hover:border-sats-orange-500/40 hover:bg-[#0a0a0a]">
       <div className="flex justify-between items-start mb-3">
-        <p className="text-[11px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">{title}</p>
+        <p className="text-[12px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">{title}</p>
         <div className="p-1.5 bg-black rounded-lg border border-[#1a1a1a] shadow-inner">
           {icon}
         </div>

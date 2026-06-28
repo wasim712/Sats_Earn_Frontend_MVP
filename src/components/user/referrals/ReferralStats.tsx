@@ -64,7 +64,7 @@ function StatCard({ title, value, icon, unit, isHighlight = false }: StatCardPro
 
       {/* Top Row: Title & Icon */}
       <div className="relative z-10 flex items-start justify-between gap-4 mb-6">
-        <p className={`text-[11px] font-black uppercase tracking-widest mt-1 ${isHighlight ? 'text-sats-orange-500/80' : 'text-gray-400'}`}>
+        <p className={`text-[12px] font-black uppercase tracking-widest mt-1 ${isHighlight ? 'text-sats-orange-500/80' : 'text-gray-400'}`}>
           {title}
         </p>
         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border shadow-inner transition-transform duration-500 group-hover:scale-110 ${
@@ -86,7 +86,7 @@ function StatCard({ title, value, icon, unit, isHighlight = false }: StatCardPro
           {formattedValue}
         </h4>
         {unit && (
-          <span className={`text-[11px] font-bold uppercase tracking-widest ${
+          <span className={`text-[12px] font-bold uppercase tracking-widest ${
             isHighlight ? 'text-sats-orange-500/50' : 'text-gray-600'
           }`}>
             {unit}

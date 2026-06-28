@@ -64,7 +64,7 @@ export default function AdminStandaloneTasksPage() {
         <section className="rounded-[30px] border border-[#1a1a1a] bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_30%),#050505] p-6 md:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.38)]">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div className="space-y-4 max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
+              <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-2 text-[12px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
                 <Sparkles className="h-4 w-4" /> Admin Standalone Flow
               </div>
               <div>
@@ -138,7 +138,7 @@ export default function AdminStandaloneTasksPage() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-6 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-wider">
+        <div className="relative z-10 mt-6 flex flex-wrap gap-2 text-[12px] font-bold uppercase tracking-wider">
           <span className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-gray-300 shadow-inner">
             {task.proofType || 'SCREENSHOT'}
           </span>
@@ -204,7 +204,7 @@ function SummaryCard({ label, value, icon: Icon, tone }: { label: string; value:
     <div className={`rounded-3xl border p-5 ${toneMap[tone]}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/60">{label}</div>
+          <div className="text-[12px] font-black uppercase tracking-[0.18em] text-white/60">{label}</div>
           <div className="mt-3 text-3xl font-black text-white">{value}</div>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-3">

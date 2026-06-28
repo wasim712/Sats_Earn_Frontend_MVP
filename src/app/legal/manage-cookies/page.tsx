@@ -24,7 +24,7 @@ export default function ManageCookiesPage() {
                 <div className="text-sm font-bold text-white mb-1">Essential Cookies</div>
                 <div className="text-xs text-gray-400">Login sessions, security, fraud detection. Always active.</div>
               </div>
-              <div className="bg-green-500 rounded-full px-3 py-1 text-[11px] font-bold text-black uppercase tracking-wide">
+              <div className="bg-green-500 rounded-full px-3 py-1 text-[12px] font-bold text-black uppercase tracking-wide">
                 Always On
               </div>
             </div>

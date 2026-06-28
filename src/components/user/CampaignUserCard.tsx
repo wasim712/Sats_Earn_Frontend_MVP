@@ -97,7 +97,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
           {/* Top Right Badges */}
           <div className="absolute top-5 right-5 flex items-center gap-2 z-20">
             {isCompleted ? (
-              <div className="bg-green-500/90 backdrop-blur-md text-black text-[11px] font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md">
+              <div className="bg-green-500/90 backdrop-blur-md text-black text-[12px] font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md">
                 <CheckCircle2 className="w-4 h-4" /> COMPLETED
               </div>
             ) : (
@@ -149,7 +149,7 @@ export function CampaignUserCard({ campaign }: { campaign: Campaign }) {
             
             <div className="space-y-3">
               <div className="flex justify-between items-end">
-                <span className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-red-400' : 'text-gray-400'}`}>
+                <span className={`text-[12px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isCompleted ? 'text-green-400' : isAlmostFull ? 'text-red-400' : 'text-gray-400'}`}>
                   {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Users className="w-4 h-4" />}
                   {isCompleted ? 'All steps completed' : `${spotsLeft.toLocaleString()} spots left`}
                 </span>

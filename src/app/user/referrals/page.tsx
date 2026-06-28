@@ -227,7 +227,7 @@ export default function ReferralsPage() {
             <Info className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-sky-200/90">Referral Activity Status</p>
+            <p className="text-[12px] font-black uppercase tracking-[0.22em] text-sky-200/90">Referral Activity Status</p>
             <h2 className="mt-1 text-lg font-black text-white">Active status tracks engagement</h2>
             <p className="mt-2 text-sm leading-7 text-sky-100/80">
               A referred user must be active on at least <strong className="text-white">10 different days in the last 30 days</strong>

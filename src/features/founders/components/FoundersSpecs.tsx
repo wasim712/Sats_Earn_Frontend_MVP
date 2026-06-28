@@ -19,7 +19,7 @@ export const FoundersSpecs = () => {
     <section className="py-12 max-w-3xl mx-auto px-4 relative">
       <div className="mb-8">
         <FadeUp delay={0.1}>
-          <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
+          <div className="flex items-center gap-2 font-mono text-[12px] sm:text-xs tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
             <span className="w-6 h-px bg-sats-orange-500/50 inline-block"></span>
             The Numbers
           </div>

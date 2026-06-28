@@ -18,7 +18,7 @@ export const LogoText = ({ className = ''}: LogoTextProps) => {
 
       {/* The Beta Badge - Pushed slightly up to match the image */}
      
-        <span className="bg-sats-orange-500 text-black text-[12px] sm:text-[11px]  px-2.5 py-0.5 rounded-full leading-none self-start mt-1">
+        <span className="bg-sats-orange-500 text-black text-[12px] sm:text-[12px]  px-2.5 py-0.5 rounded-full leading-none self-start mt-1">
           Beta
         </span>
 

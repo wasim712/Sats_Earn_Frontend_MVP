@@ -62,10 +62,10 @@ function DesktopTable({ list }: { list: UserReferral[] }) {
   return (
     <div className="overflow-hidden rounded-[22px] border border-[#2a2a2a] bg-[#0b0b0b] shadow-[0_18px_60px_rgba(0,0,0,0.28)] ring-1 ring-sats-orange-500/6">
       <div className="flex items-center justify-between gap-3 border-b border-[#2a2a2a] bg-[linear-gradient(180deg,rgba(249,115,22,0.14),rgba(245,158,11,0.06))] px-4 py-3 sm:px-5">
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-sats-orange-300">
+        <p className="text-[12px] font-black uppercase tracking-[0.18em] text-sats-orange-300">
           Network Overview
         </p>
-        <p className="text-[11px] font-semibold text-gray-400 sm:text-xs inline lg:hidden">
+        <p className="text-[12px] font-semibold text-gray-400 sm:text-xs inline lg:hidden">
           Swipe sideways to view all columns
         </p>
       </div>
@@ -77,7 +77,7 @@ function DesktopTable({ list }: { list: UserReferral[] }) {
               {['Username', 'Country', 'DOJ', 'Active Days', 'Tasks', 'Status', 'Tier', 'Email'].map((heading) => (
                 <th
                   key={heading}
-                  className="px-4 xl:px-5 py-3 text-left text-[11px] font-black uppercase tracking-[0.16em] text-gray-400 whitespace-nowrap"
+                  className="px-4 xl:px-5 py-3 text-left text-[12px] font-black uppercase tracking-[0.16em] text-gray-400 whitespace-nowrap"
                 >
                   {heading}
                 </th>

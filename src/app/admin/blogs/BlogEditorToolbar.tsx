@@ -32,7 +32,7 @@ export function BlogEditorToolbar({
         </button>
       </div>
 
-      <div className="text-[11px] text-gray-400">Use headings, bullet lists, quotes, links, and images for cleaner blogs.</div>
+      <div className="text-[12px] text-gray-400">Use headings, bullet lists, quotes, links, and images for cleaner blogs.</div>
     </div>
   );
 }

@@ -375,7 +375,7 @@ function CampaignCard({ campaign, onToggleActive, onDelete }: CampaignCardProps)
             )}
             {doubleRewardsStatus === 'live' && (
               <div className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-yellow-300">
-                <span className="text-[11px] leading-none">🔥</span>
+                <span className="text-[12px] leading-none">🔥</span>
                 2x Rewards
               </div>
             )}

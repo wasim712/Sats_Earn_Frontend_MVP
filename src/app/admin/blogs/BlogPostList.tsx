@@ -40,7 +40,7 @@ export function BlogPostList({
               </div>
               {post.excerpt && <p className="text-xs text-gray-400 mt-3">{post.excerpt}</p>}
               <div className="mt-3 flex items-center justify-between gap-2">
-                <span className="text-[11px] text-gray-400">{new Date(post.createdAt).toLocaleString()}</span>
+                <span className="text-[12px] text-gray-400">{new Date(post.createdAt).toLocaleString()}</span>
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={() => onEdit(post)} className="inline-flex items-center gap-2 rounded-lg border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-2 text-xs font-bold text-sats-orange-300 hover:bg-sats-orange-500/20">
                     <Pencil className="w-4 h-4" />

@@ -93,7 +93,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         
         {/* ─── HERO SECTION ─── */}
         <div className="text-center space-y-4 pt-8 md:pt-12">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-4 py-1.5 text-[12px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
             <HelpCircle className="h-4 w-4" /> Get in Touch
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight">
@@ -489,7 +489,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             >
               <div className="text-3xl shrink-0">🐛</div>
               <div>
-                <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Something broken?</div>
+                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Something broken?</div>
                 <div className="text-[15px] font-black text-white group-hover:text-sats-orange-500 transition-colors">Report a Bug</div>
                 <div className="text-xs text-gray-400 mt-1">Pre-fills the form with a bug report template so we can reproduce and fix it fast.</div>
               </div>
@@ -501,7 +501,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             >
               <div className="text-3xl shrink-0">💡</div>
               <div>
-                <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Have an idea?</div>
+                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Have an idea?</div>
                 <div className="text-[15px] font-black text-white group-hover:text-sats-orange-500 transition-colors">Request a Feature</div>
                 <div className="text-xs text-gray-400 mt-1">Pre-fills the form with a feature request template. We read every suggestion.</div>
               </div>

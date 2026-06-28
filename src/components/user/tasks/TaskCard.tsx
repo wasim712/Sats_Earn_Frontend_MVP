@@ -70,7 +70,7 @@
 //           <Upload className="w-4 h-4 text-sats-orange-500" />
 //         </div>
 //         <p className="text-sm font-medium text-white/70">{file ? file.name : 'Click to upload screenshot'}</p>
-//         <p className="text-[11px] text-white/20 mt-1">PNG, JPG up to 5MB</p>
+//         <p className="text-[12px] text-white/20 mt-1">PNG, JPG up to 5MB</p>
 //       </div>
 //     </label>
 //   );
@@ -119,7 +119,7 @@
 // }) {
 //   return (
 //     <div className="space-y-3">
-//       <p className="text-[11px] text-white/20 flex items-center gap-1.5">
+//       <p className="text-[12px] text-white/20 flex items-center gap-1.5">
 //         <span className="text-white/15">{meta.icon}</span>
 //         {meta.hint}
 //       </p>
@@ -382,7 +382,7 @@ function StatusBadge({ status }: { status: UserTaskStatus }) {
   }[status];
 
   return (
-    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-300 ${config.cls}`}>
+    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-300 ${config.cls}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${config.dot} ${status === 'pending_review' ? 'animate-pulse' : ''}`} />
       {config.label}
     </span>
@@ -576,16 +576,16 @@ export function TaskCard({
 
         {/* Badges Section */}
         <div className="flex flex-wrap items-center gap-2.5 mb-8 md:pl-16">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.08] text-[11px] font-bold uppercase tracking-wider text-white/60 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.08] text-[12px] font-bold uppercase tracking-wider text-white/60 shadow-sm">
             {taskPlatform}
           </span>
           {typeof task.taskRewardSats === 'number' && task.taskRewardSats > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-[11px] font-bold uppercase tracking-wider text-yellow-300 shadow-sm">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-[12px] font-bold uppercase tracking-wider text-yellow-300 shadow-sm">
               <Zap className="w-3.5 h-3.5" />
               {task.taskRewardSats.toLocaleString()} Sats
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sats-orange-500/10 border border-sats-orange-500/20 text-[11px] font-bold uppercase tracking-wider text-sats-orange-400 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sats-orange-500/10 border border-sats-orange-500/20 text-[12px] font-bold uppercase tracking-wider text-sats-orange-400 shadow-sm">
             <span className="opacity-80">{meta.icon}</span> {proofLabel}
           </span>
           <span className="sm:hidden">
@@ -601,7 +601,7 @@ export function TaskCard({
                 <span className="text-xs font-black text-sats-orange-500">1</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-white/30 mb-1">Step 1 • Open on {taskPlatform}</p>
+                <p className="text-[12px] font-bold uppercase tracking-widest text-white/30 mb-1">Step 1 • Open on {taskPlatform}</p>
                 <p className="text-sm font-medium text-white/60 truncate group-hover/link:text-white/80 transition-colors duration-300">{task.targetUrl}</p>
               </div>
               <a 

@@ -571,7 +571,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
               {status.label}
             </div>
 
-            <div className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-black shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md ${isPremiumOnly ? 'border border-violet-300/20 bg-[#140d1f]/80 text-violet-200 shadow-[0_0_24px_rgba(168,85,247,0.12)]' : 'border border-sats-orange-500/20 bg-black/65 text-sats-orange-400'}`}>
+            <div className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[12px] font-black shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md ${isPremiumOnly ? 'border border-violet-300/20 bg-[#140d1f]/80 text-violet-200 shadow-[0_0_24px_rgba(168,85,247,0.12)]' : 'border border-sats-orange-500/20 bg-black/65 text-sats-orange-400'}`}>
               <Zap className="h-3.5 w-3.5" />
               <span>~ {topReward.toLocaleString()} sats</span>
             </div>
@@ -579,7 +579,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
 
           {campaign.doubleRewardsActive ? (
             <div className="absolute bottom-5 left-5">
-              <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/25 bg-black/70 px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-yellow-400 shadow-[0_0_18px_rgba(234,179,8,0.08)] backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/25 bg-black/70 px-3.5 py-2 text-[12px] font-black uppercase tracking-[0.18em] text-yellow-400 shadow-[0_0_18px_rgba(234,179,8,0.08)] backdrop-blur-md">
                 <Flame className="h-4 w-4 text-sats-orange-500" />
                 2x Rewards Live
               </div>
@@ -613,7 +613,7 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
 
           <div className="mt-auto pt-6 space-y-5">
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.18em]">
+              <div className="flex items-center justify-between text-[12px] font-black uppercase tracking-[0.18em]">
                 <span className={status.isCompleted ? 'text-green-400' : status.isFull ? 'text-red-400' : 'text-gray-400'}>
                   {status.progressText}
                 </span>
@@ -667,7 +667,7 @@ function MetaPill({
   premium?: boolean;
 }) {
   return (
-    <div className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[11px] font-bold shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${premium ? 'border border-violet-400/14 bg-[#0d0914] text-violet-100' : 'border border-[#1a1a1a] bg-[#050505] text-gray-300'}`}>
+    <div className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[12px] font-bold shadow-[0_0_0_1px_rgba(255,255,255,0.015)] ${premium ? 'border border-violet-400/14 bg-[#0d0914] text-violet-100' : 'border border-[#1a1a1a] bg-[#050505] text-gray-300'}`}>
       {iconSrc ? (
         <Image src={iconSrc} alt={label} width={14} height={14} className="h-3.5 w-3.5" />
       ) : Icon ? (

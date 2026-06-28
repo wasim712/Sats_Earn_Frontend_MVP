@@ -56,7 +56,7 @@ export const FoundersCloseCta = () => {
       <FadeUp delay={0.3}>
         <div className="max-w-xl mx-auto bg-sats-black-900 border border-sats-orange-500/10 rounded-2xl p-6 sm:p-7 shadow-[0_10px_30px_rgba(0,0,0,0.4)] mb-10 relative overflow-hidden group hover:border-sats-orange-500/20 transition-colors duration-300">
           <div className="flex justify-between items-baseline mb-3">
-            <span className="font-mono text-[11px] sm:text-xs tracking-wider uppercase text-gray-300">Founding Members</span>
+            <span className="font-mono text-[12px] sm:text-xs tracking-wider uppercase text-gray-300">Founding Members</span>
             <span className="font-mono text-sm sm:text-base font-bold text-sats-orange-500">
               {spotsCount} / {totalSpots}
             </span>

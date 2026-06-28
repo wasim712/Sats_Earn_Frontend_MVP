@@ -40,13 +40,13 @@ export function BlogSidebarList({
                 </p>
               </div>
 
-              <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${isActive ? 'border-sats-orange-500/35 bg-sats-orange-500/15 text-sats-orange-300' : 'border-white/10 bg-white/[0.03] text-gray-400'}`}>
+              <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[12px] font-black uppercase tracking-[0.18em] ${isActive ? 'border-sats-orange-500/35 bg-sats-orange-500/15 text-sats-orange-300' : 'border-white/10 bg-white/[0.03] text-gray-400'}`}>
                 Read
                 <ArrowRight className={`h-3.5 w-3.5 transition-transform ${isActive ? 'translate-x-0.5' : 'group-hover:translate-x-0.5'}`} />
               </span>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-gray-400">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-3.5 w-3.5 text-sats-orange-400" />
                 {formatContentDate(blog.publishedAt || blog.createdAt)}

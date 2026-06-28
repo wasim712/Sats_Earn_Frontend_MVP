@@ -409,7 +409,7 @@ export default function UserProfilePage() {
                 <div className="mt-6 rounded-2xl border border-[#1a1a1a] bg-[#080808] p-4">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <h4 className="text-sm md:text-base font-black text-white tracking-tight">Future Premium Queue</h4>
-                    <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-violet-300">
+                    <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-violet-300">
                       {premiumQueue.length} queued
                     </span>
                   </div>
@@ -422,7 +422,7 @@ export default function UserProfilePage() {
                             <p className="text-sm font-black text-white">#{index + 1} {item.premiumTier}</p>
                             <p className="mt-1 text-xs text-gray-400">Purchased {new Date(item.createdAt).toLocaleString()}</p>
                           </div>
-                          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-300">
+                          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-blue-300">
                             {item.billingCycle}
                           </span>
                         </div>
@@ -513,7 +513,7 @@ export default function UserProfilePage() {
                         <div className="text-lg font-black text-white tracking-tight">{item.premiumTier}</div>
                         <div className="mt-1 text-sm text-gray-400">{new Date(item.createdAt).toLocaleString()}</div>
                       </div>
-                      <div className="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-green-300">
+                      <div className="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.16em] text-green-300">
                         {item.billingCycle}
                       </div>
                     </div>
@@ -530,11 +530,11 @@ export default function UserProfilePage() {
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-sats-orange-300">
+                      <span className="rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-sats-orange-300">
                         {sourceLabel}
                       </span>
                       {item.premiumExpiresAt ? (
-                        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-300">
+                        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-blue-300">
                           Expires {new Date(item.premiumExpiresAt).toLocaleDateString()}
                         </span>
                       ) : null}

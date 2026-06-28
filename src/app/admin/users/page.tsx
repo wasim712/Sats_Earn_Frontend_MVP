@@ -149,7 +149,7 @@ export default function AdminUsersPage() {
 
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-[#0b0b0b] text-gray-400 uppercase tracking-widest text-[11px]">
+              <thead className="bg-[#0b0b0b] text-gray-400 uppercase tracking-widest text-[12px]">
                 <tr>
                   <th className="text-left px-6 py-4">User</th>
                   <th className="text-left px-6 py-4">Status</th>

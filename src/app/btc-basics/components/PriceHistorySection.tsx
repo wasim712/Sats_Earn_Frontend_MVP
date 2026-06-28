@@ -31,8 +31,8 @@ export function PriceHistorySection() {
   const TableBlock = ({ data }: { data: { year: string; val: string }[] }) => (
     <div className="bg-sats-black-900/60 backdrop-blur-sm border border-white/[0.04] rounded-2xl overflow-hidden shadow-lg">
       <div className="grid grid-cols-2 gap-4 px-5 py-4 bg-sats-orange-500/[0.06] border-b border-white/[0.04]">
-        <div className="font-mono text-[11px] tracking-[1.5px] uppercase text-sats-orange-500">Year</div>
-        <div className="font-mono text-[11px] tracking-[1.5px] uppercase text-sats-orange-500 text-right">Year High</div>
+        <div className="font-mono text-[12px] tracking-[1.5px] uppercase text-sats-orange-500">Year</div>
+        <div className="font-mono text-[12px] tracking-[1.5px] uppercase text-sats-orange-500 text-right">Year High</div>
       </div>
       <div className="flex flex-col">
         {data.map((row, i) => (

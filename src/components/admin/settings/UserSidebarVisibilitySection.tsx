@@ -50,7 +50,7 @@ export function UserSidebarVisibilitySection({ values, onToggle }: UserSidebarVi
               <p className={`truncate text-sm font-bold transition-colors duration-300 ${value ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
                 {formatSidebarLabel(key)}
               </p>
-              <p className="mt-0.5 truncate text-[11px] font-medium text-gray-400">
+              <p className="mt-0.5 truncate text-[12px] font-medium text-gray-400">
                 {value ? 'Visible to users' : 'Hidden from users'}
               </p>
             </div>

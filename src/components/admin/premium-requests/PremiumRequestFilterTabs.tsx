@@ -29,7 +29,7 @@ export function PremiumRequestFilterTabs({
             }`}
           >
             <span>{option.label}</span>
-            <span className="rounded-full bg-black/30 px-2 py-0.5 text-[11px] font-black text-inherit">{counts[option.key]}</span>
+            <span className="rounded-full bg-black/30 px-2 py-0.5 text-[12px] font-black text-inherit">{counts[option.key]}</span>
           </button>
         );
       })}

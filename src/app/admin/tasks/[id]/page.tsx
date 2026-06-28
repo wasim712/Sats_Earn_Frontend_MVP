@@ -72,7 +72,7 @@ function InputWrap({ label, hint, required, children }: { label: string; hint?: 
     <label className="block space-y-2 relative">
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{label}{required ? ' *' : ''}</span>
-        {hint ? <span className="text-[11px] text-white/25">{hint}</span> : null}
+        {hint ? <span className="text-[12px] text-white/25">{hint}</span> : null}
       </div>
       {children}
     </label>
@@ -262,7 +262,7 @@ export default function AdminTaskDetailPage() {
                   <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </button>
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.25em] text-sats-orange-400/80">Standalone setup</p>
+                  <p className="text-[12px] font-black uppercase tracking-[0.25em] text-sats-orange-400/80">Standalone setup</p>
                   <h1 className="text-xl font-black tracking-tight text-white md:text-2xl">Edit standalone task</h1>
                   <p className="mt-1 text-sm text-white/45">Update standalone settings without touching campaign data.</p>
                 </div>

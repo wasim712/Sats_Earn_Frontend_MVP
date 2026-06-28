@@ -83,21 +83,21 @@ export function SatsVisualizerSection() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">As a fraction of 1 BTC</div>
+                <div className="font-mono text-[10px] sm:text-[12px] text-gray-400 tracking-widest uppercase mb-2">As a fraction of 1 BTC</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-white break-all">{btcFraction}</div>
               </div>
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ${Math.round(btcPrice / 1000)}k</div>
+                <div className="font-mono text-[10px] sm:text-[12px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ${Math.round(btcPrice / 1000)}k</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-sats-orange-500 break-all">≈ ${formatNumber(usdValue)}</div>
               </div>
               <div className="bg-sats-black-950 border border-white/[0.04] rounded-xl p-5 text-center flex flex-col justify-center">
-                <div className="font-mono text-[10px] sm:text-[11px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ₹{Math.round(inrPrice / 100000)}L</div>
+                <div className="font-mono text-[10px] sm:text-[12px] text-gray-400 tracking-widest uppercase mb-2">Approx. value @ ₹{Math.round(inrPrice / 100000)}L</div>
                 <div className="font-mono text-xl sm:text-2xl font-bold text-sats-orange-500 break-all">≈ ₹{formatNumber(inrValue)}</div>
               </div>
             </div>
 
             <div className="mb-8">
-              <div className="flex justify-between font-mono text-[10px] sm:text-[11px] text-gray-400 mb-2">
+              <div className="flex justify-between font-mono text-[10px] sm:text-[12px] text-gray-400 mb-2">
                 <span>0</span>
                 <span>1 BTC = 100,000,000 sats</span>
               </div>

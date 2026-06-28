@@ -116,7 +116,7 @@ export const ReferralChallenge = () => {
               {/* Summary */}
               <div className="bg-sats-orange-500/10 border border-sats-orange-500/30 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 sm:gap-4">
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] sm:text-[11px] tracking-wider uppercase text-sats-orange-500 font-bold mb-2">
+                  <div className="font-mono text-[10px] sm:text-[12px] tracking-wider uppercase text-sats-orange-500 font-bold mb-2">
                     Total stacked over 10 years
                   </div>
                   <div className="font-mono text-2xl sm:text-3xl font-black text-white leading-none truncate">
@@ -125,7 +125,7 @@ export const ReferralChallenge = () => {
                 </div>
                 <div className="w-full sm:w-px h-px sm:h-12 bg-sats-orange-500/30 sm:mx-4"></div>
                 <div className="flex-1 sm:text-right">
-                  <div className="font-mono text-[10px] sm:text-[11px] tracking-wider uppercase text-sats-orange-500 font-bold mb-2">
+                  <div className="font-mono text-[10px] sm:text-[12px] tracking-wider uppercase text-sats-orange-500 font-bold mb-2">
                     That's roughly
                   </div>
                   <div className="font-mono text-2xl sm:text-3xl font-black text-white leading-none truncate">
