@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchUserReferrals } from '@/features/user/userReferralsSlice';
 import emailjs from '@emailjs/browser';
 
-const SHARE_EARN_EMAILJS_SERVICE_ID = '';
-const SHARE_EARN_EMAILJS_TEMPLATE_ID = '';
-const SHARE_EARN_EMAILJS_PUBLIC_KEY = '';
+const SHARE_EARN_EMAILJS_SERVICE_ID = 'service_gqkagqq';
+const SHARE_EARN_EMAILJS_TEMPLATE_ID = 'template_vnl0p08';
+const SHARE_EARN_EMAILJS_PUBLIC_KEY = '_xryJqDanVlcpCyVN';
 
 /* ============================================================
    SatsEarn â€” Affiliate / Promo Hub
@@ -86,7 +86,7 @@ function fallbackCopy(text, done) {
 }
 
 
-/* ---- Canonical zap mark (exact path from live site nav/referral) ---- */
+/* -- Canonical zap mark (exact path from live site nav/referral) -- */
 function Zap({ size = 28, fill = C.or }) {
   return (
     <svg width={size} height={(size * 72) / 56} viewBox="0 0 56 72" aria-hidden="true" style={{ flexShrink: 0 }}>
@@ -95,7 +95,7 @@ function Zap({ size = 28, fill = C.or }) {
   );
 }
 
-/* ---- SatsEarn app icon: bolt + 3 speed lines (matches logo.png) ---- */
+/* -- SatsEarn app icon: bolt + 3 speed lines (matches logo.png) -- */
 function AppIcon({ size = 56, circle = true, boltFill = C.or }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" aria-hidden="true" style={{ flexShrink: 0 }}>
@@ -425,7 +425,7 @@ function drawScene(ctx, w, h, scene, accent) {
     while (placed < n && tries < n * 8) {
       tries++;
       const x = rnd() * w, y = rnd() * h;
-      // skip the central text band (28%â€“88% height, middle 70% width)
+      // skip the central text band (28%-88% height, middle 70% width)
       const inTextBand = y > h * 0.28 && y < h * 0.92 && x > w * 0.12 && x < w * 0.88;
       if (inTextBand) continue;
       const r = base * (0.03 + rnd() * 0.035);
@@ -1286,7 +1286,7 @@ function AmbassadorProgram() {
   const who = ["Creators", "Influencers", "YouTubers", "Crypto influencers", "Airdrop guides", "Anyone with an audience"];
   const ladder = [
     { tier: "Platinum", rate: "10%", when: "On approval", note: "Every approved ambassador starts here. You get your link, banners and assets, and begin sharing right away." },
-    { tier: "Diamond", rate: "15%", when: "After 1â€“2 months", note: "If the users you bring in are real and staying active, your rate can be raised to Diamond." },
+    { tier: "Diamond", rate: "15%", when: "After 1-2 months", note: "If the users you bring in are real and staying active, your rate can be raised to Diamond." },
     { tier: "Crown", rate: "20%", when: "As you keep growing", note: "Consistent, genuine growth over the following months can move you to Crown â€” the top of the ambassador path." },
   ];
 
@@ -1384,7 +1384,7 @@ function AmbassadorProgram() {
           </FormField>
           <FormField label="Audience size">
             <select value={form.audience} onChange={set("audience")} style={inputStyle}>
-              {["Under 1k", "1kâ€“10k", "10kâ€“50k", "50kâ€“250k", "250k+"].map((a) => <option key={a}>{a}</option>)}
+              {["Under 1k", "1k - 10k", "10k - 50k", "50k - 250k", "250k+"].map((a) => <option key={a}>{a}</option>)}
             </select>
           </FormField>
           <div style={{ gridColumn: "1 / -1" }}>

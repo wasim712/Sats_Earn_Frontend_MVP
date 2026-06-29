@@ -17,10 +17,10 @@ export const CTASection = () => {
   };
 
   return (
-    <section className="relative py-32 overflow-hidden border-t border-white/[0.05] bg-[#050505]" id="cta-final">
+    <section className="relative overflow-hidden pb-10 bg-[#050505]" id="cta-final">
       
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-sats-orange-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px]  rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <FadeUp>

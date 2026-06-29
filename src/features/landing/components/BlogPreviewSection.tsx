@@ -1,112 +1,143 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { FadeUp } from '@/components/animations/FadeUp';
-import { ArrowRight, BookOpen, Sparkles, Globe2 } from 'lucide-react';
-
-const BLOG_HIGHLIGHTS = [
-  {
-    title: 'Bitcoin guides for beginners',
-    description: 'Simple explainers, platform walkthroughs, and earning tips for every type of user.',
-  },
-  {
-    title: 'Platform updates and announcements',
-    description: 'Stay in sync with new features, campaign changes, and upcoming improvements.',
-  },
-  {
-    title: 'Available for everyone',
-    description: 'Read blogs in logged-out state too, with the same smooth reading experience as inside the app.',
-  },
-];
+import { ArrowRight, BookText, SplitSquareHorizontal } from 'lucide-react';
 
 export const BlogPreviewSection = () => {
   return (
-    <section className="relative overflow-hidden py-12" id="blogs">
-      <div className="pointer-events-none absolute inset-0 " />
+    <section className="relative overflow-hidden py-16 md:py-24" id="resources">
+      <div className="pointer-events-none absolute inset-0" />
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-4 sm:px-6">
-        <FadeUp className="mb-16 text-center">
-          <div className="mb-4 inline-flex rounded-full border border-sats-orange-500/20 bg-sats-orange-500/10 px-3 py-1 backdrop-blur-sm">
-            <span className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-sats-orange-500">
-              <BookOpen className="h-3.5 w-3.5" />
-              SatsEarn Blogs
-            </span>
+        <FadeUp className="mb-16 text-center flex flex-col items-center">
+          <div className="mb-6 text-[12px] font-black uppercase tracking-[0.25em] text-sats-orange-500">
+            RESOURCES
           </div>
 
-          <h2 className="mb-6 text-4xl font-black tracking-tight text-white sm:text-6xl">
-            Read, Learn, and Stay
-            <br />
-            <span className="text-sats-orange-500">Updated Anytime.</span>
+          <h2 className="mb-5 text-4xl font-black tracking-tight text-white sm:text-5xl md:text-5xl">
+            Read, Learn & Stay <span className="text-sats-orange-500">Updated Anytime.</span>
           </h2>
 
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-400">
-            Explore public blog articles about Bitcoin basics, platform updates, earning strategies, and useful reads - now available even before login.
+          <p className="mx-auto max-w-2xl text-[15px] leading-relaxed text-gray-400">
+            Bitcoin doesn&apos;t have to be confusing. Get up to speed with clear, beginner-friendly
+            guides — then see exactly how SatsEarn measures up against every other rewards
+            platform, with no spin.
           </p>
         </FadeUp>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-          <FadeUp delay={0.1} className="overflow-hidden rounded-[32px] border border-sats-orange-500/16 bg-[#080808] shadow-[0_20px_70px_rgba(0,0,0,0.40)]">
-            <div className="border-b border-white/6 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.10),transparent_35%)] p-6 sm:p-8">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1 text-[12px] font-black uppercase tracking-[0.2em] text-sky-300">
-                <Globe2 className="h-3.5 w-3.5" />
-                Public Access
-              </div>
-
-              <h3 className="text-2xl font-black text-white sm:text-3xl">
-                Same premium reading layout, now on the home side too.
-              </h3>
-
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-400 sm:text-[15px]">
-                The public blog route uses the same design language as the logged-in blog section, so users get a consistent experience whether they are signed in or just discovering the platform.
-              </p>
-            </div>
-
-            <div className="grid gap-4 p-6 sm:grid-cols-3 sm:p-8">
-              {BLOG_HIGHLIGHTS.map((item, index) => (
-                <div
-                  key={item.title}
-                  className="group rounded-[24px] border border-white/8 bg-[#050505] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-sats-orange-500/20 hover:bg-[#0a0a0a]"
-                >
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-sats-orange-500/18 bg-sats-orange-500/10 text-sats-orange-400 shadow-[0_0_24px_rgba(249,115,22,0.10)]">
-                    {index === 0 ? <BookOpen className="h-5 w-5" /> : index === 1 ? <Sparkles className="h-5 w-5" /> : <Globe2 className="h-5 w-5" />}
-                  </div>
-                  <h4 className="text-base font-black text-white">{item.title}</h4>
-                  <p className="mt-2 text-sm leading-6 text-gray-400">{item.description}</p>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 max-w-5xl mx-auto">
+          {/* Blog Card */}
+          <Link href="/blogs?view=blogs" className="block outline-none">
+            <FadeUp delay={0.1} className="group relative overflow-hidden rounded-[24px] border border-white/5 bg-[#0a0a0a] p-7 sm:p-8 shadow-[0_20px_70px_rgba(0,0,0,0.32)] transition-all duration-500 ease-out hover:-translate-y-2 hover:border-white/10 hover:border-t-sats-orange-500/50 hover:border-l-sats-orange-500/50 hover:shadow-[0_24px_80px_rgba(0,0,0,0.6),-8px_-8px_30px_rgba(249,115,22,0.12)]">
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="mb-8 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[14px] border border-sats-orange-500/10 bg-[#1f1309] text-sats-orange-500 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-15">
+                  <BookText className="h-7 w-7" />
                 </div>
-              ))}
-            </div>
-          </FadeUp>
-
-          <FadeUp delay={0.15} className="flex flex-col justify-between rounded-[32px] border border-white/8 bg-[#080808] p-6 shadow-[0_20px_70px_rgba(0,0,0,0.32)] sm:p-8">
-            <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sats-orange-500/18 bg-sats-orange-500/10 px-3 py-1 text-[12px] font-black uppercase tracking-[0.2em] text-sats-orange-400">
-                <Sparkles className="h-3.5 w-3.5" />
-                Live Route Ready
+                
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/20 bg-[#1f1309] px-3 py-1 text-[12px] font-bold text-sats-orange-500">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sats-orange-400 opacity-75"></span>
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-sats-orange-500"></span>
+                  </span>
+                  Live
+                </div>
               </div>
 
-              <h3 className="text-2xl font-black text-white">Open the complete blog hub</h3>
-              <p className="mt-3 text-sm leading-7 text-gray-400 sm:text-[15px]">
-                Browse all published articles, search topics, and read content in the same smooth split-view reader used in the user dashboard.
+              <div className="mb-2 text-[12px] font-mono tracking-widest text-gray-500 uppercase">
+                THE BLOG
+              </div>
+              <h3 className="mb-3 text-[22px] font-black text-white leading-tight">
+                Learn Bitcoin from the ground up
+              </h3>
+              
+              <p className="mb-8 text-[14px] leading-relaxed text-gray-400">
+                No jargon, no hype — just clear guides that take you from
+                &quot;what&apos;s a satoshi?&quot; to confidently stacking, withdrawing, and
+                keeping your sats safe.
               </p>
-            </div>
 
-            <div className="mt-8 space-y-4">
-              <Link
-                href="/blogs"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sats-orange-500 to-sats-orange-600 px-5 py-4 text-sm font-black text-white shadow-[0_10px_26px_rgba(249,115,22,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_rgba(249,115,22,0.34)]"
-              >
-                Explore Blogs
-                <ArrowRight className="h-4.5 w-4.5" />
-              </Link>
+              <div className="mt-auto border-t border-white/5 pt-6 pb-2 space-y-3.5">
+                {[
+                  "What Is Bitcoin? A beginner's guide",
+                  "How to set up a Lightning wallet",
+                  "How to spot and avoid Bitcoin scams"
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 text-[13px] text-gray-300">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-sats-orange-500 shrink-0"></span>
+                    {item}
+                  </div>
+                ))}
+              </div>
 
-              <div className="rounded-2xl border border-white/8 bg-[#050505] px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-gray-400">
-                Route: <span className="text-sats-orange-400">/blogs</span>
+              <div className="mt-8">
+                <span className="inline-flex items-center gap-2 text-[14px] font-bold text-sats-orange-500 transition-colors group-hover:text-sats-orange-400">
+                  Browse all guides
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
               </div>
             </div>
           </FadeUp>
+          </Link>
+
+          {/* Compare Card */}
+          <Link href="/blogs?view=comparisons" className="block outline-none">
+            <FadeUp delay={0.2} className="group relative overflow-hidden rounded-[24px] border border-white/5 bg-[#0a0a0a] p-7 sm:p-8 shadow-[0_20px_70px_rgba(0,0,0,0.32)] transition-all duration-500 ease-out hover:-translate-y-2 hover:border-white/10 hover:border-t-sats-orange-500/50 hover:border-l-sats-orange-500/50 hover:shadow-[0_24px_80px_rgba(0,0,0,0.6),-8px_-8px_30px_rgba(249,115,22,0.12)]">
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="mb-8 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[14px] border border-sats-orange-500/10 bg-[#1f1309] text-sats-orange-500 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-15">
+                  <SplitSquareHorizontal className="h-7 w-7" />
+                </div>
+                
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-sats-orange-500/20 bg-[#1f1309] px-3 py-1 text-[12px] font-bold text-sats-orange-500">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sats-orange-400 opacity-75"></span>
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-sats-orange-500"></span>
+                  </span>
+                  Live
+                </div>
+              </div>
+
+              <div className="mb-2 text-[12px] font-mono tracking-widest text-gray-500 uppercase">
+                COMPARE
+              </div>
+              <h3 className="mb-3 text-[22px] font-black text-white leading-tight">
+                See how SatsEarn really stacks up
+              </h3>
+              
+              <p className="mb-8 text-[14px] leading-relaxed text-gray-400">
+                Honest, side-by-side breakdowns of payouts, fees, and what
+                you actually earn — versus the platforms people ask about
+                most. We show where others win too.
+              </p>
+
+              <div className="mt-auto border-t border-white/5 pt-6 pb-2">
+                <div className="flex flex-wrap gap-2.5">
+                  {['Freecash', 'JumpTask', 'ZBD', 'Fold', 'SatsFaucet'].map((tag) => (
+                    <span key={tag} className="inline-flex items-center rounded-lg border border-white/5 bg-[#141414] px-3 py-1.5 text-[12px] font-medium text-gray-300">
+                      {tag}
+                    </span>
+                  ))}
+                  <span className="inline-flex items-center rounded-lg bg-[#1f1309] px-3 py-1.5 text-[12px] font-medium text-sats-orange-500">
+                    +12 more
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <span className="inline-flex items-center gap-2 text-[14px] font-bold text-sats-orange-500 transition-colors group-hover:text-sats-orange-400">
+                  See all comparisons
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </div>
+            </div>
+          </FadeUp>
+          </Link>
         </div>
       </div>
     </section>
   );
 };
+

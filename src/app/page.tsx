@@ -49,8 +49,8 @@ export default function Home() {
       <ReferralPreviewSection />
       <WithdrawalsSection />
       <PricingSection />
-      <BlogPreviewSection />
       <FAQ />
+      <BlogPreviewSection />
       <CTASection />
     </div>
   );
