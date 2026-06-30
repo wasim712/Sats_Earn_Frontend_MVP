@@ -38,6 +38,7 @@ const DEFAULT_USER_SIDEBAR_CONFIG: UserSidebarConfig = {
   help: true,
   notifications: true,
   profile: true,
+  shareAndEarn: true,
 };
 
 const USER_ROUTE_CONFIG: Array<{ key: keyof UserSidebarConfig; prefix: string }> = [
@@ -54,6 +55,7 @@ const USER_ROUTE_CONFIG: Array<{ key: keyof UserSidebarConfig; prefix: string }>
   { key: 'help', prefix: '/user/help' },
   { key: 'notifications', prefix: '/user/notifications' },
   { key: 'profile', prefix: '/user/profile' },
+  { key: 'shareAndEarn', prefix: '/user/share-and-earn' },
 ];
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {

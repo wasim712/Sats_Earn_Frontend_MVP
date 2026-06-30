@@ -19,6 +19,7 @@ export interface UserSidebarConfig {
   help: boolean;
   notifications: boolean;
   profile: boolean;
+  shareAndEarn: boolean;
 }
 
 export interface AdminSettings {

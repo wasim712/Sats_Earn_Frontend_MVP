@@ -427,7 +427,7 @@ export default function RewardsPage() {
               </Link>
             </div>
             
-            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider relative z-10">
+            <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wider relative z-10">
               No credit card to start. All sats subject to a 15-day maturity period.
             </p>
           </section>

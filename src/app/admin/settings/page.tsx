@@ -75,6 +75,7 @@ export default function AdminSettingsPage() {
       help: true,
       notifications: true,
       profile: true,
+      shareAndEarn: true,
     },
   });
 

@@ -31,6 +31,7 @@ import {
   CircleStar,
   Sparkles,
   Rocket,
+  Share2,
 } from "lucide-react";
 import Image from "next/image";
 import { useGetUserNotificationsQuery } from "@/store/services/userApi";
@@ -254,6 +255,7 @@ export const UserSidebar = ({
       icon: Settings,
     },
     { key: "help", name: "Help", href: "/user/help", icon: CircleHelp },
+    { key: "shareAndEarn", name: "Share & Earn", href: "/user/share-and-earn", icon: Share2 },
   ].filter((item) => sidebarConfig[item.key as keyof UserSidebarConfig]);
 
   const getInitials = (name?: string) => {

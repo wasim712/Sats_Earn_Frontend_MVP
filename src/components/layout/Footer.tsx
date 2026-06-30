@@ -30,8 +30,9 @@ const FOOTER_LINKS = {
     { name: 'Legal', href: '/legal' },
     { name: 'Terms of service', href: '/legal/terms' },
     { name: 'Refund Policy', href: '/legal/refund-policy' },
-    { name: 'Sats Disclaimer', href: '/legal/sats-disclaimer' },
     { name: 'Privacy Policy', href: '/legal/privacy' },
+    { name: 'Share And Earn', href: '/share-and-earn' },
+
   ],
 };
 
