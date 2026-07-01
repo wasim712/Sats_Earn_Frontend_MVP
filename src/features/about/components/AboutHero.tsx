@@ -13,8 +13,8 @@ export const AboutHero = () => {
 
       <FadeUp delay={0.2}>
         <h1 className="text-4xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tighter mb-5">
-          Bitcoin Isn't Bought.<br />
-          It's <span className="inline-block bg-sats-orange-500 text-black px-4 rounded-xl leading-tight">Earned.</span>
+          Bitcoin isn&apos;t Bought.<br />
+          it&apos;s <span className="inline-block bg-sats-orange-500 text-black px-4 rounded-xl leading-tight">Earned.</span>
         </h1>
       </FadeUp>
 

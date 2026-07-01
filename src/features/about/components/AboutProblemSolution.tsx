@@ -7,7 +7,7 @@ export const AboutProblemSolution = () => {
       <div className="max-w-5xl mx-auto">
         <FadeUp className="text-center mb-12 sm:mb-16">
           <div className="inline-block text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
-            The Gap We're Closing
+            The Gap We&apos;re Closing
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white">
             Bitcoin is Hard to Get.<br />

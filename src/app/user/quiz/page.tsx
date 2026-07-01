@@ -181,7 +181,7 @@ export default function UserDailyQuizPage() {
     return (
       <QuizEmptyState
         title="No Quiz Live Right Now"
-        message="There isn't an active daily quiz at the moment. Please check again after some time for the next earning opportunity."
+        message="There isn&apos;t an active daily quiz at the moment. Please check again after some time for the next earning opportunity."
         tone="neutral"
         onBack={() => router.push('/user/dashboard')}
       />

@@ -282,7 +282,7 @@ export default function AdminSubmissionsPage() {
                 <div className="space-y-3">
                   <p className="text-sm font-bold text-white">Provided Proof</p>
                   
-                  {/* If it's an Image */}
+                  {/* If it&apos;s an Image */}
                   {selectedSubmission.screenshotUrl && (
                     <>
                       <a
@@ -309,7 +309,7 @@ export default function AdminSubmissionsPage() {
                     </>
                   )}
 
-                  {/* If it's a URL or Text */}
+                  {/* If it&apos;s a URL or Text */}
                   {(selectedSubmission as any).proofText && (
                     <div className="flex flex-col gap-2">
                       <div className="w-full rounded-2xl border border-[#1a1a1a] bg-[#111] px-4 py-4 text-sm text-gray-300 break-all whitespace-pre-wrap">

@@ -73,7 +73,7 @@ export const WormElements = () => {
         
         <FadeUp delay={0.2}>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white font-mono leading-none mb-4 uppercase">
-            What's on the board
+            what&apos;s on the board
           </h2>
         </FadeUp>
         

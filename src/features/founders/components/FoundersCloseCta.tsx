@@ -47,7 +47,7 @@ export const FoundersCloseCta = () => {
         
         <FadeUp delay={0.2}>
           <p className="text-sm sm:text-base text-gray-300 max-w-lg mx-auto">
-            1,000 spots, then the tier closes for good. Claim yours while it's open.
+            1,000 spots, then the tier closes for good. Claim yours while it&apos;s open.
           </p>
         </FadeUp>
       </div>

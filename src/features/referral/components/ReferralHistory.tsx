@@ -206,7 +206,7 @@ export const ReferralHistory = () => {
               What killed faucets — and what fixed them
             </h2>
             <p className="text-base text-gray-300 max-w-2xl leading-relaxed">
-              Early faucets broke because on-chain fees dwarfed the payouts. Lightning is what makes earning real sats practical again — and it's what SatsEarn pays you over.
+              Early faucets broke because on-chain fees dwarfed the payouts. Lightning is what makes earning real sats practical again — and it&apos;s what SatsEarn pays you over.
             </p>
           </FadeUp>
 

@@ -30,7 +30,7 @@ export const AboutWhyBitcoin = () => {
               <div className="max-w-[260px]">
                 <div className="text-3xl mb-3 md:mb-4">🔒</div>
                 <div className="text-lg font-extrabold text-white mb-2 leading-tight">Entirely Yours</div>
-                <div className="text-sm text-gray-400 leading-relaxed">Once it's in your wallet, it's yours. No bank, no platform, no government can freeze or seize your sats.</div>
+                <div className="text-sm text-gray-400 leading-relaxed">Once it&apos;s in your wallet, it&apos;s yours. No bank, no platform, no government can freeze or seize your sats.</div>
               </div>
             </div>
 

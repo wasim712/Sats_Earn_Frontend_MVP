@@ -84,7 +84,7 @@ export const ReferralMechanics = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-[15px] text-white mb-1.5">One unique link</h4>
-                  <p className="text-[13px] text-gray-400 leading-relaxed">Your dashboard gives you a single referral link. There's nothing to configure — it's ready the moment you have an account.</p>
+                  <p className="text-[13px] text-gray-400 leading-relaxed">Your dashboard gives you a single referral link. There's nothing to configure — it&apos;s ready the moment you have an account.</p>
                 </div>
               </div>
             </FadeUp>

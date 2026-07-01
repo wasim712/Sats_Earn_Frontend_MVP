@@ -51,7 +51,7 @@ export const fetchHighRiskQueue = createAsyncThunk(
       // 1. Check if the response is actually JSON before parsing
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
-        // If it's HTML, we throw a string error instead of trying to parse it
+        // If it&apos;s HTML, we throw a string error instead of trying to parse it
         throw new Error(`Server returned non-JSON response. Check your API route (${response.status})`);
       }
 

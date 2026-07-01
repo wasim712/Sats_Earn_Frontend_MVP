@@ -24,10 +24,10 @@ export const WormInMotion = () => {
 
           <FadeUp delay={0.3}>
             <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-4">
-              The worm's head glows brightest and carries the direction it's travelling. Behind it, the body fades from bright orange to deep amber so you can always trace your tail.
+              The worm's head glows brightest and carries the direction it&apos;s travelling. Behind it, the body fades from bright orange to deep amber so you can always trace your tail.
             </p>
             <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-              The sat food pulses with a countdown ring that drains clockwise — <span className="text-sats-orange-500 font-semibold">orange</span> means you have time, <span className="text-amber-400 font-semibold">yellow</span> means hurry, and <span className="text-red-500 font-semibold">red</span> means it's about to teleport. Good players don't chase; they cut the food off.
+              The sat food pulses with a countdown ring that drains clockwise — <span className="text-sats-orange-500 font-semibold">orange</span> means you have time, <span className="text-amber-400 font-semibold">yellow</span> means hurry, and <span className="text-red-500 font-semibold">red</span> means it&apos;s about to teleport. Good players don't chase; they cut the food off.
             </p>
           </FadeUp>
         </div>

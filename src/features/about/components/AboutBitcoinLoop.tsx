@@ -38,7 +38,7 @@ export const AboutBitcoinLoop = () => {
               </div>
               <h3 className="text-lg font-bold text-white mb-3">Brands fund campaigns</h3>
               <p className="text-[14px] text-gray-400 leading-relaxed">
-                Advertisers fund campaigns in <strong className="text-sats-orange-500">USD, USDT, or INR</strong> to reach a Bitcoin-native audience. We're based in India and work with brands worldwide.
+                Advertisers fund campaigns in <strong className="text-sats-orange-500">USD, USDT, or INR</strong> to reach a Bitcoin-native audience. We&apos;re based in India and work with brands worldwide.
               </p>
             </div>
 
