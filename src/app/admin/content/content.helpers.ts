@@ -1,6 +1,6 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-export const EMPTY_BLOG_HTML = '<p>Start writing your blog post...</p>';
+export const EMPTY_BLOG_HTML = '';
 
 export function slugify(value: string) {
   return value

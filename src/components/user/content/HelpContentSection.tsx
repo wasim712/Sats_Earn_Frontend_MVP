@@ -152,7 +152,7 @@ export function HelpContentSection({
             <InlineErrorCard message={faqError || 'Unable to load FAQs right now.'} />
           )}
 
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 space-y-3 overflow-y-scroll max-h-screen">
             {filteredFaqs.length ? (
               filteredFaqs.map((faq) => {
                 const isOpen = openFaqId === faq.id;
@@ -270,7 +270,7 @@ export function HelpContentSection({
               <InlineErrorCard message={blogError || 'Unable to load blog posts right now.'} />
             )}
 
-            <div className="mt-5 space-y-4">
+            <div className="mt-5 space-y-4 overflow-y-scroll max-h-[60dvh]">
               {filteredBlogs.length ? (
                 filteredBlogs.map((blog) => (
                   <Link

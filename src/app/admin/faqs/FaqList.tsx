@@ -25,7 +25,7 @@ export function FaqList({
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 overflow-y-scroll max-h-[55dvh]">
         {isLoading ? (
           <div className="text-sm text-gray-400">Loading FAQs...</div>
         ) : items.length === 0 ? (
