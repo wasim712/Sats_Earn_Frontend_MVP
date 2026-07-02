@@ -10,35 +10,12 @@ const SHARE_EARN_EMAILJS_SERVICE_ID = 'service_gqkagqq';
 const SHARE_EARN_EMAILJS_TEMPLATE_ID = 'template_vnl0p08';
 const SHARE_EARN_EMAILJS_PUBLIC_KEY = '_xryJqDanVlcpCyVN';
 
-/* ============================================================
-   SatsEarn â€” Affiliate / Promo Hub
-   Modeled on the CryptoTab affiliate structure, rebuilt in the
-   SatsEarn brand and copy rules.
-
-   Sections:
-     1. Share To Earn modal (promo post + image + social row)
-     2. Brand resources (icon / logo / UI screens)
-     3. Generate Banners (theme / size / language + style + PNG)
-
-     4. Images for promo posts (Rectangle / Square / Stories)
-     5. Texts for promo posts (ready-made, honest copy)
-     6. Additional landing pages
-     7. Promo videos (placeholder until assets exist)
-
-   Brand tokens (canonical):
-     orange #f7931a  bg #04040a  surf #0d0d16  surf2 #141420
-     sats green #3dffaa  dim #7778aa  txt #fff
-   Copy rules: no projections, no counts, no hype superlatives,
-   L1 referral only, creator program separate. No fabricated
-   assets (videos / screenshots are marked placeholders).
-   ============================================================ */
-
 const C = {
   or: "#f7931a",
   bg: "#060608",
   or2: "#ffb347",
   org: "rgba(247,147,26,0.15)",
-  bg2: "#0a0a0f",
+  bg2: "#0a0a0f", 
   surf: "#0f0f18",
   surf2: "#141420",
   txt: "#f0f0f0",
@@ -767,7 +744,7 @@ const PROMO_POSTS = [
   },
   {
     title: "Earn real Bitcoin over Lightning",
-    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes â€” every reward is real sats sent over the Lightning Network. It's in early beta and worth a look.",
+    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes â€” every reward is real sats sent over the Lightning Network. it&apos;s in early beta and worth a look.",
   },
   {
     title: "A simple way to start with Bitcoin",
@@ -1295,9 +1272,9 @@ function AmbassadorProgram() {
       title="Ambassador Program"
       sub="For creators, influencers, YouTubers, crypto influencers, airdrop guides â€” anyone with an audience. Share SatsEarn and earn referral commission up to 20%, paid in real Bitcoin over Lightning."
     >
-      {/* Who it's for */}
+      {/* Who it&apos;s for */}
       <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Who it's for</div>
+        <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Who it&apos;s for</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {who.map((w) => (
             <span key={w} style={{ background: C.surf2, border: `1px solid ${C.line2}`, borderRadius: 999, padding: "7px 14px", fontSize: 13, color: C.txt2, fontWeight: 600 }}>{w}</span>
@@ -1309,7 +1286,7 @@ function AmbassadorProgram() {
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 6 }}>How your rate grows</div>
         <p style={{ color: C.dim, fontSize: 13, lineHeight: 1.6, margin: "0 0 14px" }}>
-          Ambassadors join the same referral tiers regular users have â€” you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance â€” it isn't automatic or guaranteed, and there's no fixed timeline.
+          Ambassadors join the same referral tiers regular users have â€” you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance â€” it isn&apos;t automatic or guaranteed, and there's no fixed timeline.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {ladder.map((l, i) => (
@@ -1352,7 +1329,7 @@ function AmbassadorProgram() {
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Ways to share</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
-            ["Pin your link", "Put your referral link in your bio, pinned post, video description or stream panel so it's always one tap away."],
+            ["Pin your link", "Put your referral link in your bio, pinned post, video description or stream panel so it&apos;s always one tap away."],
             ["Post ready-made banners", "Use the banners and promo images above â€” sized for X, Instagram, Telegram and more, with your link baked in."],
             ["Use the honest copy", "The ready-made texts are written to convert without hype. Keep your own posts honest too â€” it protects your commission."],
             ["Explain, don't oversell", "Show how earning sats works. Airdrop and crypto audiences respond to clear how-it-works over income claims."],

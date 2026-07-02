@@ -125,7 +125,7 @@ export const FoundersComparison = () => {
       {/* Comparison Note */}
       <FadeUp delay={0.5}>
         <p className="text-xs text-gray-400 mt-5 leading-relaxed italic">
-          Actual sats per task vary by campaign and brand — they aren't fixed. What's fixed is your <strong className="text-gray-300 font-bold not-italic">tier standing</strong>: higher tiers always earn a higher share of each task's reward, and Founders sit at the top. Referral commission percentages are fixed and apply to the admin base reward. Free tiers (Basic–Gold) earn at lower levels with lifetime caps and a 25,000-sat withdrawal minimum.
+          Actual sats per task vary by campaign and brand — they aren't fixed. what&apos;s fixed is your <strong className="text-gray-300 font-bold not-italic">tier standing</strong>: higher tiers always earn a higher share of each task's reward, and Founders sit at the top. Referral commission percentages are fixed and apply to the admin base reward. Free tiers (Basic–Gold) earn at lower levels with lifetime caps and a 25,000-sat withdrawal minimum.
         </p>
       </FadeUp>
     </section>

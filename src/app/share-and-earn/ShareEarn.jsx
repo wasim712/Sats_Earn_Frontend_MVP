@@ -761,7 +761,7 @@ const PROMO_POSTS = [
   },
   {
     title: "Earn real Bitcoin over Lightning",
-    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes — every reward is real sats sent over the Lightning Network. It's in early beta and worth a look.",
+    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes — every reward is real sats sent over the Lightning Network. it&apos;s in early beta and worth a look.",
   },
   {
     title: "A simple way to start with Bitcoin",
@@ -1224,9 +1224,9 @@ function AmbassadorProgram() {
       title="Ambassador Program"
       sub="For creators, influencers, YouTubers, crypto influencers, airdrop guides — anyone with an audience. Share SatsEarn and earn referral commission up to 20%, paid in real Bitcoin over Lightning."
     >
-      {/* Who it's for */}
+      {/* Who it&apos;s for */}
       <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Who it's for</div>
+        <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Who it&apos;s for</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {who.map((w) => (
             <span key={w} style={{ background: C.surf2, border: `1px solid ${C.line2}`, borderRadius: 999, padding: "7px 14px", fontSize: 13, color: C.txt2, fontWeight: 600 }}>{w}</span>
@@ -1238,7 +1238,7 @@ function AmbassadorProgram() {
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 6 }}>How your rate grows</div>
         <p style={{ color: C.dim, fontSize: 13, lineHeight: 1.6, margin: "0 0 14px" }}>
-          Ambassadors join the same referral tiers regular users have — you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance — it isn't automatic or guaranteed, and there's no fixed timeline.
+          Ambassadors join the same referral tiers regular users have — you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance — it isn&apos;t automatic or guaranteed, and there's no fixed timeline.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {ladder.map((l, i) => (
@@ -1281,7 +1281,7 @@ function AmbassadorProgram() {
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Ways to share</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
-            ["Pin your link", "Put your referral link in your bio, pinned post, video description or stream panel so it's always one tap away."],
+            ["Pin your link", "Put your referral link in your bio, pinned post, video description or stream panel so it&apos;s always one tap away."],
             ["Post ready-made banners", "Use the banners and promo images above — sized for X, Instagram, Telegram and more, with your link baked in."],
             ["Use the honest copy", "The ready-made texts are written to convert without hype. Keep your own posts honest too — it protects your commission."],
             ["Explain, don't oversell", "Show how earning sats works. Airdrop and crypto audiences respond to clear how-it-works over income claims."],

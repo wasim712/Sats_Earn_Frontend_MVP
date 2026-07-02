@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/store/StoreProvider';
 import { AnalyticsProvider } from '@/components/AnalyticsProvider';
+import GoogleTagManagerNoScript from '@/components/GoogleTagManagerNoScript';
 import { RouteWrapper } from '@/components/layout/RouteWrapper';
 import { NavbarWrapper } from '@/components/layout/NavbarWrapper';
 import { PwaRegistration } from '@/components/ui/PwaRegistration';
@@ -74,6 +75,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-sats-black-950 text-white font-sans overflow-x-clip" suppressHydrationWarning>
+        <GoogleTagManagerNoScript/>
         <AnalyticsProvider>
           <StoreProvider>
             <PwaRegistration />

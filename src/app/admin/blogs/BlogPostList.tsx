@@ -21,7 +21,7 @@ export function BlogPostList({
         <BookOpen className="w-5 h-5 text-sats-orange-500" />
         <h2 className="text-xl font-black text-white">Existing Posts</h2>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3 overflow-y-scroll max-h-[115dvh]">
         {isLoading ? (
           <div className="text-sm text-gray-400">Loading blog posts...</div>
         ) : posts.length === 0 ? (

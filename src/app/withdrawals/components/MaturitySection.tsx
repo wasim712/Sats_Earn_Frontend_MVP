@@ -14,7 +14,7 @@ export function MaturitySection() {
             <h2 className="text-xl sm:text-2xl font-extrabold text-white">The 15-Day Maturity Period</h2>
           </div>
           <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-8">
-            Before any sats can be withdrawn, they pass through a maturity period. This applies to every user on every tier — it's the backbone of our fraud protection.
+            Before any sats can be withdrawn, they pass through a maturity period. This applies to every user on every tier — it&apos;s the backbone of our fraud protection.
           </p>
 
           <div className="flex flex-col gap-3">

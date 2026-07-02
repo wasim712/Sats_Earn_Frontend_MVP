@@ -7,7 +7,7 @@ import { GA_TRACKING_ID, trackPageView } from '@/lib/analytics';
 
 /**
  * Internal component to handle route changes and dispatch page view events.
- * It's isolated so it can be wrapped in a Suspense boundary, preventing
+ * it&apos;s isolated so it can be wrapped in a Suspense boundary, preventing
  * the entire layout from de-optimizing to client-side rendering.
  */
 function RouteTracker() {

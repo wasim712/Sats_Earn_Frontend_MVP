@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     question: "What is the Founders tier?",
-    answer: "Founders is the highest tier on SatsEarn, limited to 1,000 users. It's a yearly-only subscription with the highest task rewards (30 sats), highest referral rate (30%), and the lowest withdrawal minimum (10,000 sats). Founders also participate in a referral rotation — when new users join without a referral code, they are automatically assigned to a Founder who earns commission on them for life."
+    answer: "Founders is the highest tier on SatsEarn, limited to 1,000 users. it&apos;s a yearly-only subscription with the highest task rewards (30 sats), highest referral rate (30%), and the lowest withdrawal minimum (10,000 sats). Founders also participate in a referral rotation — when new users join without a referral code, they are automatically assigned to a Founder who earns commission on them for life."
   },
   {
     question: "How do I withdraw my sats?",

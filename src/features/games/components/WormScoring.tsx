@@ -114,7 +114,7 @@ export const WormScoring = () => {
 
             {/* footer */}
             <div className="bg-sats-black-950 px-6 py-4.5 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-sats-orange-500/5">
-              Planned: one award per milestone, every 100 points up to the 1,000-point / 10-sat cap per run. Sat rewards from games are currently disabled — XP is what's active today. Figures shown are the planned structure and may change before launch.
+              Planned: one award per milestone, every 100 points up to the 1,000-point / 10-sat cap per run. Sat rewards from games are currently disabled — XP is what&apos;s active today. Figures shown are the planned structure and may change before launch.
             </div>
           </div>
         </FadeUp>

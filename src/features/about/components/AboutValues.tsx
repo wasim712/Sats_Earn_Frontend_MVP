@@ -5,10 +5,10 @@ export const AboutValues = () => {
   const values = [
     { icon: "🌍", name: "Accessibility", desc: "Bitcoin for everyone. 180+ countries. No ID. No bank account needed. If you have email and internet, you can earn Bitcoin on SatsEarn." },
     { icon: "🔒", name: "Security", desc: "Your Bitcoin is yours. The 15-day maturity hold protects against fraud. AI verification catches bad actors before they affect the platform." },
-    { icon: "💡", name: "Honesty", desc: "We're in beta. We'll tell you what works and what doesn't. No hype. No fake promises. No guaranteed earnings claims. Just real Bitcoin for real work." },
+    { icon: "💡", name: "Honesty", desc: "We&apos;re in beta. We'll tell you what works and what doesn't. No hype. No fake promises. No guaranteed earnings claims. Just real Bitcoin for real work." },
     { icon: "⚡", name: "Simplicity", desc: "No confusing crypto jargon. No technical requirements. If you can scroll and follow an account, you can earn Bitcoin on SatsEarn." },
     { icon: "📊", name: "Transparency", desc: "Public roadmap. Open policies. Clear earning rules. Every sat you earn is traceable from task completion to your Lightning wallet. We hide nothing." },
-    { icon: "🤝", name: "Community", desc: "We're not a corporation. We're building with our users. Your feedback shapes our roadmap. Your success is our success. We listen and we act." }
+    { icon: "🤝", name: "Community", desc: "We&apos;re not a corporation. We&apos;re building with our users. Your feedback shapes our roadmap. Your success is our success. We listen and we act." }
   ];
 
   return (

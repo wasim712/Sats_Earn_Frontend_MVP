@@ -80,10 +80,10 @@ export const AboutRoadmap = () => {
             Transparent Roadmap
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white mb-4">
-            Where We're <span className="text-sats-orange-500">Going</span>
+            Where We&apos;re <span className="text-sats-orange-500">Going</span>
           </h2>
           <p className="text-base text-gray-300 max-w-xl mx-auto leading-relaxed">
-            We build in public. This is our honest roadmap — what's done, what's coming, and what we're planning long-term.
+            We build in public. This is our honest roadmap — what&apos;s done, what&apos;s coming, and what We&apos;re planning long-term.
           </p>
         </FadeUp>
 
@@ -99,24 +99,35 @@ export const AboutRoadmap = () => {
                   }`}
                 >
                   <div 
-                    className="flex flex-wrap items-center gap-3 sm:gap-4 p-5 sm:p-6 cursor-pointer"
+                    className="flex flex-wrap items-center justify-between gap-2 sm:gap-4 p-5 sm:p-6 cursor-pointer flex-col sm:flex-row"
                     onClick={() => setOpenIndex(isOpen ? -1 : index)}
                   >
-                    <span className="text-[12px] font-bold tracking-[0.15em] text-sats-orange-500 font-mono shrink-0">
-                      {item.phase}
+                    <span className='flex gap-3 items-center justify-between w-full self-start'>
+                      
+                      <span className='flex gap-3 sm:gap-4 items-center w-full  self-start'>
+                        <span className="text-[12px] font-bold tracking-[0.15em] text-sats-orange-500 font-mono shrink-0">
+                          {item.phase}
+                        </span>
+                        <span className={`text-[12px] font-bold px-2.5 py-1 rounded-md tracking-wide ${item.statusColor}`}>
+                          {item.status === 'Live' && '● '}
+                          {item.status}
+                        </span>
+                      
+                        <span className="text-xs text-gray-400 font-mono hidden sm:inline">
+                          {item.date}
+                        </span>
+                      </span>
+                        <span className={`text-xl sm:text-2xl text-sats-orange-500 transition-transform shrink-0 ${isOpen ? 'rotate-45' : ''}`}>
+                          +
+                        </span>
                     </span>
-                    <span className={`text-[12px] font-bold px-2.5 py-1 rounded-md tracking-wide ${item.statusColor}`}>
-                      {item.status === 'Live' && '● '}
-                      {item.status}
-                    </span>
-                    <span className="text-xs text-gray-400 font-mono">
+                    <span className=' flex items-center gap-3 w-full justify-between sm:hidden'>
+                    <span className="text-xs text-gray-400 font-mono sm:hidden">
                       {item.date}
+                    </span>
                     </span>
                     <span className="text-[15px] sm:text-base font-bold text-white flex-1 min-w-full sm:min-w-[180px] order-4 sm:order-none mt-2 sm:mt-0">
                       {item.title}
-                    </span>
-                    <span className={`text-xl sm:text-2xl text-sats-orange-500 transition-transform shrink-0 ${isOpen ? 'rotate-45' : ''}`}>
-                      +
                     </span>
                   </div>
                   

@@ -13,7 +13,7 @@ export const WormCta = () => {
     },
     {
       title: 'Watch the food ring',
-      body: "The arc drains clockwise. Orange is safe, yellow means hurry, red means it's about to teleport — commit to your route before it resets."
+      body: "The arc drains clockwise. Orange is safe, yellow means hurry, red means it&apos;s about to teleport — commit to your route before it resets."
     },
     {
       title: 'Real food is always orange',
