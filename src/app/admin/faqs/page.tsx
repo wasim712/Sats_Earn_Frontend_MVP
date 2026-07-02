@@ -49,6 +49,7 @@ export default function AdminFaqsPage() {
   };
 
   const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this FAQ item? This action cannot be undone.')) return;
     try {
       await dispatch(deleteAdminFaq(id)).unwrap();
     } catch (err: any) {

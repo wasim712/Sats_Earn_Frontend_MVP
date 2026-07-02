@@ -15,6 +15,12 @@ const BLOG_SLUG_MIN = 3;
 const BLOG_SLUG_MAX = 150;
 const BLOG_EXCERPT_MAX = 280;
 
+const getTrimmedWordCount = (value: string) =>
+  value
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+
 export default function AdminBlogsPage() {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -38,6 +44,10 @@ export default function AdminBlogsPage() {
     const trimmedSlug = slug.trim();
     const trimmedExcerpt = excerpt.trim();
     const trimmedCoverImageUrl = coverImageUrl.trim();
+
+    if (getTrimmedWordCount(trimmedTitle) < 2) {
+      return 'Title must contain at least 2 words.';
+    }
 
     if (trimmedTitle.length < BLOG_TITLE_MIN) {
       return `Title must be at least ${BLOG_TITLE_MIN} characters.`;
@@ -178,13 +188,13 @@ export default function AdminBlogsPage() {
     setSlug(slugify(post.title));
     setExcerpt(post.excerpt || '');
     setCoverImageUrl(post.coverImageUrl || '');
-    setContent(post.content);
     setIsPublished(post.isPublished);
     setIsPreview(false);
     setTimeout(() => syncEditor(post.content), 0);
   };
 
   const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this blog? This action cannot be undone.')) return;
     try {
       await dispatch(deleteAdminBlog(id)).unwrap();
       if (editingId === id) resetForm();
@@ -219,6 +229,9 @@ export default function AdminBlogsPage() {
               <div className="space-y-2">
                 <input value={title} maxLength={BLOG_TITLE_MAX} onChange={(e) => setTitle(e.target.value)} placeholder="Blog title" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
                 <p className="text-[12px] text-gray-400">{title.trim().length}/{BLOG_TITLE_MAX} characters</p>
+                {title.trim().length > 0 && getTrimmedWordCount(title) < 2 ? (
+                  <p className="text-[12px] text-red-400">Title must contain at least 2 words.</p>
+                ) : null}
               </div>
               <div className="space-y-2">
                 <input value={slug} maxLength={BLOG_SLUG_MAX} readOnly placeholder="blog-slug" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full lowercase cursor-not-allowed opacity-80" />
