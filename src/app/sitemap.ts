@@ -1,4 +1,4 @@
-﻿import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { getSiteUrl } from '@/lib/site';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -49,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/contact', priority: 0.5, changeFrequency: 'yearly' },
     { url: '/brands', priority: 0.8, changeFrequency: 'monthly' },
     { url: '/games/sat-worm', priority: 0.6, changeFrequency: 'monthly' },
+    { url: '/share-and-earn', priority: 0.8, changeFrequency: 'monthly' },
   ] as const;
 
   const legalPages = [

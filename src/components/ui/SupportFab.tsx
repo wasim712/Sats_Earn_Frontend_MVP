@@ -49,7 +49,7 @@ export function SupportFab() {
 
         {/* Telegram Link */}
         <a
-          href="#"
+          href="https://t.me/satsearnapp"
           className="group flex items-center gap-3 bg-sats-black-900/90 backdrop-blur-md border border-sats-orange-500/20 rounded-xl px-4 py-2.5 no-underline text-[#f0f0f0] text-[13px] font-bold whitespace-nowrap shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-[#24A1DE]/40 hover:text-[#24A1DE] hover:shadow-[0_0_15px_rgba(36,161,222,0.2)] hover:-translate-y-0.5"
         >
           <span className="text-sats-orange-500 group-hover:text-[#24A1DE] group-hover:scale-110 transition-all duration-300">
@@ -62,7 +62,7 @@ export function SupportFab() {
 
         {/* Discord Link */}
         <a
-          href="#"
+          href="https://discord.gg/VX4cB2xTnZ"
           className="group flex items-center gap-3 bg-sats-black-900/90 backdrop-blur-md border border-sats-orange-500/20 rounded-xl px-4 py-2.5 no-underline text-[#f0f0f0] text-[13px] font-bold whitespace-nowrap shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-[#5865F2]/40 hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.2)] hover:-translate-y-0.5"
         >
           <span className="text-sats-orange-500 group-hover:text-[#5865F2] group-hover:scale-110 transition-all duration-300">
