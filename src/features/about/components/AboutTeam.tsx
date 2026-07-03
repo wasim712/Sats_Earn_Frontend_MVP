@@ -4,9 +4,7 @@ import { FadeUp } from '@/components/animations/FadeUp';
 export const AboutTeam = () => {
   const team = [
     { name: "Wasim Akram", role: "Founder & CEO", sub: "Product, Strategy & Vision", initial: "W", gradient: "from-[#f7931a] to-[#ffcc00]", isFounder: true },
-    { name: "Nadeem M S", role: "Founder", sub: "Operations & Growth", initial: "N", gradient: "from-[#a855f7] to-[#ec4899]", isFounder: true },
-    { name: "Saksham Arya", role: "Founding Engineer", sub: "Backend developer", initial: "S", gradient: "from-[#3b82f6] to-[#06b6d4]", isFounder: false },
-    { name: "Sumit Dwivedi", role: "Founding Engineer", sub: "Frontend developer", initial: "S", gradient: "from-[#22c55e] to-[#84cc16]", isFounder: false }
+    { name: "Nadeem M S", role: "Founder", sub: "Operations & Growth", initial: "N", gradient: "from-[#a855f7] to-[#ec4899]", isFounder: true }
   ];
 
   return (
