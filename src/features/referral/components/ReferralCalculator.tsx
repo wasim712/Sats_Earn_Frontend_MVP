@@ -201,64 +201,7 @@ export const ReferralCalculator = () => {
         </div>
       </section>
 
-      {/* WORKED EXAMPLE */}
-      <section className="px-4 pb-16 sm:pb-24 pt-8 sm:pt-12">
-        <div className="max-w-4xl mx-auto">
-          <FadeUp className="mb-10 sm:mb-12 text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-sats-orange-500 font-bold mb-3">
-              <div className="w-6 h-px bg-sats-orange-500/50 hidden sm:block"></div>
-              A Quick Example
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-white mb-4">
-              How it adds up
-            </h2>
-            <p className="text-base text-gray-300 max-w-2xl leading-relaxed mx-auto sm:mx-0">
-              One concrete walk-through, so the numbers make sense without touching a slider.
-            </p>
-          </FadeUp>
-
-          <FadeUp>
-            <div className="bg-sats-black-800 border border-sats-orange-500/30 rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(249,115,22,0.08),transparent_70%)] pointer-events-none"></div>
-
-              <div className="flex items-center gap-4 mb-6 relative z-10">
-                <div className="w-12 h-12 rounded-full bg-sats-orange-500/10 border border-sats-orange-500/30 flex items-center justify-center font-mono text-xl font-black text-sats-orange-500 shrink-0">
-                  M
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-white leading-tight mb-1">Maya is on the Crown tier (20%)</h3>
-                  <p className="text-[13px] text-gray-400">She shares her link with friends — most had never owned Bitcoin before</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 mb-6 relative z-10">
-                <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
-                  <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">1</div>
-                  <div><strong className="text-white">10 friends</strong> sign up through Maya's link and start using SatsEarn <span className="text-gray-400">(this is the ×10)</span>.</div>
-                </div>
-                <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
-                  <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">2</div>
-                  <div>Each friend completes about <strong className="text-white">30 commissionable actions</strong> a month <span className="text-gray-400">(this is the ×30)</span>.</div>
-                </div>
-                <div className="flex gap-3 text-sm text-gray-300 leading-relaxed">
-                  <div className="w-6 h-6 shrink-0 rounded bg-sats-black-900 border border-white/10 font-mono text-xs font-bold text-sats-orange-500 flex items-center justify-center mt-0.5">3</div>
-                  <div>At a 10-sat base reward, Maya earns her 20% on every action = <strong className="text-white">2 sats per action</strong>. So: 2 sats × 30 actions × 10 friends.</div>
-                </div>
-              </div>
-
-              <div className="bg-sats-orange-500/10 border border-sats-orange-500/30 rounded-xl p-5 flex flex-wrap justify-between items-center gap-4 relative z-10">
-                <div className="text-[13px] text-gray-300 font-bold">Maya's estimated monthly commission</div>
-                <div className="font-mono text-2xl font-black text-sats-orange-500">600 sats</div>
-              </div>
-
-              <p className="text-xs text-gray-400 italic mt-4 relative z-10">
-                Illustration using the calculator's logic — actual numbers depend on the real base reward and how active her referrals stay. If Maya upgrades to Founders (30%), the same network earns her 900 sats/month.
-              </p>
-
-            </div>
-          </FadeUp>
-        </div>
-      </section>
+      
     </>
   );
 };
