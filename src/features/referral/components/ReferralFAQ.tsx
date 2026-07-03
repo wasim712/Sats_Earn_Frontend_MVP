@@ -117,7 +117,7 @@ export const ReferralFAQ = () => {
       </section>
 
       {/* CTA */}
-      <section className="px-4 py-20 sm:py-32 relative overflow-hidden text-center bg-sats-black-950">
+      <section className="px-4 pb-20 relative overflow-hidden text-center bg-sats-black-950">
         {/* Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[radial-gradient(ellipse,rgba(249,115,22,0.1),transparent_70%)] pointer-events-none"></div>
 
