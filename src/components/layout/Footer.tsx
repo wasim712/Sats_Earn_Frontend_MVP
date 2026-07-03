@@ -10,13 +10,13 @@ const FOOTER_LINKS = {
     { name: 'Rewards', href: '/rewards' },
     { name: 'BTC-Basics', href: '/btc-basics' },
     { name: 'Referral', href: '/referral' },
-    { name: 'Blogs', href: '/blogs' },
+    { name: 'Share And Earn', href: '/share-and-earn' },
   ],
   Company: [
     { name: 'For Brands', href: '/brands' },
     { name: 'How It Works', href: '/how-it-works' },
     { name: 'FAQ', href: '/faq' },
-    { name: 'Guidelines', href: '/legal/community-guidelines' },
+    { name: 'Blogs', href: '/blogs' },
     { name: 'About', href: '/about' },
   ],
   Others: [
@@ -31,7 +31,7 @@ const FOOTER_LINKS = {
     { name: 'Terms of service', href: '/legal/terms' },
     { name: 'Refund Policy', href: '/legal/refund-policy' },
     { name: 'Privacy Policy', href: '/legal/privacy' },
-    { name: 'Share And Earn', href: '/share-and-earn' },
+    { name: 'Guidelines', href: '/legal/community-guidelines' },
 
   ],
 };

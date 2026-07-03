@@ -32,13 +32,13 @@ const DEMO_CODE = "14261EDD";
 const TAGLINE = "Stack Sats. No Buying Required.";
 const SUBLINE = "Earn real Bitcoin over Lightning.";
 
-// Distinct banner copy â€” line1 (white), line2 (orange), sub. Each banner uses one.
+// Distinct banner copy — line1 (white), line2 (orange), sub. Each banner uses one.
 const TAGLINES = [
   { l1: "Stack Sats.", l2: "No Buying Required.", sub: "Earn real Bitcoin over Lightning" },
-  { l1: "Earn Bitcoin", l2: "by Doing Simple Tasks", sub: "Quizzes, streaks and games â€” paid in sats" },
+  { l1: "Earn Bitcoin", l2: "by Doing Simple Tasks", sub: "Quizzes, streaks and games — paid in sats" },
   { l1: "Stack Sats Daily,", l2: "Bit by Bit", sub: "Small actions, real Bitcoin over Lightning" },
-  { l1: "Stack Sats,", l2: "Not Excuses", sub: "Start earning Bitcoin today â€” no deposit" },
-  { l1: "Earn Bitcoin", l2: "Instead of Buying It", sub: "The easiest way in â€” paid over Lightning" },
+  { l1: "Stack Sats,", l2: "Not Excuses", sub: "Start earning Bitcoin today — no deposit" },
+  { l1: "Earn Bitcoin", l2: "Instead of Buying It", sub: "The easiest way in — paid over Lightning" },
   { l1: "From Task", l2: "to Sats", sub: "Complete, earn, withdraw over Lightning" },
 ];
 
@@ -89,7 +89,7 @@ function AppIcon({ size = 56, circle = true, boltFill = C.or }) {
 
 
 /* ============================================================
-   SOCIAL ICONS â€” official current marks (Simple Icons, CC0/MIT)
+   SOCIAL ICONS — official current marks (Simple Icons, CC0/MIT)
    White glyph on brand-color circle.
    ============================================================ */
 const BRAND_ICONS = {
@@ -130,7 +130,7 @@ function shareUrl(name, link, title, text) {
     case "Viber": return `viber://forward?text=${full}`;
     case "Signal": return `https://signal.me/`;
     case "Snapchat": return `https://www.snapchat.com/`;
-    case "Discord": return null; // no web share intent â€” copy instead
+    case "Discord": return null; // no web share intent — copy instead
     default: return null;
   }
 }
@@ -187,10 +187,10 @@ function SocialRow({ link, title, text }) {
         {order.map((name) => (
           <SocialIcon key={name} name={name} link={link} title={title} text={text} onCopyFallback={copyMsg} />
         ))}
-        {/* Native share â€” orange, opens the device share sheet */}
+        {/* Native share — orange, opens the device share sheet */}
         <button
           onClick={nativeShare}
-          title="More â€” open your device share menu"
+          title="More — open your device share menu"
           style={{
             width: 40, height: 40, borderRadius: "50%", background: C.or,
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -246,7 +246,7 @@ function CopyRow({ link, small = false }) {
 
 
 /* ============================================================
-   BANNER ENGINE â€” spec + canvas + preview
+   BANNER ENGINE — spec + canvas + preview
    Styles: Bolt (dark, orange), Glow (dark, orange gradient),
            Outline (dark, framed).  Solid removed per feedback.
    ============================================================ */
@@ -412,7 +412,7 @@ function drawScene(ctx, w, h, scene, accent) {
   }
   if (scene === "mockup") {
     // small dim phone tucked into the right edge; only on banners wide enough
-    if (w < base * 1.4) return; // skip on square/tall â€” would sit behind text
+    if (w < base * 1.4) return; // skip on square/tall — would sit behind text
     const mpw = h * 0.34, mph = mpw * 2.0;
     if (mph > h * 0.96) return;
     const px = w - mpw * 0.62, py = h / 2 - mph / 2;
@@ -735,20 +735,20 @@ function BannerPreview({ size, styleId, box = 250, copy = TAGLINES[0], scene = "
 }
 
 /* ============================================================
-   SECTION 1 â€” SHARE TO EARN (promo post composer + modal)
+   SECTION 1 — SHARE TO EARN (promo post composer + modal)
    ============================================================ */
 const PROMO_POSTS = [
   {
     title: "Stack Sats. No Buying Required.",
-    text: "New to Bitcoin and don't want to risk buying any? SatsEarn lets you earn real satoshis by doing simple tasks, quizzes and mini-games â€” paid straight to your Lightning wallet. No deposit, no purchase. Just stack sats.",
+    text: "New to Bitcoin and don't want to risk buying any? SatsEarn lets you earn real satoshis by doing simple tasks, quizzes and mini-games — paid straight to your Lightning wallet. No deposit, no purchase. Just stack sats.",
   },
   {
     title: "Earn real Bitcoin over Lightning",
-    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes â€” every reward is real sats sent over the Lightning Network. it&apos;s in early beta and worth a look.",
+    text: "I've been using SatsEarn to collect small amounts of Bitcoin without ever buying any. Tasks, daily streaks, quizzes — every reward is real sats sent over the Lightning Network. it&apos;s in early beta and worth a look.",
   },
   {
     title: "A simple way to start with Bitcoin",
-    text: "If you've wanted to hold a little Bitcoin but weren't ready to buy, SatsEarn is a Lightning-native way to earn sats by completing tasks. You withdraw real Bitcoin â€” nothing to deposit first.",
+    text: "If you've wanted to hold a little Bitcoin but weren't ready to buy, SatsEarn is a Lightning-native way to earn sats by completing tasks. You withdraw real Bitcoin — nothing to deposit first.",
   },
 ];
 
@@ -800,7 +800,7 @@ function ShareToEarn({ link }) {
 }
 
 /* ============================================================
-   SECTION 2 â€” BRAND RESOURCES
+   SECTION 2 — BRAND RESOURCES
    ============================================================ */
 function drawSpeedLines(ctx, fill) {
   // proportions from logo.png, in 512 space
@@ -914,7 +914,7 @@ function BrandResources() {
 }
 
 /* ============================================================
-   SECTION 3 â€” GENERATE BANNERS
+   SECTION 3 — GENERATE BANNERS
    ============================================================ */
 function GenerateBanners({ link }) {
   const [styleId, setStyleId] = useState("bolt");
@@ -988,7 +988,7 @@ function GenerateBanners({ link }) {
         </Field>
         <Field label="Banner size">
           <select value={sizeId} onChange={(e) => setSizeId(e.target.value)} style={selectStyle}>
-            {SIZES.map((s) => <option key={s.id} value={s.id}>{s.w}Ã—{s.h} â€” {s.label}</option>)}
+            {SIZES.map((s) => <option key={s.id} value={s.id}>{s.w} X {s.h} — {s.label}</option>)}
           </select>
         </Field>
         <button onClick={download} style={{ ...primaryBtn, height: 40 }}>Generate & download</button>
@@ -1005,7 +1005,7 @@ function GenerateBanners({ link }) {
 }
 
 /* ============================================================
-   SECTION 4 â€” IMAGES FOR PROMO POSTS (Rectangle/Square/Stories)
+   SECTION 4 — IMAGES FOR PROMO POSTS (Rectangle/Square/Stories)
    ============================================================ */
 const PROMO_IMG_SIZES = {
   Rectangle: { id: "pi-rect", w: 1200, h: 630 },
@@ -1061,7 +1061,7 @@ function PromoImageCard({ size, styleId, link, copy, scene, mark, markPos }) {
       <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <BannerPreview size={size} styleId={styleId} box={180} copy={copy} scene={scene} mark={mark} markPos={markPos} />
       </div>
-      <button onClick={download} style={{ ...primaryBtn, width: "100%", padding: "8px 0", fontSize: 12 }}>â†“ Download</button>
+      <button onClick={download} style={{ ...primaryBtn, width: "100%", padding: "8px 0", fontSize: 12 }}>↓ Download</button>
       <CopyRow link={link} small />
       <canvas ref={canvasRef} style={{ display: "none" }} />
     </div>
@@ -1069,34 +1069,34 @@ function PromoImageCard({ size, styleId, link, copy, scene, mark, markPos }) {
 }
 
 /* ============================================================
-   SECTION 5 â€” TEXTS FOR PROMO POSTS
+   SECTION 5 — TEXTS FOR PROMO POSTS
    ============================================================ */
 const PROMO_TEXTS = [
-  "I'm earning real Bitcoin â€” actual sats, no buying â€” just by completing tasks, quizzes and games on SatsEarn. Paid straight over Lightning. Start free with my link:",
-  "Hey â€” found a way to actually earn Bitcoin without buying any. You do small tasks, quizzes and games and get paid in real sats over Lightning. No experience needed, free to start. Here's my link:",
-  "SatsEarn lets anyone stack real Bitcoin sats â€” earned, not bought â€” through tasks, learning and games, paid over the Lightning Network. Free to join:",
-  "New to Bitcoin and not ready to buy any? SatsEarn pays real satoshis to your Lightning wallet for simple tasks, quizzes and daily streaks. No deposit, no purchase â€” just stack sats. Try it free:",
+  "I'm earning real Bitcoin — actual sats, no buying — just by completing tasks, quizzes and games on SatsEarn. Paid straight over Lightning. Start free with my link:",
+  "Hey — found a way to actually earn Bitcoin without buying any. You do small tasks, quizzes and games and get paid in real sats over Lightning. No experience needed, free to start. Here's my link:",
+  "SatsEarn lets anyone stack real Bitcoin sats — earned, not bought — through tasks, learning and games, paid over the Lightning Network. Free to join:",
+  "New to Bitcoin and not ready to buy any? SatsEarn pays real satoshis to your Lightning wallet for simple tasks, quizzes and daily streaks. No deposit, no purchase — just stack sats. Try it free:",
   "You don't have to buy Bitcoin to own some. On SatsEarn you earn real sats by doing quick tasks and quizzes, paid over Lightning. Start with my link:",
-  "Curious about Bitcoin but exchanges feel like a hassle? SatsEarn skips all that â€” earn sats by completing simple tasks, withdraw real BTC over Lightning. Free to start:",
+  "Curious about Bitcoin but exchanges feel like a hassle? SatsEarn skips all that — earn sats by completing simple tasks, withdraw real BTC over Lightning. Free to start:",
   "Stacking sats the easy way: tasks, quizzes, a daily streak, and a couple of mini-games. Every reward is real Bitcoin paid over Lightning. Join free here:",
-  "I've been collecting small amounts of Bitcoin without spending a thing â€” SatsEarn pays in real sats over Lightning for everyday tasks. Worth a look:",
+  "I've been collecting small amounts of Bitcoin without spending a thing — SatsEarn pays in real sats over Lightning for everyday tasks. Worth a look:",
   "No buying. No deposit. Just earn. SatsEarn rewards you in real Bitcoin sats for tasks, learning and games. Free to join with my link:",
   "Want your first sats without putting money in? SatsEarn is a Lightning-native way to earn real Bitcoin by completing tasks. Start free:",
-  "Bitcoin doesn't have to start with a big purchase. On SatsEarn you earn real sats by doing simple things online â€” paid over Lightning. Here's my link:",
+  "Bitcoin doesn't have to start with a big purchase. On SatsEarn you earn real sats by doing simple things online — paid over Lightning. Here's my link:",
   "A daily habit that pays in Bitcoin: open SatsEarn, keep your streak, finish a task or quiz, stack a few more sats. All real, all over Lightning. Join free:",
-  "If you like the idea of owning Bitcoin but not the price tag, SatsEarn lets you earn sats instead of buying them. Tasks, quizzes, games â€” paid over Lightning:",
+  "If you like the idea of owning Bitcoin but not the price tag, SatsEarn lets you earn sats instead of buying them. Tasks, quizzes, games — paid over Lightning:",
   "Learn a little about Bitcoin and get paid in it. SatsEarn rewards tasks, quizzes and streaks with real sats over the Lightning Network. Free to start:",
   "Real Bitcoin, earned not bought. SatsEarn pays sats to your Lightning wallet for completing tasks and quizzes. No experience needed. Join with my link:",
-  "Stack Sats. No Buying Required. That's the whole idea behind SatsEarn â€” earn real Bitcoin over Lightning by doing simple tasks. Try it free:",
-  "Looking for a no-risk way into Bitcoin? SatsEarn pays you in real sats for tasks and quizzes â€” nothing to deposit, nothing to buy. Start here:",
+  "Stack Sats. No Buying Required. That's the whole idea behind SatsEarn — earn real Bitcoin over Lightning by doing simple tasks. Try it free:",
+  "Looking for a no-risk way into Bitcoin? SatsEarn pays you in real sats for tasks and quizzes — nothing to deposit, nothing to buy. Start here:",
   "I earn a little Bitcoin every day on SatsEarn just by keeping a streak and finishing a few tasks. Real sats, paid over Lightning. Join free:",
-  "SatsEarn turns small tasks into real Bitcoin. Quizzes, social actions, mini-games â€” all paid in sats over Lightning. Free to start with my link:",
-  "Your Lightning wallet, slowly filling with sats you earned instead of bought. That's SatsEarn. Tasks, quizzes, streaks â€” all real Bitcoin. Join free:",
+  "SatsEarn turns small tasks into real Bitcoin. Quizzes, social actions, mini-games — all paid in sats over Lightning. Free to start with my link:",
+  "Your Lightning wallet, slowly filling with sats you earned instead of bought. That's SatsEarn. Tasks, quizzes, streaks — all real Bitcoin. Join free:",
   "New to crypto? Start the simple way. SatsEarn pays real Bitcoin sats for easy tasks and quizzes, straight over Lightning. No buying required:",
   "Earn sats on your coffee break. SatsEarn rewards quick tasks, quizzes and games with real Bitcoin over Lightning. Free to join here:",
   "The no-buy way to stack Bitcoin: complete tasks on SatsEarn, earn real sats, withdraw over Lightning. Start free with my link:",
   "Bitcoin without the deposit. SatsEarn pays you in real satoshis for tasks, learning and daily streaks, all over the Lightning Network. Join free:",
-  "Small actions, real sats. SatsEarn rewards everyday tasks and quizzes with actual Bitcoin over Lightning â€” no purchase needed. Try it:",
+  "Small actions, real sats. SatsEarn rewards everyday tasks and quizzes with actual Bitcoin over Lightning — no purchase needed. Try it:",
   "Thinking about Bitcoin but not ready to buy? SatsEarn lets you earn your first sats by doing simple tasks, paid over Lightning. Free to start:",
 ];
 
@@ -1136,7 +1136,7 @@ function PromoTextCard({ text, link }) {
 }
 
 /* ============================================================
-   SECTION 6 â€” ADDITIONAL LANDING PAGES
+   SECTION 6 — ADDITIONAL LANDING PAGES
    ============================================================ */
 const LANDINGS = [
   { id: "lp1", label: "Classic", style: "bolt" },
@@ -1165,7 +1165,7 @@ function LandingPages({ link }) {
 }
 
 /* ============================================================
-   SECTION 7 â€” PROMO VIDEOS (honest placeholder)
+   SECTION 7 — PROMO VIDEOS (honest placeholder)
    ============================================================ */
 function PromoVideos() {
   return (
@@ -1264,13 +1264,13 @@ function AmbassadorProgram() {
   const ladder = [
     { tier: "Platinum", rate: "10%", when: "On approval", note: "Every approved ambassador starts here. You get your link, banners and assets, and begin sharing right away." },
     { tier: "Diamond", rate: "15%", when: "After 1-2 months", note: "If the users you bring in are real and staying active, your rate can be raised to Diamond." },
-    { tier: "Crown", rate: "20%", when: "As you keep growing", note: "Consistent, genuine growth over the following months can move you to Crown â€” the top of the ambassador path." },
+    { tier: "Crown", rate: "20%", when: "As you keep growing", note: "Consistent, genuine growth over the following months can move you to Crown — the top of the ambassador path." },
   ];
 
   return (
     <Section
       title="Ambassador Program"
-      sub="For creators, influencers, YouTubers, crypto influencers, airdrop guides â€” anyone with an audience. Share SatsEarn and earn referral commission up to 20%, paid in real Bitcoin over Lightning."
+      sub="For creators, influencers, YouTubers, crypto influencers, airdrop guides — anyone with an audience. Share SatsEarn and earn referral commission up to 20%, paid in real Bitcoin over Lightning."
     >
       {/* Who it&apos;s for */}
       <div style={{ marginBottom: 22 }}>
@@ -1286,7 +1286,7 @@ function AmbassadorProgram() {
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 6 }}>How your rate grows</div>
         <p style={{ color: C.dim, fontSize: 13, lineHeight: 1.6, margin: "0 0 14px" }}>
-          Ambassadors join the same referral tiers regular users have â€” you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance â€” it isn&apos;t automatic or guaranteed, and there's no fixed timeline.
+          Ambassadors join the same referral tiers regular users have — you simply start higher. Every approved ambassador begins at <strong style={{ color: C.txt }}>Platinum (10%)</strong>. Based on the verified, active users you bring in over time, your rate can be raised toward <strong style={{ color: C.txt }}>Crown (up to 20%)</strong>. Progression is reviewed on real performance — it isn&apos;t automatic or guaranteed, and there's no fixed timeline.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {ladder.map((l, i) => (
@@ -1301,7 +1301,7 @@ function AmbassadorProgram() {
           ))}
         </div>
         <p style={{ color: C.faint, fontSize: 11.5, lineHeight: 1.5, margin: "10px 0 0" }}>
-          Note: the ambassador path tops out at Crown (20%). Commission is a share of the platform's base reward on your referrals' activity, paid automatically over Lightning. Keep your promotion honest â€” no income promises or "get rich" claims, which can forfeit commission.
+          Note: the ambassador path tops out at Crown (20%). Commission is a share of the platform's base reward on your referrals' activity, paid automatically over Lightning. Keep your promotion honest — no income promises or "get rich" claims, which can forfeit commission.
         </p>
       </div>
 
@@ -1313,7 +1313,7 @@ function AmbassadorProgram() {
             ["1", "Apply", "Tell us who you are and where your audience is. Takes a minute."],
             ["2", "Get approved", "We review your profile and approve a fit. You're added at Platinum (10%)."],
             ["3", "Share", "Use your link, banners and ready-made posts to share SatsEarn with your audience."],
-            ["4", "Grow & earn", "As real users join and stay active, your commission is paid in sats over Lightning â€” and your rate can climb toward Crown."],
+            ["4", "Grow & earn", "As real users join and stay active, your commission is paid in sats over Lightning — and your rate can climb toward Crown."],
           ].map(([n, h, p]) => (
             <div key={n} style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16 }}>
               <div style={{ width: 26, height: 26, borderRadius: "50%", background: C.org, border: `1px solid ${C.line2}`, color: C.or, fontWeight: 900, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>{n}</div>
@@ -1330,8 +1330,8 @@ function AmbassadorProgram() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
             ["Pin your link", "Put your referral link in your bio, pinned post, video description or stream panel so it&apos;s always one tap away."],
-            ["Post ready-made banners", "Use the banners and promo images above â€” sized for X, Instagram, Telegram and more, with your link baked in."],
-            ["Use the honest copy", "The ready-made texts are written to convert without hype. Keep your own posts honest too â€” it protects your commission."],
+            ["Post ready-made banners", "Use the banners and promo images above — sized for X, Instagram, Telegram and more, with your link baked in."],
+            ["Use the honest copy", "The ready-made texts are written to convert without hype. Keep your own posts honest too — it protects your commission."],
             ["Explain, don't oversell", "Show how earning sats works. Airdrop and crypto audiences respond to clear how-it-works over income claims."],
           ].map(([h, p]) => (
             <div key={h} style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16 }}>
@@ -1423,7 +1423,7 @@ function ReferralTerms() {
   return (
     <Section
       title="How referral rewards work"
-      sub="Share your link. When the people you invite get active on SatsEarn, you earn a commission on the platform's base reward for their activity â€” paid in real sats over Lightning."
+      sub="Share your link. When the people you invite get active on SatsEarn, you earn a commission on the platform's base reward for their activity — paid in real sats over Lightning."
       right={
         <a href={REFERRAL_URL} target="_blank" rel="noopener noreferrer"
           style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: `1px solid ${C.line2}`, color: C.or, borderRadius: 9, padding: "9px 16px", fontWeight: 800, fontSize: 13, textDecoration: "none", whiteSpace: "nowrap" }}>
@@ -1436,9 +1436,9 @@ function ReferralTerms() {
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>How it flows</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
           {[
-            ["1", "Share your link", "Send your personal link â€” satsearn.app/?ref=YOURCODE â€” to friends and followers. No Bitcoin experience needed on their end."],
+            ["1", "Share your link", "Send your personal link — satsearn.app/?ref=YOURCODE — to friends and followers. No Bitcoin experience needed on their end."],
             ["2", "They join and get active", "When someone signs up through your link and starts completing tasks, quizzes and other earning actions, they become your direct referral."],
-            ["3", "You earn commission sats", "You receive a fixed share of the admin base reward on their commissionable activity â€” automatically, on top of what you stack yourself."],
+            ["3", "You earn commission sats", "You receive a fixed share of the admin base reward on their commissionable activity — automatically, on top of what you stack yourself."],
             ["4", "Paid over Lightning", "Commission is paid in real Bitcoin sats to your balance, withdrawable over the Lightning Network like everything else on SatsEarn."],
           ].map(([n, h, p]) => (
             <div key={n} style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16 }}>
@@ -1454,7 +1454,7 @@ function ReferralTerms() {
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Commission rates by tier</div>
         <div style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
-          <div style={{ color: C.txt, fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Free tiers â€” Basic, Copper, Bronze, Silver, Gold</div>
+          <div style={{ color: C.txt, fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Free tiers — Basic, Copper, Bronze, Silver, Gold</div>
           <div style={{ color: C.dim, fontSize: 13, lineHeight: 1.6 }}>
             A flat <strong style={{ color: C.txt }}>5%</strong> commission on your referrals' base-reward activity, with a lifetime referral cap. Upgrading to any paid tier raises your rate and removes the cap.
           </div>
@@ -1472,7 +1472,7 @@ function ReferralTerms() {
           ))}
         </div>
         <p style={{ color: C.dim, fontSize: 12, margin: "10px 0 0", lineHeight: 1.5 }}>
-          Paid tiers earn a higher commission with no lifetime referral cap â€” Founders sit at the top at 30%.
+          Paid tiers earn a higher commission with no lifetime referral cap — Founders sit at the top at 30%.
         </p>
       </div>
 
@@ -1480,11 +1480,11 @@ function ReferralTerms() {
       <div>
         <div style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: C.or, fontWeight: 700, marginBottom: 12 }}>Good to know</div>
         <ul style={{ color: C.dim, fontSize: 13, lineHeight: 1.85, margin: 0, paddingLeft: 18 }}>
-          <li><strong style={{ color: C.txt }}>Direct referrals only.</strong> You earn from the people you invite directly â€” there are no further levels and no multi-level structure.</li>
+          <li><strong style={{ color: C.txt }}>Direct referrals only.</strong> You earn from the people you invite directly — there are no further levels and no multi-level structure.</li>
           <li><strong style={{ color: C.txt }}>Your code is automatic.</strong> Once you log in, your dashboard fills in your real 8-character code (for example 14261EDD). The link format is satsearn.app/?ref=YOURCODE.</li>
-          <li><strong style={{ color: C.txt }}>Founders Rotation.</strong> New users who join without a referrer are shared evenly across the founding cohort as crew members, so Founders also earn on people the platform brings in â€” not only those they invite themselves.</li>
+          <li><strong style={{ color: C.txt }}>Founders Rotation.</strong> New users who join without a referrer are shared evenly across the founding cohort as crew members, so Founders also earn on people the platform brings in — not only those they invite themselves.</li>
           <li><strong style={{ color: C.txt }}>Commission is a fixed share</strong> of the admin base reward on commissionable activity, paid automatically. You always earn and withdraw real Bitcoin over Lightning.</li>
-          <li><strong style={{ color: C.txt }}>Keep it honest.</strong> No income promises or "get rich" claims when you share â€” those break the fair-play rules and can forfeit your commission.</li>
+          <li><strong style={{ color: C.txt }}>Keep it honest.</strong> No income promises or "get rich" claims when you share — those break the fair-play rules and can forfeit your commission.</li>
         </ul>
       </div>
     </Section>
@@ -1534,7 +1534,7 @@ function Section({ title, sub, right, children }) {
 }
 
 /* ============================================================
-   SHARED SITE CHROME â€” ported from the static HTML pages
+   SHARED SITE CHROME — ported from the static HTML pages
    (nav + master footer + scroll-reveal + heartbeat).
    At Next.js conversion these consolidate into one layout.
    ============================================================ */
@@ -1706,7 +1706,7 @@ export default function SatsEarnShare() {
     </button>
   );
 
-  // Shared promo asset sections â€” appear under BOTH tabs.
+  // Shared promo asset sections — appear under BOTH tabs.
   const assets = (
     <>
       <Reveal><ShareToEarn link={link} /></Reveal>
@@ -1735,7 +1735,7 @@ export default function SatsEarnShare() {
             Ready-made promo materials with <span style={{ color: C.or }}>your personal link</span>
           </h1>
           <p style={{ color: C.txt2, fontSize: 14, margin: "0 auto", maxWidth: 560, lineHeight: 1.6 }}>
-            Banners, images and posts â€” ready to go. Use them to invite friends and followers and grow your network. {TAGLINE} {SUBLINE}
+            Banners, images and posts — ready to go. Use them to invite friends and followers and grow your network. {TAGLINE} {SUBLINE}
           </p>
         </div>
 
@@ -1775,7 +1775,7 @@ export default function SatsEarnShare() {
         )}
 
         <div style={{ textAlign: "center", color: C.faint, fontSize: 11, marginTop: 12 }}>
-          SatsEarn Â· Lightning-native, no buying required Â· support@satsearn.app
+          SatsEarn · Lightning-native, no buying required · support@satsearn.app
         </div>
       </div>
     </div>

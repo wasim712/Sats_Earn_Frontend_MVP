@@ -2,14 +2,15 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, CheckSquare, ChevronRight, Clock3, Plus, Search, Sparkles, ShieldAlert, Zap, Trash2 } from 'lucide-react';
+import { CheckCircle2, CheckSquare, Clock3, Loader2, Plus, Search, Sparkles, ShieldAlert, Zap, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchStandaloneTasks, deleteStandaloneTask } from '@/features/admin/adminTasksSlice';
+import { fetchStandaloneTasks, deleteStandaloneTask, updateStandaloneTask } from '@/features/admin/adminTasksSlice';
 
 export default function AdminStandaloneTasksPage() {
   const dispatch = useAppDispatch();
-  const { tasks, isLoading, error } = useAppSelector((state) => state.adminTasks);
+  const { tasks, isLoading, isSaving, error } = useAppSelector((state) => state.adminTasks);
   const [searchQuery, setSearchQuery] = useState('');
+  const [togglingTaskId, setTogglingTaskId] = useState<string | null>(null);
 
   const getTaskPlatform = (task: any) => {
     const platform = task.requiredPlatform || task.platform || task.deviceTarget || task.requirements?.requiredPlatform || 'NONE';
@@ -25,6 +26,18 @@ export default function AdminStandaloneTasksPage() {
     e.stopPropagation();
     if (window.confirm("Are you sure you want to delete this standalone task?")) {
       dispatch(deleteStandaloneTask(taskId));
+    }
+  };
+
+  const handleToggleTaskStatus = async (e: React.MouseEvent, taskId: string, currentStatus: boolean) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      setTogglingTaskId(taskId);
+      await dispatch(updateStandaloneTask({ taskId, data: { isActive: !currentStatus } })).unwrap();
+    } finally {
+      setTogglingTaskId(null);
     }
   };
 
@@ -104,6 +117,8 @@ export default function AdminStandaloneTasksPage() {
   {filteredTasks.length > 0 ? filteredTasks.map((task) => {
     const highestReward = Math.max(...Object.values(task.tierRewardMatrix || {}).map((value) => Number(value || 0)), 0);
 
+    const isToggling = togglingTaskId === task.id && isSaving;
+
     return (
       <Link 
         key={task.id} 
@@ -170,11 +185,30 @@ export default function AdminStandaloneTasksPage() {
             Delete Task
           </button>
 
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 transition-colors duration-300 group-hover:text-gray-400">
-            Manage
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-gray-400 transition-all duration-300 group-hover:bg-sats-orange-500 group-hover:text-black group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </div>
+          <div className="flex items-center gap-3">
+            <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${task.isActive !== false ? 'text-emerald-400' : 'text-gray-500'}`}>
+              {task.isActive !== false ? 'Active' : 'Paused'}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => handleToggleTaskStatus(e, task.id, task.isActive !== false)}
+              disabled={isToggling}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300 focus:outline-none ${
+                task.isActive !== false ? 'bg-green-500' : 'bg-sats-black-700'
+              } ${isToggling ? 'opacity-50 pointer-events-none' : 'hover:ring-2 ring-sats-black-700 ring-offset-2 ring-offset-[#050505]'}`}
+              title={isToggling ? (task.isActive !== false ? 'Pausing task...' : 'Activating task...') : task.isActive !== false ? 'Pause Task' : 'Activate Task'}
+            >
+              {isToggling ? (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                </span>
+              ) : null}
+              <span
+                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                  task.isActive !== false ? 'translate-x-[18px]' : 'translate-x-0.5'
+                } ${isToggling ? 'opacity-0' : 'opacity-100'}`}
+              />
+            </button>
           </div>
         </div>
       </Link>

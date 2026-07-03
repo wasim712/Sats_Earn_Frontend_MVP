@@ -47,7 +47,7 @@ export const ReferralFAQ = () => {
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white mb-2">Founders get extra: the Rotation</h3>
                 <p className="text-sm text-gray-300 leading-relaxed mb-4 sm:mb-0">
-                  Founders don't just earn the top 30% rate. New users who join SatsEarn without a referrer are shared out evenly across the founding cohort as <strong className="text-white">crew members</strong> — so Founders earn commission on people the platform brings in, not only those they invite themselves.
+                  Founders don&apos;t just earn the top 30% rate. New users who join SatsEarn without a referrer are shared out evenly across the founding cohort as <strong className="text-white">crew members</strong> — so Founders earn commission on people the platform brings in, not only those they invite themselves.
                 </p>
               </div>
 

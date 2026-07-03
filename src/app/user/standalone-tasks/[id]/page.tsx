@@ -26,6 +26,7 @@ type StandaloneTaskDetails = Task & {
   coverImageUrl?: string | null;
   targetCountries?: string[];
   isPremiumOnly?: boolean;
+  isNewUserOnly?: boolean;
   requiredFreeTier?: string;
   doubleRewardsStartAt?: string | null;
   doubleRewardsEndAt?: string | null;
@@ -162,6 +163,7 @@ export default function StandaloneTaskDetailsPage() {
   const progressPct = allDone ? 100 : 0;
 
   const isPremiumOnly = Boolean(task?.isPremiumOnly);
+  const isNewUserOnly = Boolean(task?.isNewUserOnly);
   const themeColors = {
     primary: isPremiumOnly ? 'text-violet-400' : 'text-sats-orange-500',
     primaryBg: isPremiumOnly ? 'bg-violet-500' : 'bg-sats-orange-500',
@@ -389,6 +391,20 @@ export default function StandaloneTaskDetailsPage() {
                     <span className="text-sm font-black text-violet-400 tracking-wide">Premium Only</span>
                   </div>
                 )}
+                {isNewUserOnly && (
+                  <div className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/20 shadow-[0_0_12px_rgba(14,165,233,0.3)] cursor-help">
+                    <svg className="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <line x1="19" y1="8" x2="19" y2="14"></line>
+                      <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                    <span className="text-sm font-black text-sky-400 tracking-wide">New User Only</span>
+                    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-2 w-52 p-2.5 rounded-xl bg-[#111] border border-[#222] text-xs text-white/80 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center shadow-xl">
+                      This campaign is for new users only. If you&apos;ve previously used or created an account on this platform, you won&apos;t be eligible for rewards.
+                    </div>
+                  </div>
+                )}
               </div>
               <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug mb-5 break-words">
                 {task.title}
@@ -523,6 +539,12 @@ export default function StandaloneTaskDetailsPage() {
                   <span className="text-white/40 flex items-center gap-2">Difficulty</span>
                   <span className="font-bold text-white/80">{difficulty}</span>
                 </div>
+                {isNewUserOnly && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 flex items-center gap-2">Target User</span>
+                    <span className="font-bold text-sky-400 shadow-[0_0_12px_rgba(14,165,233,0.15)] bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20 text-xs">New Users Only</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-white/40 flex items-center gap-2">Device</span>
                   <span className="font-bold text-white/80">{deviceDisplay}</span>
