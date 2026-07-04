@@ -125,6 +125,10 @@ const normalizeCampaignPayload = (data: any) => {
     maxCompletions: Number(campaign.maxCompletions || 0),
     totalCompletions: Number(campaign.totalCompletions || 0),
     xpReward: Number(campaign.xpReward || 0),
+    tasks: Array.isArray(campaign.tasks) ? campaign.tasks.map((task: any) => ({
+      ...task,
+      requiredPlatform: task.requirements?.requiredPlatform || task.requiredPlatform || 'WEBSITE'
+    })) : campaign.tasks,
   };
 };
 
