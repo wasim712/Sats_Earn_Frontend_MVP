@@ -12,7 +12,15 @@ import { OnboardingTour, TourButton, useOnboarding } from '@/components/user/das
 import { DashboardLowerGrid, StreakSection } from '@/components/user/dashboard/DashboardSections';
 
 
-function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function OnboardingCongratsModal({
+  isOpen,
+  onClose,
+  rewardSats,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  rewardSats: number;
+}) {
   if (!isOpen) return null;
 
   return (
@@ -34,12 +42,12 @@ function OnboardingCongratsModal({ isOpen, onClose }: { isOpen: boolean; onClose
           {/* Subtle Reward Badge */}
           <div className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-lg border border-sats-orange-500/15 bg-sats-orange-500/5 px-3 py-1.5 text-xs font-black tracking-widest text-sats-orange-500">
             <Zap className="h-3.5 w-3.5" fill="currentColor" />
-            +50 SATS
+            +{rewardSats.toLocaleString()} SATS
           </div>
 
           {/* Description */}
           <p className="text-sm leading-relaxed text-gray-400 font-medium px-2">
-            You have earned your first <strong className="text-gray-200">50 sats</strong> for completing the sign up and onboarding. Welcome!
+            You have earned your first <strong className="text-gray-200">{rewardSats.toLocaleString()} sats</strong> for completing the sign up and onboarding. Welcome!
           </p>
 
           {/* Action Button */}
@@ -66,6 +74,7 @@ export default function UserDashboardPage() {
   const { data: leaderboardData } = useAppSelector((state) => state.userLeaderboard);
   const [showCongrats, setShowCongrats] = useState(false);
   const [hasAutoOpenedOnboarding, setHasAutoOpenedOnboarding] = useState(false);
+  const welcomeRewardSats = Number(data?.balances?.locked || 0);
 
   // Sats to BTC Converter State (Only applies to Available Balance)
   const [showBtc, setShowBtc] = useState(false);
@@ -172,7 +181,7 @@ export default function UserDashboardPage() {
     if (showBtc) {
       return (
         <div className="flex items-baseline gap-1">
-          <span className={`text-2xl sm:text-3xl lg:text-2xl font-black tracking-tight`}>{(sats / 100000000).toFixed(9)}</span>
+          <span className={`text-2xl sm:text-3xl lg:text-2xl font-black tracking-tight`}>{(sats / 100000000).toFixed(8)}</span>
           <span className="text-2xl font-bold text-gray-300 mb-1">BTC</span>
         </div>
       );
@@ -218,9 +227,9 @@ export default function UserDashboardPage() {
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ******************************************************************************
   // SKELETON LOADER
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ******************************************************************************
   if (isLoading || !data || !data.balances || !data.gamification) {
     return (
       <div className="space-y-8 animate-pulse pb-20 w-full p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
@@ -369,9 +378,9 @@ export default function UserDashboardPage() {
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ******************************************************************************
   // CALCULATED VALUES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ******************************************************************************
   // Use the backend-computed totalLifetime which sums only positive (income) ledger entries.
   // This never decreases even when sats are spent on subscriptions or withdrawn.
   const totalLifetimeEarned = data.balances?.totalLifetime || 0;
@@ -449,7 +458,11 @@ export default function UserDashboardPage() {
   return (
     <>
       <OnboardingTour isOpen={isTourOpen} onClose={closeTour} referralCode={user?.referralCode || ''} hideSkip={hideSkip} onSkip={handleTourSkip} onFinish={handleTourFinish} />
-      <OnboardingCongratsModal isOpen={showCongrats} onClose={() => setShowCongrats(false)} />
+      <OnboardingCongratsModal
+        isOpen={showCongrats}
+        onClose={() => setShowCongrats(false)}
+        rewardSats={welcomeRewardSats}
+      />
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
       
       {/* â”€â”€â”€ 1. HEADER & TOP BADGES â”€â”€â”€ */}

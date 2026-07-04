@@ -14,8 +14,6 @@ interface FounderObject {
 // Easily add/edit objects here to add more Founders to the cohort.
 const FOUNDERS_LIST: FounderObject[] = [
   { name: 'Wasim ' },
-  { name: 'Sumit Dwivedi'},
-  { name: 'Saksham Arya'  },
 ];
 
 export const FoundersCohort = () => {
