@@ -302,10 +302,10 @@ export default function StandaloneTasksPage() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-5 right-5 z-20 rounded-xl bg-sats-orange-500/90 px-3.5 py-2 text-black shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+                  { isNewUserOnly?<div className="absolute bottom-5 right-5 z-20 rounded-xl bg-sats-orange-500/90 px-3.5 py-2 text-black shadow-[0_0_15px_rgba(249,115,22,0.5)]">
                     <div className="text-[10px] font-black uppercase tracking-[0.16em]">Reward</div>
                     <div className="text-sm font-black">{formatCompact(reward)} sats</div>
-                  </div>
+                  </div>:null}
                 </div>
 
                 <div className="p-6 md:p-8 flex flex-col grow relative z-10">

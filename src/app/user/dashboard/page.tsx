@@ -587,7 +587,7 @@ export default function UserDashboardPage() {
           </div>
           <div className="mt-4">
             <h3 className="text-3xl font-black text-white">{(data.balances?.locked || 0).toLocaleString()} <span className='text-2xl'> sats</span></h3>
-            <p className="text-sm font-bold text-gray-600 mt-1">Locked Period</p>
+            <p className="text-sm font-bold text-gray-600 mt-1">Maturity Period</p>
           </div>
         </div>
         {/* Card 4: Total Earned */}

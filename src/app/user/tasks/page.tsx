@@ -571,10 +571,10 @@ function TaskPreviewCard({ campaign, isPremiumUser }: { campaign: Campaign; isPr
               {status.label}
             </div>
 
-            <div className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[12px] font-black shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md ${isPremiumOnly ? 'border border-violet-300/20 bg-[#140d1f]/80 text-violet-200 shadow-[0_0_24px_rgba(168,85,247,0.12)]' : 'border border-sats-orange-500/20 bg-black/65 text-sats-orange-400'}`}>
+            {!isNewUserOnly?<div className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[12px] font-black shadow-[0_0_18px_rgba(238,139,18,0.08)] backdrop-blur-md ${isPremiumOnly ? 'border border-violet-300/20 bg-[#140d1f]/80 text-violet-200 shadow-[0_0_24px_rgba(168,85,247,0.12)]' : 'border border-sats-orange-500/20 bg-black/65 text-sats-orange-400'}`}>
               <Zap className="h-3.5 w-3.5" />
-              <span>~ {topReward.toLocaleString()} sats</span>
-            </div>
+              <span> ~ {topReward.toLocaleString()} sats</span>
+            </div> : null}
           </div>
 
           {campaign.doubleRewardsActive ? (

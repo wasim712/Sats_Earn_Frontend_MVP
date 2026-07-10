@@ -777,7 +777,7 @@ function ShareToEarn({ link }) {
 
   return (
     <Section title="Share to earn" sub="Share promo posts and links to invite new users and grow your referral network.">
-      <div  className="grid grid-rows-3 gap-5 md:gap-10 md:grid-cols-2">
+      <div  className="grid gap-5 md:gap-10 md:grid-cols-2">
         {/* Editable post */}
         <div className="flex flex-col gap-10 ">
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
