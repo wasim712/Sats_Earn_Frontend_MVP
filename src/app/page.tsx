@@ -1,4 +1,13 @@
 import React, { Suspense } from 'react';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Earn Bitcoin Through Tasks, Offers, and Rewards',
+  description: 'SatsEarn is a rewards platform where you can complete online tasks, surveys, offers, and referrals to earn real Bitcoin without buying.',
+  path: '/',
+  keywords: ['earn bitcoin', 'bitcoin rewards', 'tasks for crypto', 'surveys for bitcoin', 'free sats'],
+});
+
 import { HeroSection } from '@/features/landing/components/HeroSection';
 import { TickerSection } from '@/features/landing/components/TickerSection';
 import { HowItWorksSection } from '@/features/landing/components/HowItWorksSection';

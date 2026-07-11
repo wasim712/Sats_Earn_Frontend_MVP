@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Regulatory Statement',
+  description: 'Our platform classification, jurisdiction, and regulatory position.',
+  path: '/legal/regulatory-statement',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

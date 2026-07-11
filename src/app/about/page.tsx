@@ -16,20 +16,13 @@ import { AboutRoadmap } from '@/features/about/components/AboutRoadmap';
 import { AboutMission } from '@/features/about/components/AboutMission';
 import { AboutCTA } from '@/features/about/components/AboutCTA';
 
-export const metadata: Metadata = {
-  title: `About`,
-  description:
-    'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
-  alternates: {
-    canonical: getSiteUrl('/about'),
-  },
-  openGraph: {
-    title: `About`,
-    description:
-      'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
-    url: getSiteUrl('/about'),
-  },
-};
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'About Satsearn - Bitcoin Earning Platform',
+  description: 'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
+  path: '/about',
+});
 
 export default function AboutPage() {
   return (

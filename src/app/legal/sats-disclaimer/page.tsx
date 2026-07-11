@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Sats Disclaimer',
+  description: 'Important information about Bitcoin volatility and earnings. Not financial advice.',
+  path: '/legal/sats-disclaimer',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Rewards Policy',
+  description: 'How rewards are earned, verified, matured, and the rules around forfeiture.',
+  path: '/legal/rewards-policy',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

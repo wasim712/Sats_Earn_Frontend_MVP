@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Refund Policy',
+  description: 'Refund eligibility for paid tier subscriptions and how to request one.',
+  path: '/legal/refund-policy',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

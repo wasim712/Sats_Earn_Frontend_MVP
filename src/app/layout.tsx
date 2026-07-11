@@ -20,12 +20,8 @@ export const metadata: Metadata = {
     'SatsEarn is a public rewards platform where users can complete online tasks, surveys, offers, and referrals to earn Bitcoin rewards.',
   manifest: '/manifest.webmanifest',
   applicationName: SITE_NAME,
-  alternates: {
-    canonical: getSiteUrl('/'),
-  },
   openGraph: {
     type: 'website',
-    url: getSiteUrl('/'),
     siteName: SITE_NAME,
     title: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
     description:

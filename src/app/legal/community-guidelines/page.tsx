@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Community Guidelines',
+  description: 'Rules and expectations for participating in the SatsEarn community.',
+  path: '/legal/community-guidelines',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

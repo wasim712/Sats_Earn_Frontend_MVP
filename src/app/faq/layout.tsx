@@ -3,35 +3,13 @@ import React from 'react';
 import { getSiteUrl } from '@/lib/site';
 import { faqData } from './faqData';
 
-export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | SatsEarn',
-  description:
-    'Answers to common questions about earning Bitcoin, satoshis, referrals, withdrawals, Lightning Network payments, rewards, account management, and platform security.',
-  keywords: [
-    'Bitcoin rewards',
-    'earn satoshis',
-    'Lightning Network',
-    'SatsEarn FAQ',
-    'earn crypto free',
-    'Bitcoin withdrawals',
-    'earning Bitcoin online',
-  ],
-  alternates: {
-    canonical: getSiteUrl('/faq'),
-  },
-  openGraph: {
-    title: 'SatsEarn Help Centre & FAQ',
-    description:
-      'Answers to common questions about earning Bitcoin, satoshis, referrals, withdrawals, Lightning Network payments, rewards, and platform security.',
-    type: 'website',
-    url: getSiteUrl('/faq'),
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'SatsEarn FAQ',
-    description: 'Learn how to earn free Bitcoin and withdraw via Lightning Network.',
-  },
-};
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Frequently Asked Questions',
+  description: 'Answers to common questions about earning Bitcoin, satoshis, referrals, withdrawals, Lightning Network payments, rewards, account management, and platform security.',
+  path: '/faq',
+});
 
 // Safe helper to extract raw text from React nodes
 const extractTextFromNode = (node: React.ReactNode): string => {

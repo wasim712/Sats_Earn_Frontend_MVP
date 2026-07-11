@@ -1,10 +1,13 @@
 
 import SignupForm from '@/features/auth/components/SignupForm';
 
-export const metadata = {
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
   title: 'Sign Up',
   description: 'Create your account and start earning Bitcoin in minutes.',
-};
+  path: '/signup',
+});
 
 export default function SignupPage() {
   return (

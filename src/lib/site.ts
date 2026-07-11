@@ -1,4 +1,4 @@
-const fallbackSiteUrl = 'https://www.satsearn.app';
+const fallbackSiteUrl = 'https://satsearn.app';
 
 export const SITE_NAME = 'SatsEarn';
 export const SITE_URL =

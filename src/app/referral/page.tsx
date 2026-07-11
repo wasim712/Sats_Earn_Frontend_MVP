@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import type { Metadata } from 'next';
 import { ReferralHero } from '@/features/referral/components/ReferralHero';
@@ -12,11 +14,6 @@ import { ReferralSecNav } from '@/features/referral/components/ReferralSecNav';
 import { ReferralContactFab } from '@/features/referral/components/ReferralContactFab';
 import { ReferralMechanics } from '@/features/referral/components/ReferralMechanics';
 import { ReferralCommissionGrid } from '@/features/referral/components/ReferralCommissionGrid';
-
-export const metadata: Metadata = {
-  title: 'Referral Programme | SatsEarn',
-  description: 'Earn real Bitcoin by inviting friends to SatsEarn. Stack sats for every commissionable action they complete. Free to join, uncapped on paid tiers.',
-};
 
 export default function ReferralPage() {
   return (

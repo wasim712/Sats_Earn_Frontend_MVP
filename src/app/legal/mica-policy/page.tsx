@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'MiCA Policy',
+  description: 'Our good-faith compliance approach to EU crypto-asset regulation.',
+  path: '/legal/mica-policy',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

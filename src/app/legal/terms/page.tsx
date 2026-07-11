@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Terms of Service',
+  description: 'Your rights and responsibilities when using SatsEarn to earn Bitcoin sats.',
+  path: '/legal/terms',
+});
+
 
 import React from 'react';
 import Link from 'next/link';
