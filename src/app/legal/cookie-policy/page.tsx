@@ -1,4 +1,11 @@
-'use client';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
+  title: 'Cookie Policy',
+  description: 'Which cookies we use and why. No third-party advertising trackers.',
+  path: '/legal/cookie-policy',
+});
+
 
 import React from 'react';
 import Link from 'next/link';

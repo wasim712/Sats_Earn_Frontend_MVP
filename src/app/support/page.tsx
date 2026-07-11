@@ -1,16 +1,8 @@
+'use client';
+
 import React from 'react';
-import type { Metadata } from 'next';
-import { getSiteUrl } from '@/lib/site';
 import { SupportFab } from '@/components/ui/SupportFab';
 import { FadeUp } from '@/components/animations/FadeUp';
-
-export const metadata: Metadata = {
-  title: 'Support & Contact | SatsEarn',
-  description: 'Reach our support team for billing, privacy, or partnership inquiries.',
-  alternates: {
-    canonical: getSiteUrl('/support'),
-  },
-};
 
 export default function SupportPage() {
   return (

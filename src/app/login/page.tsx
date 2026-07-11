@@ -2,10 +2,13 @@
 // import React, { useEffect } from 'react';
 import LoginForm from '@/features/auth/components/LoginForm';
 
-export const metadata = {
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({
   title: 'Log In',
   description: 'Log in to your account to continue earning Bitcoin.',
-};
+  path: '/login',
+});
 
 export default function LoginPage() {
   return (

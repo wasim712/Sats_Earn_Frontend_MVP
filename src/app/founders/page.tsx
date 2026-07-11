@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -8,20 +10,6 @@ import { FoundersComparison } from '@/features/founders/components/FoundersCompa
 import { FoundersCohort } from '@/features/founders/components/FoundersCohort';
 import { FoundersRotation } from '@/features/founders/components/FoundersRotation';
 import { FoundersCloseCta } from '@/features/founders/components/FoundersCloseCta';
-
-export const metadata: Metadata = {
-  title: 'Founders Tier — Become a SatsEarn Founder | SatsEarn',
-  description: 'Join the SatsEarn Founders tier — the highest paid tier, capped at 1,000 members. Permanent Founder status, the highest sat rewards, uncapped referrals, and the Founders Rotation perk.',
-  alternates: {
-    canonical: 'https://satsearn.app/founders',
-  },
-  openGraph: {
-    title: 'Founders Tier — Become a SatsEarn Founder',
-    description: 'The highest SatsEarn tier, capped at 1,000 members. Permanent Founder status, top sat rewards, uncapped referrals, and the Founders Rotation perk.',
-    type: 'website',
-    url: 'https://satsearn.app/founders',
-  }
-};
 
 export default function FoundersPage() {
   return (
