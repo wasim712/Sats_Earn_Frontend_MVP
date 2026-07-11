@@ -19,7 +19,7 @@ import { AboutCTA } from '@/features/about/components/AboutCTA';
 import { createPageMetadata } from '@/lib/seo';
 
 export const metadata = createPageMetadata({
-  title: 'About',
+  title: 'About Satsearn - Bitcoin Earning Platform',
   description: 'Learn what SatsEarn is, who it is for, how users earn Bitcoin rewards, and how to reach support.',
   path: '/about',
 });

@@ -6,7 +6,7 @@ import { faqData } from './faqData';
 import { createPageMetadata } from '@/lib/seo';
 
 export const metadata = createPageMetadata({
-  title: 'FAQ',
+  title: 'Frequently Asked Questions',
   description: 'Answers to common questions about earning Bitcoin, satoshis, referrals, withdrawals, Lightning Network payments, rewards, account management, and platform security.',
   path: '/faq',
 });

@@ -3,7 +3,7 @@ import { createPageMetadata } from '@/lib/seo';
 import BlogsBrowser from '@/components/user/content/BlogsBrowser';
 
 export const metadata = createPageMetadata({
-  title: 'Blog',
+  title: 'Blogs & Comparisions',
   description: 'Read the latest news, updates, and educational content from SatsEarn.',
   path: '/blogs',
 });
