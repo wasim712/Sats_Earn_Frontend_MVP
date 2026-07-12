@@ -196,7 +196,7 @@ export   const faqData: FAQCategory[] = [
           )
         },
         {
-          q: 'Why is my earned balance showing as &quot;Pending&quot;?',
+          q: 'Why is my earned balance showing as Pending?',
           a: (
             <span>
               Every completed task enters a <strong>Pending</strong> state for up to 24 hours while our AI and manual review systems verify the completion was genuine. Once verified, it moves to <strong>Maturing</strong> status for the 15-day lock period. This protects the platform from fraud and ensures every reward is legitimate.
@@ -224,14 +224,6 @@ export   const faqData: FAQCategory[] = [
           a: (
             <span>
               If a task completion is rejected during verification, the pending reward is removed and not added to your balance. Reasons include: incomplete action, reversed action (e.g. unfollowed after completing), or detected fraud signals. Repeated rejections may affect your account standing.
-            </span>
-          )
-        },
-        {
-          q: 'Can I earn sats from mini-games on a free tier?',
-          a: (
-            <span>
-              Free tier users earn <strong>XP</strong> from the 1–2 free games available to all users. Sats rewards from games are exclusive to paid tier users via paid-exclusive games. We&apos;re monitoring game traffic before enabling broader sats rewards.
             </span>
           )
         },
