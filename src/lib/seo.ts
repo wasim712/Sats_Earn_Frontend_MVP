@@ -30,11 +30,20 @@ export function createPageMetadata({
       url,
       siteName: SITE_NAME,
       type: 'website',
+      images: [
+      {
+        url: getSiteUrl("/og-image.png"),
+        width: 1200,
+        height: 630,
+        alt: "SatsEarn",
+      },
+    ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${title} | ${SITE_NAME}`,
       description,
+      images: [getSiteUrl("/og-image.png")],
     },
     robots: {
       index: !noindex,

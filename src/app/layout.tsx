@@ -22,6 +22,14 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   openGraph: {
     type: 'website',
+    images: [
+    {
+      url: getSiteUrl("/og-image.png"),
+      width: 1200,
+      height: 630,
+      alt: "SatsEarn",
+    },
+  ],
     siteName: SITE_NAME,
     title: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
     description:
@@ -32,6 +40,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} | Earn Bitcoin Through Tasks, Offers, and Rewards`,
     description:
       'Complete online tasks, surveys, offers, and referrals on SatsEarn to earn Bitcoin rewards.',
+      images:[getSiteUrl("/og-image.png")],
   },
   appleWebApp: {
     capable: true,
