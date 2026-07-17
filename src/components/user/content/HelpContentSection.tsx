@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/normalizeImageUrl';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -283,7 +284,7 @@ export function HelpContentSection({
                         {blog.coverImageUrl ? (
                           <>
                             <Image
-                              src={blog.coverImageUrl}
+                              src={normalizeImageUrl(blog.coverImageUrl)}
                               alt={blog.title}
                               fill
                               className="object-cover scale-110 blur-2xl opacity-40"
@@ -293,7 +294,7 @@ export function HelpContentSection({
                             <div className="absolute inset-0 flex items-center justify-center p-3">
                               <div className="relative h-full w-full overflow-hidden rounded-[20px] border border-white/10 bg-black/10 shadow-[0_12px_30px_rgba(0,0,0,0.25)]">
                                 <Image
-                                  src={blog.coverImageUrl}
+                                  src={normalizeImageUrl(blog.coverImageUrl)}
                                   alt={blog.title}
                                   fill
                                   className="object-contain p-2 transition duration-500 group-hover:scale-[1.03]"

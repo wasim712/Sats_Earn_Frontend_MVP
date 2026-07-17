@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Heading1, Heading2, ImageIcon, Link2, List, ListOrdered, Loader2, Quote, Save, Send, Type, Undo2 } from 'lucide-react';
+import { normalizeImageUrl } from '@/lib/normalizeImageUrl';
 import { EMPTY_BLOG_HTML, slugify } from '../content/content.helpers';
 import type { BlogPost, EditorButton } from '../content/content.types';
 import { BlogEditorToolbar } from './BlogEditorToolbar';
@@ -170,7 +171,7 @@ export default function AdminBlogsPage() {
           slug: slug.trim(),
           excerpt: excerpt.trim(),
           content,
-          coverImageUrl: coverImageUrl.trim(),
+          coverImageUrl: normalizeImageUrl(coverImageUrl),
           isPublished,
         },
       })).unwrap();
@@ -243,7 +244,12 @@ export default function AdminBlogsPage() {
               <textarea value={excerpt} maxLength={BLOG_EXCERPT_MAX} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short excerpt" className="w-full min-h-24 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white" />
               <p className="text-[12px] text-gray-400">Optional excerpt · {excerpt.trim().length}/{BLOG_EXCERPT_MAX} characters</p>
             </div>
-            <input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="Cover image URL" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
+            <div className="space-y-1">
+              <input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="Cover image URL" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-4 py-3 text-white w-full" />
+              <p className="text-[12px] text-gray-400">
+                Use a direct image link (ends in .jpg/.png/.webp, e.g. from Cloudinary). Google Drive &quot;share&quot; links point to a viewer page, not the raw image, so they&apos;ll show a broken image.
+              </p>
+            </div>
 
             <BlogEditorToolbar buttons={toolbar} isPreview={isPreview} onTogglePreview={() => setIsPreview((prev) => !prev)} />
 

@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
+import { normalizeImageUrl } from '@/lib/normalizeImageUrl';
 import {
   USER_API_URL,
   formatContentDate,
@@ -82,11 +83,11 @@ function BlogCard({
       <div className="relative h-52 overflow-hidden border-b border-white/6 bg-[#0b0b0b]">
         {blog.coverImageUrl ? (
           <>
-            <Image src={blog.coverImageUrl} alt={blog.title} fill className="object-cover scale-110 blur-2xl opacity-45" unoptimized />
+            <Image src={normalizeImageUrl(blog.coverImageUrl)} alt={blog.title} fill className="object-cover scale-110 blur-2xl opacity-45" unoptimized />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.45))]" />
             <div className="absolute inset-0 flex items-center justify-center p-5">
               <div className="relative h-full w-full max-w-[240px] overflow-hidden rounded-[22px] border border-white/10 bg-black/10 shadow-[0_16px_36px_rgba(0,0,0,0.35)]">
-                <Image src={blog.coverImageUrl} alt={blog.title} fill className="object-contain p-3 transition duration-500 group-hover:scale-[1.03]" unoptimized />
+                <Image src={normalizeImageUrl(blog.coverImageUrl)} alt={blog.title} fill className="object-contain p-3 transition duration-500 group-hover:scale-[1.03]" unoptimized />
               </div>
             </div>
           </>

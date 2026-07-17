@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { AlertTriangle, ArrowLeft, BookOpen, CalendarDays, Clock3, Sparkles } from 'lucide-react';
 import { obfuscatedJsonRequest } from '@/lib/obfuscatedFetch';
+import { normalizeImageUrl } from '@/lib/normalizeImageUrl';
 import {
   USER_API_URL,
   formatContentDate,
@@ -115,11 +116,11 @@ export default function PublicBlogDetailsPage() {
             <div className="p-5 md:p-8">
               {blog.coverImageUrl ? (
                 <div className="relative mb-8 h-64 w-full overflow-hidden rounded-[26px] border border-white/6 bg-[#0b0b0b] md:h-[420px]">
-                  <Image src={blog.coverImageUrl} alt={blog.title} fill className="scale-110 object-cover blur-2xl opacity-40" unoptimized />
+                  <Image src={normalizeImageUrl(blog.coverImageUrl)} alt={blog.title} fill className="scale-110 object-cover blur-2xl opacity-40" unoptimized />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center p-6">
                     <div className="relative h-full w-full max-w-[460px] overflow-hidden rounded-[24px] border border-white/10 shadow-[0_18px_48px_rgba(0,0,0,0.38)]">
-                      <Image src={blog.coverImageUrl} alt={blog.title} fill className="object-contain p-4" unoptimized />
+                      <Image src={normalizeImageUrl(blog.coverImageUrl)} alt={blog.title} fill className="object-contain p-4" unoptimized />
                     </div>
                   </div>
                 </div>
