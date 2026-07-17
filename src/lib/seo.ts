@@ -43,7 +43,14 @@ export function createPageMetadata({
       card: 'summary_large_image',
       title: `${title} | ${SITE_NAME}`,
       description,
-      images: [getSiteUrl("/og-image.png")],
+      site: '@satsearn',
+      creator: '@satsearn',
+      images: [
+        {
+          url: getSiteUrl("/og-image.png"),
+          alt: "SatsEarn",
+        },
+      ],
     },
     robots: {
       index: !noindex,
