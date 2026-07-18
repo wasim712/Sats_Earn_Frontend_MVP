@@ -178,7 +178,9 @@ export default function StandaloneTaskDetailsPage() {
   const difficulty = 'Easy';
 
   const safeTotal = Number(task?.campaign?.totalCompletions || task?.totalCompletions) || 0;
-  const safeMax = Number(task?.campaign?.maxCompletions || task?.maxCompletions) || 1;
+  // Standalone tasks have no completion cap in the backend, so a missing/zero maxCompletions
+  // means "unlimited" — not a real cap of 1.
+  const safeMax = Number(task?.campaign?.maxCompletions || task?.maxCompletions) || 999999;
   const spotsLeft = Math.max(0, safeMax - safeTotal);
   let completionPct = Math.round(Math.min((safeTotal / safeMax) * 100, 100));
   if (completionPct < 0) completionPct = 0;

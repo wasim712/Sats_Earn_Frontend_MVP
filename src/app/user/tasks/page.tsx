@@ -151,8 +151,10 @@ const mapStandaloneTaskToCampaign = (task: StandaloneTask): Campaign => ({
   doubleRewardsEndAt: null,
   doubleRewardsActive: Boolean(task.doubleRewardsActive),
   tierRewardMatrix: {},
-  totalCompletions: task.isCompleted ? 1 : 0,
-  maxCompletions: 1,
+  // Standalone tasks have no completion cap in the backend (see StandaloneTask model),
+  // so there's no real global count to report — treat as unlimited.
+  totalCompletions: 0,
+  maxCompletions: 999999,
   isActive: true,
   isStandalone: true,
   itemSource: 'standalone',
